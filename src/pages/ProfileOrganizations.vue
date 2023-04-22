@@ -5,7 +5,7 @@
     </div>
     <div class="organizations" :organizations_data="organizations">
       <div class="dart-row">
-        <div class="d-col-lg-3" v-for="item in organizations.stores" v-bind:key="item.id">
+        <div class="d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.stores" v-bind:key="item.id">
           <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
             <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { type: item.type, id: item.id }}">{{ item.name }}</router-link>
             <ul class="panel_widget_organization__menu">
@@ -17,7 +17,7 @@
             </ul>
           </div>
         </div>
-        <div class="d-col-lg-3" v-for="item in organizations.warehouses" v-bind:key="item.id">
+        <div class="d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.warehouses" v-bind:key="item.id">
           <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
             <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { type: item.type, id: item.id }}">{{ item.name }}</router-link>
             <ul class="panel_widget_organization__menu">
@@ -70,6 +70,9 @@ export default {
 </script>
 
 <style lang="scss">
+  .panel_widget_organization_wrap{
+    margin-bottom: 20px;
+  }
   .panel_widget_organization{
     position: relative;
     height: 100%;

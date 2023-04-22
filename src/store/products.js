@@ -6,17 +6,20 @@ export default {
     products: []
   },
   actions: {
-    get_data_from_api ({ commit }, { filter, page, perpage }) {
-      console.log(filter)
+    get_data_from_api ({ commit }, { filter, filtersdata, page, perpage }) {
+      // console.log(filter)
+      const data = {
+        id: router.currentRoute._value.params.id,
+        type: router.currentRoute._value.params.type,
+        filter: filter,
+        filtersdata: filtersdata,
+        page: page,
+        perpage: perpage
+      }
+      console.log(data)
       return Axios('/rest/front_getproducts', {
         method: 'POST',
-        data: {
-          id: router.currentRoute._value.params.id,
-          type: router.currentRoute._value.params.type,
-          filter: filter,
-          page: page,
-          perpage: perpage
-        },
+        data: data,
         headers: {
           'Access-Control-Allow-Origin': '*'
         }

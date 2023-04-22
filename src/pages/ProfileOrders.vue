@@ -66,25 +66,6 @@ export default {
           label: 'Сумма',
           type: 'text'
         }
-      },
-      filters: {
-        filter: {
-          label: 'Поиск по полям заказа',
-          type: 'text'
-        },
-        status: {
-          label: 'Статус',
-          type: 'select',
-          data: this.$store.state.orders.orders.statuses
-        },
-        from: {
-          label: 'От',
-          type: 'date'
-        },
-        to: {
-          label: 'До',
-          type: 'date'
-        }
       }
     }
   },

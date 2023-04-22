@@ -27,6 +27,20 @@
                 </div>
             </div>
         </div>
+        <div class="d-col-md-6" v-for="(filter, i) in filters" :key="i">
+          <div class="dart-form-group">
+            <!-- <label>{{ filter.name }}</label> -->
+            <select
+              :name=i
+              :id="'filter_' + i"
+              class="dart-form-control"
+              v-model="filtersdata[i]"
+              @change="setFilter"
+              >
+              <option v-for="(opt, opt_i) in filter.values" :key="opt_i" :value=opt>{{ opt_i }}</option>
+            </select>
+          </div>
+        </div>
     </div>
     <div class="profile-products__products">
         <table class="profile-table">
@@ -62,7 +76,7 @@
 </template>
 
 <script>
-
+import { toRaw } from 'vue'
 import vTableRow from './v-table-row'
 // import vTableFilter from './v-table-filter'
 import Paginate from 'vuejs-paginate-next'
@@ -82,9 +96,9 @@ export default ({
       }
     },
     filters: {
-      type: Array,
+      type: Object,
       default: () => {
-        return []
+        return {}
       }
     },
     table_data: {
@@ -121,6 +135,7 @@ export default ({
   data () {
     return {
       filter: '',
+      filtersdata: { },
       per_page: this.pagination_items_per_page
     }
   },
@@ -135,8 +150,10 @@ export default ({
   },
   methods: {
     setFilter () {
+      // console.log(toRaw(this.filtersdata))
       this.$emit('filter', {
         filter: this.filter,
+        filtersdata: toRaw(this.filtersdata),
         page: 1,
         perpage: this.pagination_items_per_page
       })

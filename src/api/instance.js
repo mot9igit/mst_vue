@@ -1,11 +1,10 @@
 import axios from 'axios'
 
 const instance = axios.create({
-  baseURL: '/rest/',
+  baseURL: 'rest/',
   withCridentials: true,
   headers: {
-    accept: 'application/json',
-    'Access-Control-Allow-Origin': '*'
+    accept: 'application/json'
   }
 })
 

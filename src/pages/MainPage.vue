@@ -30,7 +30,7 @@ export default {
   mounted () {
     this.setUser(JSON.parse(localStorage.getItem('user')))
     if (this.getUser) {
-      this.$router.push({ name: 'profile' })
+      this.$router.push({ name: 'organizations' })
     }
   },
   methods: {

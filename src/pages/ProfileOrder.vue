@@ -4,13 +4,17 @@
       <div class="d-col-md-4">
         <span class="block-header__title">Заказ №{{ order.num }}</span>
         <div class="block-header__description">
-          <b>Подготовка заказа к отправке покупателю</b>
+          <b>{{ order.description }}</b>
         </div>
       </div>
       <div class="d-col-md-8">
-        <div class="block-header__buttons">
-          <a href="#" class="dart-btn dart-btn-primary-outline">Отменить заказ</a>
-          <a href="#" class="dart-btn dart-btn-primary">Подтвердить передачу в доставку</a>
+        <div class="block-header__buttons" v-if="order.stores_available != 0 && type == 'slStores'">
+          <!--<a href="#" class="dart-btn dart-btn-primary-outline">Отменить заказ</a>-->
+          <a href="#" class="dart-btn dart-btn-primary" :disabled="isLoading == true" :class="{ 'dart-btn-loading': isLoading }" @click="change_ststatus">{{ order.transition_anchor }}</a>
+        </div>
+        <div class="block-header__buttons" v-if="order.warehouses_available != 0 && type == 'slWarehouse'">
+          <!--<a href="#" class="dart-btn dart-btn-primary-outline">Отменить заказ</a>-->
+          <a href="#" class="dart-btn dart-btn-primary" :disabled="isLoading == true" :class="{ 'dart-btn-loading': isLoading }" @click="change_ststatus">{{ order.transition_anchor }}</a>
         </div>
       </div>
     </div>
@@ -25,7 +29,13 @@
           <div class="d-col-md-6">
             <div class="item">
               <span class="label">Покупатель</span>
-              <span class="value">{{ order.customer }}</span>
+              <span class="value">{{ order.customer_username? order.customer_username : order.customer }}</span>
+            </div>
+          </div>
+          <div class="d-col-md-6" v-if="order.address">
+            <div class="item">
+              <span class="label">Адрес доставки</span>
+              <span class="value">{{ order.address }}</span>
             </div>
           </div>
           <div class="d-col-md-6">
@@ -111,15 +121,24 @@ export default {
   props: { },
   data () {
     return {
-      form: {
-        status: ''
-      }
+      isLoading: false,
+      type: this.$route.params.type,
+      id: this.$route.params.id
     }
   },
   methods: {
     ...mapActions([
-      'get_order_from_api'
-    ])
+      'get_order_from_api',
+      'change_status'
+    ]),
+    change_ststatus () {
+      this.isLoading = !false
+      this.change_status().then(res => {
+        this.isLoading = !true
+      }).catch(error => {
+        console.error(error)
+      })
+    }
   },
   mounted () {
     this.get_order_from_api()

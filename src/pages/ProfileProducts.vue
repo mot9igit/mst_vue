@@ -8,6 +8,7 @@
         :pagination_offset="this.pagination_offset"
         :page="this.page"
         :table_data="this.table_data"
+        :filters="this.filters"
         title="Остатки товаров"
         @filter="filter"
         @paginate="paginate"
@@ -38,6 +39,16 @@ export default {
   },
   data () {
     return {
+      filters: {
+        product_id: {
+          name: 'Привязанный товар',
+          values: {
+            'Все товары': '',
+            'С привязанным товаром': 1,
+            'С не привязанным товаром': 0
+          }
+        }
+      },
       table_data: {
         image: {
           label: 'Фото',

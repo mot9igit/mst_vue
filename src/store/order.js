@@ -23,6 +23,21 @@ export default {
         .then((response) => {
           commit('SET_ORDER_TO_VUEX', response.data)
         })
+    },
+    change_status ({ commit }) {
+      return Axios('/rest/front_order_change', {
+        method: 'POST',
+        data: {
+          id: router.currentRoute._value.params.id,
+          type: router.currentRoute._value.params.type,
+          order_id: router.currentRoute._value.params.order_id
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      }).then((response) => {
+        commit('SET_ORDER_TO_VUEX', response.data)
+      })
     }
   },
   mutations: {

@@ -67,10 +67,10 @@ export default {
           username: this.form.email,
           password: this.form.password
         })
-        console.log(data.data.data)
+        console.log(data.data)
         localStorage.setItem('user', JSON.stringify(data.data.data))
         this.$store.dispatch('user/setUser', data.data.data)
-        this.$router.push({ name: 'profile' })
+        this.$router.push({ name: 'organizations' })
       })
     },
     cancel (close) {

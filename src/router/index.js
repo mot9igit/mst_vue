@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 import MainPage from '../pages/MainPage'
 import ProfileLoyout from '../pages/Loyouts/ProfileLoyout'
 import OrganizationsLoyout from '../pages/Loyouts/OrganizationsLoyout'
-import ProfilePage from '../pages/ProfilePage'
+// import ProfilePage from '../pages/ProfilePage'
 import ProfileOrganizations from '../pages/ProfileOrganizations'
 import ProfileOrganization from '../pages/ProfileOrganization'
 import ProfileProducts from '../pages/ProfileProducts'
@@ -45,17 +45,6 @@ const routes = [
       }
     },
     children: [{
-      path: '',
-      name: 'profile',
-      meta: {
-        breadcrumb: {
-          label: 'Профиль'
-        }
-      },
-      props: true,
-      label: 'Профиль',
-      component: ProfilePage
-    }, {
       path: 'organizations',
       children: [{
         path: '',
