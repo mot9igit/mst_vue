@@ -1,6 +1,6 @@
 <template>
-  <header class="dart_header dart_header_analytics">
-      <div class="dart_container wrap">
+  <header class="dart_header_mst">
+      <div class="wrap">
         <router-link
           :to="{ name: 'home' }"
           class="logo"
@@ -8,8 +8,8 @@
           МСТ Аналитика
         </router-link>
         <a href="#" class="logout" @click="onAuthBtnClick">
-          <i class="fa fa-sign-out"></i>
           <span>Выйти</span>
+          <mdicon name="logout" />
         </a>
       </div>
     </header>
@@ -49,7 +49,37 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
-.dart_header{
+.dart_header_mst{
   z-index: 101;
+  flex: 0 0 auto;
+  position: relative;
+  padding: 0;
+  background: #F3F3F3;
+  .wrap{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .logo{
+    display: inline-block;
+    min-width: 350px;
+    padding: 10px 15px;
+    background: #282828;
+    font-size: 1.25rem;
+    text-decoration: none;
+    white-space: nowrap;
+    display: block;
+    color: #fff;
+  }
+  .logout{
+    display: inline-block;
+    color: #B5B5B5;
+    text-decoration: none;
+    padding: 0 15px;
+    span{
+      display: inline-block;
+      margin-right: 10px;
+    }
+  }
 }
 </style>

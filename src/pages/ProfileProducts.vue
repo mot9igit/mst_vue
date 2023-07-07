@@ -11,6 +11,7 @@
         :filters="this.filters"
         title="Остатки товаров"
         @filter="filter"
+        @sort="filter"
         @paginate="paginate"
       />
     </div>
@@ -40,8 +41,14 @@ export default {
   data () {
     return {
       filters: {
+        name: {
+          name: 'Наименование, артикул',
+          placeholder: 'Наименование, артикул',
+          type: 'text'
+        },
         product_id: {
           name: 'Привязанный товар',
+          type: 'select',
           values: {
             'Все товары': '',
             'С привязанным товаром': 1,
@@ -54,35 +61,55 @@ export default {
           label: 'Фото',
           type: 'image'
         },
-        article: {
+        vendor_article: {
           label: 'Артикул',
-          type: 'text'
+          type: 'text',
+          sort: true
         },
         name: {
           label: 'Наименование',
           type: 'link',
           link_to: 'org_product',
           link_params: {
-            type: this.$route.params.type,
             id: this.$route.params.id,
             product_id: 'id'
-          }
+          },
+          sort: true
         },
         price: {
           label: 'Розничная цена',
-          type: 'text'
+          type: 'text',
+          sort: true
         },
         remains: {
           label: 'Фактическое наличие',
-          type: 'text'
+          type: 'text',
+          sort: true
         },
         reserved: {
           label: 'Резерв',
-          type: 'text'
+          type: 'text',
+          sort: true
         },
         available: {
           label: 'Доступно для продажи',
-          type: 'text'
+          type: 'text',
+          sort: true
+        },
+        sales: {
+          label: 'Продаж за все время',
+          type: 'text',
+          sort: true
+        },
+        price_rrc: {
+          label: 'Цена, РРЦ',
+          type: 'text',
+          sort: true
+        },
+        price_rrc_delta: {
+          label: 'РРЦ дельта',
+          type: 'text',
+          sort: true
         }
       }
     }
@@ -101,7 +128,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$breadcrumbs.value)
     this.get_data_from_api({
       page: this.page,
       perpage: this.pagination_items_per_page

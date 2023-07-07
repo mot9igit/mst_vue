@@ -1,4 +1,10 @@
 <template>
+  <div class="to__up">
+    <router-link :to="{ name: 'org_products', params: { id: $route.params.id } }">
+      <mdicon name="arrow-left" />
+      <span>Назад к товарам</span>
+    </router-link>
+  </div>
   <div class="profile-content b-wrap">
     <div class="profile-content__title">
       <span class="title">{{ product.name }} (арт. {{ product.article }})</span>

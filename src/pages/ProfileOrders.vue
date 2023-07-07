@@ -11,6 +11,7 @@
         :filters="this.filters"
         title="Заказы"
         @filter="filter"
+        @sort="filter"
         @paginate="paginate"
       />
     </div>
@@ -39,16 +40,23 @@ export default {
   },
   data () {
     return {
+      filters: {
+        name: {
+          name: 'Наименование, артикул',
+          placeholder: 'Наименование, артикул',
+          type: 'text'
+        }
+      },
       table_data: {
         num: {
           label: 'Номер',
           type: 'link',
           link_to: 'org_order',
           link_params: {
-            type: this.$route.params.type,
             id: this.$route.params.id,
             order_id: 'id'
-          }
+          },
+          sort: true
         },
         customer: {
           label: 'Покупатель',
@@ -56,7 +64,8 @@ export default {
         },
         createdon: {
           label: 'Дата',
-          type: 'text'
+          type: 'text',
+          sort: true
         },
         status: {
           label: 'Статус',
@@ -64,6 +73,15 @@ export default {
         },
         cost: {
           label: 'Сумма',
+          type: 'text',
+          sort: true
+        },
+        delivery: {
+          label: 'Доставка',
+          type: 'text'
+        },
+        payment: {
+          label: 'Оплата',
           type: 'text'
         }
       }
@@ -83,7 +101,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$breadcrumbs.value)
     this.get_orders_from_api({
       page: this.page,
       perpage: this.pagination_items_per_page

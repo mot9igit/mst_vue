@@ -6,7 +6,7 @@ export default {
     orders: []
   },
   actions: {
-    get_orders_from_api ({ commit }, { filter, page, perpage }) {
+    get_orders_from_api ({ commit }, { filter, sort, page, perpage }) {
       console.log(filter)
       return Axios('/rest/front_getorders', {
         method: 'POST',
@@ -15,6 +15,7 @@ export default {
           type: router.currentRoute._value.params.type,
           filter: filter,
           page: page,
+          sort: sort,
           perpage: perpage
         },
         headers: {
@@ -23,6 +24,12 @@ export default {
       })
         .then((response) => {
           commit('SET_ORDERS_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
         })
     }
   },

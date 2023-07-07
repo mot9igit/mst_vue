@@ -9,6 +9,17 @@ import dilers from './dilers'
 import orders from './orders'
 import order from './order'
 import shipping from './shipping'
+import topsales from './topsales'
+import available from './available'
+import present from './present'
+import regions from './regions'
+import catalog from './catalog'
+import vendors from './vendors'
+import stores from './stores'
+import warehouses from './warehouses'
+import matrixs from './matrixs'
+import matrix from './matrix'
+import getAvailableProd from './get_available_prod'
 
 export default new Vuex.Store({
   modules: {
@@ -20,6 +31,17 @@ export default new Vuex.Store({
     dilers,
     orders,
     order,
-    shipping
+    shipping,
+    topsales,
+    available,
+    present,
+    regions,
+    catalog,
+    vendors,
+    stores,
+    warehouses,
+    matrixs,
+    matrix,
+    getAvailableProd
   }
 })

@@ -1,0 +1,189 @@
+<template>
+  <form @submit.prevent="formSubmit">
+    <div class="profile-content__title">
+        <span class="title">Редактирование ключевой матрицы</span>
+        <div class="buttons_container">
+          <RouterLink :to="{ name: 'org_matrix', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary">Отменить</RouterLink>
+          <button type="submit" class="dart-btn dart-btn-primary" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Редактировать</button>
+        </div>
+    </div>
+    <div>
+      <div class="dart-form-group">
+        <label for="name">Название ключевой матрицы</label>
+        <input v-model="matrix.name" type="text" name="name" placeholder="Укажите название ключевой матрицы" class="dart-form-control">
+      </div>
+      <div class="dart-form-group">
+        <label for="name">Целевое значение представленности ключевой матрицы в %</label>
+        <input v-model="matrix.percent" type="text" name="percent" placeholder="Введите целевое значение" class="dart-form-control">
+      </div>
+      <div class="dart-form-group">
+        <label for="name">Период действия</label>
+        <Calendar v-model="matrix.dates" selectionMode="range" placeholder="Выберите диапазон дат" :manualInput="false" showIcon/>
+      </div>
+      <div class="dart-form-group picker-wrap">
+        <label for="name">Добавление товаров</label>
+        <PickList v-model="matrix.products" :selection="form.products" listStyle="height:342px" dataKey='id'  :metaKeySelection="false" :showSourceControls="false" :showTargetControls="false"
+        @update:selection="saveData(data)">
+          <template #sourceheader>
+            <div class="source_list">
+              <span>Доступные</span>
+              <div class="filter">
+                <div class="form_input_group input_pl input-parent required">
+                  <input
+                  type="text"
+                  id="filter_name"
+                  placeholder="Артикул, наименование"
+                  name="filter"
+                  class="dart-form-control"
+                  v-model="filter"
+                  @input="setFilter"
+                  />
+                  <label for="product_filter_name" class="s-complex-input__label">Артикул, наименование</label>
+                  <div class="form_input_group__icon">
+                      <i class="d_icon d_icon-search"></i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </template>
+          <template #targetheader> Выбранные </template>
+          <template #item="slotProps">
+              <div class="flex flex-wrap p-2 align-items-center gap-3">
+                <img class="w-4rem flex-shrink-0 border-round" :src="'https://mst.tools' + slotProps.item.image" :alt="slotProps.pagetitle" />
+                <div class="flex-1 flex flex-column gap-2">
+                    <span class="font-bold">{{ slotProps.item.name }}</span>
+                    <span class="article">{{ slotProps.item.article }}</span>
+                </div>
+                <div class="input">
+                  <span class="p-float-label">
+                    <InputNumber
+                      v-model="slotProps.item.count"
+                      inputId="horizontal-buttons"
+                      :step="1"
+                      incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                    />
+                    <label for="number-input">Кол-во товара</label>
+                  </span>
+                </div>
+              </div>
+          </template>
+        </PickList>
+      </div>
+    </div>
+  </form>
+</template>
+
+<script>
+import { mapActions, mapGetters } from 'vuex'
+import router from '@/router'
+import Calendar from 'primevue/calendar'
+import PickList from 'primevue/picklist'
+import InputNumber from 'primevue/inputnumber'
+
+export default {
+  name: 'ProfileMatrixEdit',
+  props: { },
+  data () {
+    return {
+      loading: false,
+      filter: '',
+      selected: [],
+      form: {
+      }
+    }
+  },
+  methods: {
+    ...mapActions([
+      'get_available_products_from_api',
+      'get_matrix_from_api',
+      'set_matrix_to_api'
+    ]),
+    setFilter () {
+      const data = { filter: this.filter, selected: this.selected }
+      this.get_available_products_from_api(data)
+    },
+    saveData () {
+      this.selected = this.matrix.products[1]
+    },
+    formSubmit (event) {
+      this.loading = true
+      this.$load(async () => {
+        await this.set_matrix_to_api({
+          action: 'set',
+          id: router.currentRoute._value.params.id,
+          matrix_id: this.matrix.id,
+          name: this.matrix.name,
+          percent: this.matrix.percent,
+          dates: this.matrix.dates,
+          products: this.selected
+        })
+          .then((result) => {
+            // this.loading = false
+            router.push({ name: 'org_matrix', params: { id: router.currentRoute._value.params.id } })
+          })
+          .catch((result) => {
+            console.log(result)
+          })
+      })
+    }
+  },
+  mounted () {
+    // this.get_available_products_from_api({ filter: '', selected: [] })
+    this.get_matrix_from_api({ id: router.currentRoute._value.params.matrix_id })
+  },
+  components: { Calendar, PickList, InputNumber },
+  computed: {
+    ...mapGetters([
+      'available_products',
+      'matrix'
+    ])
+  },
+  watch: {
+    matrix: function (newVal, oldVal) {
+      this.saveData()
+    },
+    available_products: function (newVal, oldVal) {
+      this.matrix.products = this.available_products.products
+    }
+  }
+}
+</script>
+
+<style lang="scss">
+  .source_list{
+    position: relative;
+    z-index: 3;
+    .filter{
+      position: absolute;
+      bottom: -95px;
+      left: 0;
+      right: 15px;
+    }
+  }
+  .p-picklist .p-picklist-list.p-picklist-source{
+    padding-top: 75px !important;
+    .p-picklist-item{
+      .input{
+        display: none;
+      }
+    }
+  }
+  .dart-form-group{
+    max-width: 755px;
+    &.picker-wrap{
+      max-width: 100%;
+    }
+  }
+  .profile-content__title{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .buttons_container{
+    display: flex;
+    align-items: center;
+    .dart-btn + .dart-btn {
+        margin-left: 5px;
+    }
+  }
+</style>

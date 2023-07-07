@@ -8,7 +8,7 @@
         :pagination_offset="this.pagination_offset"
         :page="this.page"
         :table_data="this.table_data"
-        title="Мои дилеры"
+        title="Мои магазины"
         @filter="filter"
         @paginate="paginate"
       />
@@ -74,6 +74,7 @@ export default {
   mounted () {
     console.log(this.$breadcrumbs.value)
     this.get_dilers_from_api({
+      type: 1,
       page: this.page,
       perpage: this.pagination_items_per_page
     })

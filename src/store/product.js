@@ -21,6 +21,12 @@ export default {
         .then((response) => {
           commit('SET_DATA_TO_VUEX', response.data)
         })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
     }
   },
   mutations: {

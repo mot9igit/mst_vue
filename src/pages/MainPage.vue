@@ -43,6 +43,9 @@ export default {
 </script>
 
 <style lang="scss">
+  main.office-auth-form{
+    margin-left: 0;
+  }
   .analytics_auth{
     background: #282828;
     display: -webkit-box;

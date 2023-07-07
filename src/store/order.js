@@ -23,6 +23,12 @@ export default {
         .then((response) => {
           commit('SET_ORDER_TO_VUEX', response.data)
         })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
     },
     change_status ({ commit }) {
       return Axios('/rest/front_order_change', {

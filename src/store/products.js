@@ -6,17 +6,16 @@ export default {
     products: []
   },
   actions: {
-    get_data_from_api ({ commit }, { filter, filtersdata, page, perpage }) {
+    get_data_from_api ({ commit }, { filter, filtersdata, page, sort, perpage }) {
       // console.log(filter)
       const data = {
         id: router.currentRoute._value.params.id,
-        type: router.currentRoute._value.params.type,
         filter: filter,
         filtersdata: filtersdata,
+        sort: sort,
         page: page,
         perpage: perpage
       }
-      console.log(data)
       return Axios('/rest/front_getproducts', {
         method: 'POST',
         data: data,
@@ -26,6 +25,12 @@ export default {
       })
         .then((response) => {
           commit('SET_DATA_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
         })
     }
   },

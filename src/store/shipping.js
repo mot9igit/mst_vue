@@ -17,6 +17,12 @@ export default {
         .then((response) => {
           commit('SET_SHIPPING_TO_VUEX', response.data)
         })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
     },
     async set_shipping_to_api ({ commit }, data) {
       return Axios('/rest/front_getshipping', {
@@ -28,6 +34,12 @@ export default {
       })
         .then((response) => {
           commit('SET_SHIPPING_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
         })
     }
   },

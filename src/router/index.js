@@ -8,11 +8,17 @@ import ProfileOrganization from '../pages/ProfileOrganization'
 import ProfileProducts from '../pages/ProfileProducts'
 import ProfileProduct from '../pages/ProfileProduct'
 import ProfileDilers from '../pages/ProfileDilers'
+import ProfileDilersOpts from '../pages/ProfileDilersOpts'
 import ProfileProfile from '../pages/ProfileProfile'
 import ProfileOrders from '../pages/ProfileOrders'
 import ProfileOrder from '../pages/ProfileOrder'
 import ProfileShipping from '../pages/ProfileShipping'
+import ProfileMatrix from '../pages/ProfileMatrix'
+import ProfileMatrixAdd from '../pages/ProfileMatrixAdd'
+import ProfileMatrixEdit from '../pages/ProfileMatrixEdit'
 import BonusMain from '../pages/BonusMain'
+import BonusAdd from '../pages/bonuses/add'
+import BonusEdit from '../pages/bonuses/edit'
 import BonusOutofstock from '../pages/BonusOutofstock'
 import BonusRemains from '../pages/BonusRemains'
 import BonusPersonal from '../pages/BonusPersonal'
@@ -21,9 +27,15 @@ import BonusActions from '../pages/BonusActions'
 import BonusQuality from '../pages/BonusQuality'
 import BonusAkbpunkts from '../pages/BonusAkbpunkts'
 import BonusAkbcity from '../pages/BonusAkbcity'
-import ReportMain from '../pages/ReportMain'
+import ReportMain from '../pages/reports/ReportMain'
+import ReportPage from '../pages/reports/ReportPage'
+import ReportElemsPage from '../pages/reports/ReportElemsPage'
+import ReportsAkb from '../pages/reports/ReportAkb'
 import ReportAverage from '../pages/ReportAverage'
 import ReportSpeedSales from '../pages/ReportSpeedSales'
+import ReportTopSales from '../pages/ReportTopSales'
+import ReportAvailable from '../pages/ReportAvailable'
+import ReportPresent from '../pages/ReportPresent'
 import notFound from '../pages/NotFound'
 
 const routes = [
@@ -58,17 +70,10 @@ const routes = [
         label: 'Организации',
         component: ProfileOrganizations
       }, {
-        path: ':type/:id',
+        path: ':id',
         children: [{
           path: '',
           name: 'organization',
-          meta: {
-            breadcrumb: {
-              breadcrumb (route, app) {
-                return `Item ${route.params.id}`
-              }
-            }
-          },
           props: true,
           label: 'Организация',
           component: ProfileOrganization
@@ -78,11 +83,6 @@ const routes = [
           children: [{
             path: '',
             name: 'org_products',
-            meta: {
-              breadcrumb: {
-                label: 'Товары'
-              }
-            },
             props: true,
             label: 'Товары',
             component: ProfileProducts
@@ -91,13 +91,6 @@ const routes = [
             path: ':product_id',
             name: 'org_product',
             label: 'Товар',
-            meta: {
-              breadcrumb: {
-                breadcrumb (route, app) {
-                  return `Item ${route.params.product_id}`
-                }
-              }
-            },
             component: ProfileProduct
           }]
         }, {
@@ -108,6 +101,10 @@ const routes = [
           path: 'dilers',
           name: 'org_dilers',
           component: ProfileDilers
+        }, {
+          path: 'opts',
+          name: 'org_opts',
+          component: ProfileDilersOpts
         }, {
           path: 'orders',
           children: [{
@@ -123,14 +120,7 @@ const routes = [
           }, {
             path: ':order_id',
             name: 'org_order',
-            component: ProfileOrder,
-            meta: {
-              breadcrumb: {
-                breadcrumb (route, app) {
-                  return `Item ${route.params.order_id}`
-                }
-              }
-            }
+            component: ProfileOrder
           }]
         }, {
           path: 'shipping',
@@ -143,13 +133,48 @@ const routes = [
             name: 'org_reports',
             component: ReportMain
           }, {
+            path: ':report_id',
+            name: 'org_reps',
+            children: [{
+              path: '',
+              name: 'org_reports_page',
+              props: true,
+              label: 'Страница отчета',
+              component: ReportPage
+            }, {
+              path: ':elem_id',
+              name: 'org_reports_elems_page',
+              props: true,
+              label: 'Страница элемента отчета',
+              component: ReportElemsPage
+            }]
+          }, {
             path: '',
             name: 'org_reports_average',
             component: ReportAverage
           }, {
-            path: '',
+            path: 'speedsales',
             name: 'org_reports_speed',
             component: ReportSpeedSales
+          }, {
+            path: 'topsales',
+            name: 'org_reports_topsales',
+            component: ReportTopSales
+          }, {
+            path: 'available',
+            name: 'org_reports_available',
+            component: ReportAvailable
+          }, {
+            path: 'present',
+            name: 'org_reports_present',
+            component: ReportPresent
+          }]
+        }, {
+          path: 'akb',
+          children: [{
+            path: '',
+            name: 'org_akb',
+            component: ReportsAkb
           }]
         }, {
           path: 'bonuses',
@@ -157,6 +182,16 @@ const routes = [
             path: '',
             name: 'org_bonuses',
             component: BonusMain
+          }, {
+            path: 'add',
+            name: 'org_bonuses_add',
+            component: BonusAdd
+          }, {
+            path: ':bonus_id',
+            name: 'org_bonus_edit',
+            props: true,
+            label: 'Редактирование ретро-бонуса',
+            component: BonusEdit
           }, {
             path: 'outofstock',
             name: 'org_outofstock',
@@ -189,6 +224,27 @@ const routes = [
             path: 'pos',
             name: 'org_pos',
             component: BonusPos
+          }]
+        }, {
+          path: 'matrix',
+          children: [{
+            path: '',
+            name: 'org_matrix',
+            props: true,
+            label: 'Ключевые матрицы',
+            component: ProfileMatrix
+          }, {
+            path: 'add',
+            name: 'org_matrix_add',
+            props: true,
+            label: 'Добавление ключевой матрицы',
+            component: ProfileMatrixAdd
+          }, {
+            path: ':matrix_id',
+            name: 'org_matrix_edit',
+            props: true,
+            label: 'Редактирование матрицы',
+            component: ProfileMatrixEdit
           }]
         }]
       }]

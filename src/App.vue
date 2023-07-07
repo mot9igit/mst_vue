@@ -18,6 +18,9 @@ export default {
 </script>
 
 <style lang="scss">
+  .dart-btn-text img + span{
+    margin-left: 5px;
+  }
   .scale-enter-active,
   .scale-leave-active {
     transition: all 0.2s ease;

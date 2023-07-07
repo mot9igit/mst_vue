@@ -1,4 +1,10 @@
 <template>
+  <div class="to__up">
+    <router-link :to="{ name: 'org_orders', params: { id: $route.params.id } }">
+      <mdicon name="arrow-left" />
+      <span>Назад к заказам</span>
+    </router-link>
+  </div>
   <div class="block-header">
     <div class="dart-row dart-align-items-center">
       <div class="d-col-md-4">

@@ -270,7 +270,6 @@ export default {
       })
     },
     formSubmit (event) {
-      // console.log(event)
       this.$load(async () => {
         await this.set_shipping_to_api({
           action: 'set',

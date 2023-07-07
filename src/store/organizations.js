@@ -1,4 +1,5 @@
 import Axios from 'axios'
+import router from '@/router'
 
 export default {
   state: {
@@ -11,6 +12,12 @@ export default {
       })
         .then((response) => {
           commit('SET_ORGANIZATIONS_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
         })
     }
   },

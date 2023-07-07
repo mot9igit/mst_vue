@@ -6,8 +6,10 @@
           :cell_data="row"
           :cell_key="index"
           :value="row_data"
+          @deleteElem="deleteElem"
       />
     </tr>
+    <slot name="add_data"></slot>
 </template>
 
 <script>
@@ -27,6 +29,11 @@ export default ({
       default: () => {
         return {}
       }
+    }
+  },
+  methods: {
+    deleteElem (data) {
+      this.$emit('deleteElem', data)
     }
   },
   components: {
