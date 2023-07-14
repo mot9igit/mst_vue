@@ -18,7 +18,7 @@
         @deleteElem="deleteBonus"
       >
         <template v-slot:button>
-          <RouterLink :to="{ name: 'org_bonuses_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Добавить бонус</RouterLink>
+          <RouterLink :to="{ name: 'org_bonuses_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Добавить программу</RouterLink>
         </template>
       </v-table>
     </div>
@@ -88,7 +88,7 @@ export default {
           type: 'image'
         },
         name: {
-          label: 'Наименование бонуса',
+          label: 'Наименование',
           type: 'link',
           link_to: 'org_bonus_edit',
           link_params: {
@@ -103,7 +103,7 @@ export default {
           sort: true
         },
         customer: {
-          label: 'Поставщик бонуса',
+          label: 'Поставщик',
           type: 'text',
           sort: true
         },
@@ -160,7 +160,7 @@ export default {
     ]),
     deleteBonus (data) {
       this.$confirm.require({
-        message: 'Вы уверены, что хотите удалить ретро-бонус ' + data.name + '?',
+        message: 'Вы уверены, что хотите удалить программу ' + data.name + '?',
         header: 'Подтверждение',
         icon: 'pi pi-exclamation-triangle',
         accept: () => {
@@ -178,7 +178,7 @@ export default {
             }
           })
             .then((response) => {
-              this.$toast.add({ severity: 'info', summary: 'Удаление', detail: 'Ретро-бонус ' + data.name + ' успешно удален', life: 3000 })
+              this.$toast.add({ severity: 'info', summary: 'Удаление', detail: 'Программа ' + data.name + ' успешно удалена', life: 3000 })
               this.get_bonuses_from_api({
                 page: this.page,
                 perpage: this.pagination_items_per_page

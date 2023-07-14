@@ -2,13 +2,13 @@
   <div class="to__up">
     <router-link :to="{ name: 'org_bonuses', params: { id: $route.params.id } }">
       <mdicon name="arrow-left" />
-      <span>Назад к бонусам</span>
+      <span>Назад к программам</span>
     </router-link>
   </div>
   <Toast />
   <form @submit.prevent="formSubmit">
     <div class="profile-content__title">
-        <span class="title">Добавление ретро-бонуса</span>
+        <span class="title">Добавление программы производителя</span>
         <div class="buttons_container">
           <RouterLink :to="{ name: 'org_bonuses', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary">Отменить</RouterLink>
           <button type="submit" class="dart-btn dart-btn-primary" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Добавить</button>
@@ -16,8 +16,8 @@
     </div>
     <div>
       <div class="dart-form-group">
-        <label for="name">Наименование бонуса</label>
-        <input v-model="form.name" type="text" name="name" placeholder="Укажите название ретро бонуса" class="dart-form-control">
+        <label for="name">Наименование</label>
+        <input v-model="form.name" type="text" name="name" placeholder="Укажите наименование программы" class="dart-form-control">
       </div>
       <div class="dart-form-group">
         <label for="name">Выберите баннер</label>
@@ -48,16 +48,16 @@
         <div class="flex flex-wrap justify-content-start gap-3">
           <div class="flex dart-align-items-center">
               <Checkbox v-model="form.fstores" name="stores" value="1" :binary="1"/>
-              <label class="ml-2"> Доступен для розницы </label>
+              <label class="ml-2"> Доступна для розницы </label>
           </div>
           <div class="flex align-items-center">
               <Checkbox v-model="form.fwarehouses" name="warehouses" value="1" :binary="1"/>
-              <label class="ml-2"> Доступен для опта </label>
+              <label class="ml-2"> Доступна для опта </label>
           </div>
         </div>
       </div>
       <div class="dart-form-group picker-wrap">
-        <label for="name">Добавление точек продаж, доступных для бонуса</label>
+        <label for="name">Добавление точек продаж, доступных для программы</label>
         <PickList v-model="available_stores.items" :selection="form.stores" listStyle="height:342px" dataKey='id' :showSourceControls="false" :showTargetControls="false"
         @update:selection="saveData(data)">
           <template #sourceheader>
@@ -123,7 +123,8 @@ export default {
   methods: {
     ...mapActions([
       'get_available_stores_from_api',
-      'get_available_brands_from_api'
+      'get_available_brands_from_api',
+      'set_bonus_to_api'
     ]),
     setFilter () {
       if (this.filter.length > 3 || this.filter.length === 0) {

@@ -87,7 +87,7 @@
                 {{ row.date_from_e }} - {{ row.date_to_e }}
               </div>
               <div class="profile-bonuses__item-customer">
-                <span>Поставщик бонуса: {{ row.customer }}</span>
+                <span>Поставщик: {{ row.customer }}</span>
               </div>
               <div class="participation-block">
                 <div class="participation participation-yes" v-if="row.connection">

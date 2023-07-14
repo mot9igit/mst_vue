@@ -7,17 +7,16 @@
       <div class="dart-row">
         <div class="d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.stores" v-bind:key="item.id">
           <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
-            <div class="panel_widget_organization__icon">
+            <div class="panel_widget_organization__icon" v-if="item.image">
+              <img :src="item.image" alt="">
+            </div>
+            <div class="panel_widget_organization__icon" v-else>
               <i class="d_icon d_icon-house"></i>
             </div>
             <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name }}</router-link>
-            <ul class="panel_widget_organization__menu">
-              <li><router-link :to="{ name: 'org_orders', params: { id: item.id }}">Заказы</router-link></li>
-              <li><router-link :to="{ name: 'org_products', params: { id: item.id }}">Товары</router-link></li>
-              <li><router-link :to="{ name: 'org_profile', params: { id: item.id }}">Карточка компании</router-link></li>
-              <li><router-link :to="{ name: 'org_bonuses', params: { id: item.id }}">Ретро-бонусы</router-link></li>
-              <li><router-link :to="{ name: 'org_reports', params: { id: item.id }}">Отчеты</router-link></li>
-            </ul>
+            <div class="panel_widget_organization__menu">
+              <Menu :model="getmenu(item.type, item.id)" />
+            </div>
           </div>
         </div>
       </div>
@@ -31,19 +30,16 @@
       <div class="dart-row">
         <div class="d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.warehouses" v-bind:key="item.id">
           <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
-            <div class="panel_widget_organization__icon">
+            <div class="panel_widget_organization__icon" v-if="item.image">
+              <img :src="item.image" alt="">
+            </div>
+            <div class="panel_widget_organization__icon" v-else>
               <i class="d_icon d_icon-house"></i>
             </div>
             <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name }}</router-link>
-            <ul class="panel_widget_organization__menu">
-              <li><router-link :to="{ name: 'org_orders', params: { id: item.id }}">Заказы</router-link></li>
-              <li><router-link :to="{ name: 'org_products', params: { id: item.id }}">Товары</router-link></li>
-              <li><router-link :to="{ name: 'org_profile', params: { id: item.id }}">Карточка компании</router-link></li>
-              <li><router-link :to="{ name: 'org_dilers', params: { id: item.id }}">Дилеры</router-link></li>
-              <li><router-link :to="{ name: 'org_shipping', params: { id: item.id }}">Отгрузки</router-link></li>
-              <li><router-link :to="{ name: 'org_bonuses', params: { id: item.id }}">Ретро-бонусы</router-link></li>
-              <li><router-link :to="{ name: 'org_reports', params: { id: item.id }}">Отчеты</router-link></li>
-            </ul>
+            <div class="panel_widget_organization__menu">
+              <Menu :model="getmenu(item.type, item.id)" />
+            </div>
           </div>
         </div>
       </div>
@@ -57,15 +53,16 @@
       <div class="dart-row">
         <div class="d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.vendors" v-bind:key="item.id">
           <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
-            <div class="panel_widget_organization__icon">
+            <div class="panel_widget_organization__icon" v-if="item.image">
+              <img :src="item.image" alt="">
+            </div>
+            <div class="icon" v-else>
               <i class="d_icon d_icon-house"></i>
             </div>
             <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name }}</router-link>
-            <ul class="panel_widget_organization__menu">
-              <li><router-link :to="{ name: 'org_profile', params: { id: item.id }}">Карточка компании</router-link></li>
-              <li><router-link :to="{ name: 'org_bonuses', params: { id: item.id }}">Ретро-бонусы</router-link></li>
-              <li><router-link :to="{ name: 'org_reports', params: { id: item.id }}">Отчеты</router-link></li>
-            </ul>
+            <div class="panel_widget_organization__menu">
+              <Menu :model="getmenu(item.type, item.id)" />
+            </div>
           </div>
         </div>
       </div>
@@ -75,6 +72,8 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+// import router from '@/router'
+import Menu from 'primevue/menu'
 
 export default {
   name: 'ProfileOrganizations',
@@ -115,11 +114,135 @@ export default {
   mounted () {
     this.get_organizations_from_api()
   },
-  components: { },
+  components: { Menu },
   computed: {
     ...mapGetters([
       'organizations'
-    ])
+    ]),
+    getmenu: function () {
+      return function (type, id) {
+        console.log(type + ' + ' + id)
+        if (type) {
+          if (type === 1) {
+            return [{
+              key: '0',
+              label: 'Заказы',
+              icon: 'd_icon d_icon-list-bulleted',
+              to: { name: 'org_orders', params: { id: id } }
+            }, {
+              key: '1',
+              label: 'Товары',
+              icon: 'd_icon d_icon-archive',
+              to: { name: 'org_products', params: { id: id } }
+            }, {
+              key: '2',
+              label: 'Карточка компании',
+              icon: 'd_icon d_icon-cog',
+              to: { name: 'org_profile', params: { id: id } }
+            }, {
+              key: '3',
+              label: 'Программы производителей',
+              icon: 'd_icon d_icon-star',
+              to: { name: 'org_bonuses', params: { id: id } }
+            }, {
+              key: '4',
+              label: 'Мастер отчетов',
+              icon: 'd_icon d_icon-analytics',
+              to: { name: 'org_reports', params: { id: id } }
+            }]
+          }
+          if (type === 2) {
+            return [{
+              key: '0',
+              label: 'Заказы',
+              icon: 'd_icon d_icon-list-bulleted',
+              to: { name: 'org_orders', params: { id: id } }
+            }, {
+              key: '1',
+              label: 'Товары',
+              icon: 'd_icon d_icon-archive',
+              to: { name: 'org_products', params: { id: id } }
+            }, {
+              key: '2',
+              label: 'Карточка компании',
+              icon: 'd_icon d_icon-cog',
+              to: { name: 'org_profile', params: { id: id } }
+            }, {
+              key: '3',
+              label: 'Мои магазины',
+              icon: 'd_icon d_icon-cog',
+              to: { name: 'org_dilers', params: { id: id } }
+            }, {
+              key: '4',
+              label: 'Отгрузки',
+              icon: 'd_icon d_icon-truck',
+              to: { name: 'org_shipping', params: { id: id } }
+            }, {
+              key: '5',
+              label: 'Программы производителей',
+              icon: 'd_icon d_icon-star',
+              to: { name: 'org_bonuses', params: { id: id } }
+            }, {
+              key: '6',
+              label: 'Мастер отчетов',
+              icon: 'd_icon d_icon-analytics',
+              to: { name: 'org_reports', params: { id: id } }
+            }]
+          }
+          if (type === 3) {
+            return [{
+              key: '1',
+              label: 'Карточка компании',
+              icon: 'd_icon d_icon-cog',
+              to: { name: 'org_profile', params: { id: id } }
+            }, {
+              key: '2',
+              label: 'Товары',
+              icon: 'd_icon d_icon-archive',
+              to: { name: 'org_products', params: { id: id } }
+            }, {
+              key: '3',
+              label: 'Мои программы',
+              icon: 'd_icon d_icon-star',
+              to: { name: 'org_bonuses', params: { id: id } }
+            }, {
+              key: '4',
+              label: 'Мои магазины',
+              icon: 'd_icon d_icon-cog',
+              to: { name: 'org_dilers', params: { id: id } }
+            }, {
+              key: '5',
+              label: 'Мои оптовики',
+              icon: 'd_icon d_icon-cog',
+              to: { name: 'org_opts', params: { id: id } }
+            }, {
+              key: '6',
+              label: 'Отгрузки',
+              icon: 'd_icon d_icon-truck',
+              to: { name: 'org_shipping', params: { id: id } }
+            }, {
+              key: '7',
+              label: 'АКБ',
+              icon: 'd_icon d_icon-star',
+              to: { name: 'org_akb', params: { id: id } }
+            }, {
+              key: '8',
+              label: 'Мастер отчетов',
+              icon: 'd_icon d_icon-analytics',
+              to: { name: 'org_reports', params: { id: id } }
+            }, {
+              key: '9',
+              label: 'Ключевые матрицы',
+              icon: 'd_icon d_icon-key',
+              to: { name: 'org_matrix', params: { id: id } }
+            }]
+          }
+          return { }
+        } else {
+          return { }
+        }
+      }
+    }
   }
 }
 </script>
@@ -195,12 +318,24 @@ export default {
       &__menu{
         list-style-type: none;
         padding: 10px 0;
-        margin: 0;
+        margin: 0 -24px;
+        .p-menu{
+          border: none;
+          width: 100%;
+          .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-text{
+            color: #343434;
+          }
+          .p-menuitem > .p-menuitem-content .p-menuitem-link .p-menuitem-icon{
+            font-size: 18px;
+            color: #343434;
+          }
+        }
         li{
           padding: 0;
           margin: 0;
           a{
-            display: block;
+            display: flex;
+            align-items: center;
             font-style: normal;
             font-weight: 400;
             font-size: 14px;

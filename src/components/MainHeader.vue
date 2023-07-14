@@ -52,7 +52,8 @@ export default {
 .dart_header_mst{
   z-index: 101;
   flex: 0 0 auto;
-  position: relative;
+  position: fixed;
+  width: 100%;
   padding: 0;
   background: #F3F3F3;
   .wrap{

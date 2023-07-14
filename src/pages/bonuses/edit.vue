@@ -3,14 +3,14 @@
     <div class="to__up">
       <router-link :to="{ name: 'org_bonuses', params: { id: $route.params.id } }">
         <mdicon name="arrow-left" />
-        <span>Назад к бонусам</span>
+        <span>Назад к программам</span>
       </router-link>
     </div>
     <Toast />
     <div v-if="organization.type === 3">
       <form @submit.prevent="formSubmit">
         <div class="profile-content__title">
-            <span class="title">Редактирование ретро-бонуса</span>
+            <span class="title">Редактирование программы производителя</span>
             <div class="buttons_container">
               <RouterLink :to="{ name: 'org_bonuses', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary">Отменить</RouterLink>
               <button type="submit" class="dart-btn dart-btn-primary" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Редактировать</button>
@@ -18,8 +18,8 @@
         </div>
         <div>
           <div class="dart-form-group">
-            <label for="name">Наименование бонуса</label>
-            <input v-model="bonus.name" type="text" name="name" placeholder="Укажите название ретро бонуса" class="dart-form-control">
+            <label for="name">Наименование</label>
+            <input v-model="bonus.name" type="text" name="name" placeholder="Укажите название программы" class="dart-form-control">
           </div>
           <div class="dart-form-group">
             <label for="name">Выберите баннер</label>
@@ -59,7 +59,7 @@
             </div>
           </div>
           <div class="dart-form-group picker-wrap">
-            <label for="name">Добавление точек продаж, доступных для бонуса</label>
+            <label for="name">Добавление точек продаж, доступных для программы</label>
             <PickList v-model="bonus.stores" :selection="form.stores" listStyle="height:342px" dataKey='id' :showSourceControls="false" :showTargetControls="false"
             @update:selection="saveData(data)">
               <template #sourceheader>
@@ -100,7 +100,7 @@
     </div>
     <div v-else>
       <div class="profile-content__title" v-if="bonus.name">
-        <span class="title">Ретро-бонус {{ bonus.name }}</span>
+        <span class="title">Программа {{ bonus.name }}</span>
         <div class="buttons_container">
           <div v-if="bonus.connection">
             <div class="participation-block">
@@ -132,7 +132,7 @@
               <span>{{ bonus.brand }}</span>
             </div>
             <div class="customer">
-              <span>Поставщик бонуса: {{ bonus.customer }}</span>
+              <span>Поставщик: {{ bonus.customer }}</span>
             </div>
           </div>
         </div>
@@ -171,7 +171,7 @@
               <span><Skeleton width="2rem"></Skeleton></span>
             </div>
             <div class="customer">
-              <span>Поставщик бонуса: </span>
+              <span>Поставщик: </span>
               <span><Skeleton width="2rem" class="ml-2"></Skeleton></span>
             </div>
           </div>

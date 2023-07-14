@@ -12,14 +12,10 @@
       <span>Скачать файл</span>
     </a>
 </div>
-  <div class="dart-alert dart-alert-info">Пока Вы видите суммарную информацию за период. Более подробный отчет в сформированном файле. </div>
-  <TreeTable :value="getreports.items" :loading="loading">
-    <Column field="name" header="" expander></Column>
-    <Column field="remain_avg" header="Средний остаток"></Column>
-    <Column field="sales" header="Продаж"></Column>
-    <Column field="sales_speed" header="Средняя скорость продаж"></Column>
-    <Column field="remain" header="Средний остаток на конец недели"></Column>
-    <Column field="days_out_of_stock" header="Дней Out Of Stock"></Column>
+  <div class="dart-alert dart-alert-info">Более удобный формат в сгенерированном файле. </div>
+  <TreeTable :value="getreports.items" :loading="loading" :tableProps="{ style: { minWidth: '650px' } }" scrollable scrollHeight="600px" scrollDirection="both">
+    <Column v-for="col of getreports.columns" :key="col.field" :field="col.field" :header="col.label" :expander="col.expander" :frozen="col.frozen" :style="'width: ' + col.width + 'px;'">
+    </Column>
   </TreeTable>
 </template>
 
@@ -144,9 +140,44 @@ export default {
       )
     }
   },
-  watch: { }
+  watch: {
+    loading: function (newVal, oldVal) {
+      console.log(newVal)
+      if (!newVal) {
+        for (const key in this.getreports.columns) {
+          if (Object.prototype.hasOwnProperty.call(this.getreports.columns[key], 'html')) {
+            console.log(this.getreports.columns[key].html)
+            const elements = document.querySelectorAll('.p-treetable-wrapper thead tr th:first-child')
+            console.log(elements)
+            if (elements[0]) {
+              // elements[0].insertAdjacentHTML('afterbegin', this.getreports.columns[key].html)
+            }
+          }
+        }
+      }
+    }
+  }
 }
 </script>
 
 <style lang="scss">
+  .tree-table-header{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    .col{
+      min-width: 150px;
+      & + .col{
+        border-left: 1px solid #dee2e6;
+        padding: 15px 15px;
+      }
+    }
+  }
+  .p-treetable-tbody{
+    td {
+      button + *{
+      }
+    }
+  }
 </style>

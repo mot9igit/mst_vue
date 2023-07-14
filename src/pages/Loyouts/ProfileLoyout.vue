@@ -193,16 +193,21 @@ export default {
             to: { name: 'org_opts', params: { id: this.$route.params.id } }
           }, {
             key: '6',
+            label: 'Отгрузки',
+            icon: 'd_icon d_icon-truck',
+            to: { name: 'org_shipping', params: { id: this.$route.params.id } }
+          }, {
+            key: '7',
             label: 'АКБ',
             icon: 'd_icon d_icon-star',
             to: { name: 'org_akb', params: { id: this.$route.params.id } }
           }, {
-            key: '7',
+            key: '8',
             label: 'Мастер отчетов',
             icon: 'd_icon d_icon-analytics',
             to: { name: 'org_reports', params: { id: this.$route.params.id } }
           }, {
-            key: '8',
+            key: '9',
             label: 'Ключевые матрицы',
             icon: 'd_icon d_icon-key',
             to: { name: 'org_matrix', params: { id: this.$route.params.id } }
@@ -279,6 +284,7 @@ export default {
 }
 main{
   margin-left: 370px;
+  padding-top: 60px;
 }
 .sidebars {
   position: fixed;

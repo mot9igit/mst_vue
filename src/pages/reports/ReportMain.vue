@@ -1,84 +1,88 @@
 <template>
-  <h2>Мастер отчетов</h2>
-  <Toast />
-  <ConfirmDialog></ConfirmDialog>
-  <div class="panel_widget panel_widget_organization">
-    <div class="panel_widget__header">
-      <span class="title">Генерация отчета</span>
-    </div>
-    <div class="panel_widget__content">
-      <div class="form">
-        <form action="#" @submit.prevent="formSubmit">
-          <div class="dart-row">
-            <div class="d-col-md-3">
-              <span class="p-float-label">
-                <InputText id="username" v-model="report.name" />
-                <label for="username">Наименование отчета</label>
-              </span>
-            </div>
-            <div class="d-col-md-3">
-              <span class="p-float-label">
-                <Calendar v-model="report.date_from" :minDate="dates.minDateFrom" :maxDate="dates.maxDateFrom" showIcon @update:modelValue="setMinToDate()"/>
-                <label for="username">От</label>
-              </span>
-            </div>
-            <div class="d-col-md-3">
-              <span class="p-float-label">
-                <Calendar v-model="report.date_to" :minDate="dates.minDateTo" :maxDate="dates.maxDateTo" showIcon @update:modelValue="setMaxFromDate()"/>
-                <label for="username">По</label>
-              </span>
-            </div>
-            <div class="d-col-md-3">
-              <div class="p-float-label">
-                <Dropdown v-model="report.type" :options="reportTypes" optionLabel="name" placeholder="Тип отчета" />
-                <label for="dd-city">Тип отчета</label>
+  <div>
+    <h2>Мастер отчетов</h2>
+    <Toast />
+    <ConfirmDialog></ConfirmDialog>
+    <div class="panel_widget panel_widget_organization">
+      <div class="panel_widget__header">
+        <span class="title">Генерация отчета</span>
+      </div>
+      <div class="panel_widget__content">
+        <div class="form">
+          <form action="#" @submit.prevent="formSubmit">
+            <div class="dart-row">
+              <div class="d-col-md-3">
+                <span class="p-float-label">
+                  <InputText id="username" v-model="report.name" />
+                  <label for="username">Наименование отчета</label>
+                </span>
               </div>
-            </div>
-          </div>
-          <div class="addicted_params" v-if="addictedParams[report.type.code]">
-            <span class="title">Дополнительные параметры</span>
-            <div class="dart-row" v-for="(ffilter, i) in addictedParams[report.type.code]" :key="i">
-              <div class="d-col-md-3" v-for="(filter, ind) in ffilter" :key="ind">
-                <div class="p-float-label" v-if="filter.type == 'dropdown'">
-                  <Dropdown v-model="report[ind]" :options="filter.values" optionLabel="name" optionValue="id" :placeholder="filter.placeholder"></Dropdown>
-                  <label for="">{{ filter.placeholder }}</label>
+              <div class="d-col-md-3">
+                <span class="p-float-label">
+                  <Calendar v-model="report.date_from" :minDate="dates.minDateFrom" :maxDate="dates.maxDateFrom" showIcon @update:modelValue="setMinToDate()"/>
+                  <label for="username">От</label>
+                </span>
+              </div>
+              <div class="d-col-md-3">
+                <span class="p-float-label">
+                  <Calendar v-model="report.date_to" :minDate="dates.minDateTo" :maxDate="dates.maxDateTo" showIcon @update:modelValue="setMaxFromDate()"/>
+                  <label for="username">По</label>
+                </span>
+              </div>
+              <div class="d-col-md-3">
+                <div class="p-float-label">
+                  <Dropdown v-model="report.type" :options="reportTypes" optionLabel="name" placeholder="Тип отчета" />
+                  <label for="dd-city">Тип отчета</label>
                 </div>
               </div>
             </div>
-          </div>
-          <div class="buttons-container">
-            <button type="submit" class="dart-btn dart-btn-primary" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Сгенерировать отчет</button>
-          </div>
-        </form>
+            <div class="addicted_params" v-if="addictedParams[report.type.code]">
+              <span class="title">Дополнительные параметры</span>
+              <div class="dart-row" v-for="(ffilter, i) in addictedParams[report.type.code]" :key="i">
+                <div class="d-col-md-3" v-for="(filter, ind) in ffilter" :key="ind">
+                  <div class="p-float-label" v-if="filter.type == 'dropdown'">
+                    <Dropdown v-model="report[ind]" :options="filter.values" optionLabel="name" optionValue="id" :placeholder="filter.placeholder"></Dropdown>
+                    <label for="">{{ filter.placeholder }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="buttons-container">
+              <button type="submit" class="dart-btn dart-btn-primary" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Сгенерировать отчет</button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="profile">
-    <v-table
-      :items_data="getreports.items"
-      :total="getreports.total"
-      :pagination_items_per_page="this.pagination_items_per_page"
-      :pagination_offset="this.pagination_offset"
-      :page="this.page"
-      :table_data="this.table_data"
-      :filters="this.filters"
-      title="Отчеты"
-      @filter="filter"
-      @sort="filter"
-      @paginate="paginate"
-      @deleteElem="deleteReport"
-    >
-      <template v-slot:button>
-        <button @click="reload()" class="dart-btn dart-btn-primary" :class="{ 'dart-btn-loading': reloading }" :disabled="reloading">Обновить</button>
-      </template>
-    </v-table>
-    <div class="panel_widget panel_widget_organization">
-      <span class="panel_widget_organization__title">Отчеты</span>
-      <ul class="panel_widget_organization__menu">
-        <li><router-link :to="{ name: 'org_reports_topsales', params: { id: $route.params.id }}">Топы продаж</router-link></li>
-        <li><router-link :to="{ name: 'org_reports_available', params: { id: $route.params.id }}">Наличие товара</router-link></li>
-        <li><router-link :to="{ name: 'org_reports_present', params: { id: $route.params.id }}">План по первичной передставленности</router-link></li>
-      </ul>
+    <div class="profile">
+      <v-table
+        :items_data="getreports.items"
+        :total="getreports.total"
+        :pagination_items_per_page="this.pagination_items_per_page"
+        :pagination_offset="this.pagination_offset"
+        :page="this.page"
+        :table_data="this.table_data"
+        :filters="this.filters"
+        title="Отчеты"
+        @filter="filter"
+        @sort="filter"
+        @paginate="paginate"
+        @deleteElem="deleteReport"
+      >
+        <template v-slot:button>
+          <button @click="reload()" class="dart-btn dart-btn-primary" :class="{ 'dart-btn-loading': reloading }" :disabled="reloading">Обновить</button>
+        </template>
+      </v-table>
+      <!--
+      <div class="panel_widget panel_widget_organization">
+        <span class="panel_widget_organization__title">Отчеты</span>
+        <ul class="panel_widget_organization__menu">
+          <li><router-link :to="{ name: 'org_reports_topsales', params: { id: $route.params.id }}">Топы продаж</router-link></li>
+          <li><router-link :to="{ name: 'org_reports_available', params: { id: $route.params.id }}">Наличие товара</router-link></li>
+          <li><router-link :to="{ name: 'org_reports_present', params: { id: $route.params.id }}">План по первичной передставленности</router-link></li>
+        </ul>
+      </div>
+      -->
     </div>
   </div>
 </template>
