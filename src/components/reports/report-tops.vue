@@ -14,11 +14,16 @@
       :page="this.page"
       :table_data="this.table_data"
       :filters="this.filters"
-      :title="'Отчет Топы продаж ' + getreport.name + ' с ' + getreport.date_from + ' по ' + getreport.date_to"
+      :title="getreport.name"
       @filter="filter"
       @sort="filter"
       @paginate="paginate"
-    />
+    >
+      <template v-slot:desc>
+        <span class="desc__text">Тип отчета: Топы продаж</span>
+        <span class="desc__text">Период:  с  {{ getreport.date_from }} по {{ getreport.date_to }}</span>
+      </template>
+    </v-table>
   </div>
 </template>
 
@@ -36,15 +41,12 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
-    },
-    page: {
-      type: Number,
-      default: 1
     }
   },
   data () {
     return {
       loading: true,
+      page: 1,
       filters: {
         name: {
           name: 'Наименование, артикул',
@@ -68,6 +70,18 @@ export default {
           placeholder: 'Выберите категорию',
           type: 'tree',
           values: this.getcatalog
+        },
+        store_type: {
+          name: 'Тип организации',
+          placeholder: 'Выберите тип организации',
+          type: 'dropdown',
+          values: [{
+            name: 'Розница',
+            id: 1
+          }, {
+            name: 'Опт',
+            id: 2
+          }]
         },
         stores: {
           name: 'Магазин',
@@ -131,6 +145,7 @@ export default {
     },
     paginate (data) {
       this.loading = true
+      this.page = data.page
       this.unset_datatopsales()
       this.get_datatopsales_from_api(data).then(
         result => {

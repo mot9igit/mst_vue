@@ -7,6 +7,9 @@
           :cell_key="index"
           :value="row_data"
           @deleteElem="deleteElem"
+          @updateElem="updateElem"
+          @editElem="editElem"
+          @clickElem="clickElem"
       />
     </tr>
     <slot name="add_data"></slot>
@@ -34,6 +37,15 @@ export default ({
   methods: {
     deleteElem (data) {
       this.$emit('deleteElem', data)
+    },
+    updateElem (data) {
+      this.$emit('updateElem', data)
+    },
+    editElem (data) {
+      this.$emit('editElem', data)
+    },
+    clickElem (data) {
+      this.$emit('clickElem', data)
     }
   },
   components: {

@@ -34,7 +34,7 @@
       </div>
       <div class="dart-form-group">
         <label for="name">Бренд</label>
-        <Dropdown v-model="form.brand" :options="available_brands" filter showClear optionLabel="name" optionValue="id" placeholder="Выберите бренд"></Dropdown>
+        <Dropdown v-model="form.brand_id" :options="available_brands" filter showClear optionLabel="name" optionValue="id" placeholder="Выберите бренд"></Dropdown>
       </div>
       <div class="dart-form-group">
         <label for="conditions">Условия участия</label>
@@ -68,7 +68,7 @@
                   <input
                   type="text"
                   id="filter_name"
-                  placeholder="Артикул, наименование"
+                  placeholder="Наименование"
                   name="filter"
                   class="dart-form-control"
                   v-model="filter"
@@ -144,6 +144,7 @@ export default {
           action: 'set',
           type: 'bonus',
           id: router.currentRoute._value.params.id,
+          brand: this.form.brand_id,
           name: this.form.name,
           stores: this.form.fstores,
           warehouses: this.form.fwarehouses,

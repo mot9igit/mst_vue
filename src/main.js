@@ -161,3 +161,9 @@ app
   .use(ConfirmationService)
   .component('AutoComplete', AutoComplete)
   .mount('#app')
+
+app.config.globalProperties.$filters = {
+  round (value) {
+    return value.toFixed(2)
+  }
+}

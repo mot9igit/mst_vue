@@ -13,15 +13,56 @@
     :page="this.page"
     :table_data="this.table_data"
     :filters="this.filters"
-    :title="'Отчет Первичной представленности ' + getreport.name + ' с ' + getreport.date_from + ' по ' + getreport.date_to"
+    :title="getreport.name"
+    @clickElem="clickElem"
     @filter="filter"
     @sort="filter"
     @paginate="paginate"
-  />
+  >
+    <template v-slot:widgets v-if="getreports.summary">
+      <div class="plan_values">
+        <span class="plan_values__title">{{ getreports.summary.plan_field }}</span>
+        <div class="plan_values__content">
+          <div class="plan_values__chart">
+            <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-5rem" />
+          </div>
+          <div class="plan_values__val">
+            <span class="label">Значение показателя (факт):</span>
+            <span class="value">{{ getreports.summary.fact }}</span>
+          </div>
+          <div class="plan_values__val">
+            <span class="label">Значение показателя (план):</span>
+            <span class="value">{{ getreports.summary.plan }}</span>
+          </div>
+        </div>
+      </div>
+    </template>
+    <template v-slot:desc>
+      <span class="desc__text">Тип отчета: Первичная представленность</span>
+      <span class="desc__text">Период:  с  {{ getreport.date_from }} по {{ getreport.date_to }}</span>
+    </template>
+  </v-table>
+  <teleport to="body">
+    <custom-modal v-model="showPlanModal" @cancel="closePlanModal" class="plan-modal">
+      <template v-slot:title>Выполнение по магазину</template>
+      <v-table
+        :items_data="getstoredata.items"
+        :total="getstoredata.total"
+        :pagination_items_per_page="this.pagination_items_per_page"
+        :pagination_offset="this.pagination_offset"
+        :page="this.page"
+        :table_data="this.table_modal_data"
+        :title="getstoredata.name + ' с ' + getreport.date_from + ' по ' + getreport.date_to"
+        @paginate="paginateModal"
+      />
+    </custom-modal>
+  </teleport>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import customModal from '@/components/popup/CustomModal'
+import Chart from 'primevue/chart'
 import vTable from '@/components/table/v-table.vue'
 
 export default {
@@ -42,6 +83,9 @@ export default {
   },
   data () {
     return {
+      showPlanModal: false,
+      chartData: {},
+      chartOptions: {},
       loading: false,
       filters: {
         name: {
@@ -56,10 +100,32 @@ export default {
           values: this.getregions
         }
       },
+      table_modal_data: {
+        name: {
+          label: 'Наименование товара',
+          type: 'text',
+          sort: true
+        },
+        plan: {
+          label: 'План',
+          type: 'text',
+          sort: true
+        },
+        fact: {
+          label: 'Факт',
+          type: 'text',
+          sort: true
+        },
+        percent: {
+          label: 'Выполнение, %',
+          type: 'text',
+          sort: true
+        }
+      },
       table_data: {
         name: {
           label: 'Наименование торговой точки',
-          type: 'text',
+          type: 'clickevent',
           sort: true
         },
         region: {
@@ -96,12 +162,15 @@ export default {
       }
     }
   },
-  components: { vTable },
+  components: { vTable, Chart, customModal },
   computed: {
     ...mapGetters([
       'getregions',
       'getreports',
-      'getreport'
+      'getreport',
+      'getstoredata',
+      'unset_storedata_data',
+      'get_storedata_from_api'
     ])
   },
   mounted () {
@@ -128,6 +197,10 @@ export default {
       'get_regions_from_api',
       'unset_reports_data'
     ]),
+    clickElem (data) {
+      console.log(data)
+      this.showPlanModal = true
+    },
     filter (data) {
       this.unset_reports_data()
       this.get_report_data_from_api(data).then(
@@ -144,6 +217,19 @@ export default {
       this.unset_reports_data()
       this.loading = true
       this.get_report_data_from_api(data).then(
+        result => {
+          this.loading = false
+        },
+        error => {
+          // alert error
+          console.log('Произошла ошибка ' + error)
+        }
+      )
+    },
+    paginateModal (data) {
+      this.unset_products_remains_data()
+      this.loading = true
+      this.get_products_remains_from_api(data).then(
         result => {
           this.loading = false
         },

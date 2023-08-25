@@ -66,7 +66,7 @@
     <div class="profile-bonuses" v-if="total != 0">
       <div class="dart-row" v-if="total != -1">
         <div
-        class="d-col-md-3"
+        class="d-col-md-3 profile-bonuses__item-wrap"
         v-for="row in items_data"
         :key="row.id"
         :row_data="row"
@@ -296,11 +296,17 @@ export default ({
 </script>
 
 <style lang="scss">
+  .profile-bonuses__item-wrap{
+    margin-bottom: 24px;
+  }
   .profile-bonuses__item{
     background: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.12);
     overflow: hidden;
     border-radius: 5px;
+    margin-bottom: 24px;
+    position: relative;
+    height: 100%;
     &-image{
       position: relative;
       img{

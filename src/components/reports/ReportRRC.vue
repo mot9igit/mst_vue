@@ -1,57 +1,65 @@
 <template>
-  <div class="to__up">
-    <router-link :to="{ name: 'org_reports_page', params: { id: $route.params.id, report_id: $route.params.report_id} }">
-      <mdicon name="arrow-left" />
-      <span>Назад к магазинам</span>
-    </router-link>
+  <div>
+    <div v-if="getrrcreport.store_name">
+      <v-table
+        :items_data="getrrcreport.items"
+        :total="getrrcreport.total"
+        :pagination_items_per_page="this.pagination_items_per_page"
+        :pagination_offset="this.pagination_offset"
+        :page="this.page"
+        :table_data="this.table_data"
+        :filters="this.filters"
+        :title="'Отчет соблюдения РРЦ ' + getrrcreport.store_name + ' с ' + getrrcreport.date_from + ' по ' + getrrcreport.date_to"
+        @filter="filter"
+        @sort="filter"
+        @paginate="paginate"
+        @clickElem="clickElem"
+      />
+    </div>
+    <div v-else>
+      <v-table
+        :items_data="getrrcreport.items"
+        :total="getrrcreport.total"
+        :pagination_items_per_page="this.pagination_items_per_page"
+        :pagination_offset="this.pagination_offset"
+        :page="this.page"
+        :table_data="this.table_data"
+        :filters="this.filters"
+        :title="'Отчет соблюдения РРЦ'"
+        @filter="filter"
+        @sort="filter"
+        @paginate="paginate"
+        @clickElem="clickElem"
+      />
+    </div>
+    <teleport to="body">
+      <custom-modal v-model="showPlanModal" @cancel="closePlanModal" class="plan-modal">
+        <template v-slot:title>Данные по товару</template>
+        <div class="linked_product">
+          <div class="image">
+            <img :src="modal.image" :alt="modal.name">
+          </div>
+          <div class="text">
+            <span class="title">{{ modal.name }}</span>
+            <span class="desc"><b class="lb">Артикул производителя:</b> {{ modal.vendor_article }}</span>
+            <span class="desc"><b class="lb">РРЦ:</b> {{ modal.rrc }} ₽ </span>
+          </div>
+        </div>
+        <div class="dart-mt-3">
+          <v-table
+            :items_data="getrrcdata.items"
+            :total="getrrcdata.total"
+            :pagination_items_per_page="this.pagination_items_per_page"
+            :pagination_offset="this.pagination_offset"
+            :page="this.page"
+            :table_data="this.table_modal_data"
+            :title="'Изменение цены с ' + getrrcreport.date_from + ' по ' + getrrcreport.date_to"
+            @paginate="paginateModal"
+          />
+        </div>
+      </custom-modal>
+    </teleport>
   </div>
-  <v-table
-    :items_data="getreports.items"
-    :total="getreports.total"
-    :pagination_items_per_page="this.pagination_items_per_page"
-    :pagination_offset="this.pagination_offset"
-    :page="this.page"
-    :table_data="this.table_data"
-    :filters="this.filters"
-    :title="getreport.name"
-    @filter="filter"
-    @sort="filter"
-    @paginate="paginate"
-    @clickElem="clickElem"
-  >
-    <template v-slot:desc>
-      <span class="desc__text">Тип отчета: Соблюдение РРЦ</span>
-      <span class="desc__text">Период:  с  {{ getreport.date_from }} по {{ getreport.date_to }}</span>
-      <span class="desc__text" v-if="getreports.store">Магазин: {{ getreports.store.name }}</span>
-    </template>
-  </v-table>
-  <teleport to="body">
-    <custom-modal v-model="showPlanModal" @close="closePlanModal" class="plan-modal">
-      <template v-slot:title>Данные по товару</template>
-      <div class="linked_product">
-        <div class="image">
-          <img :src="modal.image" :alt="modal.name">
-        </div>
-        <div class="text">
-          <span class="title">{{ modal.name }}</span>
-          <span class="desc"><b class="lb">Артикул производителя:</b> {{ modal.vendor_article }}</span>
-          <span class="desc"><b class="lb">РРЦ:</b> {{ modal.rrc }} ₽ </span>
-        </div>
-      </div>
-      <div class="dart-mt-3">
-        <v-table
-          :items_data="getrrcdata.items"
-          :total="getrrcdata.total"
-          :pagination_items_per_page="this.pagination_items_per_page"
-          :pagination_offset="this.pagination_offset"
-          :page="this.page"
-          :table_data="this.table_modal_data"
-          :title="'Изменение цены с ' + getreport.date_from + ' по ' + getreport.date_to"
-          @paginate="paginateModal"
-        />
-      </div>
-    </custom-modal>
-  </teleport>
 </template>
 
 <script>
@@ -60,8 +68,12 @@ import customModal from '@/components/popup/CustomModal'
 import vTable from '@/components/table/v-table.vue'
 
 export default {
-  name: 'ReportRrc',
+  name: 'ReportRRC',
   props: {
+    store_id: {
+      type: Number,
+      default: 0
+    },
     pagination_items_per_page: {
       type: Number,
       default: 25
@@ -69,12 +81,18 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
+    },
+    page: {
+      type: Number,
+      default: 1
+    },
+    page_m: {
+      type: Number,
+      default: 1
     }
   },
   data () {
     return {
-      page: 1,
-      page_m: 1,
       loading: false,
       showPlanModal: false,
       modal: {
@@ -83,11 +101,11 @@ export default {
         image: ''
       },
       filters: {
-        name: {
+        /* name: {
           name: 'Наименование, артикул',
           placeholder: 'Наименование, артикул',
           type: 'text'
-        }
+        } */
       },
       table_data: {
         product_image: {
@@ -144,17 +162,17 @@ export default {
           type: 'text',
           sort: true
         }, */
-        not_rrc_days: {
+        non_rrc: {
           label: 'Кол-во дней не в РРЦ',
           type: 'text',
           sort: true
         },
-        max_price: {
+        price_max: {
           label: 'Макс. цена, ₽',
           type: 'text',
           sort: true
         },
-        min_price: {
+        price_min: {
           label: 'Мин. цена, ₽',
           type: 'text',
           sort: true
@@ -193,60 +211,30 @@ export default {
   components: { vTable, customModal },
   computed: {
     ...mapGetters([
-      'getreports',
-      'getreport',
+      'getrrcreport',
       'getrrcdata'
     ])
   },
   mounted () {
-    this.get_report_from_api({
-      page: this.page,
-      perpage: this.pagination_items_per_page
-    })
-    this.get_report_data_from_api({
+    this.get_report_rrc_from_api({
+      storeId: this.store_id,
       page: this.page,
       perpage: this.pagination_items_per_page
     })
   },
   unmounted () {
     // очищаем репорт
-    this.unset_reports_data()
+    this.unset_report_rrc()
   },
   methods: {
     ...mapActions([
-      'get_report_from_api',
-      'get_report_data_from_api',
+      'get_report_rrc_from_api',
       'get_report_rrc_data',
-      'unset_reports_data',
+      'unset_report_rrc',
       'unset_report_rrc_data'
     ]),
-    filter (data) {
-      this.get_report_data_from_api(data).then(
-        result => {
-          this.loading = false
-        },
-        error => {
-          // alert error
-          console.log('Произошла ошибка' + error)
-        }
-      )
-    },
-    paginate (data) {
-      this.loading = true
-      this.get_report_data_from_api(data).then(
-        result => {
-          this.loading = false
-        },
-        error => {
-          // alert error
-          console.log('Произошла ошибка ' + error)
-        }
-      )
-    },
-    closePlanModal () {
-      this.unset_report_rrc_data()
-    },
     clickElem (data) {
+      console.log(data)
       this.get_report_rrc_data({
         remainId: data.remain_id,
         page: this.page_m,
@@ -258,10 +246,33 @@ export default {
       this.modal.rrc = data.price_rrc
       this.showPlanModal = true
     },
-    paginateModal (data) {
-      this.unset_report_rrc_data()
+    filter (data) {
+      this.get_report_rrc_from_api(data).then(
+        result => {
+          this.loading = false
+        },
+        error => {
+          // alert error
+          console.log('Произошла ошибка' + error)
+        }
+      )
+    },
+    paginate (data) {
       this.loading = true
-      this.unset_report_rrc_data(data).then(
+      this.get_report_rrc_from_api(data).then(
+        result => {
+          this.loading = false
+        },
+        error => {
+          // alert error
+          console.log('Произошла ошибка ' + error)
+        }
+      )
+    },
+    paginateModal (data) {
+      this.unset_products_remains_data()
+      this.loading = true
+      this.get_products_remains_from_api(data).then(
         result => {
           this.loading = false
         },

@@ -1,14 +1,20 @@
 <template>
   <div class="profile">
+    <div class="to__up">
+      <router-link :to="{ name: 'org_reports_available', params: { id: $route.params.id } }">
+        <mdicon name="arrow-left" />
+        <span>Назад к регионам</span>
+      </router-link>
+    </div>
     <v-table
-      :items_data="topsales.products"
-      :total="topsales.total"
+      :items_data="available_store.regions_data"
+      :total="available_store.total"
       :pagination_items_per_page="this.pagination_items_per_page"
       :pagination_offset="this.pagination_offset"
       :page="this.page"
       :table_data="this.table_data"
       :filters="this.filters"
-      title="Топы продаж"
+      :title="get_title"
       @filter="filter"
       @sort="filter"
       @paginate="paginate"
@@ -21,7 +27,7 @@ import { mapActions, mapGetters } from 'vuex'
 import vTable from '../components/table/v-table'
 
 export default {
-  name: 'ReportTopSales',
+  name: 'ReportAvailableStores',
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -40,76 +46,32 @@ export default {
     return {
       loading: true,
       filters: {
-        name: {
-          name: 'Наименование, артикул',
-          placeholder: 'Наименование, артикул',
-          type: 'text'
-        },
         vendor: {
           name: 'Производитель',
           placeholder: 'Выберите производителя',
           type: 'dropdown',
           values: this.getvendors
         },
-        range: {
-          name: 'Временной промежуток',
-          placeholder: 'Выберите даты',
-          type: 'range'
-        },
-        store_type: {
-          name: 'Тип организации',
-          placeholder: 'Выберите тип организации',
-          type: 'dropdown',
-          values: [{
-            name: 'Розница',
-            id: 1
-          }, {
-            name: 'Опт',
-            id: 2
-          }]
-        },
-        region: {
-          name: 'Регион',
-          placeholder: 'Выберите регион',
-          type: 'tree',
-          values: this.getregions
-        },
         catalog: {
           name: 'Категория товара',
           placeholder: 'Выберите категорию',
           type: 'tree',
           values: this.getcatalog
-        },
-        stores: {
-          name: 'Магазин',
-          placeholder: 'Выберите магазин',
-          type: 'dropdown',
-          values: this.getstores
-        },
-        warehouses: {
-          name: 'Магазин',
-          placeholder: 'Выберите оптовую компанию',
-          type: 'dropdown',
-          values: this.getwarehouses
         }
       },
       table_data: {
-        image: {
-          label: 'Фото',
-          type: 'image'
-        },
-        vendor_article: {
-          label: 'Артикул',
-          type: 'text',
-          sort: true
-        },
         name: {
           label: 'Наименование',
           type: 'text',
           sort: true
         },
-        roz_sales: {
-          label: 'Продажи',
+        count: {
+          label: 'Кол-во товара, шт',
+          type: 'text',
+          sort: true
+        },
+        price: {
+          label: 'Кол-во товара, ₽',
           type: 'text',
           sort: true
         }
@@ -118,16 +80,15 @@ export default {
   },
   methods: {
     ...mapActions([
-      'get_datatopsales_from_api',
-      'get_regions_from_api',
+      'get_dataavailablestores_from_api',
       'get_catalog_from_api',
       'get_vendors_from_api',
-      'get_stores_from_api',
-      'get_warehouses_from_api'
+      'unset_dataavailable'
     ]),
     filter (data) {
+      this.unset_dataavailable()
       this.loading = true
-      this.get_datatopsales_from_api(data).then(
+      this.get_dataavailablestores_from_api(data).then(
         result => {
           this.loading = false
         },
@@ -138,8 +99,9 @@ export default {
       )
     },
     paginate (data) {
+      this.unset_dataavailable()
       this.loading = true
-      this.get_datatopsales_from_api(data).then(
+      this.get_dataavailablestores_from_api(data).then(
         result => {
           this.loading = false
         },
@@ -151,7 +113,7 @@ export default {
     }
   },
   mounted () {
-    this.get_datatopsales_from_api({
+    this.get_dataavailablestores_from_api({
       page: this.page,
       perpage: this.pagination_items_per_page
     }).then(
@@ -163,48 +125,38 @@ export default {
         console.log('Произошла ошибка' + error)
       }
     )
-    this.get_regions_from_api().then(
-      this.filters.region.values = this.getregions
-    )
     this.get_catalog_from_api().then(
       this.filters.catalog.values = this.getcatalog
     )
     this.get_vendors_from_api().then(
       this.filters.vendor.values = this.getvendors
     )
-    this.get_stores_from_api().then(
-      this.filters.stores.values = this.getstores
-    )
-    this.get_warehouses_from_api().then(
-      this.filters.warehouses.values = this.warehouses
-    )
+  },
+  unmounted () {
+    // очищаем репорт
+    this.unset_dataavailable()
   },
   components: { vTable },
   computed: {
     ...mapGetters([
-      'topsales',
-      'getregions',
+      'available_store',
       'getcatalog',
-      'getvendors',
-      'getstores',
-      'getwarehouses'
-    ])
+      'getvendors'
+    ]),
+    get_title: function () {
+      if (this.available_store.region) {
+        return 'Наличие товара в регионе: ' + this.available_store.region
+      } else {
+        return 'Наличие товара в регионе: ...'
+      }
+    }
   },
   watch: {
-    getregions: function (newVal, oldVal) {
-      this.filters.region.values = this.getregions
-    },
     getcatalog: function (newVal, oldVal) {
       this.filters.catalog.values = this.getcatalog
     },
     getvendors: function (newVal, oldVal) {
       this.filters.vendor.values = this.getvendors
-    },
-    getstores: function (newVal, oldVal) {
-      this.filters.stores.values = this.getstores
-    },
-    getwarehouses: function (newVal, oldVal) {
-      this.filters.warehouses.values = this.getwarehouses
     }
   }
 }

@@ -26,9 +26,14 @@
         {{ value[cell_key] }}
       </router-link>
     </div>
+    <div class="cell_value" :class="cell_key == 'name' ? 'name' : ''" v-else-if="cell_data.type == 'clickevent'">
+      <a href="#" @click.prevent="actionElem('click')">
+        {{ value[cell_key] }}
+      </a>
+    </div>
     <div class="cell_value" :class="cell_key == 'actions' ? 'actions' : ''" v-else-if="cell_data.type == 'actions'">
       <span class="p-buttonset">
-        <Button :label="row.label" :icon="row.icon" v-for="(row, index) in cell_data.available" :key="index" severity="secondary" text @click="deleteElem">
+        <Button :label="row.label" :icon="row.icon" v-for="(row, index) in cell_data.available" :key="index" severity="secondary" text @click="actionElem(index)">
           <i :class="row.icon"></i>
         </Button>
       </span>
@@ -61,8 +66,21 @@ export default ({
     }
   },
   methods: {
-    deleteElem () {
-      this.$emit('deleteElem', this.value)
+    actionElem (action) {
+      // console.log(action)
+      // console.log(this.value)
+      if (action === 'delete') {
+        this.$emit('deleteElem', this.value)
+      }
+      if (action === 'update') {
+        this.$emit('updateElem', this.value)
+      }
+      if (action === 'edit') {
+        this.$emit('editElem', this.value)
+      }
+      if (action === 'click') {
+        this.$emit('clickElem', this.value)
+      }
     }
   },
   computed: {

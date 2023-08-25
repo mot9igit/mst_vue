@@ -27,6 +27,10 @@ import vTable from '@/components/table/v-table'
 export default {
   name: 'ReportAkbPunkts',
   props: {
+    store_id: {
+      type: Number,
+      default: 0
+    },
     pagination_items_per_page: {
       type: Number,
       default: 25
@@ -101,6 +105,7 @@ export default {
   },
   mounted () {
     this.get_akbsettlements_from_api({
+      storeId: this.store_id,
       page: this.page,
       perpage: this.pagination_items_per_page
     })

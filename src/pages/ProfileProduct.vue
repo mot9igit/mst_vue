@@ -1,4 +1,6 @@
 <template>
+  <Toast />
+  <ConfirmDialog></ConfirmDialog>
   <div class="to__up">
     <router-link :to="{ name: 'org_products', params: { id: $route.params.id } }">
       <mdicon name="arrow-left" />
@@ -63,6 +65,25 @@
             </div>
           </div>
         </div>
+        <div class="d-col-md-6" v-else>
+          <div v-if="getrequests.total > 0">
+            <v-table
+              :items_data="getrequests.items"
+              :total="getrequests.total"
+              :pagination_items_per_page="this.pagination_items_per_page"
+              :pagination_offset="this.pagination_offset"
+              :page="this.page"
+              :table_data="this.table_data"
+              :filters="this.filters"
+              title="Запросы карточек товара"
+              @deleteElem="deleteRequest"
+            >
+              <template v-slot:desc>
+                <span class="desc">Ваши запросы на создание карточки товара.</span>
+              </template>
+            </v-table>
+          </div>
+        </div>
         <div class="d-col-lg-6">
           <div class="form_input_group">
             <label>Привяжите товар</label>
@@ -80,6 +101,7 @@
                 <div>{{ slotProps.item.label }}</div>
               </template>
             </AutoComplete>
+            <a href="#" class="request_alert" @click.prevent="showRequestModal = true" v-if="getrequests.total < 1 && product.product_id == 0">Запросить создание карточки товара</a>
           </div>
         </div>
       </div>
@@ -99,30 +121,120 @@
       </div>
     </div>
   </div>
+  <teleport to="body">
+    <custom-modal v-model="showRequestModal" @cancel="cancelRequest" class="plan-modal">
+      <template v-slot:title>Запрос на создание карточки товара</template>
+      <form @submit.prevent="onSubmitRequest">
+        <div class="dart-row">
+          <div class="d-col-md-6">
+            <div class="dart-form-group">
+              <label for="name">Наименование товара</label>
+              <InputText v-model="request.form.name" placeholder="" />
+            </div>
+          </div>
+          <div class="d-col-md-6">
+            <div class="dart-form-group">
+              <label for="name">Ссылка на товар на другом сайте</label>
+              <InputText v-model="request.form.url" placeholder="" />
+            </div>
+          </div>
+          <div class="d-col-md-12">
+            <div class="dart-form-group">
+              <label for="">Комментарий</label>
+              <Textarea v-model="request.form.description" rows="3" cols="30" />
+            </div>
+          </div>
+        </div>
+        <button class="dart-btn dart-btn-primary dart-btn-block dart-mt-1" type="submit" :class="{ 'dart-btn-loading': loadingRequest }" :disabled="loadingRequest">Запросить</button>
+      </form>
+    </custom-modal>
+  </teleport>
 </template>
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import router from '@/router'
 import AutoComplete from 'primevue/autocomplete'
+import Axios from 'axios'
+import vTable from '@/components/table/v-table'
+import customModal from '@/components/popup/CustomModal'
+import InputText from 'primevue/inputtext'
+import Textarea from 'primevue/textarea'
+import ConfirmDialog from 'primevue/confirmdialog'
+import Toast from 'primevue/toast'
 import { Calendar } from 'v-calendar'
 import 'v-calendar/dist/style.css'
 
 export default {
   name: 'ProfileProduct',
-  props: { },
+  props: {
+    pagination_items_per_page: {
+      type: Number,
+      default: 25
+    },
+    pagination_offset: {
+      type: Number,
+      default: 0
+    }
+  },
   data () {
     return {
+      page: 1,
+      showRequestModal: false,
+      loadingRequest: false,
+      request: {
+        form: {
+          name: '',
+          url: '',
+          description: ''
+        }
+      },
       form: {
         selectedProduct: null,
         filteredProduct: null,
         filter: ''
+      },
+      table_data: {
+        name: {
+          label: 'Наименование',
+          type: 'text',
+          sort: false
+        },
+        url: {
+          label: 'URL',
+          type: 'text',
+          sort: false
+        },
+        description: {
+          label: 'Описание',
+          type: 'text',
+          sort: false
+        },
+        status_name: {
+          label: 'Статус',
+          type: 'text',
+          sort: false
+        },
+        actions: {
+          label: 'Действия',
+          type: 'actions',
+          sort: false,
+          available: {
+            delete: {
+              icon: 'pi pi-trash',
+              label: 'Удалить'
+            }
+          }
+        }
       }
     }
   },
   methods: {
     ...mapActions([
-      'get_product_from_api'
+      'get_product_from_api',
+      'get_product_requests',
+      'set_object_to_api',
+      'unset_request'
     ]),
     ...mapMutations([
       'SET_PRODUCT_LINK'
@@ -151,26 +263,97 @@ export default {
         this.$store.commit('SET_PRODUCT_LINK', data.data.data)
         // console.log(this.form.filteredProduct)
       })
+    },
+    deleteRequest (data) {
+      console.log(data)
+      this.$confirm.require({
+        message: 'Вы уверены, что хотите удалить заявку на ' + data.name + '?',
+        header: 'Подтверждение',
+        icon: 'pi pi-exclamation-triangle',
+        accept: () => {
+          this.unset_request()
+          // отправление AJAX
+          return Axios('/rest/front_deleteobject', {
+            method: 'POST',
+            data: {
+              id: router.currentRoute._value.params.id,
+              type: 'request',
+              request_id: data
+            },
+            headers: {
+              'Access-Control-Allow-Origin': '*'
+            }
+          })
+            .then((response) => {
+              this.$toast.add({ severity: 'info', summary: 'Удаление', detail: 'Заявка ' + data.name + ' успешно удалена', life: 3000 })
+              this.get_product_requests()
+            })
+            .catch(error => {
+              if (error.response.status === 403) {
+                this.$toast.add({ severity: 'error', summary: 'Вы не авторизованы', detail: 'Вы будете перенаправлены на страницу авторизации', life: 3000 })
+                localStorage.removeItem('user')
+                router.push({ name: 'home' })
+              } else {
+                this.$toast.add({ severity: 'error', summary: 'Произошла ошибка', detail: 'Мы скоро это поправим', life: 3000 })
+              }
+            })
+        },
+        reject: () => {
+          this.$toast.add({ severity: 'error', summary: 'Удаление', detail: 'Удаление отклонено', life: 3000 })
+        }
+      })
+    },
+    onSubmitRequest () {
+      this.loadingRequest = true
+      this.$load(async () => {
+        await this.set_object_to_api({
+          action: 'set',
+          type: 'request',
+          id: router.currentRoute._value.params.id,
+          product_id: this.product.id,
+          data: this.request.form
+        })
+          .then((result) => {
+            this.loadingRequest = false
+            this.showRequestModal = false
+            this.get_product_requests({
+              page: this.page,
+              perpage: this.pagination_items_per_page
+            })
+          })
+          .catch((result) => {
+            console.log(result)
+          })
+      })
     }
   },
   mounted () {
-    this.get_product_from_api()
+    this.get_product_from_api().then(() => {
+      this.get_product_requests()
+    })
     this.$load(async () => {
       const data = await this.$api.getProducts.get()
       console.log(data)
       this.form.filteredProduct = data.data.data.products
     })
   },
-  components: { AutoComplete, Calendar },
+  components: { customModal, vTable, InputText, Textarea, AutoComplete, Calendar, ConfirmDialog, Toast },
   computed: {
     ...mapGetters([
-      'product'
+      'product',
+      'getrequests'
     ])
   }
 }
 </script>
 
 <style lang="scss">
+  .request_alert{
+    display: inline-block;
+    margin-top: 5px;
+    text-decoration: none;
+    color: #343434;
+  }
   .p-autocomplete-panel .p-autocomplete-items .p-autocomplete-item {
     display: flex;
     align-items: center;

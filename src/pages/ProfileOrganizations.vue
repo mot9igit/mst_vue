@@ -121,7 +121,7 @@ export default {
     ]),
     getmenu: function () {
       return function (type, id) {
-        console.log(type + ' + ' + id)
+        // console.log(type + ' + ' + id)
         if (type) {
           if (type === 1) {
             return [{
@@ -149,6 +149,11 @@ export default {
               label: 'Мастер отчетов',
               icon: 'd_icon d_icon-analytics',
               to: { name: 'org_reports', params: { id: id } }
+            }, {
+              key: '5',
+              label: 'Документы',
+              icon: 'd_icon d_icon-file-document',
+              to: { name: 'org_docs', params: { id: id } }
             }]
           }
           if (type === 2) {
@@ -187,6 +192,11 @@ export default {
               label: 'Мастер отчетов',
               icon: 'd_icon d_icon-analytics',
               to: { name: 'org_reports', params: { id: id } }
+            }, {
+              key: '7',
+              label: 'Документы',
+              icon: 'd_icon d_icon-file-document',
+              to: { name: 'org_docs', params: { id: id } }
             }]
           }
           if (type === 3) {
@@ -197,44 +207,59 @@ export default {
               to: { name: 'org_profile', params: { id: id } }
             }, {
               key: '2',
+              label: 'Ассортимент',
+              icon: 'pi pi-database',
+              to: { name: 'org_assortment', params: { id: id } }
+            }, {
+              key: '3',
               label: 'Товары',
               icon: 'd_icon d_icon-archive',
               to: { name: 'org_products', params: { id: id } }
             }, {
-              key: '3',
+              key: '4',
               label: 'Мои программы',
               icon: 'd_icon d_icon-star',
               to: { name: 'org_bonuses', params: { id: id } }
             }, {
-              key: '4',
+              key: '5',
               label: 'Мои магазины',
               icon: 'd_icon d_icon-cog',
               to: { name: 'org_dilers', params: { id: id } }
             }, {
-              key: '5',
+              key: '6',
               label: 'Мои оптовики',
               icon: 'd_icon d_icon-cog',
               to: { name: 'org_opts', params: { id: id } }
             }, {
-              key: '6',
+              key: '7',
               label: 'Отгрузки',
               icon: 'd_icon d_icon-truck',
               to: { name: 'org_shipping', params: { id: id } }
             }, {
-              key: '7',
+              key: '8',
               label: 'АКБ',
               icon: 'd_icon d_icon-star',
               to: { name: 'org_akb', params: { id: id } }
             }, {
-              key: '8',
+              key: '9',
+              label: 'Наличие товара',
+              icon: 'd_icon d_icon-star',
+              to: { name: 'org_reports_available', params: { id: id } }
+            }, {
+              key: '10',
               label: 'Мастер отчетов',
               icon: 'd_icon d_icon-analytics',
               to: { name: 'org_reports', params: { id: id } }
             }, {
-              key: '9',
+              key: '11',
               label: 'Ключевые матрицы',
               icon: 'd_icon d_icon-key',
               to: { name: 'org_matrix', params: { id: id } }
+            }, {
+              key: '12',
+              label: 'Документы',
+              icon: 'd_icon d_icon-file-document',
+              to: { name: 'org_docs', params: { id: id } }
             }]
           }
           return { }

@@ -97,6 +97,9 @@
           </div>
         </div>
       </form>
+      <bonusParticipants></bonusParticipants>
+      <planNew></planNew>
+      <plan></plan>
     </div>
     <div v-else>
       <div class="profile-content__title" v-if="bonus.name">
@@ -209,6 +212,9 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
+import bonusParticipants from '@/components/bonuses/participants'
+import planNew from '@/components/bonuses/plannew'
+import plan from '@/components/bonuses/plan'
 import Checkbox from 'primevue/checkbox'
 import Calendar from 'primevue/calendar'
 import PickList from 'primevue/picklist'
@@ -313,7 +319,7 @@ export default {
       this.get_bonus_from_api({ id: router.currentRoute._value.params.bonus_id })
     })
   },
-  components: { Calendar, Dropdown, PickList, Checkbox, FileUpload, Toast, Skeleton },
+  components: { bonusParticipants, plan, planNew, Calendar, Dropdown, PickList, Checkbox, FileUpload, Toast, Skeleton },
   computed: {
     ...mapGetters([
       'available_stores',

@@ -1,10 +1,7 @@
 <template>
   <div class="v-table">
     <div class="profile-content__title">
-        <div class="text">
-          <span class="title">{{ title }} (<span v-if="total > -1">{{ total }}</span><span v-else>0</span>)</span>
-          <slot name="desc"></slot>
-        </div>
+        <span class="title">{{ title }} (<span v-if="total > -1">{{ total }}</span><span v-else>0</span>)</span>
         <slot name="button"></slot>
     </div>
     <!--
@@ -66,73 +63,67 @@
           </div>
         </div>
     </div>
-    <div class="v-table__widgets">
-      <slot name="widgets"></slot>
-    </div>
-    <div class="profile-products__products" v-if="total != 0">
-        <table class="profile-table">
-            <thead class="text-center">
-                <tr>
-                    <th
-                    v-for="(row, index) in table_data"
-                    :key="index"
-                    >
-                      <a class="sort" :class="sort[index]" v-if="row.sort" @click="sorting(index)">
-                        {{ row.label }}
-                      </a>
-                      <span v-else>
-                        {{ row.label }}
-                      </span>
-                    </th>
-                </tr>
-            </thead>
-            <tbody v-if="total != -1">
-                <v-table-row
-                    v-for="row in items_data"
-                    :key="row.id"
-                    :row_data="row"
-                    :keys="table_data"
-                    @deleteElem="deleteElem"
-                    @updateElem="updateElem"
-                    @editElem="editElem"
-                    @clickElem="clickElem"
-                />
-            </tbody>
-            <tbody v-else>
-              <tr v-for="n in 10" :key="n">
-                <td
-                v-for="(row, index) in table_data"
-                :key="index"
-                >
-                  <Skeleton class="mb-2"></Skeleton>
-                </td>
-              </tr>
-            </tbody>
-        </table>
-        <div v-if="pagesCount > 1">
-          <paginate
-            :page-count="pagesCount"
-            :click-handler="pagClickCallback"
-            :prev-text="'Пред'"
-            :next-text="'След'"
-            :container-class="'pagination justify-content-center'"
-            :initialPage="this.page"
-            :forcePage="this.page"
-          >
-          </paginate>
+    <div class="profile-docs" v-if="total != 0">
+      <div class="dart-row" v-if="total != -1">
+        <div
+        class="d-col-md-3"
+        v-for="row in items_data"
+        :key="row.id"
+        :row_data="row"
+        :keys="table_data">
+          <div class="profile-docs__item" :class="{ 'has-action': row.has_action, 'has-submit': row.has_submit }">
+            <div class="profile-docs__item-wrap">
+              <div class="profile-docs__item-image">
+                <div>
+                  <img :src="'/img/files/' + row.file_type + '.png'" alt="">
+                </div>
+                <div class="profile-docs__item-text">
+                    <a :href="row.file">{{ row.name }}</a><br/>
+                    <span class="type">{{ row.description }}</span>
+                </div>
+              </div>
+              <div class="profile-docs__item-meta">
+                <div class="status" :class="{ 'has-action': row.has_action, 'has-submit': row.has_submit }">
+                    {{ row.status_name }}
+                </div>
+                <div class="date">
+                  <span>Дата изменения:<br/>{{ row.date }}</span>
+                </div>
+                <div class="submit_area" v-if="row.has_submit">
+                  <a href="#" class="dart-btn dart-btn-primary" @click="submit(row.id)">Подтвердить</a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
+      <div class="dart-row" v-else>
+        <div class="d-col-md-3" v-for="n in 4" :key="n">
+          <div class="image">
+            <Skeleton width="100%" height="150px" class="mb-2"></Skeleton>
+          </div>
+          <div class="text">
+            <Skeleton width="10rem" class="mb-2"></Skeleton>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="profile-products__products" v-else>
       <div class="dart-alert dart alert-info">Ничего не найдено</div>
     </div>
+    <paginate
+      :page-count="pagesCount"
+      :click-handler="pagClickCallback"
+      :prev-text="'Пред'"
+      :next-text="'След'"
+      :container-class="'pagination justify-content-center'"
+    >
+    </paginate>
   </div>
 </template>
 
 <script>
 import { toRaw } from 'vue'
-import { mapActions, mapGetters } from 'vuex'
-import vTableRow from './v-table-row'
-// import vTableFilter from './v-table-filter'
 import Paginate from 'vuejs-paginate-next'
 import Calendar from 'primevue/calendar'
 import TreeSelect from 'primevue/treeselect'
@@ -141,10 +132,8 @@ import AutoComplete from 'primevue/autocomplete'
 import Skeleton from 'primevue/skeleton'
 
 export default ({
-  name: 'v-table',
+  name: 'v-docs',
   components: {
-    vTableRow,
-    // vTableFilter,
     Paginate,
     TreeSelect,
     Calendar,
@@ -210,9 +199,6 @@ export default ({
     }
   },
   computed: {
-    ...mapGetters([
-      'getvendors'
-    ]),
     pagesCount () {
       let pages = Math.round(this.total / this.per_page)
       if (pages === 0) {
@@ -222,21 +208,8 @@ export default ({
     }
   },
   methods: {
-    ...mapActions([
-      'get_vendors_from_api'
-    ]),
     deleteElem (data) {
       this.$emit('deleteElem', data)
-    },
-    clickElem (data) {
-      console.log(data)
-      this.$emit('clickElem', data)
-    },
-    updateElem (data) {
-      this.$emit('updateElem', data)
-    },
-    editElem (data) {
-      this.$emit('editElem', data)
     },
     setFilter (type = '0') {
       if (type === 'filter') {
@@ -261,32 +234,8 @@ export default ({
         })
       }
     },
-    sorting (key) {
-      if (Object.prototype.hasOwnProperty.call(this.sort, key)) {
-        if (this.sort[key].dir === 'ASC') {
-          this.sort[key] = {
-            dir: 'DESC',
-            sort_desc: true,
-            active: true
-          }
-        } else {
-          this.sort = { }
-        }
-      } else {
-        this.sort = { }
-        this.sort[key] = {
-          dir: 'ASC',
-          sort_asc: true,
-          active: true
-        }
-      }
-      this.$emit('sort', {
-        filter: this.filter,
-        filtersdata: toRaw(this.filtersdata),
-        sort: toRaw(this.sort),
-        page: 1,
-        perpage: this.pagination_items_per_page
-      })
+    submit (type) {
+      this.$emit('submit', type)
     },
     pagClickCallback (pageNum) {
       this.$emit('paginate', {
@@ -296,62 +245,121 @@ export default ({
         page: pageNum,
         perpage: this.pagination_items_per_page
       })
-    },
-    searchVendor (event) {
-      if (!event.query.trim().length > 2) {
-        this.filteredVendors = [...this.getvendors]
-      } else {
-        const data = {
-          search: event.query.trim()
-        }
-        this.filteredVendors = this.get_vendors_from_api(data)
-      }
     }
   },
   mounted () {
-    const data = {
-      search: ''
-    }
-    this.get_vendors_from_api(data).then(
-      this.filteredVendor = this.getvendors
-    )
   },
   created () {
     // console.log(this.filters)
-    if (typeof this.filters.range !== 'undefined') {
-      if (this.filters.range.range !== 'all') {
-        const currDate = Date.now()
-        // console.log('Unix time stamp of current date', currDate)
-        this.calendar.maxDate = new Date(currDate)
-        // console.log(this.calendar.maxDate.getFullYear())
-      }
-    }
   },
   watch: {
-    getvendors: function (newVal, oldVal) {
-      // console.log(newVal)
-      this.filteredVendor = toRaw(newVal)
-      // console.log(this.filteredVendor)
-    }
   }
 })
 </script>
 
 <style lang="scss">
+  .profile-docs__item{
+    background: #FFFFFF;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    padding: 24px 24px;
+    border-radius: 5px;
+    position: relative;
+    height: 100%;
+    &.has-submit:hover,
+    &.has-submit.active{
+      border: none;
+      .profile-docs__item-wrap{
+        position: absolute;
+        background: #FFFFFF;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        border-radius: 5px;
+        overflow: hidden;
+        padding: 24px 24px;
+        left: 0;
+        top: 0;
+        right: 0;
+        z-index: 99;
+      }
+      .profile-docs__item-meta .submit_area{
+        display: block;
+      }
+    }
+    &-image{
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    &-text{
+      padding-left: 15px;
+      a{
+        color: #282828;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: normal;
+        letter-spacing: 0.15px;
+        text-decoration: none;
+      }
+      span{
+        display: inline-block;
+        padding-top: 8px;
+        color: #ADADAD;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 106%; /* 14.84px */
+        letter-spacing: 0.25px;
+      }
+    }
+    &-meta{
+      display: flex;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      border-top: 1px solid #ADADAD;
+      padding-top: 16px;
+      .submit_area{
+        width: 100%;
+        padding-top: 12px;
+        display: none;
+        & .dart-btn{
+          display: block;
+        }
+      }
+      .status{
+        width: 50%;
+        color: #A0A0A0;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.3;
+        letter-spacing: 0.25px;
+        &.has-action{
+          color: #282828;
+        }
+        &.has-submit{
+          color: #F90;
+        }
+      }
+      .date{
+        width: 50%;
+        text-align: right;
+        padding-left: 5px;
+      }
+      span{
+        display: block;
+        color: #A0A0A0;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 1.3;
+        letter-spacing: 0.25px;
+      }
+    }
+  }
   .v-table .profile-content__title{
     display: flex;
     align-items: center;
     justify-content: space-between;
-  }
-  .v-table .profile-content__title .desc{
-    color: #ADADAD;
-    margin-top: 5px;
-    display: block;
-    font-size: 14px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1.3;
-    letter-spacing: 0.25px;
   }
   .p-inputtext,
   .p-treeselect{

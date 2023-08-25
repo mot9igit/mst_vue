@@ -6,7 +6,11 @@
     </router-link>
   </div>
   <div class="profile-content__title">
-    <span class="title">{{ getreport.name }} c {{ getreport.date_from }} по {{ getreport.date_to }}</span>
+    <div>
+      <span class="title">{{ getreport.name }}</span>
+      <span class="desc__text">Тип отчета: Продажи понедельно</span>
+      <span class="desc__text">Период:  с  {{ getreport.date_from }} по {{ getreport.date_to }}</span>
+    </div>
     <a :href="getreport.file" class="dart-btn dart-btn-text" v-if="getreport.file" download>
       <img src="/img/xslx.svg" alt="">
       <span>Скачать файл</span>
@@ -14,6 +18,11 @@
 </div>
   <div class="dart-alert dart-alert-info">Более удобный формат в сгенерированном файле. </div>
   <TreeTable :value="getreports.items" :loading="loading" :tableProps="{ style: { minWidth: '650px' } }" scrollable scrollHeight="600px" scrollDirection="both">
+    <template #header>
+      <div class="sales-header">
+        <div v-html="getreports.head" :style="'width: ' + getreports.head_width + 'px'"></div>
+      </div>
+    </template>
     <Column v-for="col of getreports.columns" :key="col.field" :field="col.field" :header="col.label" :expander="col.expander" :frozen="col.frozen" :style="'width: ' + col.width + 'px;'">
     </Column>
   </TreeTable>
@@ -44,7 +53,20 @@ export default {
     return {
       loading: true,
       reloading: false,
-      filters: { },
+      filters: {
+        region: {
+          name: 'Регион',
+          placeholder: 'Выберите регион',
+          type: 'tree',
+          values: this.getregions
+        },
+        stores: {
+          name: 'Магазин',
+          placeholder: 'Выберите магазин',
+          type: 'dropdown',
+          values: this.getstores
+        }
+      },
       table_data: {
         name: {
           label: '',
@@ -97,12 +119,18 @@ export default {
     }).then(
       result => {
         this.loading = false
+        const element = document.querySelector('.p-treetable-scrollable .p-treetable-wrapper')
+        element.addEventListener('scroll', this.handleScroll)
       },
       error => {
         // alert error
         console.log('Произошла ошибка' + error)
       }
     )
+  },
+  beforeUnmount () {
+    const element = document.querySelector('.p-treetable-scrollable .p-treetable-wrapper')
+    element.removeEventListener('scroll', this.handleScroll)
   },
   unmounted () {
     this.unset_reports_data()
@@ -138,25 +166,16 @@ export default {
           console.log('Произошла ошибка ' + error)
         }
       )
+    },
+    handleScroll (event) {
+      const element = document.querySelector('.p-treetable-scrollable .p-treetable-wrapper')
+      console.log(element.scrollLeft)
+      const header = document.querySelector('.sales-header')
+      // header.style.transform = 'translate(-' + element.scrollLeft + 'px ,0)'
+      header.scroll(element.scrollLeft, 0)
     }
   },
-  watch: {
-    loading: function (newVal, oldVal) {
-      console.log(newVal)
-      if (!newVal) {
-        for (const key in this.getreports.columns) {
-          if (Object.prototype.hasOwnProperty.call(this.getreports.columns[key], 'html')) {
-            console.log(this.getreports.columns[key].html)
-            const elements = document.querySelectorAll('.p-treetable-wrapper thead tr th:first-child')
-            console.log(elements)
-            if (elements[0]) {
-              // elements[0].insertAdjacentHTML('afterbegin', this.getreports.columns[key].html)
-            }
-          }
-        }
-      }
-    }
-  }
+  watch: {}
 }
 </script>
 
@@ -177,6 +196,49 @@ export default {
   .p-treetable-tbody{
     td {
       button + *{
+      }
+    }
+  }
+  .profile .p-treetable .p-treetable-header,
+  .profile .p-treetable .p-treetable-thead > tr > th{
+    background: transparent;
+  }
+  .profile .p-treetable .lab{
+    display: inline-block;
+    border-radius: 5px;
+    background: #DEE2E6;
+    padding: 3px 5px;
+    color: #282828;
+    text-align: center;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 1.3;
+    letter-spacing: 0.25px;
+  }
+  .sales-header{
+    overflow-x: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    .head-row{
+      display: flex;
+      flex-wrap: nowrap;
+      & > div {
+        flex-shrink: 0;
+        text-align: center;
+        padding: 5px 1rem;
+        & + div{
+          border-left: 1px solid #dee2e6;
+        }
+      }
+      & > div:first-child{
+        width: 350px;
+        text-align: left;
+        position: sticky;
+        left: 0;
+        background: transparent;
       }
     }
   }
