@@ -30,15 +30,19 @@
       </div>
       <div class="dart-form-group">
         <label for="name">Период действия</label>
-        <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите диапазон дат" :manualInput="false" showIcon/>
+        <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите диапазон дат" :manualInput="false" showIcon dateFormat="dd/mm/yy" modelValue="string"/>
       </div>
       <div class="dart-form-group">
         <label for="name">Бренд</label>
-        <Dropdown v-model="form.brand" :options="available_brands" filter showClear optionLabel="name" optionValue="id" placeholder="Выберите бренд"></Dropdown>
+        <Dropdown v-model="form.brand_id" :options="available_brands" filter showClear optionLabel="name" optionValue="id" placeholder="Выберите бренд"></Dropdown>
       </div>
       <div class="dart-form-group">
         <label for="conditions">Условия участия</label>
         <textarea v-model="form.conditions" type="text" name="conditions" placeholder="Укажите условия участия" class="dart-form-control"></textarea>
+      </div>
+      <div class="dart-form-group">
+        <label for="programs">Обязательно участие в программах:</label>
+        <MultiSelect v-model="form.trigger_programs" :options="getbonuses.items" optionLabel="name" placeholder="Выберите программы" :maxSelectedLabels="3" class="w-full md:w-20rem" />
       </div>
       <div class="dart-form-group">
         <label for="reward">Вознаграждение</label>
@@ -54,7 +58,15 @@
               <Checkbox v-model="form.fwarehouses" name="warehouses" value="1" :binary="1"/>
               <label class="ml-2"> Доступна для опта </label>
           </div>
+          <div class="flex align-items-center">
+            <Checkbox v-model="form.auto" name="auto" value="1" :binary="1"/>
+            <label class="ml-2"> Автоматическое одобрение заявок </label>
+          </div>
         </div>
+      </div>
+      <div class="dart-form-group">
+        <label for="regions">Регионы доступности программы</label>
+        <TreeSelect v-model="region" :options="this.getregions" selectionMode="checkbox" placeholder="Выберите регион" class="w-full"/>
       </div>
       <div class="dart-form-group picker-wrap">
         <label for="name">Добавление точек продаж, доступных для программы</label>
@@ -68,11 +80,12 @@
                   <input
                   type="text"
                   id="filter_name"
-                  placeholder="Артикул, наименование"
+                  placeholder="Наименование"
                   name="filter"
                   class="dart-form-control"
                   v-model="filter"
                   @input="setFilter"
+                  @keyup.delete="setFilter"
                   />
                   <label for="product_filter_name" class="s-complex-input__label">Наименование</label>
                   <div class="form_input_group__icon">
@@ -98,6 +111,7 @@
 </template>
 
 <script>
+import { toRaw } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
 import Checkbox from 'primevue/checkbox'
@@ -105,6 +119,8 @@ import Calendar from 'primevue/calendar'
 import PickList from 'primevue/picklist'
 import Dropdown from 'primevue/dropdown'
 import Toast from 'primevue/toast'
+import MultiSelect from 'primevue/multiselect'
+import TreeSelect from 'primevue/treeselect'
 import FileUpload from 'primevue/fileupload'
 
 export default {
@@ -114,6 +130,7 @@ export default {
     return {
       loading: false,
       filter: '',
+      region: [],
       selected: [],
       form: {
         files: []
@@ -124,10 +141,12 @@ export default {
     ...mapActions([
       'get_available_stores_from_api',
       'get_available_brands_from_api',
-      'set_bonus_to_api'
+      'get_regions_from_api',
+      'set_bonus_to_api',
+      'get_bonuses_from_api'
     ]),
     setFilter () {
-      if (this.filter.length > 3 || this.filter.length === 0) {
+      if (this.filter.length > 2 || this.filter.length === 0) {
         setTimeout(() => {
           const data = { filter: this.filter, selected: this.selected }
           this.get_available_stores_from_api(data)
@@ -139,23 +158,30 @@ export default {
     },
     formSubmit (event) {
       this.loading = true
+      const dates = toRaw(this.form.dates)
+      dates[0] = dates[0].toDateString()
+      dates[1] = dates[1].toDateString()
       this.$load(async () => {
         await this.set_bonus_to_api({
           action: 'set',
           type: 'bonus',
           id: router.currentRoute._value.params.id,
+          brand: this.form.brand_id,
           name: this.form.name,
           stores: this.form.fstores,
           warehouses: this.form.fwarehouses,
           conditions: this.form.conditions,
+          auto: this.form.auto,
+          trigger_programs: this.form.trigger_programs,
           reward: this.form.reward,
-          files: this.form.files,
-          dates: this.form.dates,
-          store_ids: this.selected
+          region: this.region,
+          files: toRaw(this.form.files),
+          available_dates: dates,
+          store_ids: toRaw(this.selected)
         })
           .then((result) => {
             this.loading = false
-            router.push({ name: 'org_bonuses', params: { id: router.currentRoute._value.params.id } })
+            router.push({ name: 'org_ourbonuses', params: { id: router.currentRoute._value.params.id } })
           })
           .catch((result) => {
             console.log(result)
@@ -177,12 +203,20 @@ export default {
   mounted () {
     this.get_available_stores_from_api({ filter: '', selected: [] })
     this.get_available_brands_from_api({ type: 'bonuses' })
+    this.get_bonuses_from_api({
+      our: 1,
+      page: this.page,
+      perpage: this.pagination_items_per_page
+    })
+    this.get_regions_from_api()
   },
-  components: { Calendar, Dropdown, PickList, Checkbox, FileUpload, Toast },
+  components: { MultiSelect, Calendar, Dropdown, PickList, Checkbox, FileUpload, Toast, TreeSelect },
   computed: {
     ...mapGetters([
       'available_stores',
-      'available_brands'
+      'available_brands',
+      'getbonuses',
+      'getregions'
     ])
   }
 }

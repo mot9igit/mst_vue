@@ -24,7 +24,7 @@ import { VueFinalModal } from 'vue-final-modal'
 export default {
   name: 'CustomModal',
   inheritAttrs: false,
-  emits: ['confirm', 'cancel'],
+  emits: ['confirm', 'cancel', 'close'],
   components: {
     VueFinalModal
   },
@@ -47,7 +47,7 @@ export default {
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 500px;
+  max-width: 700px;
   max-height: 90%;
   margin: 0 1rem;
   padding: 1rem;

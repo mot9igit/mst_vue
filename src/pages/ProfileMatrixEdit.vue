@@ -54,20 +54,49 @@
                     <span class="font-bold">{{ slotProps.item.name }}</span>
                     <span class="article">{{ slotProps.item.article }}</span>
                 </div>
-                <div class="input">
-                  <span class="p-float-label">
-                    <InputNumber
-                      v-model="slotProps.item.count"
-                      inputId="horizontal-buttons"
-                      :step="1"
-                      incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-                    />
-                    <label for="number-input">Кол-во товара</label>
-                  </span>
-                </div>
               </div>
           </template>
         </PickList>
+      </div>
+      <div class="dart-form-group picker-wrap">
+        <label for="name">Настройка номенклатуры</label>
+        <div class="product-settings" v-for="(item, index) in selected" :key="index">
+          <div class="item">
+            <div class="dart-row dart-align-items-center">
+              <div class="d-col-md-4">
+                <div class="flex flex-wrap p-2 align-items-center gap-3">
+                  <img class="w-4rem flex-shrink-0 border-round" :src="'https://mst.tools' + item.image" :alt="item.pagetitle" />
+                  <div class="flex-1 flex flex-column gap-2">
+                      <span class="font-bold">{{ item.name }}</span>
+                      <span class="article">{{ item.article }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="d-col-md-4">
+                <span class="p-float-label">
+                  <InputNumber
+                    v-model="selected[index].count"
+                    inputId="horizontal-buttons"
+                    :step="1"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                  />
+                  <label for="number-input">Кол-во товара</label>
+                </span>
+              </div>
+              <div class="d-col-md-4">
+                <span class="p-float-label">
+                  <InputNumber
+                    v-model="selected[index].days"
+                    inputId="horizontal-buttons"
+                    :step="1"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                  />
+                  <label for="number-input">Разрешенное кол-во дней</label>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </form>
@@ -150,6 +179,18 @@ export default {
 </script>
 
 <style lang="scss">
+  .product-settings{
+    margin: 0;
+    .item{
+      margin-bottom: 30px;
+      .p-inputnumber{
+        width: 100%;
+      }
+      input{
+        width: 100%;
+      }
+    }
+  }
   .source_list{
     position: relative;
     z-index: 3;

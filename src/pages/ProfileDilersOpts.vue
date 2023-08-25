@@ -42,13 +42,9 @@ export default {
         name: {
           label: 'Наименование',
           type: 'link',
-          link_to: 'org_products',
+          link_to: 'org_opt',
           link_params: {
-            type: 'slStores',
-            id: 'id'
-          },
-          link_props: {
-            showBalance: false
+            diler_id: 'id'
           }
         },
         address: {
@@ -72,7 +68,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.$breadcrumbs.value)
     this.get_dilers_from_api({
       type: 2,
       page: this.page,

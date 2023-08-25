@@ -5,6 +5,18 @@
       <span>Назад к заказам</span>
     </router-link>
   </div>
+  <teleport to="body">
+    <custom-modal v-model="showCodeModal">
+      <template v-slot:title>Подтверждение выдачи товара</template>
+      <form action="#" @submit.prevent="formSubmit">
+        <div class="form_input_group">
+          <label for="">Код выдачи товара</label>
+          <input type="text" v-model="code" class="dart-form-control" name="code" placeholder="Код"/>
+        </div>
+        <button class="dart-btn dart-btn-primary dart-btn-block dart-mt-1" type="submit">Подтвердить</button>
+      </form>
+    </custom-modal>
+  </teleport>
   <div class="block-header">
     <div class="dart-row dart-align-items-center">
       <div class="d-col-md-4">
@@ -14,6 +26,11 @@
         </div>
       </div>
       <div class="d-col-md-8">
+        <!--
+        <div class="block-header__buttons">
+          <a href="#" class="dart-btn dart-btn-primary" :disabled="isLoading == true" :class="{ 'dart-btn-loading': isLoading }" @click.prevent="showCodeModal = true">Выдать товар</a>
+        </div>
+        -->
         <div class="block-header__buttons" v-if="order.stores_available != 0 && type == 'slStores'">
           <!--<a href="#" class="dart-btn dart-btn-primary-outline">Отменить заказ</a>-->
           <a href="#" class="dart-btn dart-btn-primary" :disabled="isLoading == true" :class="{ 'dart-btn-loading': isLoading }" @click="change_ststatus">{{ order.transition_anchor }}</a>
@@ -121,12 +138,14 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import customModal from '@/components/popup/CustomModal'
 
 export default {
   name: 'ProfileOrder',
   props: { },
   data () {
     return {
+      showCodeModal: false,
       isLoading: false,
       type: this.$route.params.type,
       id: this.$route.params.id
@@ -149,7 +168,7 @@ export default {
   mounted () {
     this.get_order_from_api()
   },
-  components: { },
+  components: { customModal },
   computed: {
     ...mapGetters([
       'order',

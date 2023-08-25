@@ -6,12 +6,16 @@ export default {
     shipping: []
   },
   actions: {
-    get_shipping_from_api ({ commit }) {
+    get_shipping_from_api ({ commit }, { filter, filtersdata, page, sort, perpage }) {
       return Axios('/rest/front_getshipping', {
         method: 'POST',
         data: {
           id: router.currentRoute._value.params.id,
-          type: router.currentRoute._value.params.type
+          filter: filter,
+          filtersdata: filtersdata,
+          sort: sort,
+          page: page,
+          perpage: perpage
         }
       })
         .then((response) => {

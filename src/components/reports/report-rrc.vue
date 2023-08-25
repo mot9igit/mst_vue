@@ -13,11 +13,16 @@
     :page="this.page"
     :table_data="this.table_data"
     :filters="this.filters"
-    :title="'Отчет соблюдения РРЦ ' + getreport.name + ' с ' + getreport.date_from + ' по ' + getreport.date_to"
+    :title="getreport.name"
     @filter="filter"
     @sort="filter"
     @paginate="paginate"
-  />
+  >
+    <template v-slot:desc>
+      <span class="desc__text">Тип отчета: Соблюдение РРЦ</span>
+      <span class="desc__text">Период:  с  {{ getreport.date_from }} по {{ getreport.date_to }}</span>
+    </template>
+  </v-table>
 </template>
 
 <script>

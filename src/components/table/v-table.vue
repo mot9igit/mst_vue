@@ -1,7 +1,10 @@
 <template>
   <div class="v-table">
     <div class="profile-content__title">
-        <span class="title">{{ title }} (<span v-if="total > -1">{{ total }}</span><span v-else>0</span>)</span>
+        <div class="text">
+          <span class="title">{{ title }} (<span v-if="total > -1">{{ total }}</span><span v-else>0</span>)</span>
+          <slot name="desc"></slot>
+        </div>
         <slot name="button"></slot>
     </div>
     <!--
@@ -11,7 +14,7 @@
     />
     -->
     <div class="dart-row dart-align-items-center" v-if="show_filter">
-        <div class="d-col-md-6" v-for="(ffilter, i) in filters" :key="i">
+        <div class="d-col-md-3" v-for="(ffilter, i) in filters" :key="i">
           <div class="form_input_group input_pl input-parent required" v-if="ffilter.type == 'text'">
             <input
             type="text"
@@ -40,7 +43,7 @@
             </select>
           </div>
           <div class="dart-form-group" v-if="ffilter.type == 'dropdown'">
-            <Dropdown v-model="filtersdata[i]" :options="ffilter.values" filter showClear optionLabel="name" optionValue="id" :placeholder="ffilter.placeholder" @change="setFilter"></Dropdown>
+            <Dropdown v-model="filtersdata[i]" :options="ffilter.values" filter showClear :optionLabel="(ffilter.optionLabel) ? ffilter.optionLabel : 'name'" :optionValue="(ffilter.optionValue) ? ffilter.optionValue : 'id'" :placeholder="ffilter.placeholder" @change="setFilter"></Dropdown>
           </div>
           <div class="dart-form-group" v-if="ffilter.type == 'vv'">
             <AutoComplete v-model="filtersdata[i]" placeholder="Производитель" optionLabel="name" dataKey="id" :suggestions="filteredVendor" @complete="searchVendor" @change="setFilter">
@@ -61,7 +64,16 @@
           <div class="dart-form-group" v-if="ffilter.type == 'tree'">
             <TreeSelect v-model="filtersdata[i]" :options="ffilter.values" selectionMode="checkbox" :placeholder="ffilter.placeholder" class="w-full" @change="setFilter"/>
           </div>
+          <div class="dart-form-group" v-if="ffilter.type == 'checkbox'">
+            <div class="flex align-items-center">
+              <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
+              <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label>
+            </div>
+          </div>
         </div>
+    </div>
+    <div class="v-table__widgets">
+      <slot name="widgets"></slot>
     </div>
     <div class="profile-products__products" v-if="total != 0">
         <table class="profile-table">
@@ -87,6 +99,9 @@
                     :row_data="row"
                     :keys="table_data"
                     @deleteElem="deleteElem"
+                    @updateElem="updateElem"
+                    @editElem="editElem"
+                    @clickElem="clickElem"
                 />
             </tbody>
             <tbody v-else>
@@ -107,6 +122,8 @@
             :prev-text="'Пред'"
             :next-text="'След'"
             :container-class="'pagination justify-content-center'"
+            :initialPage="this.page"
+            :forcePage="this.page"
           >
           </paginate>
         </div>
@@ -127,10 +144,12 @@ import Calendar from 'primevue/calendar'
 import TreeSelect from 'primevue/treeselect'
 import Dropdown from 'primevue/dropdown'
 import AutoComplete from 'primevue/autocomplete'
+import Checkbox from 'primevue/checkbox'
 import Skeleton from 'primevue/skeleton'
 
 export default ({
   name: 'v-table',
+  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem', 'filter', 'sort', 'paginate'],
   components: {
     vTableRow,
     // vTableFilter,
@@ -139,7 +158,8 @@ export default ({
     Calendar,
     AutoComplete,
     Dropdown,
-    Skeleton
+    Skeleton,
+    Checkbox
   },
   props: {
     items_data: {
@@ -216,6 +236,16 @@ export default ({
     ]),
     deleteElem (data) {
       this.$emit('deleteElem', data)
+    },
+    clickElem (data) {
+      console.log(data)
+      this.$emit('clickElem', data)
+    },
+    updateElem (data) {
+      this.$emit('updateElem', data)
+    },
+    editElem (data) {
+      this.$emit('editElem', data)
     },
     setFilter (type = '0') {
       if (type === 'filter') {
@@ -319,8 +349,26 @@ export default ({
 <style lang="scss">
   .v-table .profile-content__title{
     display: flex;
+    width: 100%;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
+  }
+  .v-table .profile-content__title .desc{
+    color: #ADADAD;
+    display: block;
+    width: 100%;
+    margin-top: 5px;
+    display: block;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 1.3;
+    letter-spacing: 0.25px;
+    flex: 0 0 100%;
+    .dart-alert{
+      width: 100%;
+    }
   }
   .p-inputtext,
   .p-treeselect{

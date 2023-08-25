@@ -68,6 +68,7 @@
         @sort="filter"
         @paginate="paginate"
         @deleteElem="deleteReport"
+        @updateElem="updateReport"
       >
         <template v-slot:button>
           <button @click="reload()" class="dart-btn dart-btn-primary" :class="{ 'dart-btn-loading': reloading }" :disabled="reloading">Обновить</button>
@@ -177,6 +178,10 @@ export default {
           type: 'actions',
           sort: false,
           available: {
+            update: {
+              icon: 'pi pi-refresh',
+              label: 'Обновить'
+            },
             delete: {
               icon: 'pi pi-trash',
               label: 'Удалить'
@@ -281,6 +286,38 @@ export default {
     },
     setMaxFromDate () {
       this.dates.maxDateFrom = this.report.date_to
+    },
+    updateReport (data) {
+      this.unset_reports_data()
+      // отправление AJAX
+      return Axios('/rest/front_changeobject', {
+        method: 'POST',
+        data: {
+          id: router.currentRoute._value.params.id,
+          type: 'report',
+          report_id: data
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          this.$toast.add({ severity: 'info', summary: 'Обновление', detail: 'Отчет ' + data.name + ' успешно обновлен', life: 3000 })
+          this.get_reports_from_api({
+            report_id: 0,
+            page: this.page,
+            perpage: this.pagination_items_per_page
+          })
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            this.$toast.add({ severity: 'error', summary: 'Вы не авторизованы', detail: 'Вы будете перенаправлены на страницу авторизации', life: 3000 })
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          } else {
+            this.$toast.add({ severity: 'error', summary: 'Произошла ошибка', detail: 'Мы скоро это поправим', life: 3000 })
+          }
+        })
     },
     deleteReport (data) {
       console.log(data)

@@ -1,5 +1,47 @@
 <template>
-  <div class="profile-content b-wrap">
+  <div class="copo">
+    <div class="analitics-widget">
+      <div class="organization" >
+        <div class="dart-row">
+          <div class="d-col-md-4" v-if="prods.all">
+            <div class="panel-widget panel-widget-summ">
+              <span>Остатки</span>
+              <span class="sum">{{ prods.summ }} ₽</span>
+              <span class="num">{{ prods.count_all }} шт.</span>
+            </div>
+          </div>
+          <div class="d-col-md-8" v-if="prods.all">
+            <div class="panel-widget panel-widget-remains">
+              <div class="panel-widget-remains__graph">
+                <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-5rem" />
+                <span class="count">{{ $filters.round(prods.copo_percent) }}%</span>
+                <span>сопоставленных<br/> товаров</span>
+              </div>
+              <div class="panel-widget-remains__stat">
+                <div class="panel-widget-remains__stat-item">
+                  <div class="data">
+                    <span>Товаров всего</span>
+                    <span>{{ prods.all }}</span>
+                  </div>
+                  <div class="line">
+                    <span style="width: 100%;"></span>
+                  </div>
+                </div>
+                <div class="panel-widget-remains__stat-item">
+                  <div class="data">
+                    <span>Товаров сопоставлено</span>
+                    <span>{{ prods.copo }}</span>
+                  </div>
+                  <div class="line">
+                    <span :style="'width: ' + prods.copo_percent + '%;'"></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="products">
       <v-table
         :items_data="products.products"
@@ -9,11 +51,17 @@
         :page="this.page"
         :table_data="this.table_data"
         :filters="this.filters"
-        title="Остатки товаров"
+        title="Склад"
         @filter="filter"
         @sort="filter"
         @paginate="paginate"
-      />
+      >
+        <template v-slot:desc>
+          <div v-if="organization.yml_file" class="dart-alert dart-alert-info dart-mt-1">
+            <span>Вы можете посмотреть ваш каталог в формате <a :href="organization.yml_file" target="_blank">YML</a>.</span>
+          </div>
+        </template>
+      </v-table>
     </div>
   </div>
 </template>
@@ -21,6 +69,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import vTable from '../components/table/v-table'
+import Chart from 'primevue/chart'
 
 export default {
   name: 'ProfileProducts',
@@ -33,13 +82,43 @@ export default {
       type: Number,
       default: 0
     },
-    page: {
-      type: Number,
-      default: 1
+    org: {
+      type: Array,
+      default: () => {
+        return []
+      }
     }
   },
   data () {
     return {
+      chartData: null,
+      chartOptions: {
+        cutout: '60%'
+      },
+      prods: {
+        copo_percent: 0,
+        all: 0,
+        copo: 0,
+        count_all: 0,
+        summ: 0
+      },
+      orders: {
+        summ: 0,
+        count: 0
+      },
+      dilers: {
+        summ: 0,
+        count: 0
+      },
+      distr: {
+        summ: 0,
+        count: 0
+      },
+      shipment: {
+        total: 0,
+        items: []
+      },
+      page: 1,
       filters: {
         name: {
           name: 'Наименование, артикул',
@@ -61,7 +140,7 @@ export default {
           label: 'Фото',
           type: 'image'
         },
-        vendor_article: {
+        article: {
           label: 'Артикул',
           type: 'text',
           sort: true
@@ -116,14 +195,26 @@ export default {
   },
   methods: {
     ...mapActions([
-      'get_data_from_api'
+      'get_data_from_api',
+      'get_organization_from_api'
     ]),
+    setChartData () {
+      return {
+        datasets: [
+          {
+            data: [this.organization.products.copo_percent, this.organization.products.no_copo_percent],
+            backgroundColor: ['#008FFF', '#EEEEEE'],
+            hoverBackgroundColor: ['#008FFF', '#EEEEEE']
+          }
+        ]
+      }
+    },
     filter (data) {
       console.log(data)
       this.get_data_from_api(data)
     },
     paginate (data) {
-      console.log(data)
+      this.page = data.page
       this.get_data_from_api(data)
     }
   },
@@ -132,15 +223,51 @@ export default {
       page: this.page,
       perpage: this.pagination_items_per_page
     })
+    this.get_organization_from_api().then(() => {
+      this.chartData = this.setChartData()
+      const num = this.organization.products.copo_percent
+      this.prods.copo_percent = num
+      this.prods.all = this.organization.products.count
+      this.prods.copo = this.organization.products.copo_count
+      this.prods.count_all = this.organization.products.count_all
+      this.prods.summ = this.organization.products.summ
+      // orders.summ && orders.count
+      this.dilers.summ = this.organization.dilers.summ
+      this.dilers.count = this.organization.dilers.count
+      this.distr.summ = this.organization.distr.summ
+      this.distr.count = this.organization.distr.count
+      this.shipment.total = this.organization.shipment.total
+      this.shipment.items = this.organization.shipment.items
+    })
   },
-  components: { vTable },
+  components: { vTable, Chart },
   computed: {
     ...mapGetters([
-      'products'
-    ])
+      'products',
+      'organization'
+    ]),
+    date () {
+      const today = new Date()
+      return today.getDate()
+    },
+    month () {
+      const monthNames = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь',
+        'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'
+      ]
+      const today = new Date()
+      return monthNames[today.getMonth()]
+    },
+    day () {
+      const dayNames = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
+      const today = new Date()
+      return dayNames[today.getDay()]
+    }
   }
 }
 </script>
 
 <style lang="scss">
+.analitics-widget{
+  margin-bottom: 30px;
+}
 </style>

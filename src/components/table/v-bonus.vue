@@ -46,7 +46,7 @@
             <AutoComplete v-model="filtersdata[i]" placeholder="Производитель" optionLabel="name" dataKey="id" :suggestions="filteredVendor" @complete="searchVendor" @change="setFilter">
               <template #option="slotProps">
                 <div class="flex align-options-center">
-                    <img :alt="slotProps.option.name" :src="'https://mst.tools/' + slotProps.option.logo" :class="`image mr-2`" style="width: 30px" />
+                    <img :alt="slotProps.option.name" :src="'https://mst.tools/' + slotProps.option.logo" :class="`image mr-2`" style="width: 30px" v-if="slotProps.option.logo"/>
                     <div>{{ slotProps.option.name }}</div>
                 </div>
               </template>
@@ -66,28 +66,30 @@
     <div class="profile-bonuses" v-if="total != 0">
       <div class="dart-row" v-if="total != -1">
         <div
-        class="d-col-md-3"
+        class="d-col-md-3 profile-bonuses__item-wrap"
         v-for="row in items_data"
         :key="row.id"
         :row_data="row"
         :keys="table_data">
           <div class="profile-bonuses__item">
             <div class="profile-bonuses__item-image">
-              <RouterLink :to="{ name: 'org_bonus_edit', params: { id: $route.params.id, bonus_id: row.id }}">
+              <RouterLink :to="{ name: 'org_bonus_read', params: { id: $route.params.id, bonus_id: row.id }}">
                 <img :src="'https://mst.tools' + row.banner" alt="">
               </RouterLink>
-              <span class="brand">
-                <img :src="'https://mst.tools/' + row.brand_logo" :alt="row.brand">
+              <span class="brand" v-if="row.brand">
+                <div v-if="row.brand_logo">
+                  <img :src="'https://mst.tools/' + row.brand_logo" :alt="row.brand">
+                </div>
                 <span>{{ row.brand }}</span>
               </span>
             </div>
             <div class="profile-bonuses__item-text">
-              <RouterLink :to="{ name: 'org_bonus_edit', params: { id: $route.params.id, bonus_id: row.id }}" class="title">{{ row.name }}</RouterLink>
+              <RouterLink :to="{ name: 'org_bonus_read', params: { id: $route.params.id, bonus_id: row.id }}" class="title">{{ row.name }}</RouterLink>
               <div class="profile-bonuses__item-dates">
                 {{ row.date_from_e }} - {{ row.date_to_e }}
               </div>
               <div class="profile-bonuses__item-customer">
-                <span>Поставщик: {{ row.customer }}</span>
+                <span>Поставщик: {{ row.store_name }}</span>
               </div>
               <div class="participation-block">
                 <div class="participation participation-yes" v-if="row.connection">
@@ -176,15 +178,11 @@ export default ({
     },
     pagination_items_per_page: {
       type: Number,
-      default: 5
+      default: 1
     },
     pagination_offset: {
       type: Number,
       default: 0
-    },
-    page: {
-      type: Number,
-      default: 1
     },
     show_filter: {
       type: Boolean,
@@ -196,6 +194,7 @@ export default ({
       filter: '',
       filtersdata: { },
       sort: { },
+      page: 1,
       per_page: this.pagination_items_per_page,
       loading: false,
       calendar: {
@@ -296,11 +295,17 @@ export default ({
 </script>
 
 <style lang="scss">
+  .profile-bonuses__item-wrap{
+    margin-bottom: 24px;
+  }
   .profile-bonuses__item{
     background: #FFFFFF;
     border: 1px solid rgba(0, 0, 0, 0.12);
     overflow: hidden;
     border-radius: 5px;
+    margin-bottom: 24px;
+    position: relative;
+    height: 100%;
     &-image{
       position: relative;
       img{

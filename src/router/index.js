@@ -16,9 +16,15 @@ import ProfileShipping from '../pages/ProfileShipping'
 import ProfileMatrix from '../pages/ProfileMatrix'
 import ProfileMatrixAdd from '../pages/ProfileMatrixAdd'
 import ProfileMatrixEdit from '../pages/ProfileMatrixEdit'
+import ProfileDocs from '../pages/ProfileDocs'
 import BonusMain from '../pages/BonusMain'
+import BonusOur from '../pages/BonusOur'
 import BonusAdd from '../pages/bonuses/add'
 import BonusEdit from '../pages/bonuses/edit'
+import Bonus from '../pages/bonuses/read'
+import BonusPlan from '../pages/bonuses/plan'
+import ProfileDiler from '../pages/store/main'
+import DilerProducts from '../pages/store/products'
 import BonusOutofstock from '../pages/BonusOutofstock'
 import BonusRemains from '../pages/BonusRemains'
 import BonusPersonal from '../pages/BonusPersonal'
@@ -35,7 +41,9 @@ import ReportAverage from '../pages/ReportAverage'
 import ReportSpeedSales from '../pages/ReportSpeedSales'
 import ReportTopSales from '../pages/ReportTopSales'
 import ReportAvailable from '../pages/ReportAvailable'
+import ReportAvailableStores from '../pages/ReportAvailableStores'
 import ReportPresent from '../pages/ReportPresent'
+import ProductsAssortmentMain from '../pages/products/main'
 import notFound from '../pages/NotFound'
 
 const routes = [
@@ -94,17 +102,71 @@ const routes = [
             component: ProfileProduct
           }]
         }, {
+          path: 'assortment',
+          component: OrganizationsLoyout,
+          children: [{
+            path: '',
+            name: 'org_assortment',
+            props: true,
+            label: 'Ассортимент',
+            component: ProductsAssortmentMain
+          }]
+        }, {
           path: 'profile',
           name: 'org_profile',
           component: ProfileProfile
         }, {
           path: 'dilers',
-          name: 'org_dilers',
-          component: ProfileDilers
+          component: OrganizationsLoyout,
+          children: [{
+            path: '',
+            name: 'org_dilers',
+            props: true,
+            label: 'Мои магазины',
+            component: ProfileDilers
+          },
+          {
+            path: ':diler_id',
+            name: 'org_diler',
+            label: 'Мой магазин',
+            component: ProfileDiler,
+            children: [{
+              path: 'products',
+              name: 'org_diler_products',
+              props: true,
+              label: 'Товары дилера',
+              component: DilerProducts
+            }]
+          }]
         }, {
           path: 'opts',
-          name: 'org_opts',
-          component: ProfileDilersOpts
+          component: OrganizationsLoyout,
+          children: [{
+            path: '',
+            name: 'org_opts',
+            props: true,
+            label: 'Мои магазины',
+            component: ProfileDilersOpts
+          },
+          {
+            path: ':diler_id',
+            children: [{
+              path: '',
+              name: 'org_opt',
+              label: 'Мой оптовик',
+              component: ProfileDiler
+            }, {
+              path: 'products',
+              name: 'org_diler_products',
+              props: true,
+              label: 'Товары дилера',
+              component: DilerProducts
+            }]
+          }]
+        }, {
+          path: 'docs',
+          name: 'org_docs',
+          component: ProfileDocs
         }, {
           path: 'orders',
           children: [{
@@ -161,13 +223,22 @@ const routes = [
             name: 'org_reports_topsales',
             component: ReportTopSales
           }, {
-            path: 'available',
-            name: 'org_reports_available',
-            component: ReportAvailable
-          }, {
             path: 'present',
             name: 'org_reports_present',
             component: ReportPresent
+          }]
+        }, {
+          path: 'available',
+          children: [{
+            path: '',
+            name: 'org_reports_available',
+            component: ReportAvailable
+          }, {
+            path: ':region_id',
+            name: 'org_reports_available_stores',
+            props: true,
+            label: 'Страница региона',
+            component: ReportAvailableStores
           }]
         }, {
           path: 'akb',
@@ -177,21 +248,44 @@ const routes = [
             component: ReportsAkb
           }]
         }, {
-          path: 'bonuses',
+          path: 'ourbonuses',
           children: [{
             path: '',
-            name: 'org_bonuses',
-            component: BonusMain
+            name: 'org_ourbonuses',
+            component: BonusOur
           }, {
             path: 'add',
             name: 'org_bonuses_add',
             component: BonusAdd
           }, {
             path: ':bonus_id',
-            name: 'org_bonus_edit',
-            props: true,
             label: 'Редактирование ретро-бонуса',
-            component: BonusEdit
+            children: [{
+              path: '',
+              name: 'org_bonus_edit',
+              component: BonusEdit
+            }, {
+              path: ':plan_id',
+              name: 'org_bonus_plans',
+              props: true,
+              label: 'Страница плана',
+              component: BonusPlan
+            }]
+          }]
+        }, {
+          path: 'bonuses',
+          children: [{
+            path: '',
+            name: 'org_bonuses',
+            component: BonusMain
+          }, {
+            path: ':bonus_id',
+            label: 'Бонус',
+            children: [{
+              path: '',
+              name: 'org_bonus_read',
+              component: Bonus
+            }]
           }, {
             path: 'outofstock',
             name: 'org_outofstock',

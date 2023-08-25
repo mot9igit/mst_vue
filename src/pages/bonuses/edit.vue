@@ -1,14 +1,14 @@
 <template>
   <div>
     <div class="to__up">
-      <router-link :to="{ name: 'org_bonuses', params: { id: $route.params.id } }">
+      <router-link :to="{ name: 'org_ourbonuses', params: { id: $route.params.id } }">
         <mdicon name="arrow-left" />
         <span>Назад к программам</span>
       </router-link>
     </div>
     <Toast />
-    <div v-if="organization.type === 3">
-      <form @submit.prevent="formSubmit">
+    <div>
+      <form @submit.prevent="formEditSubmit">
         <div class="profile-content__title">
             <span class="title">Редактирование программы производителя</span>
             <div class="buttons_container">
@@ -24,7 +24,12 @@
           <div class="dart-form-group">
             <label for="name">Выберите баннер</label>
             <FileUpload mode="basic" name="banner[]" :url="'/rest/file_upload.php?store_id=' + $route.params.id + '&path=banners'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Выбрать" />
-            <div class="dart-upload_files">
+            <div class="dart-upload_files" v-if="form.files.length">
+              <div class="item" v-for="(file, key) in form.files" :key="key">
+                <img :src="file.thumb" alt="">
+              </div>
+            </div>
+            <div class="dart-upload_files" v-else>
               <div class="item" v-for="(file, key) in bonus.files" :key="key">
                 <img :src="file.thumb" alt="">
               </div>
@@ -32,7 +37,7 @@
           </div>
           <div class="dart-form-group">
             <label for="name">Период действия</label>
-            <Calendar v-model="bonus.dates" selectionMode="range" placeholder="Выберите диапазон дат" :manualInput="false" showIcon/>
+            <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите диапазон дат" :manualInput="false" showIcon dateFormat="dd/mm/yy" modelValue="string"/>
           </div>
           <div class="dart-form-group">
             <label for="name">Бренд</label>
@@ -41,6 +46,10 @@
           <div class="dart-form-group">
             <label for="conditions">Условия участия</label>
             <textarea v-model="bonus.conditions" type="text" name="conditions" placeholder="Укажите условия участия" class="dart-form-control"></textarea>
+          </div>
+          <div class="dart-form-group">
+            <label for="programs">Обязательно участие в программах:</label>
+            <MultiSelect v-model="form.trigger_programs" :options="getbonuses.items" optionLabel="name" placeholder="Выберите программы" :maxSelectedLabels="3" class="w-full md:w-20rem" />
           </div>
           <div class="dart-form-group">
             <label for="reward">Вознаграждение</label>
@@ -56,7 +65,15 @@
                   <Checkbox v-model="bonus.fwarehouses" name="warehouses" value="1" :binary="1"/>
                   <label class="ml-2"> Доступен для опта </label>
               </div>
+              <div class="flex align-items-center">
+                <Checkbox v-model="bonus.auto" name="auto" value="1" :binary="1"/>
+                <label class="ml-2"> Автоматическое одобрение заявок </label>
+              </div>
             </div>
+          </div>
+          <div class="dart-form-group">
+            <label for="regions">Регионы доступности программы</label>
+            <TreeSelect v-model="region" :options="this.getregions" selectionMode="checkbox" placeholder="Выберите регион" class="w-full"/>
           </div>
           <div class="dart-form-group picker-wrap">
             <label for="name">Добавление точек продаж, доступных для программы</label>
@@ -75,6 +92,7 @@
                       class="dart-form-control"
                       v-model="filter"
                       @input="setFilter"
+                      @keyup.delete="setFilter"
                       />
                       <label for="product_filter_name" class="s-complex-input__label">Наименование</label>
                       <div class="form_input_group__icon">
@@ -97,125 +115,30 @@
           </div>
         </div>
       </form>
-    </div>
-    <div v-else>
-      <div class="profile-content__title" v-if="bonus.name">
-        <span class="title">Программа {{ bonus.name }}</span>
-        <div class="buttons_container">
-          <div v-if="bonus.connection">
-            <div class="participation-block">
-              <div class="participation participation-yes">
-                <mdicon name="check" />
-                <span>Участие принято</span>
-              </div>
-            </div>
-          </div>
-          <div v-else>
-            <button type="submit" class="dart-btn dart-btn-primary" :class="{ 'dart-btn-loading': loading }" :disabled="loading" @click="chellengeAccepted">Принять участие</button>
-          </div>
-        </div>
-      </div>
-      <div class="profile-content__title" v-else>
-        <span class="title">
-          <Skeleton width="10rem"></Skeleton>
-        </span>
-        <div class="buttons_container">
-          <Skeleton width="10rem"></Skeleton>
-        </div>
-      </div>
-      <div class="store_bonus" v-if="bonus.name">
-        <div class="dart-fieldset banner" v-if="bonus.banner">
-          <img :src="bonus.thumb_big" :alt="bonus.name">
-          <div class="banner-desc">
-            <div class="vendor">
-              <img :src="'https://mst.tools/' + bonus.brand_logo" :alt="bonus.brand">
-              <span>{{ bonus.brand }}</span>
-            </div>
-            <div class="customer">
-              <span>Поставщик: {{ bonus.customer }}</span>
-            </div>
-          </div>
-        </div>
-        <div class="dart-fieldset">
-          <span class="fieldset_label">Даты проведения</span>
-          <span class="fieldset_value">{{ bonus.date_from_e }} - {{ bonus.date_to_e }}</span>
-        </div>
-        <div class="dart-fieldset" v-if="bonus.conditions">
-          <span class="fieldset_label">Условия участия</span>
-          <span class="fieldset_value">
-            <div class="conditions">
-              {{ bonus.conditions }}
-            </div>
-          </span>
-        </div>
-        <div class="dart-fieldset" v-if="bonus.reward">
-          <span class="fieldset_label">Вознаграждение</span>
-          <span class="fieldset_value">
-            <div class="reward_block">
-              <div class="icon">
-                <mdicon name="wallet-giftcard" />
-              </div>
-              <div class="text">
-                <span>{{ bonus.reward }}</span>
-              </div>
-            </div>
-          </span>
-        </div>
-      </div>
-      <div class="store_bonus" v-else>
-        <div class="dart-fieldset banner">
-          <Skeleton width="100%" height="24rem" class="mb-2" borderRadius="16px"></Skeleton>
-          <div class="banner-desc">
-            <div class="vendor">
-              <Skeleton size="3rem" class="mr-2"></Skeleton>
-              <span><Skeleton width="2rem"></Skeleton></span>
-            </div>
-            <div class="customer">
-              <span>Поставщик: </span>
-              <span><Skeleton width="2rem" class="ml-2"></Skeleton></span>
-            </div>
-          </div>
-        </div>
-        <div class="dart-fieldset">
-          <span class="fieldset_label">Даты проведения</span>
-          <span class="fieldset_value"><Skeleton width="4rem"></Skeleton></span>
-        </div>
-        <div class="dart-fieldset" v-if="bonus.conditions">
-          <span class="fieldset_label">Условия участия</span>
-          <span class="fieldset_value">
-            <div class="conditions">
-              <Skeleton width="10rem"></Skeleton>
-            </div>
-          </span>
-        </div>
-        <div class="dart-fieldset" v-if="bonus.reward">
-          <span class="fieldset_label">Вознаграждение</span>
-          <span class="fieldset_value">
-            <div class="reward_block">
-              <div class="icon">
-                <mdicon name="wallet-giftcard" />
-              </div>
-              <div class="text">
-                <span><Skeleton width="10rem"></Skeleton></span>
-              </div>
-            </div>
-          </span>
-        </div>
-      </div>
+      <bonusFiles></bonusFiles>
+      <bonusParticipants></bonusParticipants>
+      <planNew></planNew>
+      <plan></plan>
     </div>
   </div>
 </template>
 
 <script>
+import { toRaw } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
+import bonusParticipants from '@/components/bonuses/participants'
+import bonusFiles from '@/components/bonuses/files'
+import planNew from '@/components/bonuses/plannew'
+import plan from '@/components/bonuses/plan'
 import Checkbox from 'primevue/checkbox'
 import Calendar from 'primevue/calendar'
 import PickList from 'primevue/picklist'
 import Dropdown from 'primevue/dropdown'
 import Toast from 'primevue/toast'
+import TreeSelect from 'primevue/treeselect'
+import MultiSelect from 'primevue/multiselect'
 import FileUpload from 'primevue/fileupload'
-import Skeleton from 'primevue/skeleton'
 
 export default {
   name: 'ProfileBonusEdit',
@@ -224,9 +147,12 @@ export default {
     return {
       loading: false,
       filter: '',
+      region: [],
       selected: [],
       form: {
-        files: []
+        files: [],
+        bonuses: [],
+        dates: []
       }
     }
   },
@@ -235,23 +161,31 @@ export default {
       'get_available_stores_from_api',
       'get_available_brands_from_api',
       'get_organization_from_api',
+      'get_regions_from_api',
       'get_bonus_from_api',
       'set_bonus_to_api',
-      'set_connection_to_api'
+      'set_connection_to_api',
+      'get_bonuses_from_api'
     ]),
     setFilter () {
-      if (this.filter.length > 3 || this.filter.length === 0) {
+      if (this.filter.length > 2 || this.filter.length === 0) {
         setTimeout(() => {
           const data = { filter: this.filter, selected: this.selected }
-          this.get_available_stores_from_api(data)
+          this.get_available_stores_from_api(data).then(() => {
+            this.bonus.stores = this.available_stores.items
+          })
         })
       }
     },
     saveData () {
       this.selected = this.bonus.stores[1]
     },
-    formSubmit (event) {
+    formEditSubmit (event) {
       this.loading = true
+      const dates = toRaw(this.form.dates)
+      dates[0] = dates[0].toDateString()
+      dates[1] = dates[1].toDateString()
+      // console.log(dates)
       this.$load(async () => {
         await this.set_bonus_to_api({
           action: 'set',
@@ -261,34 +195,19 @@ export default {
           name: this.bonus.name,
           stores: this.bonus.fstores,
           warehouses: this.bonus.fwarehouses,
+          auto: this.bonus.auto,
+          trigger_programs: this.form.trigger_programs,
           conditions: this.bonus.conditions,
           reward: this.bonus.reward,
           brand: this.bonus.brand_id,
-          files: this.form.files,
-          dates: this.bonus.dates,
-          store_ids: this.selected
+          region: this.region,
+          files: toRaw(this.form.files),
+          available_dates: dates,
+          store_ids: toRaw(this.selected)
         })
           .then((result) => {
             this.loading = false
-            router.push({ name: 'org_bonuses', params: { id: router.currentRoute._value.params.id } })
-          })
-          .catch((result) => {
-            console.log(result)
-          })
-      })
-    },
-    chellengeAccepted () {
-      this.loading = true
-      this.$load(async () => {
-        await this.set_connection_to_api({
-          action: 'set',
-          type: 'bonus_connection',
-          id: router.currentRoute._value.params.id,
-          bonus_id: router.currentRoute._value.params.bonus_id
-        })
-          .then((result) => {
-            this.loading = false
-            this.get_bonus_from_api({ id: router.currentRoute._value.params.bonus_id })
+            router.push({ name: 'org_ourbonuses', params: { id: router.currentRoute._value.params.id } })
           })
           .catch((result) => {
             console.log(result)
@@ -310,17 +229,42 @@ export default {
   mounted () {
     this.get_organization_from_api().then(() => {
       this.get_available_brands_from_api({ type: 'bonuses' })
-      this.get_bonus_from_api({ id: router.currentRoute._value.params.bonus_id })
+      this.get_bonus_from_api({ id: router.currentRoute._value.params.bonus_id }).then(() => {
+        this.selected = this.bonus.stores[1]
+        console.log(this.bonus.properties)
+        if (this.bonus.properties) {
+          const props = JSON.parse(this.bonus.properties)
+          if (Object.prototype.hasOwnProperty.call(props, 'region')) {
+            this.region = props.region
+          }
+        }
+      })
+      this.get_bonuses_from_api({
+        our: 1,
+        simple: 1,
+        bonusid: router.currentRoute._value.params.bonus_id,
+        page: this.page,
+        perpage: this.pagination_items_per_page
+      })
     })
+    this.get_regions_from_api()
   },
-  components: { Calendar, Dropdown, PickList, Checkbox, FileUpload, Toast, Skeleton },
+  components: { MultiSelect, bonusParticipants, plan, planNew, bonusFiles, Calendar, Dropdown, PickList, Checkbox, FileUpload, Toast, TreeSelect },
   computed: {
     ...mapGetters([
       'available_stores',
       'available_brands',
       'organization',
-      'bonus'
+      'bonus',
+      'getbonuses',
+      'getregions'
     ])
+  },
+  watch: {
+    bonus: function (newVal, oldVal) {
+      this.form.trigger_programs = newVal.trigger_programs
+      this.form.dates = newVal.dates
+    }
   }
 }
 </script>

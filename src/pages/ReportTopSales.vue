@@ -30,15 +30,12 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
-    },
-    page: {
-      type: Number,
-      default: 1
     }
   },
   data () {
     return {
       loading: true,
+      pahe: 1,
       filters: {
         name: {
           name: 'Наименование, артикул',
@@ -55,6 +52,18 @@ export default {
           name: 'Временной промежуток',
           placeholder: 'Выберите даты',
           type: 'range'
+        },
+        store_type: {
+          name: 'Тип организации',
+          placeholder: 'Выберите тип организации',
+          type: 'dropdown',
+          values: [{
+            name: 'Розница',
+            id: 1
+          }, {
+            name: 'Опт',
+            id: 2
+          }]
         },
         region: {
           name: 'Регион',

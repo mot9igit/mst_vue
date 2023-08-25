@@ -58,6 +58,18 @@ export default {
           type: 'tree',
           values: this.getcatalog
         },
+        store_type: {
+          name: 'Тип организации',
+          placeholder: 'Выберите тип организации',
+          type: 'dropdown',
+          values: [{
+            name: 'Розница',
+            id: 1
+          }, {
+            name: 'Опт',
+            id: 2
+          }]
+        },
         stores: {
           name: 'Магазин',
           placeholder: 'Выберите магазин',
@@ -74,7 +86,12 @@ export default {
       table_data: {
         name: {
           label: 'Наименование',
-          type: 'text',
+          type: 'link',
+          link_to: 'org_reports_available_stores',
+          link_params: {
+            id: this.$route.params.id,
+            region_id: 'id'
+          },
           sort: true
         },
         population: {
@@ -107,9 +124,11 @@ export default {
       'get_catalog_from_api',
       'get_vendors_from_api',
       'get_stores_from_api',
-      'get_warehouses_from_api'
+      'get_warehouses_from_api',
+      'unset_dataavailable'
     ]),
     filter (data) {
+      this.unset_dataavailable()
       this.loading = true
       this.get_dataavailable_from_api(data).then(
         result => {
@@ -122,6 +141,7 @@ export default {
       )
     },
     paginate (data) {
+      this.unset_dataavailable()
       this.loading = true
       this.get_dataavailable_from_api(data).then(
         result => {
@@ -172,7 +192,16 @@ export default {
       'getvendors',
       'getstores',
       'getwarehouses'
-    ])
+    ]),
+    organization_type: function () {
+      return [{
+        name: 'Розница',
+        value: 1
+      }, {
+        name: 'Опт',
+        value: 2
+      }]
+    }
   },
   watch: {
     getregions: function (newVal, oldVal) {

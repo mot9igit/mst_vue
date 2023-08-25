@@ -16,7 +16,7 @@
               <template v-slot:title>Планирование отгрузки</template>
               <form action="#" @submit.prevent="formSubmit">
                 <div class="shipping-form">
-                  <div class="dart-form-group">
+                  <div class="dart-form-group" :class="{ error: v$.form.selectedStores.$errors.length }">
                     <label for="">Выберите магазины</label>
                     <AutoComplete
                       v-model="form.selectedStores"
@@ -27,10 +27,13 @@
                       placeholder='Начните вводить наименование магазина'
                       @complete="searchStore($event)"
                     />
+                    <span class="error_desc" v-for="error of v$.form.selectedStores.$errors" :key="error.$uid">
+                      {{ error.$message }}
+                    </span>
                   </div>
                   <div class="dart-row">
                     <div class="d-col-md-12">
-                      <div class="dart-form-group">
+                      <div class="dart-form-group"  :class="{ error: v$.form.timeSelected.repeater.$errors.length }">
                         <label for="">Повторять</label>
                         <Dropdown
                           v-model="form.timeSelected.repeater"
@@ -39,6 +42,9 @@
                           optionValue="value"
                           placeholder="Выберите период повторения"
                         />
+                        <span class="error_desc" v-for="error of v$.form.timeSelected.repeater.$errors" :key="error.$uid">
+                          {{ error.$message }}
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -68,12 +74,12 @@
                       </div>
                     </div>
                   </div>
-                  <div class="dart-form-group">
+                  <div class="dart-form-group"  :class="{ error: v$.form.timeSelected.range.$errors.length }">
                     <label for="">В период</label>
                     <DatePicker
-                      v-model="form.timeSelected.range"
+                      :modelValue="form.timeSelected.range"
+                      :masks="{ weekdays: 'WW' }"
                       mode="date"
-                      :masks="masks"
                       is-range
                     >
                       <template v-slot="{ inputValue, inputEvents, isDragging }">
@@ -97,6 +103,9 @@
                         </div>
                       </template>
                     </DatePicker>
+                    <span class="error_desc" v-for="error of v$.form.timeSelected.range.$errors" :key="error.$uid">
+                      {{ error.$message }}
+                    </span>
                   </div>
                 </div>
                 <button class="dart-btn dart-btn-primary dart-btn-block dart-mt-1" type="submit">ДОБАВИТЬ ОТГРУЗКУ</button>
@@ -109,30 +118,29 @@
   </div>
   <div class="dart-row">
     <div class="d-col-md-8">
-      <div class="profile-content b-wrap">
-        <Calendar
-          is-expanded
-          title-position="left"
-          :attributes="attributes"
-          :masks="{ weekdays: 'WW' }"
-          v-model="checkDate"
-          @dayclick='dayClicked'
-        />
-      </div>
+      <Calendar
+        is-expanded
+        title-position="left"
+        :attributes="attributes"
+        :masks="{ weekdays: 'WW' }"
+        :modelValue="checkDate"
+        @dayclick='dayClicked'
+      />
     </div>
-    <div class="d-col-md-4">
+    <div class="d-col-md-12 dart-mt-2">
       <div class="profile-content b-wrap">
         <div class="products">
           <v-table
+            :filters="this.filters"
             :items_data="shipping.shipment"
             :total="shipping.total"
             :pagination_items_per_page="this.pagination_items_per_page"
             :pagination_offset="this.pagination_offset"
             :page="this.page"
             :table_data="this.table_data"
-            :show_filter="false"
             title="Отгрузки"
             @filter="filter"
+            @sort="filter"
             @paginate="paginate"
           />
         </div>
@@ -143,6 +151,8 @@
 
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
+import { useVuelidate } from '@vuelidate/core'
+import { required } from '@/utils/i18n-validators'
 import router from '@/router'
 import AutoComplete from 'primevue/autocomplete'
 import Dropdown from 'primevue/dropdown'
@@ -162,35 +172,13 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
-    },
-    page: {
-      type: Number,
-      default: 1
     }
   },
   data () {
     return {
-      selectedDay: null,
-      table_data: {
-        dilers: {
-          label: 'Дилер',
-          type: 'text'
-        },
-        date: {
-          label: 'Дата',
-          type: 'text'
-        }
-      },
-      attributes: [
-        {
-          key: 'today',
-          highlight: 'red',
-          dates: new Date()
-        }
-        // this.shipping.dates
-      ],
-      showShippingModal: false,
+      checkDate: null,
       form: {
+        loading: false,
         selectedStores: null,
         filteredStores: null,
         filter: '',
@@ -247,13 +235,82 @@ export default {
           days: null,
           range: null
         }
-      }
+      },
+      selectedDay: null,
+      page: 1,
+      table_data: {
+        date: {
+          label: 'Дата',
+          type: 'text'
+        },
+        store_name: {
+          label: 'Дилер',
+          type: 'text'
+        },
+        city_name: {
+          label: 'Город',
+          type: 'text'
+        },
+        weight: {
+          label: 'Объем товаров, кг',
+          type: 'text'
+        },
+        count: {
+          label: 'Кол-во товаров, шт',
+          type: 'text'
+        },
+        status: {
+          label: 'Статус',
+          type: 'status'
+        }
+      },
+      filters: {
+        region: {
+          name: 'Регион',
+          placeholder: 'Выберите регион',
+          type: 'tree',
+          values: this.getregions
+        },
+        store: {
+          name: 'Магазин',
+          type: 'dropdown',
+          optionLabel: 'label',
+          optionValue: 'value',
+          placeholder: 'Магазин',
+          values: []
+        },
+        range: {
+          name: 'Временной промежуток',
+          placeholder: 'Выберите даты',
+          range: 'all',
+          type: 'range'
+        },
+        status: {
+          name: 'Статус',
+          type: 'dropdown',
+          optionLabel: 'name',
+          optionValue: 'id',
+          placeholder: 'Статус',
+          values: this.shipping_statuses
+        }
+      },
+      attributes: [
+        {
+          key: 'today',
+          highlight: 'red',
+          dates: new Date()
+        }
+        // this.shipping.dates
+      ],
+      showShippingModal: false
     }
   },
   methods: {
     ...mapActions([
       'get_shipping_from_api',
-      'set_shipping_to_api'
+      'set_shipping_to_api',
+      'get_regions_from_api',
+      'get_shipping_statuses'
     ]),
     ...mapMutations([
       'SET_SHIPPING'
@@ -269,20 +326,25 @@ export default {
         this.form.filteredStores = data.data.data.stores
       })
     },
-    formSubmit (event) {
-      this.$load(async () => {
-        await this.set_shipping_to_api({
-          action: 'set',
-          id: router.currentRoute._value.params.id,
-          type: router.currentRoute._value.params.type,
-          timing: this.form.timeSelected,
-          stores: this.form.selectedStores
+    async formSubmit (event) {
+      const result = await this.v$.$validate()
+      if (!result) {
+        console.log(result)
+      } else {
+        this.$load(async () => {
+          await this.set_shipping_to_api({
+            action: 'set',
+            id: router.currentRoute._value.params.id,
+            type: router.currentRoute._value.params.type,
+            timing: this.form.timeSelected,
+            stores: this.form.selectedStores
+          })
+          this.attributes.pop()
+          this.attributes.push(this.shipping.dates)
+          this.showShippingModal = false
+          this.formReset()
         })
-        this.attributes.pop()
-        this.attributes.push(this.shipping.dates)
-        this.showShippingModal = false
-        this.formReset()
-      })
+      }
     },
     formReset () {
       this.form.timeSelected.repeater = null
@@ -297,11 +359,52 @@ export default {
         end: day
       }
       this.showShippingModal = true
+    },
+    filter (data) {
+      console.log(data)
+      if (typeof data.filtersdata.range === 'undefined' && data.filtersdata.range === null) {
+        data.filtersdata.dates = []
+        if (data.filtersdata.range[0]) {
+          const d = data.filtersdata.range[0]
+          data.filtersdata.dates.push(d.toDateString())
+        }
+        if (data.filtersdata.range[1]) {
+          const d = data.filtersdata.range[1]
+          data.filtersdata.dates.push(d.toDateString())
+        }
+      }
+      if (typeof data.filtersdata.status === 'undefined' && data.filtersdata.status === null) {
+        data.filtersdata.status = 0
+      }
+      console.log(data)
+      this.loading = true
+      this.get_shipping_from_api(data).then(
+        result => {
+          this.loading = false
+        },
+        error => {
+          // alert error
+          console.log('Произошла ошибка' + error)
+        }
+      )
+    },
+    paginate (data) {
+      this.loading = true
+      this.page = data.page
+      this.get_shipping_from_api(data).then(
+        result => {
+          this.loading = false
+        },
+        error => {
+          // alert error
+          console.log('Произошла ошибка ' + error)
+        }
+      )
     }
   },
   mounted () {
     this.$load(async () => {
-      await this.get_shipping_from_api()
+      await this.get_shipping_from_api({ filter: [] })
       this.attributes.push(this.shipping.dates)
     })
     this.$load(async () => {
@@ -310,7 +413,14 @@ export default {
         type: router.currentRoute._value.params.type
       })
       this.form.filteredStores = data.data.data.stores
+      this.filters.store.values = data.data.data.stores
     })
+    this.get_regions_from_api().then(
+      // this.filters.region.values = this.getregions
+    )
+    this.get_shipping_statuses().then(
+      // this.filters.status.values = this.shipping_statuses
+    )
   },
   components: {
     Dropdown,
@@ -323,19 +433,61 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'shipping'
+      'shipping',
+      'getregions',
+      'shipping_statuses'
     ])
+  },
+  setup () {
+    return { v$: useVuelidate() }
+  },
+  validations () {
+    return {
+      form: {
+        timeSelected: {
+          range: { required },
+          repeater: { required }
+        },
+        selectedStores: { required }
+      }
+    }
+  },
+  watch: {
+    getregions: function (newVal, oldVal) {
+      this.filters.region.values = newVal
+    },
+    shipping_statuses: function (newVal, oldVal) {
+      this.filters.status.values = newVal
+    }
   }
 }
 </script>
 
 <style lang="scss">
+.vc-container{
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 5px;
+}
 .shipping-form{
   overflow: hidden;
 }
 .dart-form-group{
   display: flex;
   flex-wrap: wrap;
+  &.error{
+    .p-inputwrapper,
+    .dart-form-control{
+      border: 1px solid #f00;
+      border-radius: 6px;
+      .p-inputtext{
+        border: none;
+      }
+    }
+    span.error_desc{
+      color: #e24c4c;
+      font-size: 12px
+    }
+  }
   & > *{
     width: 100%;
   }

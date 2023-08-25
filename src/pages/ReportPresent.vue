@@ -9,15 +9,36 @@
       :table_data="this.table_data"
       :filters="this.filters"
       title="План по первичной представленности"
+      @clickElem="clickElem"
       @filter="filter"
       @sort="filter"
       @paginate="paginate"
-    />
+    >
+      <template v-slot:widgets>
+        <div class="plan_values">
+          <span class="plan_values__title">{{ present.summary.plan_field }}</span>
+          <div class="plan_values__content">
+            <div class="plan_values__chart">
+              <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-5rem" />
+            </div>
+            <div class="plan_values__val">
+              <span class="label">Значение показателя (факт):</span>
+              <span class="value">{{ present.summary.fact }}</span>
+            </div>
+            <div class="plan_values__val">
+              <span class="label">Значение показателя (план):</span>
+              <span class="value">{{ present.summary.plan }}</span>
+            </div>
+          </div>
+        </div>
+      </template>
+    </v-table>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import Chart from 'primevue/chart'
 import vTable from '../components/table/v-table'
 
 export default {
@@ -61,7 +82,7 @@ export default {
       table_data: {
         name: {
           label: 'Наименование торговой точки',
-          type: 'text',
+          type: 'clickevent',
           sort: true
         },
         region: {
@@ -101,8 +122,13 @@ export default {
     ...mapActions([
       'get_datapresent_from_api',
       'get_regions_from_api',
-      'get_matrixes_from_api'
+      'get_matrixes_from_api',
+      'unset_storedata_data',
+      'get_storedata_from_api'
     ]),
+    clickElem (data) {
+      console.log(data)
+    },
     filter (data) {
       this.loading = true
       this.get_datapresent_from_api(data).then(
@@ -148,12 +174,13 @@ export default {
       this.filters.matrix.values = this.getmatrixes
     )
   },
-  components: { vTable },
+  components: { vTable, Chart },
   computed: {
     ...mapGetters([
       'getregions',
       'getmatrixes',
-      'present'
+      'present',
+      'getstoredata'
     ])
   },
   watch: {

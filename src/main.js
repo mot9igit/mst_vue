@@ -3,8 +3,7 @@ import store from './store'
 import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
-import Paginate from 'vuejs-paginate-next'
-
+import { i18n } from './i18n'
 import mdiVue from 'mdi-vue/v3'
 import * as mdijs from '@mdi/js'
 import PrimeVue from 'primevue/config'
@@ -13,7 +12,6 @@ import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
 
 import { SetupCalendar } from 'v-calendar'
-import breadcrumbs from 'vue-3-breadcrumbs'
 
 import ApiPlugin from './plugins/api'
 import LoadPlugin from './plugins/load'
@@ -23,11 +21,11 @@ import '@/assets/styles.scss'
 const app = createApp(App)
 
 app
+  .use(i18n)
   .use(store)
   .use(router)
   .use(ApiPlugin)
   .use(LoadPlugin)
-  .use(Paginate)
   .use(mdiVue, {
     icons: mdijs
   })
@@ -153,11 +151,13 @@ app
       }
     }
   })
-  .use(breadcrumbs, {
-    includeComponent: true
-  })
-  .use(PrimeVue)
   .use(ToastService)
   .use(ConfirmationService)
   .component('AutoComplete', AutoComplete)
   .mount('#app')
+
+app.config.globalProperties.$filters = {
+  round (value) {
+    return value.toFixed(2)
+  }
+}
