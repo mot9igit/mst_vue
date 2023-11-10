@@ -112,6 +112,16 @@ const routes = [
             component: ProductsAssortmentMain
           }]
         }, {
+          path: 'assortment',
+          component: OrganizationsLoyout,
+          children: [{
+            path: '',
+            name: 'org_assortment',
+            props: true,
+            label: 'Ассортимент',
+            component: ProductsAssortmentMain
+          }]
+        }, {
           path: 'profile',
           name: 'org_profile',
           component: ProfileProfile
@@ -163,6 +173,10 @@ const routes = [
               component: DilerProducts
             }]
           }]
+        }, {
+          path: 'docs',
+          name: 'org_docs',
+          component: ProfileDocs
         }, {
           path: 'docs',
           name: 'org_docs',
@@ -226,6 +240,19 @@ const routes = [
             path: 'present',
             name: 'org_reports_present',
             component: ReportPresent
+          }]
+        }, {
+          path: 'available',
+          children: [{
+            path: '',
+            name: 'org_reports_available',
+            component: ReportAvailable
+          }, {
+            path: ':region_id',
+            name: 'org_reports_available_stores',
+            props: true,
+            label: 'Страница региона',
+            component: ReportAvailableStores
           }]
         }, {
           path: 'available',

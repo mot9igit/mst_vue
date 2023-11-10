@@ -657,6 +657,38 @@ export default {
           }
         })
     },
+    // Для первичной представленности, модальные окна
+    get_storedata_from_api ({ commit }, { storeId, reportId, page, perpage }) {
+      let store = 0
+      if (storeId) {
+        store = storeId
+      } else {
+        store = router.currentRoute._value.params.id
+      }
+      const data = {
+        id: store,
+        report_id: reportId,
+        type: 'storedata',
+        page: page,
+        perpage: perpage
+      }
+      return Axios('/rest/front_getobjects', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_STOREDATA_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
     get_akbdotsplan_from_api ({ commit }, { sort, page, perpage }) {
       const data = {
         id: router.currentRoute._value.params.id,

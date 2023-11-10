@@ -43,6 +43,7 @@
     </div>
     <div class="cell_value" :class="cell_key == 'actions' ? 'actions' : ''" v-else-if="cell_data.type == 'actions'">
       <span class="p-buttonset">
+        <Button :label="row.label" :icon="row.icon" v-for="(row, index) in cell_data.available" :key="index" severity="secondary" text @click="actionElem(index)"/>
         <Button :label="row.label" :icon="row.icon" v-for="(row, index) in cell_data.available" :key="index" severity="secondary" text @click="actionElem(index)">
           <i :class="row.icon"></i>
         </Button>

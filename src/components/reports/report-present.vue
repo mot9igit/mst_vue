@@ -168,8 +168,8 @@ export default {
       'getregions',
       'getreports',
       'getreport',
-      'getstoredata',
       'unset_storedata_data',
+      'getstoredata',
       'get_storedata_from_api'
     ])
   },

@@ -211,37 +211,37 @@ export default {
             icon: 'd_icon d_icon-cog',
             to: { name: 'org_dilers', params: { id: this.$route.params.id } }
           }, {
-            key: '6',
+            key: '7',
             label: 'Мои оптовики',
             icon: 'd_icon d_icon-cog',
             to: { name: 'org_opts', params: { id: this.$route.params.id } }
           }, {
-            key: '7',
+            key: '8',
             label: 'Отгрузки',
             icon: 'd_icon d_icon-truck',
             to: { name: 'org_shipping', params: { id: this.$route.params.id } }
           }, {
-            key: '8',
+            key: '9',
             label: 'АКБ',
             icon: 'd_icon d_icon-star',
             to: { name: 'org_akb', params: { id: this.$route.params.id } }
           }, {
-            key: '9',
+            key: '10',
             label: 'Наличие товара',
             icon: 'd_icon d_icon-star',
             to: { name: 'org_reports_available', params: { id: this.$route.params.id } }
           }, {
-            key: '10',
+            key: '11',
             label: 'Мастер отчетов',
             icon: 'd_icon d_icon-analytics',
             to: { name: 'org_reports', params: { id: this.$route.params.id } }
           }, {
-            key: '11',
+            key: '12',
             label: 'Ключевые матрицы',
             icon: 'd_icon d_icon-key',
             to: { name: 'org_matrix', params: { id: this.$route.params.id } }
           }, {
-            key: '12',
+            key: '13',
             label: 'Документы',
             icon: 'd_icon d_icon-file-document',
             to: { name: 'org_docs', params: { id: this.$route.params.id } }
