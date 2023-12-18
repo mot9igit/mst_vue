@@ -1,18 +1,18 @@
 <template>
-  <header class="dart_header_mst">
-      <div class="wrap">
-        <router-link
-          :to="{ name: 'home' }"
-          class="logo"
-        >
-          МСТ Аналитика
-        </router-link>
-        <a href="#" class="logout" @click="onAuthBtnClick">
-          <span>Выйти</span>
-          <mdicon name="logout" />
-        </a>
-      </div>
-    </header>
+  <div class="dart_header_mst">
+    <div class="wrap">
+      <a href="#" class="menu" @click="clickMenu">
+        <mdicon name="menu" />
+      </a>
+      <a href="#" class="logo">
+        <img src="/img/logo_dark.svg" alt="">
+      </a>
+      <a href="#" class="logout" @click="onAuthBtnClick">
+        <span>Выйти</span>
+        <mdicon name="logout" />
+      </a>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -20,6 +20,15 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   name: 'MainHeader',
+  emits: ['clickMenu'],
+  props: {
+    active: {
+      type: Boolean,
+      default: () => {
+        return false
+      }
+    }
+  },
   computed: {
     ...mapGetters({
       getUser: 'user/getUser'
@@ -42,6 +51,9 @@ export default {
       } else {
         this.$router.push({ name: 'home' })
       }
+    },
+    clickMenu () {
+      this.$emit('clickMenu')
     }
   }
 }
@@ -50,27 +62,23 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="scss">
 .dart_header_mst{
-  z-index: 101;
   flex: 0 0 auto;
-  position: fixed;
   width: 100%;
   padding: 0;
   background: #F3F3F3;
   .wrap{
+    min-height: 55px;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
   }
+  .menu{
+    display: none;
+    padding: 0 15px;
+  }
   .logo{
-    display: inline-block;
-    min-width: 350px;
-    padding: 10px 15px;
-    background: #282828;
-    font-size: 1.25rem;
-    text-decoration: none;
-    white-space: nowrap;
-    display: block;
-    color: #fff;
+    display: none;
+    padding: 0 15px;
   }
   .logout{
     display: inline-block;
@@ -80,6 +88,25 @@ export default {
     span{
       display: inline-block;
       margin-right: 10px;
+    }
+  }
+}
+@media (max-width: 991px) {
+  .dart_header_mst{
+    .wrap{
+      justify-content: space-between;
+      .menu,
+      .logo{
+        display: block;
+        img{
+          max-height: 40px;
+        }
+      }
+      .logout{
+        span:first-child{
+          display: none;
+        }
+      }
     }
   }
 }

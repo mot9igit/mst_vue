@@ -118,28 +118,28 @@ export default {
             readonly: 1
           },
           {
-            name: 'rs',
+            name: 'bank_number',
             label: 'Расчетный счет',
             placeholder: '7785612544545',
             type: 'text',
             readonly: 1
           },
           {
-            name: 'ks',
+            name: 'bank_knumber',
             label: 'Корреспондентский счет',
             placeholder: '7785612544545',
             type: 'text',
             readonly: 1
           },
           {
-            name: 'bik',
+            name: 'bank_bik',
             label: 'БИК',
             placeholder: '12345678',
             type: 'text',
             readonly: 1
           },
           {
-            name: 'bik',
+            name: 'bank_name',
             label: 'Банк',
             placeholder: 'ПАО "Сбербанк"',
             type: 'text',

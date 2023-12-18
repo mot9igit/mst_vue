@@ -7,22 +7,34 @@
   </div>
   <teleport to="body">
     <custom-modal v-model="showCodeModal">
-      <template v-slot:title>Подтверждение выдачи товара</template>
-      <form action="#" @submit.prevent="formSubmit">
-        <div class="form_input_group">
-          <label for="">Код выдачи товара</label>
-          <input type="text" v-model="code" class="dart-form-control" name="code" placeholder="Код"/>
-        </div>
-        <button class="dart-btn dart-btn-primary dart-btn-block dart-mt-1" type="submit">Подтвердить</button>
-      </form>
+      <template v-slot:title>
+        <div v-if="success_all">Выдача товара подтверждена</div>
+        <div v-else>Подтверждение выдачи товара</div>
+      </template>
+      <div v-if="success_all">
+        <div class="dart-alert dart-alert-success"> {{ response.message }} </div>
+      </div>
+      <div v-else>
+        <div class="dart-alert dart-alert-info">Запросите код выдачи у пользователя и введите в соответствующее поле.</div>
+        <form action="#" @submit.prevent="formSubmit">
+          <div class="dart-form-group" :class="{ error: !response.success }">
+            <label for="">Код выдачи товара</label>
+            <input type="text" v-model="code" class="dart-form-control" name="code" placeholder="Код"/>
+            <span class="error_desc" v-if="!response.success">
+              {{ response.message }}
+            </span>
+          </div>
+          <button class="dart-btn dart-btn-primary dart-btn-block dart-mt-1" type="submit">Подтвердить</button>
+        </form>
+      </div>
     </custom-modal>
   </teleport>
   <div class="block-header">
     <div class="dart-row dart-align-items-center">
       <div class="d-col-md-4">
         <span class="block-header__title">Заказ №{{ order.num }}</span>
-        <div class="block-header__description">
-          <b>{{ order.description }}</b>
+        <div class="block-header__description" v-if="order.stage_description">
+          <b>{{ order.stage_description }}</b>
         </div>
       </div>
       <div class="d-col-md-8">
@@ -31,13 +43,13 @@
           <a href="#" class="dart-btn dart-btn-primary" :disabled="isLoading == true" :class="{ 'dart-btn-loading': isLoading }" @click.prevent="showCodeModal = true">Выдать товар</a>
         </div>
         -->
-        <div class="block-header__buttons" v-if="order.stores_available != 0 && type == 'slStores'">
+        <div class="block-header__buttons" v-if="order.stores_available != 0 && organization.store">
           <!--<a href="#" class="dart-btn dart-btn-primary-outline">Отменить заказ</a>-->
-          <a href="#" class="dart-btn dart-btn-primary" :disabled="isLoading == true" :class="{ 'dart-btn-loading': isLoading }" @click="change_ststatus">{{ order.transition_anchor }}</a>
+          <a href="#" class="dart-btn dart-btn-primary" :disabled="isLoading == true" :class="{ 'dart-btn-loading': isLoading }" @click="order.stage_check_code? check_code() : change_ststatus()" >{{ order.transition_anchor }}</a>
         </div>
-        <div class="block-header__buttons" v-if="order.warehouses_available != 0 && type == 'slWarehouse'">
+        <div class="block-header__buttons" v-if="order.warehouses_available != 0 && (organization.warehouse && organization.vendor)">
           <!--<a href="#" class="dart-btn dart-btn-primary-outline">Отменить заказ</a>-->
-          <a href="#" class="dart-btn dart-btn-primary" :disabled="isLoading == true" :class="{ 'dart-btn-loading': isLoading }" @click="change_ststatus">{{ order.transition_anchor }}</a>
+          <a href="#" class="dart-btn dart-btn-primary" :disabled="isLoading == true" :class="{ 'dart-btn-loading': isLoading }" @click="order.stage_check_code? check_code() : change_ststatus()">{{ order.transition_anchor }}</a>
         </div>
       </div>
     </div>
@@ -52,7 +64,7 @@
           <div class="d-col-md-6">
             <div class="item">
               <span class="label">Покупатель</span>
-              <span class="value">{{ order.customer_username? order.customer_username : order.customer }}</span>
+              <span class="value">{{ order.receiver }}</span>
             </div>
           </div>
           <div class="d-col-md-6" v-if="order.address">
@@ -81,13 +93,13 @@
           </div>
           <div class="d-col-md-6">
             <div class="item">
-              <span class="label">Дилер</span>
+              <span class="label">Магазин</span>
               <span class="value">{{ store.name }}</span>
             </div>
           </div>
           <div class="d-col-md-6">
             <div class="item">
-              <span class="label">Адрес дилера</span>
+              <span class="label">Адрес магазина</span>
               <span class="value">{{ store.address }}</span>
             </div>
           </div>
@@ -138,6 +150,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import router from '@/router'
 import customModal from '@/components/popup/CustomModal'
 
 export default {
@@ -145,17 +158,42 @@ export default {
   props: { },
   data () {
     return {
+      success_all: false,
+      code: '',
       showCodeModal: false,
       isLoading: false,
       type: this.$route.params.type,
-      id: this.$route.params.id
+      id: this.$route.params.id,
+      response: {
+        success: true,
+        message: ''
+      }
     }
   },
   methods: {
     ...mapActions([
+      'get_organization_from_api',
       'get_order_from_api',
       'change_status'
     ]),
+    check_code () {
+      this.showCodeModal = true
+    },
+    formSubmit () {
+      this.$load(async () => {
+        const data = await this.$api.checkCode.get({
+          code: this.code,
+          type: 'code/check',
+          id: router.currentRoute._value.params.id,
+          order_id: router.currentRoute._value.params.order_id
+        })
+        this.response = data.data.data
+        if (this.response.success) {
+          this.success_all = true
+          this.change_ststatus()
+        }
+      })
+    },
     change_ststatus () {
       this.isLoading = !false
       this.change_status().then(res => {
@@ -166,20 +204,57 @@ export default {
     }
   },
   mounted () {
-    this.get_order_from_api()
+    this.get_organization_from_api().then(() => {
+      this.get_order_from_api()
+    })
   },
   components: { customModal },
   computed: {
     ...mapGetters([
       'order',
       'store',
-      'order_products'
+      'order_products',
+      'organization'
     ])
   }
 }
 </script>
 
 <style lang="scss">
+.dart-form-group{
+  display: flex;
+  flex-wrap: wrap;
+  &.error{
+    .p-inputwrapper,
+    .dart-form-control{
+      border: 1px solid #f00;
+      border-radius: 6px;
+      .p-inputtext{
+        border: none;
+      }
+    }
+    span.error_desc{
+      color: #e24c4c;
+      font-size: 12px
+    }
+  }
+  & > *{
+    width: 100%;
+  }
+  .p-autocomplete{
+    flex: 0 0 100%;
+  }
+  label{
+    display: block;
+    margin-bottom: 5px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.3;
+    letter-spacing: 0.25px;
+    color: #ADADAD;
+  }
+}
 .block-header{
   position: relative;
   margin-bottom: 30px;
@@ -209,6 +284,10 @@ export default {
     justify-content: flex-end;
     .dart-btn + .dart-btn{
       margin-left: 10px;
+    }
+    .desc{
+      display: block;
+      width: 100%
     }
   }
 }

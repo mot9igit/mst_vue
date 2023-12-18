@@ -24,6 +24,7 @@
                       :multiple="true"
                       :dropdown="true"
                       optionLabel="label"
+                      dataKey="value"
                       placeholder='Начните вводить наименование магазина'
                       @complete="searchStore($event)"
                     />
@@ -138,15 +139,44 @@
             :pagination_offset="this.pagination_offset"
             :page="this.page"
             :table_data="this.table_data"
+            :editMode="this.editMode"
             title="Отгрузки"
             @filter="filter"
+            @setAllCheck="setAll"
             @sort="filter"
             @paginate="paginate"
-          />
+            @clickElem="clickElem"
+            @checkElem="checkElem"
+          >
+            <template v-slot:button>
+              <div v-if="editMode">
+                <button class="dart-btn dart-btn-secondary" @click="toggleEditMode()">Отменить</button>
+              </div>
+              <div v-else>
+                <button class="dart-btn dart-btn-primary" type="submit" @click="toggleEditMode()">Редактировать</button>
+              </div>
+            </template>
+          </v-table>
         </div>
       </div>
     </div>
   </div>
+  <teleport to="body">
+    <custom-modal v-model="showShipModal" @close="closeShipModal" class="plan-modal">
+      <template v-slot:title>Отгрузка товаров магазина {{ modal.store_name }} на {{ modal.store_date }}</template>
+      <div>
+        <v-table
+          :items_data="getshipdata.items"
+          :total="getshipdata.total"
+          :pagination_items_per_page="this.pagination_items_per_page"
+          :pagination_offset="this.pagination_offset"
+          :page="this.ship_page"
+          :table_data="this.table_modal_data"
+          @paginate="paginateModal"
+        />
+      </div>
+    </custom-modal>
+  </teleport>
 </template>
 
 <script>
@@ -176,7 +206,14 @@ export default {
   },
   data () {
     return {
+      editMode: false,
+      showShipModal: false,
+      modal: {
+        store_name: '',
+        store_date: ''
+      },
       checkDate: null,
+      shipping_values: {},
       form: {
         loading: false,
         selectedStores: null,
@@ -238,14 +275,38 @@ export default {
       },
       selectedDay: null,
       page: 1,
+      ship_page: 1,
+      table_modal_data: {
+        image: {
+          label: '',
+          type: 'image'
+        },
+        name: {
+          label: 'Товар',
+          type: 'text'
+        },
+        count: {
+          label: 'Кол-во',
+          type: 'text'
+        },
+        price: {
+          label: 'Цена',
+          type: 'text'
+        }
+      },
       table_data: {
+        check: {
+          label: '',
+          checked: false,
+          type: 'editmode'
+        },
         date: {
           label: 'Дата',
           type: 'text'
         },
         store_name: {
           label: 'Дилер',
-          type: 'text'
+          type: 'clickevent'
         },
         city_name: {
           label: 'Город',
@@ -310,11 +371,23 @@ export default {
       'get_shipping_from_api',
       'set_shipping_to_api',
       'get_regions_from_api',
-      'get_shipping_statuses'
+      'get_shipping_statuses',
+      'get_ship_data_api',
+      'unset_ship_data'
     ]),
     ...mapMutations([
-      'SET_SHIPPING'
+      'SET_SHIPPING_CHECK',
+      'SET_SHIPPING_CHECK_ONE'
     ]),
+    checkElem (data) {
+      this.SET_SHIPPING_CHECK_ONE(data, { root: true })
+    },
+    toggleEditMode () {
+      this.editMode = !this.editMode
+    },
+    setAll (data) {
+      this.SET_SHIPPING_CHECK(data, { root: true })
+    },
     searchStore (event) {
       this.$load(async () => {
         const data = await this.$api.getStores.get({
@@ -346,6 +419,22 @@ export default {
         })
       }
     },
+    clickElem (data) {
+      console.log(data)
+      this.get_ship_data_api({
+        shipid: data.id,
+        page: this.ship_page,
+        perpage: this.pagination_items_per_page
+      })
+      this.modal.store_name = data.dilers
+      this.modal.store_date = data.date
+      this.showShipModal = true
+    },
+    closeShipModal () {
+      this.modal.store_name = ''
+      this.modal.store_date = ''
+      this.unset_ship_data()
+    },
     formReset () {
       this.form.timeSelected.repeater = null
       this.form.timeSelected.weeks = null
@@ -362,21 +451,23 @@ export default {
     },
     filter (data) {
       console.log(data)
-      if (typeof data.filtersdata.range === 'undefined' && data.filtersdata.range === null) {
-        data.filtersdata.dates = []
-        if (data.filtersdata.range[0]) {
-          const d = data.filtersdata.range[0]
-          data.filtersdata.dates.push(d.toDateString())
+      if (typeof data.filtersdata !== 'undefined') {
+        if (typeof data.filtersdata.range !== 'undefined' && data.filtersdata.range !== null) {
+          data.filtersdata.dates = []
+          if (data.filtersdata.range[0]) {
+            const d = data.filtersdata.range[0]
+            data.filtersdata.dates.push(d.toDateString())
+          }
+          if (data.filtersdata.range[1]) {
+            const d = data.filtersdata.range[1]
+            data.filtersdata.dates.push(d.toDateString())
+          }
         }
-        if (data.filtersdata.range[1]) {
-          const d = data.filtersdata.range[1]
-          data.filtersdata.dates.push(d.toDateString())
+        if (typeof data.filtersdata.status === 'undefined' && data.filtersdata.status === null) {
+          data.filtersdata.status = 0
         }
       }
-      if (typeof data.filtersdata.status === 'undefined' && data.filtersdata.status === null) {
-        data.filtersdata.status = 0
-      }
-      console.log(data)
+      // console.log(data)
       this.loading = true
       this.get_shipping_from_api(data).then(
         result => {
@@ -392,6 +483,19 @@ export default {
       this.loading = true
       this.page = data.page
       this.get_shipping_from_api(data).then(
+        result => {
+          this.loading = false
+        },
+        error => {
+          // alert error
+          console.log('Произошла ошибка ' + error)
+        }
+      )
+    },
+    paginateModal (data) {
+      this.loading = true
+      this.ship_page = data.page
+      this.get_ship_data_api(data).then(
         result => {
           this.loading = false
         },
@@ -435,7 +539,8 @@ export default {
     ...mapGetters([
       'shipping',
       'getregions',
-      'shipping_statuses'
+      'shipping_statuses',
+      'getshipdata'
     ])
   },
   setup () {
@@ -458,6 +563,9 @@ export default {
     },
     shipping_statuses: function (newVal, oldVal) {
       this.filters.status.values = newVal
+    },
+    shipping: function (newVal, oldVal) {
+      this.shipping_values = newVal
     }
   }
 }

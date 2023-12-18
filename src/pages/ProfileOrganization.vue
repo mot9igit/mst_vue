@@ -25,7 +25,7 @@
               <span class="num">{{ orders.count }} шт.</span>
             </div>
           </div>
-          <div class="d-col-md-8" v-if="products.all">
+          <div class="d-col-md-6" v-if="over_products.all">
             <div class="panel-widget panel-widget-remains">
                 <div class="panel-widget-remains__graph">
                   <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-5rem" />
@@ -52,6 +52,13 @@
                     </div>
                   </div>
                 </div>
+            </div>
+          </div>
+          <div class="d-col-md-2" v-for="item in organization.brands" :key="item.id">
+            <div class="panel-widget panel-widget-summ">
+              <span> {{ item.name }} </span>
+              <span class="sum">{{ item.count }} шт.</span>
+              <span class="num">Кол-во сопоставленных товаров по бренду {{ item.name }}</span>
             </div>
           </div>
           <div class="d-col-md-3" v-if="organization.type != 1">
@@ -315,6 +322,11 @@ export default {
           type: 'text',
           sort: true
         },
+        sales_30: {
+          label: 'Продаж за 30 дней',
+          type: 'text',
+          sort: true
+        },
         purchase_speed: {
           label: 'Скорость продажи шт/день',
           type: 'text',
@@ -436,6 +448,8 @@ export default {
       this.dilers.count = this.organization.dilers.count
       this.distr.summ = this.organization.distr.summ
       this.distr.count = this.organization.distr.count
+      this.orders.summ = this.organization.orders.summ
+      this.orders.count = this.organization.orders.count
       this.shipment.total = this.organization.shipment.total
       this.shipment.items = this.organization.shipment.items
       this.no_money = this.organization.no_money

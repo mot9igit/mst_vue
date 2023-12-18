@@ -1,6 +1,6 @@
 <template>
   <div class="v-table">
-    <div class="profile-content__title">
+    <div class="profile-content__title" v-if="title">
         <div class="text">
           <span class="title">{{ title }} (<span v-if="total > -1">{{ total }}</span><span v-else>0</span>)</span>
           <slot name="desc"></slot>
@@ -83,12 +83,17 @@
                     v-for="(row, index) in table_data"
                     :key="index"
                     >
-                      <a class="sort" :class="sort[index]" v-if="row.sort" @click="sorting(index)">
-                        {{ row.label }}
-                      </a>
-                      <span v-else>
-                        {{ row.label }}
-                      </span>
+                      <div v-if="row.type == 'editmode' && this.editMode">
+                        <Checkbox v-model="all_check" :value="true" @input="setAllCheck"/>
+                      </div>
+                      <div v-else>
+                        <a class="sort" :class="sort[index]" v-if="row.sort" @click="sorting(index)">
+                          {{ row.label }}
+                        </a>
+                        <span v-else>
+                          {{ row.label }}
+                        </span>
+                      </div>
                     </th>
                 </tr>
             </thead>
@@ -98,10 +103,14 @@
                     :key="row.id"
                     :row_data="row"
                     :keys="table_data"
+                    :editMode="editMode"
                     @deleteElem="deleteElem"
                     @updateElem="updateElem"
                     @editElem="editElem"
                     @clickElem="clickElem"
+                    @checkElem="checkElem"
+                    @approveElem="approveElem"
+                    @disapproveElem="disapproveElem"
                 />
             </tbody>
             <tbody v-else>
@@ -147,9 +156,9 @@ import AutoComplete from 'primevue/autocomplete'
 import Checkbox from 'primevue/checkbox'
 import Skeleton from 'primevue/skeleton'
 
-export default ({
+export default {
   name: 'v-table',
-  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem', 'filter', 'sort', 'paginate'],
+  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem', 'filter', 'sort', 'paginate', 'setAllCheck', 'checkElem', 'approveElem', 'disapproveElem'],
   components: {
     vTableRow,
     // vTableFilter,
@@ -162,6 +171,10 @@ export default ({
     Checkbox
   },
   props: {
+    editMode: {
+      type: Boolean,
+      default: false
+    },
     items_data: {
       type: Array,
       default: () => {
@@ -215,7 +228,8 @@ export default ({
       calendar: {
         maxDate: null
       },
-      filteredVendor: null
+      filteredVendor: null,
+      all_check: 0
     }
   },
   computed: {
@@ -234,6 +248,12 @@ export default ({
     ...mapActions([
       'get_vendors_from_api'
     ]),
+    checkElem (data) {
+      this.$emit('checkElem', data)
+    },
+    setAllCheck (event) {
+      this.$emit('setAllCheck', event)
+    },
     deleteElem (data) {
       this.$emit('deleteElem', data)
     },
@@ -246,6 +266,12 @@ export default ({
     },
     editElem (data) {
       this.$emit('editElem', data)
+    },
+    approveElem (data) {
+      this.$emit('approveElem', data)
+    },
+    disapproveElem (data) {
+      this.$emit('disapproveElem', data)
     },
     setFilter (type = '0') {
       if (type === 'filter') {
@@ -318,6 +344,7 @@ export default ({
     }
   },
   mounted () {
+    // console.log(this.items_data)
     const data = {
       search: ''
     }
@@ -341,9 +368,15 @@ export default ({
       // console.log(newVal)
       this.filteredVendor = toRaw(newVal)
       // console.log(this.filteredVendor)
+    },
+    editMode: function (newVal, oldVal) {
+      if (!newVal) {
+        this.all_check = false
+        this.$emit('setAllCheck', [this.all_check])
+      }
     }
   }
-})
+}
 </script>
 
 <style lang="scss">

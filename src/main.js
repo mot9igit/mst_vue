@@ -10,6 +10,7 @@ import PrimeVue from 'primevue/config'
 import AutoComplete from 'primevue/autocomplete'
 import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
+import VueCookies from 'vue-cookies'
 
 import { SetupCalendar } from 'v-calendar'
 
@@ -29,6 +30,7 @@ app
   .use(mdiVue, {
     icons: mdijs
   })
+  .use(VueCookies, { expires: '7d' })
   .use(SetupCalendar, {})
   .use(PrimeVue, {
     ripple: true,

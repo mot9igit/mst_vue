@@ -69,7 +69,7 @@ export default {
         },
         status: {
           label: 'Статус',
-          type: 'text'
+          type: 'status'
         },
         cost: {
           label: 'Сумма',

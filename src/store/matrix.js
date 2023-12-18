@@ -30,7 +30,9 @@ export default {
     getrrcreport: [],
     getrrcdata: [],
     getrequests: [],
-    shipping_statuses: []
+    shipping_statuses: [],
+    shipdata: [],
+    opts: []
   },
   actions: {
     get_available_stores_from_api ({ commit }, { filter, selected }) {
@@ -854,6 +856,25 @@ export default {
           }
         })
     },
+    toggle_opts  ({ commit }, data) {
+      data.type = 'toggleOpts'
+      return Axios('/rest/front_setobjects', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          // commit('SET_MATRIX_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
     get_report_from_api ({ commit }) {
       return Axios('/rest/front_getreports', {
         method: 'POST',
@@ -890,7 +911,6 @@ export default {
         page: page,
         perpage: perpage
       }
-      console.log(data)
       return Axios('/rest/front_getobjects', {
         method: 'POST',
         data: data,
@@ -938,6 +958,58 @@ export default {
             router.push({ name: 'home' })
           }
         })
+    },
+    get_ship_data_api ({ commit }, { shipid, page, perpage }) {
+      return Axios('/rest/front_getobjects', {
+        method: 'POST',
+        data: {
+          id: router.currentRoute._value.params.id,
+          type: 'shipdata',
+          ship_id: shipid,
+          page: page,
+          perpage: perpage
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_SHIPDATA_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    get_opts_from_api ({ commit }, { filter, filtersdata, page, sort, perpage }) {
+      return Axios('/rest/front_getobjects', {
+        method: 'POST',
+        data: {
+          id: router.currentRoute._value.params.id,
+          type: 'opts',
+          filter: filter,
+          filtersdata: filtersdata,
+          page: page,
+          perpage: perpage
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_OPTS_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    unset_ship_data ({ commit }) {
+      commit('UNSET_SHIPDATA_TO_VUEX')
     },
     unset_reports_data ({ commit }) {
       commit('UNSET_REPORTS_TO_VUEX')
@@ -995,9 +1067,18 @@ export default {
     },
     unset_matrix_data ({ commit }) {
       commit('UNSET_STOREDATA')
+    },
+    unset_opts_data ({ commit }) {
+      commit('UNSET_OPTS_DATA')
     }
   },
   mutations: {
+    SET_SHIPDATA_TO_VUEX: (state, data) => {
+      state.shipdata = data.data
+    },
+    UNSET_SHIPDATA_TO_VUEX: (state) => {
+      state.shipdata = []
+    },
     SET_REPORT_RRC_DATA_TO_VUEX: (state, data) => {
       state.getrrcdata = data.data
     },
@@ -1139,6 +1220,12 @@ export default {
     UNSET_RRC_DATA: (state) => {
       state.getrrcdata = []
     },
+    SET_OPTS_TO_VUEX: (state, data) => {
+      state.opts = data.data
+    },
+    UNSET_OPTS_DATA: (state) => {
+      state.opts = []
+    },
     SET_REQUESTS: (state, data) => {
       state.getrequests = data.data
     },
@@ -1230,6 +1317,12 @@ export default {
     },
     shipping_statuses (state) {
       return state.shipping_statuses
+    },
+    getshipdata (state) {
+      return state.shipdata
+    },
+    opts (state) {
+      return state.opts
     }
   }
 }

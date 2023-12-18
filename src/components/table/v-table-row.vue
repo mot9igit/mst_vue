@@ -6,10 +6,14 @@
           :cell_data="row"
           :cell_key="index"
           :value="row_data"
+          :editMode="editMode"
           @deleteElem="deleteElem"
           @updateElem="updateElem"
           @editElem="editElem"
           @clickElem="clickElem"
+          @checkElem="checkElem"
+          @approveElem="approveElem"
+          @disapproveElem="disapproveElem"
       />
     </tr>
     <slot name="add_data"></slot>
@@ -20,8 +24,12 @@ import vTableCell from './v-table-cell'
 
 export default ({
   name: 'v-table-row',
-  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem'],
+  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem', 'checkElem', 'approveElem', 'disapproveElem'],
   props: {
+    editMode: {
+      type: Boolean,
+      default: false
+    },
     row_data: {
       type: Object,
       default: () => {
@@ -35,6 +43,9 @@ export default ({
       }
     }
   },
+  mounted () {
+    // console.log(this.row_data)
+  },
   methods: {
     deleteElem (data) {
       this.$emit('deleteElem', data)
@@ -47,6 +58,15 @@ export default ({
     },
     clickElem (data) {
       this.$emit('clickElem', data)
+    },
+    checkElem (data) {
+      this.$emit('checkElem', data)
+    },
+    approveElem (data) {
+      this.$emit('approveElem', data)
+    },
+    disapproveElem (data) {
+      this.$emit('disapproveElem', data)
     }
   },
   components: {

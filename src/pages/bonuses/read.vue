@@ -8,7 +8,6 @@
         <span>Назад к программам</span>
       </router-link>
     </div>
-    <Toast />
     <div>
       <div class="profile-content__title" v-if="bonus.name">
         <span class="title">Программа {{ bonus.name }}</span>
@@ -65,11 +64,11 @@
         <div class="dart-fieldset banner" v-if="bonus.banner">
           <img :src="bonus.thumb_big" :alt="bonus.name">
           <div class="banner-desc">
-            <div class="vendor">
+            <div class="vendor" v-if="bonus.brand">
               <img :src="'https://mst.tools/' + bonus.brand_logo" :alt="bonus.brand">
-              <span>{{ bonus.brand }}</span>
+              <span v-if="bonus.brand">{{ bonus.brand }}</span>
             </div>
-            <div class="customer">
+            <div class="customer" v-if="bonus.customer">
               <span>Поставщик: {{ bonus.customer }}</span>
             </div>
           </div>

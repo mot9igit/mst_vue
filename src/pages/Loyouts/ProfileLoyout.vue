@@ -1,53 +1,74 @@
 <template>
   <div class="dart_wrapper">
-    <main-header />
-    <div class="dart_container">
-      <nav class="sidebars">
-        <div class="sidebar-sticky">
-          <div class="organization-menu" v-if="$route.params.id">
-            <div class="organization-menu__up">
-              <router-link :to="{ name: 'organizations' }">
-                <mdicon name="arrow-left" />
-                <span>Назад к организациям</span>
-              </router-link>
+    <nav class="sidebars" :class="{ 'active': sidebar_active, 'mobile_active': mobile_menu }">
+      <div class="sidebar-sticky">
+        <div class="sidebar_header">
+          <router-link
+            :to="{ name: 'home' }"
+            class="logo"
+          >
+            <img src="/img/logo_small.svg" alt="МСТ Аналитика">
+            <span>МСТ Аналитика</span>
+          </router-link>
+          <a href="#" class="sidebar_header-close" @click.prevent="toggleMobileMenu">
+            <mdicon name="close" :width="24" :height="24" fill="#ffffff"/>
+          </a>
+        </div>
+        <div class="organization-menu" v-if="$route.params.id">
+          <div class="organization-menu__up">
+            <router-link :to="{ name: 'organizations' }">
+              <mdicon name="arrow-left" />
+              <span>Назад к организациям</span>
+            </router-link>
+          </div>
+          <div class="organization-menu__name">
+            <div class="icon" v-if="image">
+              <img :src="image" alt="">
             </div>
-            <div class="organization-menu__name">
-              <div class="icon" v-if="image">
-                <img :src="image" alt="">
-              </div>
-              <div class="icon" v-else>
-                <i class="d_icon d_icon-account-circle"></i>
-              </div>
-              <router-link class="organization-menu__title" :to="{ name: 'organization', params: { id: $route.params.id }}">{{ organization.name }}</router-link>
-              <div v-if="this.showBalance != false">
-                <div class="sidebar_widget dart_diler_widget">
-                  <div class="dart_diler_widget__info-text">
-                      <div class="item">
-                          <div class="label">Баланс</div>
-                          <div class="value">0 ₽</div>
-                      </div>
-                  </div>
-                  <div class="dart_diler_widget__btn-container">
-                      <a href="#" class="dart-btn dart-btn-primary-dark dart-btn-block">Вывести средства</a>
-                  </div>
-              </div>
-              </div>
+            <div class="icon" v-else>
+              <i class="d_icon d_icon-account-circle"></i>
             </div>
-            <div class="organization-menu__menu">
-              <PanelMenu v-model:expandedKeys="expandedKeys" :model="getMenu"/>
+            <router-link class="organization-menu__title" :to="{ name: 'organization', params: { id: $route.params.id }}">{{ organization.name }}</router-link>
+            <div>
+              <div class="sidebar_widget dart_diler_widget">
+                <div class="dart_diler_widget__info-text">
+                    <div class="item">
+                        <div class="label">Баланс</div>
+                        <div class="value">{{ organization.balance }} ₽</div>
+                    </div>
+                </div>
+                <div class="dart_diler_widget__btn-container">
+                    <router-link class="dart-btn dart-btn-primary-dark dart-btn-block" :to="{ name: 'org_balance', params: { id: $route.params.id }}">
+                      <mdicon name="cash-multiple" :width="24" :height="24"/>
+                      <span class="text">Вывести средства</span>
+                    </router-link>
+                </div>
+            </div>
             </div>
           </div>
-          <div v-else>
-            <PanelMenu v-model:expandedKeys="expandedKeys" :model="menu"/>
+          <div class="organization-menu__menu">
+            <PanelMenu v-model:expandedKeys="expandedKeys" :model="getMenu"/>
           </div>
         </div>
-      </nav>
-      <main role="main">
-        <div class="main_content">
+        <div v-else>
+          <PanelMenu v-model:expandedKeys="expandedKeys" :model="menu"/>
+        </div>
+      </div>
+      <a href="#" class="sidebar-toggle" @click="sidebarToggle">
+        <mdicon name="arrow-collapse-right" :width="12" :height="12"/>
+      </a>
+    </nav>
+    <main role="main">
+      <main-header
+        :active="true"
+        @clickMenu="clickMenu"
+      />
+      <div class="main_content">
+        <div class="dart_container">
           <router-view></router-view>
         </div>
-      </main>
-    </div>
+      </div>
+    </main>
   </div>
 </template>
 
@@ -60,6 +81,8 @@ export default {
   name: 'ProfilePage',
   data () {
     return {
+      sidebar_active: true,
+      mobile_menu: false,
       user: {
       },
       image: '',
@@ -76,19 +99,17 @@ export default {
       }]
     }
   },
-  props: {
-    showBalance: {
-      type: Boolean,
-      default: () => {
-        return true
-      }
-    }
-  },
+  props: { },
   mounted () {
     this.get_organization_from_api().then(() => {
       this.image = this.organization.image
       // console.log(this.organization)
     })
+    const sidebarCookie = Number(this.$cookies.get('sidebar_active'))
+    console.log(sidebarCookie)
+    if (sidebarCookie === 0 || sidebarCookie === 1) {
+      this.sidebar_active = sidebarCookie
+    }
   },
   created () {
     this.auth = localStorage.getItem('user') !== null
@@ -121,16 +142,21 @@ export default {
             to: { name: 'org_profile', params: { id: this.$route.params.id } }
           }, {
             key: '3',
+            label: 'Мои поставщики',
+            icon: 'd_icon d_icon-cog',
+            to: { name: 'org_opts', params: { id: this.$route.params.id } }
+          }, {
+            key: '4',
             label: 'Программы оптовиков и производителей',
             icon: 'd_icon d_icon-star',
             to: { name: 'org_bonuses', params: { id: this.$route.params.id } }
           }, {
-            key: '4',
+            key: '5',
             label: 'Мастер отчетов',
             icon: 'd_icon d_icon-analytics',
             to: { name: 'org_reports', params: { id: this.$route.params.id } }
           }, {
-            key: '5',
+            key: '6',
             label: 'Документы',
             icon: 'd_icon d_icon-file-document',
             to: { name: 'org_docs', params: { id: this.$route.params.id } }
@@ -257,7 +283,18 @@ export default {
     ...mapActions([
       'get_organization_from_api',
       'delete_organization_from_api'
-    ])
+    ]),
+    sidebarToggle () {
+      this.sidebar_active = !this.sidebar_active
+      this.$cookies.set('sidebar_active', Number(this.sidebar_active))
+    },
+    toggleMobileMenu () {
+      this.mobile_menu = !this.mobile_menu
+    },
+    clickMenu () {
+      this.sidebar_active = 1
+      this.mobile_menu = !this.mobile_menu
+    }
   },
   watch: {
     $route () {
@@ -331,12 +368,11 @@ export default {
     color: #009821;
   }
 }
-.main_content{
-  padding: 30px 0;
-}
 main{
-  margin-left: 370px;
-  padding-top: 60px;
+  transition: all .2s ease;
+  .main_content{
+    padding: 30px 0;
+  }
 }
 .sidebars {
   position: fixed;
@@ -344,9 +380,174 @@ main{
   bottom: 0;
   left: 0;
   background: #282828;
-  width: 350px;
+  width: 75px;
   z-index: 100;
-  padding: 85px 0 0;
+  padding: 0 0;
+  transition: all .2s ease;
+  & + main{
+    margin-left: 75px;
+    transition: all .2s ease;
+  }
+  .sidebar-toggle{
+    position: absolute;
+    left: 50%;
+    bottom: 15px;
+    transform: translate(-50%, 0);
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 3px;
+    z-index: 2;
+    span{
+      position: relative;
+      transition: all .2s ease;
+    }
+  }
+  .p-panelmenu .p-menuitem-text{
+    display: none;
+  }
+  .organization-menu__up{
+    text-align: center;
+    a{
+      span:last-child{
+        display: none;
+      }
+    }
+  }
+  .organization-menu__name{
+    padding: 0 15px;
+    display: block;
+    text-align: center;
+    .icon{
+      width: 45px;
+      height: 45px;
+      margin: 0 auto;
+    }
+    .organization-menu__title{
+      display: none;
+    }
+  }
+  .sidebar_widget .dart_diler_widget__btn-container{
+    a{
+      span:first-child{
+        display: inline-block;
+      }
+      span:last-child{
+        display: none;
+      }
+    }
+  }
+  .dart_diler_widget .dart_diler_widget__info-text{
+    visibility: hidden;
+  }
+  .sidebar_header{
+    .sidebar_header-close{
+      display: none
+    }
+  }
+  &.active{
+    width: 350px;
+    transition: all .2s ease;
+    .dart_diler_widget .dart_diler_widget__info-text{
+      visibility: visible;
+    }
+    .sidebar_widget .dart_diler_widget__btn-container{
+      a{
+        span:first-child{
+          display: none;
+        }
+        span:last-child{
+          display: inline-block;
+        }
+      }
+    }
+    .organization-menu__up{
+      text-align: left;
+      a{
+        span:last-child{
+          display: inline-block;
+        }
+      }
+    }
+    .organization-menu__name{
+      padding: 0 15px;
+      display: block;
+      text-align: left;
+      .icon{
+        width: 60px;
+        height: 60px;
+        margin: 0 0;
+      }
+      .organization-menu__title{
+        display: block;
+      }
+    }
+    .p-panelmenu .p-menuitem-text{
+      display: inline-block;
+    }
+    .p-panelmenu .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-action{
+      justify-content: flex-start;
+    }
+    .organization-menu__up{
+      a{
+        span:last-child{
+          display: inline-block;
+        }
+      }
+    }
+    .sidebar-toggle {
+      span{
+        top: 1px;
+        left: 1px;
+        transform: rotate(-180deg);
+        transition: all .2s ease;
+      }
+    }
+    .sidebar_header{
+      .logo{
+        span{
+          display: inline-block;
+          transition: all .2s ease;
+        }
+      }
+    }
+  }
+  &.active + main{
+    margin-left: 350px;
+    transition: all .2s ease;
+  }
+  .sidebar_header{
+    border-bottom: 1px dashed #464545;
+    margin-bottom: 50px;
+    position: relative;
+    .logo{
+      padding: 10px 15px 10px 15px;
+      background: #282828;
+      display: flex;
+      color: #fff;
+      text-decoration: none;
+      align-items: center;
+      justify-content: center;
+      img{
+        max-height: 35px;
+        & + span{
+          margin-left: 15px;
+          display: none;
+          transition: all .2s ease;
+        }
+      }
+      span{
+        display: inline-block;
+        font-size: 1.25rem;
+        text-decoration: none;
+        white-space: nowrap;
+      }
+    }
+  }
   .sidebar-heading {
     font-size: .75rem;
     text-transform: uppercase;
@@ -355,12 +556,11 @@ main{
 .sidebar-sticky {
   position: relative;
   top: 0;
-  height: calc(100vh - 85px);
-  padding: .5rem 0;
-  overflow-x: hidden;
+  height: 100vh;
+  padding: 0 0;
+  overflow-x: clip;
   overflow-y: auto;
 }
-
 .p-panelmenu{
   padding: 0;
   margin: 0;
@@ -390,6 +590,7 @@ main{
         .p-panelmenu-header-action{
           display: flex;
           align-items: center;
+          justify-content: center;
           color: #fff;
           text-decoration: none;
           position: relative;
@@ -397,6 +598,10 @@ main{
           border-left: 4px solid transparent;
           .p-menuitem-icon{
             font-size: 24px;
+            margin-right: 0;
+            & + .p-menuitem-text{
+              margin-left: 0.5rem;
+            }
           }
           span{
             font-size: 16px;
@@ -588,6 +793,34 @@ main{
 @supports ((position: -webkit-sticky) or (position: sticky)) {
   .sidebar-sticky {
     position: sticky;
+  }
+}
+
+@media (max-width: 991px) {
+  .sidebars{
+    left: -3000px;
+    .sidebar-toggle{
+      display: none;
+    }
+    &.mobile_active{
+      left: 0;
+      width: 100%;
+    }
+    & + main{
+      margin-left: 0 !important;
+    }
+    .sidebar_header{
+      position: relative;
+      padding: 0 45px;
+      .sidebar_header-close{
+        display: inline-block;
+        color: #fff;
+        position: absolute;
+        right: 15px;
+        top: 50%;
+        transform: translate(0, -50%);
+      }
+    }
   }
 }
 </style>

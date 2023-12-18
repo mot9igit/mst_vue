@@ -8,7 +8,9 @@ import router from '@/router'
 export default {
   state: {
     organization: [],
-    diler: []
+    diler: [],
+    balance: [],
+    balance_requests: []
   },
   actions: {
     get_organization_from_api ({ commit }) {
@@ -51,11 +53,84 @@ export default {
           }
         })
     },
+    get_balance_from_api ({ commit }, { page, sort, perpage }) {
+      return Axios('/rest/front_getobjects', {
+        method: 'POST',
+        data: {
+          id: router.currentRoute._value.params.id,
+          type: 'balance',
+          sort: sort,
+          page: page,
+          perpage: perpage
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_BALANCE_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    get_balance_requests_from_api ({ commit }, { page, sort, perpage }) {
+      return Axios('/rest/front_getobjects', {
+        method: 'POST',
+        data: {
+          id: router.currentRoute._value.params.id,
+          type: 'balance_requests',
+          sort: sort,
+          page: page,
+          perpage: perpage
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_BALANCE_REQUESTS_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          console.log(error)
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    set_balance_request_to_api ({ commit }, data) {
+      return Axios('/rest/front_setobjects', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+        })
+        .catch(error => {
+          console.log(error)
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
     delete_organization_from_api ({ commit }) {
       commit('DELETE_ORGANIZATION_FROM_VUEX')
     },
     delete_diler_from_api ({ commit }) {
       commit('DELETE_DILER_FROM_VUEX')
+    },
+    delete_balance_from_api ({ commit }) {
+      commit('UNSET_BALANCE_FROM_VUEX')
+    },
+    delete_balance_requests_from_api ({ commit }) {
+      commit('UNSET_BALANCE_REQUESTS_FROM_VUEX')
     }
   },
   mutations: {
@@ -70,6 +145,18 @@ export default {
     },
     DELETE_DILER_FROM_VUEX: (state) => {
       state.diler = { }
+    },
+    SET_BALANCE_TO_VUEX: (state, data) => {
+      state.balance = data.data
+    },
+    UNSET_BALANCE_FROM_VUEX: (state) => {
+      state.balance = []
+    },
+    SET_BALANCE_REQUESTS_TO_VUEX: (state, data) => {
+      state.balance_requests = data.data
+    },
+    UNSET_BALANCE_REQUESTS_FROM_VUEX: (state) => {
+      state.balance_requests = []
     }
   },
   getters: {
@@ -78,6 +165,12 @@ export default {
     },
     diler (state) {
       return state.diler
+    },
+    balance (state) {
+      return state.balance
+    },
+    balance_requests (state) {
+      return state.balance_requests
     }
   }
 }

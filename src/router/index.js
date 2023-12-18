@@ -25,6 +25,7 @@ import Bonus from '../pages/bonuses/read'
 import BonusPlan from '../pages/bonuses/plan'
 import ProfileDiler from '../pages/store/main'
 import DilerProducts from '../pages/store/products'
+import Balance from '../pages/store/balance'
 import BonusOutofstock from '../pages/BonusOutofstock'
 import BonusRemains from '../pages/BonusRemains'
 import BonusPersonal from '../pages/BonusPersonal'
@@ -121,6 +122,10 @@ const routes = [
             label: 'Ассортимент',
             component: ProductsAssortmentMain
           }]
+        }, {
+          path: 'balance',
+          name: 'org_balance',
+          component: Balance
         }, {
           path: 'profile',
           name: 'org_profile',

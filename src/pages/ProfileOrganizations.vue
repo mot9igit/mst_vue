@@ -141,16 +141,21 @@ export default {
               to: { name: 'org_profile', params: { id: id } }
             }, {
               key: '3',
+              label: 'Мои поставщики',
+              icon: 'd_icon d_icon-cog',
+              to: { name: 'org_opts', params: { id: id } }
+            }, {
+              key: '4',
               label: 'Программы оптовиков и производителей',
               icon: 'd_icon d_icon-star',
               to: { name: 'org_bonuses', params: { id: id } }
             }, {
-              key: '4',
+              key: '5',
               label: 'Мастер отчетов',
               icon: 'd_icon d_icon-analytics',
               to: { name: 'org_reports', params: { id: id } }
             }, {
-              key: '5',
+              key: '6',
               label: 'Документы',
               icon: 'd_icon d_icon-file-document',
               to: { name: 'org_docs', params: { id: id } }

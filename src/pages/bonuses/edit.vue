@@ -215,7 +215,6 @@ export default {
       })
     },
     onUpload (data) {
-      console.log(data.xhr)
       if (data.xhr.response) {
         const response = JSON.parse(data.xhr.response)
         if (Object.prototype.hasOwnProperty.call(response.data, 'files')) {
@@ -231,7 +230,6 @@ export default {
       this.get_available_brands_from_api({ type: 'bonuses' })
       this.get_bonus_from_api({ id: router.currentRoute._value.params.bonus_id }).then(() => {
         this.selected = this.bonus.stores[1]
-        console.log(this.bonus.properties)
         if (this.bonus.properties) {
           const props = JSON.parse(this.bonus.properties)
           if (Object.prototype.hasOwnProperty.call(props, 'region')) {
@@ -248,6 +246,9 @@ export default {
       })
     })
     this.get_regions_from_api()
+    this.get_available_stores_from_api({
+      filter: ''
+    })
   },
   components: { MultiSelect, bonusParticipants, plan, planNew, bonusFiles, Calendar, Dropdown, PickList, Checkbox, FileUpload, Toast, TreeSelect },
   computed: {

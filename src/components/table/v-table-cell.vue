@@ -8,6 +8,9 @@
         <img src="https://mst.tools/assets/files/img/nopic.png" alt=""/>
       </div>
     </div>
+    <div class="cell_value" v-else-if="cell_data.type == 'editmode' && editMode">
+      <Checkbox v-model="check" :binary="true" @input="checkRow"/>
+    </div>
     <div class="cell_value" v-else-if="cell_data.type == 'text'">
       {{ value[cell_key] }}
     </div>
@@ -37,14 +40,20 @@
       </a>
     </div>
     <div class="cell_value" :class="cell_key == 'status' ? 'status' : ''" v-else-if="cell_data.type == 'status'">
-      <span :style="'color: #' + value.status_color">
+      <span :style="'font-size: 12px;padding: 3px 5px;border-radius: 3px;white-space: nowrap;color: #fff;background-color: #' + value.status_color">
         {{ value['status_name'] }}
       </span>
     </div>
     <div class="cell_value" :class="cell_key == 'actions' ? 'actions' : ''" v-else-if="cell_data.type == 'actions'">
       <span class="p-buttonset">
-        <Button :label="row.label" :icon="row.icon" v-for="(row, index) in cell_data.available" :key="index" severity="secondary" text @click="actionElem(index)"/>
-        <Button :label="row.label" :icon="row.icon" v-for="(row, index) in cell_data.available" :key="index" severity="secondary" text @click="actionElem(index)">
+        <Button
+          :title="row.label"
+          :label="row.label" :icon="row.icon"
+          v-for="(row, index) in blank.available"
+          :key="index" severity="secondary"
+          text
+          @click="actionElem(index)"
+          >
           <i :class="row.icon"></i>
         </Button>
       </span>
@@ -54,11 +63,16 @@
 
 <script>
 import Button from 'primevue/button'
+import Checkbox from 'primevue/checkbox'
 
 export default ({
   name: 'v-table-cell',
-  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem'],
+  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem', 'checkElem', 'approveElem', 'disapproveElem'],
   props: {
+    editMode: {
+      type: Boolean,
+      default: false
+    },
     cell_data: {
       type: Object,
       default: () => {
@@ -69,12 +83,23 @@ export default ({
       type: String,
       default: null
     },
-    value: null,
+    value: {
+      type: Object,
+      default: () => {
+        return {}
+      }
+    },
     link_params: {
       type: Object,
       default: () => {
         return {}
       }
+    }
+  },
+  data () {
+    return {
+      check: false,
+      blank: {}
     }
   },
   methods: {
@@ -93,6 +118,17 @@ export default ({
       if (action === 'click') {
         this.$emit('clickElem', this.value)
       }
+      if (action === 'approve') {
+        this.$emit('approveElem', this.value)
+      }
+      if (action === 'disapprove') {
+        this.$emit('disapproveElem', this.value)
+      }
+    },
+    checkRow (data) {
+      const val = this.value
+      val.checked = data
+      this.$emit('checkElem', val)
     }
   },
   computed: {
@@ -110,8 +146,48 @@ export default ({
       return linkparams
     }
   },
+  mounted () {
+    this.blank = this.cell_data
+    if (this.cell_data.type === 'editmode') {
+      if (this.value.checked) {
+        this.check = true
+      } else {
+        this.check = false
+      }
+    }
+    if (this.blank.type === 'actions') {
+      for (const key in this.blank.available) {
+        if (Object.prototype.hasOwnProperty.call(this.blank.available[key], 'link') && Object.prototype.hasOwnProperty.call(this.blank.available[key], 'link_values')) {
+          if (this.blank.available[key].link && this.blank.available[key].link_values) {
+            const link = this.blank.available[key].link
+            const values = this.blank.available[key].link_values
+            if (!values.includes(Number(this.value[link]))) {
+              delete this.blank.available[key]
+            }
+          }
+        }
+      }
+    }
+  },
   components: {
-    Button
+    Button,
+    Checkbox
+  },
+  watch: {
+    cell_data: function (newVal, oldVal) {
+      if (newVal.type === 'editmode') {
+        if (this.value.checked) {
+          this.check = true
+        } else {
+          this.check = false
+        }
+      }
+    },
+    value: function (newVal, oldVal) {
+      if (this.cell_data.type === 'editmode') {
+        this.check = newVal.checked
+      }
+    }
   }
 })
 </script>

@@ -58,7 +58,35 @@ export default {
           }
         }
       }
+      console.log(data.data)
+      for (let i = 0; i < data.data.shipment.length; i++) {
+        data.data.shipment[i].checked = false
+      }
       state.shipping = data.data
+    },
+    SET_SHIPPING_CHECK: (state, data) => {
+      // console.log(data)
+      const shipping = state.shipping
+      for (let i = 0; i < shipping.shipment.length; i++) {
+        if (data[0]) {
+          shipping.shipment[i].checked = data[0]
+        } else {
+          shipping.shipment[i].checked = false
+        }
+      }
+      state.shipping = shipping
+    },
+    SET_SHIPPING_CHECK_ONE: (state, data) => {
+      console.log(data)
+      console.log(state)
+      const shipping = state.shipping
+      for (let i = 0; i < shipping.shipment.length; i++) {
+        console.log(data.id + '===' + shipping.shipment[i].id)
+        if (data.id === shipping.shipment[i].id) {
+          shipping.shipment[i].checked = data.checked
+        }
+      }
+      state.shipping = shipping
     }
   },
   getters: {

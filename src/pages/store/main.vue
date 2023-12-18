@@ -37,7 +37,7 @@
               <span class="num">{{ orders.count }} шт.</span>
             </div>
           </div>
-          <div class="d-col-md-8" v-if="products.all">
+          <div class="d-col-md-6" v-if="products.all">
             <div class="panel-widget panel-widget-remains">
                 <div class="panel-widget-remains__graph">
                   <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-5rem" />
@@ -70,6 +70,13 @@
                     <mdicon name="arrow-right" />
                   </router-link>
                 </div>
+            </div>
+          </div>
+          <div class="d-col-md-2" v-for="item in diler.brands" :key="item.id">
+            <div class="panel-widget panel-widget-summ">
+              <span> {{ item.name }} </span>
+              <span class="sum">{{ item.count }} шт.</span>
+              <span class="num">Кол-во сопоставленных товаров по бренду {{ item.name }}</span>
             </div>
           </div>
           <div class="d-col-md-3" v-if="diler.type != 1">
@@ -307,6 +314,11 @@ export default {
         },
         remains: {
           label: 'Остаток сейчас',
+          type: 'text',
+          sort: true
+        },
+        sales_30: {
+          label: 'Продаж за 30 дней',
           type: 'text',
           sort: true
         },

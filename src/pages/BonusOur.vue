@@ -16,6 +16,7 @@
         @sort="filter"
         @paginate="paginate"
         @deleteElem="deleteBonus"
+        @updateElem="updateBonus"
       >
         <template v-slot:button>
           <RouterLink :to="{ name: 'org_bonuses_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Добавить программу</RouterLink>
@@ -103,6 +104,10 @@ export default {
           type: 'actions',
           sort: false,
           available: {
+            update: {
+              icon: 'pi pi-pencil',
+              label: 'Редактировать'
+            },
             delete: {
               icon: 'pi pi-trash',
               label: 'Удалить'
@@ -140,6 +145,17 @@ export default {
       'get_brands_from_api',
       'unset_bonuses_data'
     ]),
+    updateBonus (data) {
+      if (data.id) {
+        router.push({
+          name: 'org_bonus_edit',
+          params: {
+            id: this.$route.params.id,
+            bonus_id: data.id
+          }
+        })
+      }
+    },
     deleteBonus (data) {
       this.$confirm.require({
         message: 'Вы уверены, что хотите удалить программу ' + data.name + '?',
