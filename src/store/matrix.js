@@ -20,6 +20,7 @@ export default {
     bonus: [],
     docs: [],
     docsstatus: [],
+    cardstatus: [],
     stores: [],
     akbpunkts: [],
     akbdotsplan: [],
@@ -32,7 +33,9 @@ export default {
     getrequests: [],
     shipping_statuses: [],
     shipdata: [],
-    opts: []
+    opts: [],
+    report_copo: [],
+    report_copo_details: []
   },
   actions: {
     get_available_stores_from_api ({ commit }, { filter, selected }) {
@@ -127,6 +130,26 @@ export default {
       })
         .then((response) => {
           commit('SET_DOCSSTATUS_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    get_cardstatus_from_api ({ commit }) {
+      return Axios('/rest/front_getobjects', {
+        method: 'POST',
+        data: {
+          type: 'cardstatus'
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_CARDSTATUS_TO_VUEX', response.data)
         })
         .catch(error => {
           if (error.response.status === 403) {
@@ -991,6 +1014,7 @@ export default {
           type: 'opts',
           filter: filter,
           filtersdata: filtersdata,
+          sort: sort,
           page: page,
           perpage: perpage
         },
@@ -1000,6 +1024,61 @@ export default {
       })
         .then((response) => {
           commit('SET_OPTS_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    /* Берем сводные данные по бренду в отчете по сопоставлению товаров */
+    get_report_copo_from_api ({ commit }, { filter, filtersdata, page, sort, perpage }) {
+      return Axios('/rest/front_getobjects', {
+        method: 'POST',
+        data: {
+          id: router.currentRoute._value.params.id,
+          type: 'report_copo',
+          filter: filter,
+          filtersdata: filtersdata,
+          sort: sort,
+          page: page,
+          perpage: perpage
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_REPORT_COPO', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    /* Берем подробные данные по бренду в отчете по сопоставлению товаров */
+    get_report_copo_details_from_api ({ commit }, { filter, filtersdata, page, sort, perpage }) {
+      return Axios('/rest/front_getobjects', {
+        method: 'POST',
+        data: {
+          id: router.currentRoute._value.params.id,
+          brand_id: router.currentRoute._value.params.brand_id,
+          type: 'report_copo_details',
+          filter: filter,
+          filtersdata: filtersdata,
+          sort: sort,
+          page: page,
+          perpage: perpage
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_REPORT_COPO_DETAILS', response.data)
         })
         .catch(error => {
           if (error.response.status === 403) {
@@ -1070,6 +1149,12 @@ export default {
     },
     unset_opts_data ({ commit }) {
       commit('UNSET_OPTS_DATA')
+    },
+    unset_report_copo ({ commit }) {
+      commit('UNSET_REPORT_COPO')
+    },
+    unset_report_copo_details ({ commit }) {
+      commit('UNSET_REPORT_COPO_DETAILS')
     }
   },
   mutations: {
@@ -1181,6 +1266,9 @@ export default {
     SET_DOCSSTATUS_TO_VUEX: (state, data) => {
       state.docsstatus = data.data.items
     },
+    SET_CARDSTATUS_TO_VUEX: (state, data) => {
+      state.cardstatus = data.data.items
+    },
     SET_SHIPPINGSTATUSES_TO_VUEX: (state, data) => {
       state.shipping_statuses = data.data.items
     },
@@ -1231,6 +1319,18 @@ export default {
     },
     UNSET_REQUESTS: (state) => {
       state.getrequests = []
+    },
+    SET_REPORT_COPO: (state, data) => {
+      state.report_copo = data.data
+    },
+    SET_REPORT_COPO_DETAILS: (state, data) => {
+      state.report_copo_details = data.data
+    },
+    UNSET_REPORT_COPO: (state) => {
+      state.report_copo = []
+    },
+    UNSET_REPORT_COPO_DETAILS: (state) => {
+      state.report_copo_details = []
     }
   },
   getters: {
@@ -1272,6 +1372,9 @@ export default {
     },
     getdocsstatus (state) {
       return state.docsstatus
+    },
+    getcardstatus (state) {
+      return state.cardstatus
     },
     available_stores (state) {
       return state.stores
@@ -1323,6 +1426,12 @@ export default {
     },
     opts (state) {
       return state.opts
+    },
+    report_copo (state) {
+      return state.report_copo
+    },
+    report_copo_details (state) {
+      return state.report_copo_details
     }
   }
 }

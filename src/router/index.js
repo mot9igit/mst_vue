@@ -44,6 +44,8 @@ import ReportTopSales from '../pages/ReportTopSales'
 import ReportAvailable from '../pages/ReportAvailable'
 import ReportAvailableStores from '../pages/ReportAvailableStores'
 import ReportPresent from '../pages/ReportPresent'
+import ReportCopo from '../pages/store/report_copo'
+import ReportCopoDetails from '../pages/store/report_copo_details'
 import ProductsAssortmentMain from '../pages/products/main'
 import notFound from '../pages/NotFound'
 
@@ -101,6 +103,22 @@ const routes = [
             name: 'org_product',
             label: 'Товар',
             component: ProfileProduct
+          },
+          {
+            path: 'report',
+            component: OrganizationsLoyout,
+            children: [{
+              path: '',
+              name: 'report_copo',
+              props: true,
+              label: 'Отчет по сопоставлению',
+              component: ReportCopo
+            }, {
+              path: ':brand_id',
+              name: 'report_copo_details',
+              label: 'Отчет по бренду',
+              component: ReportCopoDetails
+            }]
           }]
         }, {
           path: 'assortment',

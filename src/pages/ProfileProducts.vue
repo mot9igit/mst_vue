@@ -36,6 +36,12 @@
                     <span :style="'width: ' + prods.copo_percent + '%;'"></span>
                   </div>
                 </div>
+                <div class="products_href">
+                  <router-link :to="{ name: 'report_copo', params: { id: $route.params.id } }">
+                    Отчет по сопоставлению
+                    <mdicon name="arrow-right" />
+                  </router-link>
+                </div>
               </div>
             </div>
           </div>
