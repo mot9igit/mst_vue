@@ -2,10 +2,10 @@
   <td>
     <div class="cell_value" v-if="cell_data.type == 'image'">
       <div class="img_abs" v-if="value[cell_key]">
-        <img :src="'https://mst.tools' + value[cell_key]" alt=""/>
+        <img :src="site_url_prefix + value[cell_key]" alt=""/>
       </div>
       <div class="img_abs" v-else>
-        <img src="https://mst.tools/assets/files/img/nopic.png" alt=""/>
+        <img :src="site_url_prefix + 'assets/files/img/nopic.png'" alt=""/>
       </div>
     </div>
     <div class="cell_value" v-else-if="cell_data.type == 'editmode' && editMode">
@@ -13,6 +13,14 @@
     </div>
     <div class="cell_value" v-else-if="cell_data.type == 'text'">
       {{ value[cell_key] }}
+      <div v-if="cell_data.description" class="cell_description">
+        <span v-if="cell_data.description.type == 'field'">
+          {{ value[cell_data.description.key] }}
+        </span>
+        <span v-else-if="cell_data.description.type == 'text'">
+          {{ value[cell_key].description.text }}
+        </span>
+      </div>
     </div>
     <div class="cell_value" v-else-if="cell_data.type == 'boolean'">
       <div v-if="value[cell_key] == 0">
@@ -27,6 +35,14 @@
     <div class="cell_value" :class="cell_key == 'name' ? 'name' : ''" v-else-if="cell_data.type == 'link'">
       <router-link :to="{ name: cell_data.link_to, params: linkParams, props: cell_data.link_props}">
         {{ value[cell_key] }}
+        <div v-if="cell_data.description" class="cell_description">
+          <span v-if="cell_data.description.type == 'field'">
+            {{ value[cell_data.description.key] }}
+          </span>
+          <span v-else-if="cell_data.description.type == 'text'">
+            {{ value[cell_key].description.text }}
+          </span>
+        </div>
       </router-link>
     </div>
     <div class="cell_value" :class="cell_key == 'name' ? 'name' : ''" v-else-if="cell_data.type == 'clickevent'">
@@ -142,6 +158,7 @@ export default ({
             linkparams[key] = this.value[this.cell_data.link_params[key]]
           }
         }
+        // console.log(linkparams)
       }
       return linkparams
     }
@@ -220,5 +237,13 @@ export default ({
 }
 .name{
   text-align: left;
+}
+.cell_description{
+  display: block;
+  padding-top: 5px;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  font-weight: bold;
+  color: #666666;
 }
 </style>

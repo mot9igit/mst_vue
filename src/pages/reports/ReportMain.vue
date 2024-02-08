@@ -13,27 +13,39 @@
             <div class="dart-row">
               <div class="d-col-md-3">
                 <span class="p-float-label">
-                  <InputText id="username" v-model="report.name" />
+                  <InputText id="username" v-model="report.name" :class="{ 'p-invalid': v$.report.name.$errors.length }"/>
                   <label for="username">Наименование отчета</label>
                 </span>
+                <small class="p-error" v-for="error of v$.report.name.$errors" :key="error.$uid">
+                  {{ error.$message }}
+                </small>
               </div>
               <div class="d-col-md-3">
                 <span class="p-float-label">
-                  <Calendar v-model="report.date_from" :minDate="dates.minDateFrom" :maxDate="dates.maxDateFrom" showIcon @update:modelValue="setMinToDate()"/>
+                  <Calendar v-model="report.date_from" :minDate="dates.minDateFrom" :maxDate="dates.maxDateFrom" showIcon @update:modelValue="setMinToDate()" :class="{ 'p-invalid': v$.report.date_from.$errors.length }"/>
                   <label for="username">От</label>
                 </span>
+                <small class="p-error" v-for="error of v$.report.date_from.$errors" :key="error.$uid">
+                  {{ error.$message }}
+                </small>
               </div>
               <div class="d-col-md-3">
                 <span class="p-float-label">
-                  <Calendar v-model="report.date_to" :minDate="dates.minDateTo" :maxDate="dates.maxDateTo" showIcon @update:modelValue="setMaxFromDate()"/>
+                  <Calendar v-model="report.date_to" :minDate="dates.minDateTo" :maxDate="dates.maxDateTo" showIcon @update:modelValue="setMaxFromDate()"  :class="{ 'p-invalid': v$.report.date_to.$errors.length }"/>
                   <label for="username">По</label>
                 </span>
+                <small class="p-error" v-for="error of v$.report.date_to.$errors" :key="error.$uid">
+                  {{ error.$message }}
+                </small>
               </div>
               <div class="d-col-md-3">
                 <div class="p-float-label">
-                  <Dropdown v-model="report.type" :options="reportTypes" optionLabel="name" placeholder="Тип отчета" />
+                  <Dropdown v-model="report.type" :options="reportTypes" optionLabel="name" placeholder="Тип отчета" :class="{ 'p-invalid': v$.report.type.$errors.length }"/>
                   <label for="dd-city">Тип отчета</label>
                 </div>
+                <small class="p-error" v-for="error of v$.report.type.$errors" :key="error.$uid">
+                  {{ error.$message }}
+                </small>
               </div>
             </div>
             <div class="addicted_params" v-if="addictedParams[report.type.code]">
@@ -43,6 +55,12 @@
                   <div class="p-float-label" v-if="filter.type == 'dropdown'">
                     <Dropdown v-model="report[ind]" :options="filter.values" optionLabel="name" optionValue="id" :placeholder="filter.placeholder"></Dropdown>
                     <label for="">{{ filter.placeholder }}</label>
+                  </div>
+                  <div class="dart-form-group" v-if="filter.type == 'checkbox'">
+                    <div class="flex align-items-center">
+                      <Checkbox v-model="report[ind]" :inputId="'input' + ind" :name="ind" value="1"/>
+                      <label :for="'input' + ind" class="ml-2"> {{ filter.placeholder }} </label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -91,11 +109,14 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import Axios from 'axios'
+import { useVuelidate } from '@vuelidate/core'
+import { required } from '@/utils/i18n-validators'
 import router from '@/router'
 import InputText from 'primevue/inputtext'
 import Calendar from 'primevue/calendar'
 import Dropdown from 'primevue/dropdown'
 import ConfirmDialog from 'primevue/confirmdialog'
+import Checkbox from 'primevue/checkbox'
 import Toast from 'primevue/toast'
 import vTable from '@/components/table/v-table'
 
@@ -109,14 +130,11 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
-    },
-    page: {
-      type: Number,
-      default: 1
     }
   },
   data () {
     return {
+      page: 1,
       loading: false,
       reloading: false,
       filters: {
@@ -208,6 +226,13 @@ export default {
         { name: 'Понедельный отчет по продажам', code: '4' }
       ],
       addictedParams: {
+        1: [{
+          all_products: {
+            name: 'Учитывать все товары',
+            placeholder: 'Учитывать все товары',
+            type: 'checkbox'
+          }
+        }],
         2: [{
           matrix: {
             name: 'Матрица',
@@ -235,7 +260,7 @@ export default {
       }
     }
   },
-  components: { vTable, InputText, Calendar, Dropdown, Toast, ConfirmDialog },
+  components: { vTable, InputText, Calendar, Dropdown, Toast, ConfirmDialog, Checkbox },
   computed: {
     ...mapGetters([
       'getmatrixes',
@@ -387,32 +412,49 @@ export default {
         }
       )
     },
-    formSubmit () {
-      this.loading = true
-      this.$load(async () => {
-        await this.set_report_to_api({
-          action: 'set',
-          id: router.currentRoute._value.params.id,
-          report: this.report
-        })
-          .then((result) => {
-            this.loading = false
-            this.get_reports_from_api({
-              page: this.page,
-              perpage: this.pagination_items_per_page
+    async formSubmit () {
+      const result = await this.v$.$validate()
+      if (!result) {
+        console.log(result)
+      } else {
+        this.$load(async () => {
+          await this.set_report_to_api({
+            action: 'set',
+            id: router.currentRoute._value.params.id,
+            report: this.report
+          })
+            .then((result) => {
+              this.loading = false
+              this.get_reports_from_api({
+                page: this.page,
+                perpage: this.pagination_items_per_page
+              })
+              // обнуляем форму
+              this.report = {
+                name: '',
+                date_from: '',
+                date_to: '',
+                type: ''
+              }
             })
-            // обнуляем форму
-            this.report = {
-              name: '',
-              date_from: '',
-              date_to: '',
-              type: ''
-            }
-          })
-          .catch((result) => {
-            console.log(result)
-          })
-      })
+            .catch((result) => {
+              console.log(result)
+            })
+        })
+      }
+    }
+  },
+  setup () {
+    return { v$: useVuelidate() }
+  },
+  validations () {
+    return {
+      report: {
+        name: { required },
+        date_from: { required },
+        date_to: { required },
+        type: { required }
+      }
     }
   },
   watch: {

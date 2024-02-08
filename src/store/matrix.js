@@ -35,7 +35,9 @@ export default {
     shipdata: [],
     opts: [],
     report_copo: [],
-    report_copo_details: []
+    report_copo_details: [],
+    report_copo_all: [],
+    report_copo_all_details: []
   },
   actions: {
     get_available_stores_from_api ({ commit }, { filter, selected }) {
@@ -1032,8 +1034,35 @@ export default {
           }
         })
     },
+    /* Берем сводные данные по бренду в отчете по сопоставлению товаров ОБЩИЙ */
+    get_report_copo_all_from_api ({ commit }, { filter, filtersdata, page, sort, perpage }) {
+      return Axios('/rest/front_getobjects', {
+        method: 'POST',
+        data: {
+          id: router.currentRoute._value.params.id,
+          type: 'report_copo_all',
+          filter: filter,
+          filtersdata: filtersdata,
+          sort: sort,
+          page: page,
+          perpage: perpage
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_REPORT_COPO_ALL', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
     /* Берем сводные данные по бренду в отчете по сопоставлению товаров */
-    get_report_copo_from_api ({ commit }, { filter, filtersdata, page, sort, perpage }) {
+    get_report_copo_from_api ({ commit }, { tabledata, filter, filtersdata, page, sort, perpage }) {
       return Axios('/rest/front_getobjects', {
         method: 'POST',
         data: {
@@ -1041,6 +1070,7 @@ export default {
           type: 'report_copo',
           filter: filter,
           filtersdata: filtersdata,
+          tabledata: tabledata,
           sort: sort,
           page: page,
           perpage: perpage
@@ -1060,13 +1090,41 @@ export default {
         })
     },
     /* Берем подробные данные по бренду в отчете по сопоставлению товаров */
-    get_report_copo_details_from_api ({ commit }, { filter, filtersdata, page, sort, perpage }) {
+    get_report_copo_details_from_api ({ commit }, { tabledata, filter, filtersdata, page, sort, perpage }) {
       return Axios('/rest/front_getobjects', {
         method: 'POST',
         data: {
           id: router.currentRoute._value.params.id,
           brand_id: router.currentRoute._value.params.brand_id,
           type: 'report_copo_details',
+          filter: filter,
+          filtersdata: filtersdata,
+          tabledata: tabledata,
+          sort: sort,
+          page: page,
+          perpage: perpage
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_REPORT_COPO_DETAILS', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    /* Берем подробные данные по бренду в отчете по сопоставлению товаров */
+    get_report_copo_all_details_from_api ({ commit }, { filter, filtersdata, page, sort, perpage }) {
+      return Axios('/rest/front_getobjects', {
+        method: 'POST',
+        data: {
+          vendor_id: router.currentRoute._value.params.vendor_id,
+          type: 'report_copo_all_details',
           filter: filter,
           filtersdata: filtersdata,
           sort: sort,
@@ -1078,7 +1136,7 @@ export default {
         }
       })
         .then((response) => {
-          commit('SET_REPORT_COPO_DETAILS', response.data)
+          commit('SET_REPORT_COPO_ALL_DETAILS', response.data)
         })
         .catch(error => {
           if (error.response.status === 403) {
@@ -1155,6 +1213,12 @@ export default {
     },
     unset_report_copo_details ({ commit }) {
       commit('UNSET_REPORT_COPO_DETAILS')
+    },
+    unset_report_copo_all ({ commit }) {
+      commit('UNSET_REPORT_COPO_ALL')
+    },
+    unset_report_copo_all_details ({ commit }) {
+      commit('UNSET_REPORT_COPO_ALL_DETAILS')
     }
   },
   mutations: {
@@ -1331,6 +1395,18 @@ export default {
     },
     UNSET_REPORT_COPO_DETAILS: (state) => {
       state.report_copo_details = []
+    },
+    SET_REPORT_COPO_ALL: (state, data) => {
+      state.report_copo_all = data.data
+    },
+    SET_REPORT_COPO_ALL_DETAILS: (state, data) => {
+      state.report_copo_all_details = data.data
+    },
+    UNSET_REPORT_COPO_ALL: (state) => {
+      state.report_copo_all = []
+    },
+    UNSET_REPORT_COPO_ALL_DETAILS: (state) => {
+      state.report_copo_all_details = []
     }
   },
   getters: {
@@ -1432,6 +1508,12 @@ export default {
     },
     report_copo_details (state) {
       return state.report_copo_details
+    },
+    report_copo_all (state) {
+      return state.report_copo_all
+    },
+    report_copo_all_details (state) {
+      return state.report_copo_all_details
     }
   }
 }

@@ -25,6 +25,12 @@
             <span>На данной странице представлены бренды, найденые в вашем каталоге и статус сопоставления. Более подробный отчет по бренду вы можете посмотреть, кликнув на наименование бренда.</span>
           </div>
         </template>
+        <template v-slot:button>
+          <a :href="report_copo.file" class="dart-btn dart-btn-text" v-if="report_copo.file" download>
+            <img src="/img/xslx.svg" alt="">
+            <span>Скачать файл</span>
+          </a>
+        </template>
       </v-table>
     </div>
   </div>
@@ -85,7 +91,12 @@ export default {
           sort: true
         },
         identified: {
-          label: 'Идентифицировано',
+          label: 'Сопоставлено',
+          type: 'text',
+          sort: true
+        },
+        no_identified: {
+          label: 'Не сопоставлено',
           type: 'text',
           sort: true
         },
@@ -95,7 +106,17 @@ export default {
           sort: true
         },
         percent_identified: {
-          label: 'Процент идентификации',
+          label: '% сопоставления',
+          type: 'text',
+          sort: true
+        },
+        vendor_price: {
+          label: 'Сумма товара, ₽',
+          type: 'text',
+          sort: true
+        },
+        percent_summ_identified: {
+          label: '% сопоставления от суммы товара',
           type: 'text',
           sort: true
         }
@@ -107,15 +128,18 @@ export default {
       'get_report_copo_from_api'
     ]),
     filter (data) {
+      data.tabledata = this.table_data
       this.get_report_copo_from_api(data)
     },
     paginate (data) {
       this.page = data.page
+      data.tabledata = this.table_data
       this.get_report_copo_from_api(data)
     }
   },
   mounted () {
     this.get_report_copo_from_api({
+      tabledata: this.table_data,
       page: this.page,
       perpage: this.pagination_items_per_page
     })

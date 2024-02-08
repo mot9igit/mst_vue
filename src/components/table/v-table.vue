@@ -49,7 +49,7 @@
             <AutoComplete v-model="filtersdata[i]" placeholder="Производитель" optionLabel="name" dataKey="id" :suggestions="filteredVendor" @complete="searchVendor" @change="setFilter">
               <template #option="slotProps">
                 <div class="flex align-options-center">
-                    <img :alt="slotProps.option.name" :src="'https://mst.tools/' + slotProps.option.logo" :class="`image mr-2`" style="width: 30px" />
+                    <img :alt="slotProps.option.name" :src="site_url_prefix + slotProps.option.logo" :class="`image mr-2`" style="width: 30px" />
                     <div>{{ slotProps.option.name }}</div>
                 </div>
               </template>
@@ -275,7 +275,7 @@ export default {
     },
     setFilter (type = '0') {
       if (type === 'filter') {
-        if (this.filter.length > 3 || this.filter.length === 0) {
+        if (this.filter.length >= 3 || this.filter.length === 0) {
           setTimeout(() => {
             this.$emit('filter', {
               filter: this.filter,

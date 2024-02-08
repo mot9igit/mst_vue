@@ -22,19 +22,19 @@
             </router-link>
           </div>
           <div class="organization-menu__name">
-            <div class="icon" v-if="image">
-              <img :src="image" alt="">
+            <div class="icon" v-if="org.image">
+              <img :src="org.image" alt="">
             </div>
             <div class="icon" v-else>
               <i class="d_icon d_icon-account-circle"></i>
             </div>
-            <router-link class="organization-menu__title" :to="{ name: 'organization', params: { id: $route.params.id }}">{{ organization.name }}</router-link>
+            <router-link class="organization-menu__title" :to="{ name: 'organization', params: { id: $route.params.id }}">{{ org.name }}</router-link>
             <div>
               <div class="sidebar_widget dart_diler_widget">
                 <div class="dart_diler_widget__info-text">
                     <div class="item">
                         <div class="label">Баланс</div>
-                        <div class="value">{{ organization.balance }} ₽</div>
+                        <div class="value">{{ org.balance }} ₽</div>
                     </div>
                 </div>
                 <div class="dart_diler_widget__btn-container">
@@ -85,7 +85,11 @@ export default {
       mobile_menu: false,
       user: {
       },
-      image: '',
+      org: {
+        image: '',
+        balance: '',
+        name: ''
+      },
       expandedKeys: [],
       route: {
         type: null,
@@ -102,17 +106,23 @@ export default {
   props: { },
   mounted () {
     this.get_organization_from_api().then(() => {
-      this.image = this.organization.image
-      // console.log(this.organization)
+      // this.org.image = this.organization.image
+      // this.org.name = this.organization.name
+      // this.org.balance = this.organization.balance
     })
     const sidebarCookie = Number(this.$cookies.get('sidebar_active'))
-    console.log(sidebarCookie)
     if (sidebarCookie === 0 || sidebarCookie === 1) {
       this.sidebar_active = sidebarCookie
     }
-  },
-  created () {
-    this.auth = localStorage.getItem('user') !== null
+    this.user = JSON.parse(localStorage.getItem('user'))
+    if (this.user.sudo) {
+      this.menu.push({
+        key: '1',
+        label: 'Вся база товаров',
+        icon: 'pi pi-database',
+        to: { name: 'copo_all' }
+      })
+    }
   },
   components: { MainHeader, PanelMenu },
   computed: {
@@ -300,8 +310,11 @@ export default {
     $route () {
       this.get_organization_from_api()
     },
-    organization: function () {
-      this.image = this.organization.image
+    organization: function (newVal, oldVal) {
+      this.org.image = newVal.image
+      this.org.name = newVal.name
+      this.org.balance = newVal.balance
+      this.org.type = newVal.type
     }
   }
 }

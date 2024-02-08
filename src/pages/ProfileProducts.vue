@@ -10,7 +10,42 @@
               <span class="num">{{ prods.count_all }} шт.</span>
             </div>
           </div>
-          <div class="d-col-md-8" v-if="prods.all">
+          <div class="d-col-md-4" v-if="prods.all">
+            <div class="panel-widget panel-widget-remains">
+                <div class="panel-widget-remains__graph">
+                  <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem" />
+                  <span class="count">{{ $filters.round(prods.copo_money_percent) }}%</span>
+                  <span>сопоставленных<br/> товаров по стоимости</span>
+                </div>
+                <div class="panel-widget-remains__stat">
+                  <div class="panel-widget-remains__stat-item">
+                    <div class="data">
+                      <span>Товаров на сумму</span>
+                      <span>{{ prods.summ }}</span>
+                    </div>
+                    <div class="line">
+                      <span style="width: 100%;"></span>
+                    </div>
+                  </div>
+                  <div class="panel-widget-remains__stat-item">
+                    <div class="data">
+                      <span>Товаров сопоставлено на сумму</span>
+                      <span>{{ prods.summ_copo }}</span>
+                    </div>
+                    <div class="line">
+                      <span :style="'width: ' + prods.copo_money_percent + '%;'"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="products_href">
+                  <router-link :to="{ name: 'report_copo', params: { id: $route.params.id } }">
+                    Отчет по сопоставлению
+                    <mdicon name="arrow-right" />
+                  </router-link>
+                </div>
+            </div>
+          </div>
+          <div class="d-col-md-4" v-if="prods.all">
             <div class="panel-widget panel-widget-remains">
               <div class="panel-widget-remains__graph">
                 <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-5rem" />
@@ -98,6 +133,7 @@ export default {
   data () {
     return {
       chartData: null,
+      chartDataMoney: null,
       chartOptions: {
         cutout: '60%'
       },
@@ -159,6 +195,10 @@ export default {
             id: this.$route.params.id,
             product_id: 'id'
           },
+          description: {
+            type: 'field',
+            key: 'catalog'
+          },
           sort: true
         },
         price: {
@@ -215,8 +255,18 @@ export default {
         ]
       }
     },
+    setChartDataMoney () {
+      return {
+        datasets: [
+          {
+            data: [this.organization.products.copo_money_percent, this.organization.products.no_copo_money_percent],
+            backgroundColor: ['#008FFF', '#EEEEEE'],
+            hoverBackgroundColor: ['#008FFF', '#EEEEEE']
+          }
+        ]
+      }
+    },
     filter (data) {
-      console.log(data)
       this.get_data_from_api(data)
     },
     paginate (data) {
@@ -231,12 +281,16 @@ export default {
     })
     this.get_organization_from_api().then(() => {
       this.chartData = this.setChartData()
+      this.chartDataMoney = this.setChartDataMoney()
       const num = this.organization.products.copo_percent
       this.prods.copo_percent = num
       this.prods.all = this.organization.products.count
       this.prods.copo = this.organization.products.copo_count
       this.prods.count_all = this.organization.products.count_all
       this.prods.summ = this.organization.products.summ
+      this.prods.copo_money_percent = this.organization.products.copo_money_percent
+      this.prods.no_copo_money_percent = this.organization.products.no_copo_money_percent
+      this.prods.summ_copo = this.organization.products.summ_copo
       // orders.summ && orders.count
       this.dilers.summ = this.organization.dilers.summ
       this.dilers.count = this.organization.dilers.count

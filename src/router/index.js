@@ -44,6 +44,8 @@ import ReportTopSales from '../pages/ReportTopSales'
 import ReportAvailable from '../pages/ReportAvailable'
 import ReportAvailableStores from '../pages/ReportAvailableStores'
 import ReportPresent from '../pages/ReportPresent'
+import ReportCopoAll from '../pages/store/report_copo_all'
+import ReportCopoAllDetails from '../pages/store/report_copo_all_details'
 import ReportCopo from '../pages/store/report_copo'
 import ReportCopoDetails from '../pages/store/report_copo_details'
 import ProductsAssortmentMain from '../pages/products/main'
@@ -391,6 +393,25 @@ const routes = [
             component: ProfileMatrixEdit
           }]
         }]
+      }]
+    }, {
+      path: 'copo_all',
+      children: [{
+        path: '',
+        name: 'copo_all',
+        meta: {
+          breadcrumb: {
+            label: 'Сопоставление по всем организациям'
+          }
+        },
+        props: true,
+        label: 'Сопоставление по всем организациям',
+        component: ReportCopoAll
+      }, {
+        path: ':vendor_id',
+        name: 'report_copo_all_details',
+        label: 'Отчет по бренду',
+        component: ReportCopoAllDetails
       }]
     }, {
       path: ':pathMatch(.*)*',

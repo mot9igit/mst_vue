@@ -1,15 +1,15 @@
 <template>
   <div class="copo">
     <div class="to__up">
-      <router-link :to="{ name: 'report_copo', params: { id: $route.params.id } }">
+      <router-link :to="{ name: 'copo_all' }">
         <mdicon name="arrow-left" />
         <span>Назад к брендам</span>
       </router-link>
     </div>
     <div class="products">
       <v-table
-        :items_data="report_copo_details.items"
-        :total="report_copo_details.total"
+        :items_data="report_copo_all_details.items"
+        :total="report_copo_all_details.total"
         :pagination_items_per_page="this.pagination_items_per_page"
         :pagination_offset="this.pagination_offset"
         :page="this.page"
@@ -25,12 +25,6 @@
             <span>На данной странице представлены товары бренда, найденые в вашем каталоге и статус сопоставления.</span>
           </div>
         </template>
-        <template v-slot:button>
-          <a :href="report_copo_details.file" class="dart-btn dart-btn-text" v-if="report_copo_details.file" download>
-            <img src="/img/xslx.svg" alt="">
-            <span>Скачать файл</span>
-          </a>
-        </template>
       </v-table>
     </div>
   </div>
@@ -41,7 +35,7 @@ import { mapActions, mapGetters } from 'vuex'
 import vTable from '@/components/table/v-table'
 
 export default {
-  name: 'ReportCopoDetails',
+  name: 'ReportCopoAllDetails',
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -75,6 +69,12 @@ export default {
           placeholder: 'Статус',
           type: 'dropdown',
           values: this.getcardstatus
+        },
+        active: {
+          name: 'Только активные точки',
+          placeholder: 'Только активные точки',
+          type: 'checkbox',
+          values: 1
         },
         instock: {
           name: 'В наличии',
@@ -142,31 +142,35 @@ export default {
   },
   methods: {
     ...mapActions([
-      'get_report_copo_details_from_api',
+      'get_report_copo_all_details_from_api',
+      'unset_report_copo_all_details',
       'get_cardstatus_from_api'
     ]),
     filter (data) {
-      data.tabledata = this.table_data
-      this.get_report_copo_details_from_api(data)
+      this.page = 1
+      this.unset_report_copo_all_details()
+      this.get_report_copo_all_details_from_api(data)
     },
     paginate (data) {
+      this.unset_report_copo_all_details()
       this.page = data.page
-      data.tabledata = this.table_data
-      this.get_report_copo_details_from_api(data)
+      this.get_report_copo_all_details_from_api(data)
     }
   },
   mounted () {
-    this.get_report_copo_details_from_api({
-      tabledata: this.table_data,
+    this.get_report_copo_all_details_from_api({
       page: this.page,
       perpage: this.pagination_items_per_page
     })
     this.get_cardstatus_from_api()
   },
+  unmounted () {
+    this.unset_report_copo_all_details()
+  },
   components: { vTable },
   computed: {
     ...mapGetters([
-      'report_copo_details',
+      'report_copo_all_details',
       'getcardstatus'
     ])
   },
@@ -174,8 +178,10 @@ export default {
     getcardstatus: function (newVal, oldVal) {
       this.filters.status.values = newVal
     },
-    report_copo_details: function (newVal, oldVal) {
-      this.vendor = newVal.vendor
+    report_copo_all_details: function (newVal, oldVal) {
+      if (newVal.vendor) {
+        this.vendor = newVal.vendor
+      }
     }
   }
 }

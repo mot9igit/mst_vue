@@ -39,15 +39,12 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
-    },
-    page: {
-      type: Number,
-      default: 1
     }
   },
   data () {
     return {
       loading: false,
+      page: 1,
       filters: {
         name: {
           name: 'Наименование, артикул',
