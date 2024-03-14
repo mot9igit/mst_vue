@@ -22,7 +22,7 @@ import '@/assets/styles.scss'
 const app = createApp(App)
 
 app.config.globalProperties.site_url = 'https://a.mst.tools/'
-app.config.globalProperties.site_url_prefix = 'https://dev.mst.tools/'
+app.config.globalProperties.site_url_prefix = 'https://mst.tools/'
 
 app
   .use(i18n)

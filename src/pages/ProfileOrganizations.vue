@@ -7,15 +7,40 @@
       <div class="dart-row">
         <div class="d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.stores" v-bind:key="item.id">
           <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
-            <div class="panel_widget_organization__icon" v-if="item.image">
-              <img :src="item.image" alt="">
+            <div class="panel_widget_organization__top">
+              <div class="panel_widget_organization__icon" v-if="item.image">
+                <img :src="item.image" alt="">
+                <div class="panel_widget_organization__status">
+                  <i class="d_icon d_icon-check"></i>
+                  <!-- <i class="d_icon d_icon-focus"></i> -->
+                </div>
+              </div>
+              <div class="panel_widget_organization__icon" v-else>
+                <i class="d_icon d_icon-house"></i>
+              </div>
+              <!-- <div class="panel_widget_organization__notifications">
+                <i class="d_icon d_icon-alerts"><div class="panel_widget_organization__notifications-cout">1</div></i>
+              </div> -->
             </div>
-            <div class="panel_widget_organization__icon" v-else>
-              <i class="d_icon d_icon-house"></i>
+            <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name_short }}</router-link>
+            <p class="panel_widget_organization__addres">{{ item.address }}</p>
+            <hr/>
+            <div class="panel_widget_organization__two-collums">
+              <p class="panel_widget_organization__name">Баланс</p>
+              <p class="panel_widget_organization__value">{{item.balance}} ₽</p>
             </div>
-            <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name }}</router-link>
-            <div class="panel_widget_organization__menu">
-              <Menu :model="getmenu(item.type, item.id)" />
+            <hr/>
+            <div class="panel_widget_organization__two-collums">
+              <p class="panel_widget_organization__name">Заказы</p>
+              <p class="panel_widget_organization__circle active">5</p>
+            </div>
+            <div class="panel_widget_organization__two-collums">
+              <p class="panel_widget_organization__name">Отгрузки</p>
+              <p class="panel_widget_organization__circle">10</p>
+            </div>
+            <div class="panel_widget_organization__two-collums">
+              <p class="panel_widget_organization__name">Упущенные продажи</p>
+              <p class="panel_widget_organization__value">268 950 ₽</p>
             </div>
           </div>
         </div>
@@ -30,15 +55,40 @@
       <div class="dart-row">
         <div class="d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.warehouses" v-bind:key="item.id">
           <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
-            <div class="panel_widget_organization__icon" v-if="item.image">
-              <img :src="item.image" alt="">
-            </div>
-            <div class="panel_widget_organization__icon" v-else>
-              <i class="d_icon d_icon-house"></i>
+            <div class="panel_widget_organization__top">
+              <div class="panel_widget_organization__icon" v-if="item.image">
+                <img :src="item.image" alt="">
+                <div class="panel_widget_organization__status">
+                  <!-- <i class="d_icon d_icon-check"></i> -->
+                  <i class="d_icon d_icon-focus"></i>
+                </div>
+              </div>
+              <div class="panel_widget_organization__icon" v-else>
+                <i class="d_icon d_icon-house"></i>
+              </div>
+              <!-- <div class="panel_widget_organization__notifications">
+                <i class="d_icon d_icon-alerts"><div class="panel_widget_organization__notifications-cout active">10</div></i>
+              </div> -->
             </div>
             <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name }}</router-link>
-            <div class="panel_widget_organization__menu">
-              <Menu :model="getmenu(item.type, item.id)" />
+            <p class="panel_widget_organization__addres">{{ item.address }}</p>
+            <hr/>
+            <div class="panel_widget_organization__two-collums">
+              <p class="panel_widget_organization__name">Баланс</p>
+              <p class="panel_widget_organization__value">{{item.balance}} ₽</p>
+            </div>
+            <hr/>
+            <div class="panel_widget_organization__two-collums">
+              <p class="panel_widget_organization__name">Заказы</p>
+              <p class="panel_widget_organization__circle">5</p>
+            </div>
+            <div class="panel_widget_organization__two-collums">
+              <p class="panel_widget_organization__name">Отгрузки</p>
+              <p class="panel_widget_organization__circle">10</p>
+            </div>
+            <div class="panel_widget_organization__two-collums">
+              <p class="panel_widget_organization__name">Упущенные продажи</p>
+              <p class="panel_widget_organization__value">268 950 ₽</p>
             </div>
           </div>
         </div>
@@ -60,9 +110,6 @@
               <i class="d_icon d_icon-house"></i>
             </div>
             <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name }}</router-link>
-            <div class="panel_widget_organization__menu">
-              <Menu :model="getmenu(item.type, item.id)" />
-            </div>
           </div>
         </div>
       </div>
@@ -73,7 +120,6 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 // import router from '@/router'
-import Menu from 'primevue/menu'
 
 export default {
   name: 'ProfileOrganizations',
@@ -114,7 +160,6 @@ export default {
   mounted () {
     this.get_organizations_from_api()
   },
-  components: { Menu },
   computed: {
     ...mapGetters([
       'organizations'
@@ -321,6 +366,7 @@ export default {
       padding: 24px 24px;
       position: relative;
       &__icon{
+        position: relative;
         display: inline-block;
         padding: 13px 13px;
         background: #FFFFFF;
@@ -348,10 +394,92 @@ export default {
         font-size: 14px;
         letter-spacing: 0.25px;
         color: #282828;
-        line-height: 1.3;
+        line-height: 1.2;
         font-weight: 500;
-        margin: 16px 0 0;
-        min-height: 34px;
+        margin: 16px 0 8px 0;
+      }
+      &__addres{
+        color: #666666;
+        font-size: 14px;
+        line-height: 1.1;
+        font-weight: 400;
+      }
+      &__two-collums{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      &__name{
+        font-size: 14px;
+        font-weight: 400;
+        color: #666666;
+        margin-bottom: 0;
+      }
+      &__value{
+        font-size: 14px;
+        font-weight: 500;
+        color: #282828;
+        margin-bottom: 0;
+      }
+      &__top{
+        display: flex;
+        justify-content: space-between;
+      }
+      &__circle{
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #A0A0A0;
+        color: #FFF;
+        border-radius: 50%;
+        font-size: 12px;
+        line-height: 1;
+        &.active{
+          background: #282828;
+        }
+      }
+      &__notifications{
+        .d_icon{
+          color: #A0A0A0;
+          font-size: 20px;
+          position: relative;
+        }
+
+        &-cout{
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          color: #FFFFFF;
+          font-size: 12px;
+          font-weight: 500;
+          line-height: 1;
+          background: #A0A0A0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: absolute;
+          right: -13px;
+          bottom: -10px;
+
+          &.active{
+            background: #FF0000;
+          }
+        }
+      }
+      &__status{
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        right: -7px;
+        bottom: -7px;
+        .d_icon{
+          font-size: 20px;
+          width: 100%;
+          height: 100%;
+          background: #FFF;
+        }
       }
       &__menu{
         list-style-type: none;

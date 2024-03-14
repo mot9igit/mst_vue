@@ -21,7 +21,7 @@
               <span>Назад к организациям</span>
             </router-link>
           </div>
-          <div class="organization-menu__name">
+          <div class="organization-menu__name organization-menu__gradient">
             <div class="icon" v-if="org.image">
               <img :src="org.image" alt="">
             </div>
@@ -29,7 +29,8 @@
               <i class="d_icon d_icon-account-circle"></i>
             </div>
             <router-link class="organization-menu__title" :to="{ name: 'organization', params: { id: $route.params.id }}">{{ org.name }}</router-link>
-            <div>
+          </div>
+          <div class="organization-menu__name">
               <div class="sidebar_widget dart_diler_widget">
                 <div class="dart_diler_widget__info-text">
                     <div class="item">
@@ -45,7 +46,6 @@
                 </div>
             </div>
             </div>
-          </div>
           <div class="organization-menu__menu">
             <PanelMenu v-model:expandedKeys="expandedKeys" :model="getMenu"/>
           </div>
@@ -486,8 +486,14 @@ main{
         }
       }
     }
+    .organization-menu__gradient{
+      border-left: 4px solid #FF0000;
+      background: linear-gradient(89.93deg, rgba(255, 0, 0, 0.15) 0.06%, rgba(255, 0, 0, 0) 99.95%);
+      padding: 15px 24px 15px 40px !important;
+      margin-top: 24px;
+    }
     .organization-menu__name{
-      padding: 0 15px;
+      padding: 0 24px 0 40px;
       display: block;
       text-align: left;
       .icon{
@@ -504,11 +510,15 @@ main{
     }
     .p-panelmenu .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-action{
       justify-content: flex-start;
+      padding: 10px 10px 10px 40px;
     }
     .organization-menu__up{
+      padding: 0 24px 0 40px;
       a{
         span:last-child{
           display: inline-block;
+          font-size: 14px;
+          margin-left: 8px;
         }
       }
     }
@@ -720,7 +730,6 @@ main{
     }
   }
   &__name{
-    margin-top: 24px;
     padding: 0 15px;
     .icon{
       width: 60px;
@@ -739,8 +748,8 @@ main{
     .dart_diler_widget{
       background: transparent;
       box-shadow: none;
-      margin: 8px 0;
-      padding: 24px 0;
+      // margin: 8px 0;
+      padding: 16px 0 24px 0;
       border-radius: 0;
       border-bottom: 1px solid #474747;
       &__info-text{

@@ -4,15 +4,15 @@ module.exports = defineConfig({
   transpileDependencies: true,
   configureWebpack: {
     output: {
-        filename: `js/[name].[chunkhash].${version}.js`,
-        chunkFilename: `js/[id].[chunkhash].${version}.js`
+      filename: `js/[name].[chunkhash].${version}.js`,
+      chunkFilename: `js/[id].[chunkhash].${version}.js`
     }
   },
   devServer: {
     port: 80,
     proxy: {
       'rest/': {
-        target: 'https://a.dev.mst.tools/rest/',
+        target: 'https://a.mst.tools/rest/',
         pathRewrite: { '^/rest': '' },
         changeOrigin: true,
         secure: true
