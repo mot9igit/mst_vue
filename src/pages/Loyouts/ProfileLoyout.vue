@@ -141,7 +141,7 @@ export default {
       this.menu.push({
         key: '1',
         label: 'Вся база товаров',
-        icon: 'pi pi-database',
+        icon: 'd_icon d_icon-database',
         to: { name: 'copo_all' }
       })
     }
