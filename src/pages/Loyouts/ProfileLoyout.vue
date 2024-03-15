@@ -47,7 +47,14 @@
             </div>
             </div>
           <div class="organization-menu__menu">
-            <PanelMenu v-model:expandedKeys="expandedKeys" :model="getMenu"/>
+            <PanelMenu v-model:expandedKeys="expandedKeys" :model="getMenu">
+              <template #item="{ item }">
+                <router-link class="" :to="item.to" style="color: #fff;">
+                    <span :class="item.icon" v-if="item.icon"></span>
+                    <span>{{ item.label }}</span>
+                </router-link>
+              </template>
+            </PanelMenu>
           </div>
         </div>
         <div v-else>

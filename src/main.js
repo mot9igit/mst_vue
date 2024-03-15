@@ -12,7 +12,7 @@ import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
 import VueCookies from 'vue-cookies'
 
-import { SetupCalendar } from 'v-calendar'
+import { setupCalendar } from 'v-calendar'
 
 import ApiPlugin from './plugins/api'
 import LoadPlugin from './plugins/load'
@@ -34,7 +34,7 @@ app
     icons: mdijs
   })
   .use(VueCookies, { expires: '7d' })
-  .use(SetupCalendar, {})
+  .use(setupCalendar, {})
   .use(PrimeVue, {
     ripple: true,
     locale: {
