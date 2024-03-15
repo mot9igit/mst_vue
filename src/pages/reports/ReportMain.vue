@@ -12,19 +12,19 @@
           <form action="#" @submit.prevent="formSubmit">
             <div class="dart-row">
               <div class="d-col-md-3">
-                <span class="p-float-label">
+                <FloatLabel>
                   <InputText id="username" v-model="report.name" :class="{ 'p-invalid': v$.report.name.$errors.length }"/>
                   <label for="username">Наименование отчета</label>
-                </span>
+                </FloatLabel>
                 <small class="p-error" v-for="error of v$.report.name.$errors" :key="error.$uid">
                   {{ error.$message }}
                 </small>
               </div>
               <div class="d-col-md-3">
-                <span class="p-float-label">
+                <FloatLabel>
                   <Calendar v-model="report.date_from" :minDate="dates.minDateFrom" :maxDate="dates.maxDateFrom" showIcon @update:modelValue="setMinToDate()" :class="{ 'p-invalid': v$.report.date_from.$errors.length }"/>
                   <label for="username">От</label>
-                </span>
+                </FloatLabel>
                 <small class="p-error" v-for="error of v$.report.date_from.$errors" :key="error.$uid">
                   {{ error.$message }}
                 </small>
@@ -119,6 +119,7 @@ import ConfirmDialog from 'primevue/confirmdialog'
 import Checkbox from 'primevue/checkbox'
 import Toast from 'primevue/toast'
 import vTable from '@/components/table/v-table'
+import FloatLabel from 'primevue/floatlabel'
 
 export default {
   name: 'ReportsMain',
@@ -260,7 +261,7 @@ export default {
       }
     }
   },
-  components: { vTable, InputText, Calendar, Dropdown, Toast, ConfirmDialog, Checkbox },
+  components: { vTable, InputText, Calendar, Dropdown, Toast, ConfirmDialog, Checkbox, FloatLabel },
   computed: {
     ...mapGetters([
       'getmatrixes',

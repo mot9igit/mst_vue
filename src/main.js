@@ -17,6 +17,7 @@ import { setupCalendar } from 'v-calendar'
 import ApiPlugin from './plugins/api'
 import LoadPlugin from './plugins/load'
 
+import 'primevue/resources/themes/aura-light-green/theme.css'
 import '@/assets/styles.scss'
 
 const app = createApp(App)
