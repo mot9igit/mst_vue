@@ -44,18 +44,27 @@
                       <span class="text">Вывести средства</span>
                     </router-link>
                 </div>
+                <div class="dart-payment-status">
+                  <i class="d_icon d_icon-check"></i>
+                  <!-- <i class="d_icon d_icon-focus"></i> -->
+                  <span>Включен</span>
+                </div>
             </div>
             </div>
-          <div class="organization-menu__menu">
-            <PanelMenu v-model:expandedKeys="expandedKeys" :model="getMenu">
-              <template #item="{ item }">
-                <router-link class="" :to="item.to" style="color: #fff;">
-                    <span :class="item.icon" v-if="item.icon"></span>
-                    <span>{{ item.label }}</span>
-                </router-link>
-              </template>
-            </PanelMenu>
-          </div>
+            <div class="organization-menu__menu">
+              <PanelMenu v-model:expandedKeys="expandedKeys" :model="getMenu">
+                <template #item="{ item }">
+                  <router-link class="sitebar-menu__item" :to="item.to" style="color: #fff;">
+                    <div class="sitebar-menu__name">
+                      <span :class="item.icon" v-if="item.icon"></span>
+                      <span class="sitebar-menu__title">{{ item.label }}</span>
+                    </div>
+                    <div class="">
+                    </div>
+                  </router-link>
+                </template>
+              </PanelMenu>
+            </div>
         </div>
         <div v-else>
           <PanelMenu v-model:expandedKeys="expandedKeys" :model="menu"/>
@@ -150,7 +159,7 @@ export default {
           }, {
             key: '1',
             label: 'Товары',
-            icon: 'd_icon d_icon-archive',
+            icon: 'd_icon d_icon-products',
             to: { name: 'org_products', params: { id: this.$route.params.id } }
           }, {
             key: '2',
@@ -160,7 +169,7 @@ export default {
           }, {
             key: '3',
             label: 'Мои поставщики',
-            icon: 'd_icon d_icon-cog',
+            icon: 'd_icon d_icon-vendors',
             to: { name: 'org_opts', params: { id: this.$route.params.id } }
           }, {
             key: '4',
@@ -188,7 +197,7 @@ export default {
           }, {
             key: '1',
             label: 'Товары',
-            icon: 'd_icon d_icon-archive',
+            icon: 'd_icon d_icon-products',
             to: { name: 'org_products', params: { id: this.$route.params.id } }
           }, {
             key: '2',
@@ -241,7 +250,7 @@ export default {
           }, {
             key: '3',
             label: 'Товары',
-            icon: 'd_icon d_icon-archive',
+            icon: 'd_icon d_icon-products',
             to: { name: 'org_products', params: { id: this.$route.params.id } }
           }, {
             key: '4',
@@ -328,6 +337,23 @@ export default {
 </script>
 
 <style lang="scss">
+.dart-payment-status{
+  height: 31px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #00F61926;
+  border: 1px solid #00F619;
+  color: #FFFFFF;
+  border-radius: 30px;
+  width: fit-content;
+  margin-top: 16px;
+}
+.organization-menu__menu{
+  margin-bottom: 24px;
+}
 .profile-content__title .title + .desc__text{
   margin-top: 14px;
 }
@@ -493,6 +519,51 @@ main{
         }
       }
     }
+    .p-panelmenu-panel{
+      margin: 0;
+    }
+    .sitebar-menu{
+      &__item{
+        width: 100%;
+        padding: 15px 24px 15px 40px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        gap: 16px;
+        &:hover,
+        &.router-link-active{
+          border-left: 4px solid #FF0000;
+          &::after{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(89.93deg, rgba(255, 0, 0, 0.15) 0.06%, rgba(255, 0, 0, 0) 99.95%);
+            z-index: 1;
+          }
+        }
+      }
+
+      &__name{
+        text-align: left;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        .d_icon{
+          font-size: 24px;
+          margin: 0 0;
+        }
+      }
+
+      &__title{
+        font-size: 14px;
+        display: block;
+        margin: 0;
+      }
+    }
     .organization-menu__gradient{
       border-left: 4px solid #FF0000;
       background: linear-gradient(89.93deg, rgba(255, 0, 0, 0.15) 0.06%, rgba(255, 0, 0, 0) 99.95%);
@@ -551,7 +622,7 @@ main{
     transition: all .2s ease;
   }
   .sidebar_header{
-    border-bottom: 1px dashed #464545;
+    // border-bottom: 1px dashed #464545;
     margin-bottom: 50px;
     position: relative;
     .logo{
@@ -590,6 +661,16 @@ main{
   padding: 0 0;
   overflow-x: clip;
   overflow-y: auto;
+
+  &::-webkit-scrollbar {
+      width: 8px;
+      background-color: #e0e0e0; /* blue */
+      border-radius: 9em;
+  }
+  &::-webkit-scrollbar-thumb {
+      background-color: #b4b4b4; /* green */
+      border-radius: 9em;
+  }
 }
 .p-panelmenu{
   padding: 0;
