@@ -34,14 +34,12 @@
               <p class="panel_widget_organization__name">Заказы</p>
               <p class="panel_widget_organization__circle active">5</p>
             </div>
-            <div class="panel_widget_organization__two-collums">
-              <p class="panel_widget_organization__name">Отгрузки</p>
-              <p class="panel_widget_organization__circle">10</p>
-            </div>
+            <!--
             <div class="panel_widget_organization__two-collums">
               <p class="panel_widget_organization__name">Упущенные продажи</p>
               <p class="panel_widget_organization__value">268 950 ₽</p>
             </div>
+            -->
           </div>
         </div>
       </div>
@@ -86,10 +84,12 @@
               <p class="panel_widget_organization__name">Отгрузки</p>
               <p class="panel_widget_organization__circle">10</p>
             </div>
+            <!--
             <div class="panel_widget_organization__two-collums">
               <p class="panel_widget_organization__name">Упущенные продажи</p>
               <p class="panel_widget_organization__value">268 950 ₽</p>
             </div>
+            -->
           </div>
         </div>
       </div>
@@ -103,13 +103,43 @@
       <div class="dart-row">
         <div class="d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.vendors" v-bind:key="item.id">
           <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
-            <div class="panel_widget_organization__icon" v-if="item.image">
-              <img :src="item.image" alt="">
-            </div>
-            <div class="icon" v-else>
-              <i class="d_icon d_icon-house"></i>
+            <div class="panel_widget_organization__top">
+              <div class="panel_widget_organization__icon" v-if="item.image">
+                <img :src="item.image" alt="">
+                <div class="panel_widget_organization__status">
+                  <!-- <i class="d_icon d_icon-check"></i> -->
+                  <i class="d_icon d_icon-focus"></i>
+                </div>
+              </div>
+              <div class="panel_widget_organization__icon" v-else>
+                <i class="d_icon d_icon-house"></i>
+              </div>
+              <!-- <div class="panel_widget_organization__notifications">
+                <i class="d_icon d_icon-alerts"><div class="panel_widget_organization__notifications-cout active">10</div></i>
+              </div> -->
             </div>
             <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name }}</router-link>
+            <p class="panel_widget_organization__addres">{{ item.address }}</p>
+            <hr/>
+            <div class="panel_widget_organization__two-collums">
+              <p class="panel_widget_organization__name">Баланс</p>
+              <p class="panel_widget_organization__value">{{item.balance}} ₽</p>
+            </div>
+            <hr/>
+            <div class="panel_widget_organization__two-collums">
+              <p class="panel_widget_organization__name">Заказы</p>
+              <p class="panel_widget_organization__circle">5</p>
+            </div>
+            <div class="panel_widget_organization__two-collums">
+              <p class="panel_widget_organization__name">Отгрузки</p>
+              <p class="panel_widget_organization__circle">10</p>
+            </div>
+            <!--
+            <div class="panel_widget_organization__two-collums">
+              <p class="panel_widget_organization__name">Упущенные продажи</p>
+              <p class="panel_widget_organization__value">268 950 ₽</p>
+            </div>
+            -->
           </div>
         </div>
       </div>
@@ -365,6 +395,7 @@ export default {
     .panel_widget_organization{
       padding: 24px 24px;
       position: relative;
+      height: calc(100% - 20px);
       &__icon{
         position: relative;
         display: inline-block;
