@@ -523,9 +523,30 @@ export default {
   }
   .p-multiselect .p-multiselect-label,
   .p-inputtext,
-  .p-autocomplete .p-autocomplete-multiple-container {
-    padding: 10px 15px !important;
-    font-size: 14px !important;
-    line-height: 1.4;
+  .p-autocomplete .p-autocomplete-multiple-container,
+  .p-calendar,
+  .p-dropdown {
+    // padding: 10px 15px !important;
+    // font-size: 14px !important;
+    // line-height: 1.4;
+    & ~ label{
+      transform: translate(0, -50%);
+    }
+
+    label{
+      transform: translate(0, -50%);
+    }
   }
+
+  // .p-float-label > label{
+  //   top: 50%;
+  //   transform: translate(0, -50%);
+  // }
+
+  // .p-inputtext{
+  //   &:active,&:focus + label{
+  //     top: 0;
+  //     background: #FFF;
+  //   }
+  // }
 </style>

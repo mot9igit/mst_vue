@@ -60,6 +60,10 @@
                       <span class="sitebar-menu__title">{{ item.label }}</span>
                     </div>
                     <div class="sitebar-menu__notification">
+                      <!-- Уведомления -->
+                    </div>
+                    <div class="sitebar-menu__hint">
+                      {{ item.label }}
                     </div>
                   </router-link>
                 </template>
@@ -426,6 +430,16 @@ main{
     margin-left: 75px;
     transition: all .2s ease;
   }
+
+  .p-panelmenu .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-action{
+    &:hover{
+      background: transparent;
+      color: #FFF;
+    }
+  }
+  .p-menuitem-icon{
+      color: #FFF ;
+  }
   .sidebar-toggle{
     width: calc(100% - 8px);
     position: absolute;
@@ -543,6 +557,13 @@ main{
             z-index: 1;
           }
         }
+
+        &:hover{
+          .sitebar-menu__hint{
+            opacity: 1;
+            pointer-events: all;
+          }
+        }
       }
       &__name{
         text-align: left;
@@ -562,6 +583,31 @@ main{
 
       &__notification{
         display: none;
+      }
+
+      &__hint{
+        display: flex;
+        position: fixed;
+        left: 85px;
+        height: 26px;
+        padding: 0 10px;
+        background: #282828;
+        border-radius: 8px;
+        align-items: center;
+        opacity: 0;
+        transition: all 0.4s;
+        pointer-events: none;
+        &::before{
+          width: 10px;
+          height: 10px;
+          background: #282828;
+          position: absolute;
+          content: "";
+          z-index: 1;
+          left: -3px;
+          top: 50%;
+          transform: translate(0, -50%) rotate(45deg);
+        }
       }
   }
 
@@ -658,6 +704,10 @@ main{
         display: block;
         margin: 0;
       }
+
+      &__hint{
+        display: none;
+      }
     }
     .organization-menu__gradient{
       border-left: 4px solid #FF0000;
@@ -693,7 +743,7 @@ main{
       color: #FFF;
     }
     .p-menuitem-icon{
-      color: #FFF;
+      color: #FFF ;
     }
     .organization-menu__up{
       padding: 0 24px 0 40px;
