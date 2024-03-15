@@ -23,6 +23,10 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+.d_icon-arrow:before {
+	content: "\e90c";
+
+}
 .d_icon-focus:before {
 	content: "\e900";
 	color: #fb203a;

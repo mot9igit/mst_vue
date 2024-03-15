@@ -59,7 +59,7 @@
                       <span :class="item.icon" v-if="item.icon"></span>
                       <span class="sitebar-menu__title">{{ item.label }}</span>
                     </div>
-                    <div class="">
+                    <div class="sitebar-menu__notification">
                     </div>
                   </router-link>
                 </template>
@@ -71,7 +71,9 @@
         </div>
       </div>
       <a href="#" class="sidebar-toggle" @click="sidebarToggle">
-        <mdicon name="arrow-collapse-right" :width="12" :height="12"/>
+        <i class="d_icon d_icon-arrow"></i>
+        <p>Скрыть</p>
+        <!-- <mdicon name="pi pi-angle-right" :width="12" :height="12"/> -->
       </a>
     </nav>
     <main role="main">
@@ -337,22 +339,12 @@ export default {
 </script>
 
 <style lang="scss">
-.dart-payment-status{
-  height: 31px;
-  padding: 0 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  background: #00F61926;
-  border: 1px solid #00F619;
-  color: #FFFFFF;
-  border-radius: 30px;
-  width: fit-content;
-  margin-top: 16px;
+.p-panelmenu-panel{
+  border: 0;
 }
+
 .organization-menu__menu{
-  margin-bottom: 24px;
+  margin-bottom: 45px;
 }
 .profile-content__title .title + .desc__text{
   margin-top: 14px;
@@ -435,21 +427,27 @@ main{
     transition: all .2s ease;
   }
   .sidebar-toggle{
+    width: calc(100% - 8px);
     position: absolute;
-    left: 50%;
-    bottom: 15px;
-    transform: translate(-50%, 0);
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.12);
+    bottom: 0px;
+    background: #282828;
+    color: #FFF;
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 20px;
-    height: 20px;
-    border-radius: 3px;
+    height: 30px;
     z-index: 2;
-    span{
+    text-decoration: none;
+    gap: 4px;
+    p{
+      display: none;
+    }
+    .d_icon{
+      font-size: 8px;
+      transform: rotate(-90deg);
       position: relative;
+      top: -3px;
       transition: all .2s ease;
     }
   }
@@ -458,14 +456,35 @@ main{
   }
   .organization-menu__up{
     text-align: center;
+    margin-bottom: 10px;
     a{
       span:last-child{
         display: none;
       }
     }
   }
+
+  .dart-payment-status{
+    height: 31px;
+    width: 31px !important;
+    margin: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: #00F61926;
+    border: 1px solid #00F619;
+    color: #FFFFFF;
+    border-radius: 30px;
+    width: fit-content;
+    margin-top: 16px;
+    span{
+      display: none;
+    }
+  }
+
   .organization-menu__name{
-    padding: 0 15px;
+    padding: 0;
     display: block;
     text-align: center;
     .icon{
@@ -477,7 +496,11 @@ main{
       display: none;
     }
   }
+
   .sidebar_widget .dart_diler_widget__btn-container{
+    width: 45px;
+    height: 45px;
+    margin: auto;
     a{
       span:first-child{
         display: inline-block;
@@ -488,20 +511,91 @@ main{
     }
   }
   .dart_diler_widget .dart_diler_widget__info-text{
-    visibility: hidden;
+    display: none;
   }
+
   .sidebar_header{
     .sidebar_header-close{
       display: none
     }
   }
+
+  .sitebar-menu{
+      &__item{
+        width: 100%;
+        padding: 15px;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        justify-content: center;
+        gap: 16px;
+        &:hover,
+        &.router-link-active{
+          border-left: 4px solid #FF0000;
+          &::after{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(89.93deg, rgba(255, 0, 0, 0.15) 0.06%, rgba(255, 0, 0, 0) 99.95%);
+            z-index: 1;
+          }
+        }
+      }
+      &__name{
+        text-align: left;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        .d_icon{
+          font-size: 24px;
+          margin: 0 0;
+        }
+      }
+
+      &__title{
+        display: none;
+      }
+
+      &__notification{
+        display: none;
+      }
+  }
+
   &.active{
     width: 350px;
     transition: all .2s ease;
+    .sidebar_header .logo{
+      padding: 10px 24px 10px 40px;
+      justify-content: flex-start;
+    }
+    .dart-payment-status{
+      height: 31px;
+      width: fit-content !important;
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #00F61926;
+      border: 1px solid #00F619;
+      color: #FFFFFF;
+      border-radius: 30px;
+      margin-top: 16px;
+      margin: 16px 0 0 0 ;
+      span{
+        display: block;
+      }
+    }
     .dart_diler_widget .dart_diler_widget__info-text{
       visibility: visible;
     }
     .sidebar_widget .dart_diler_widget__btn-container{
+      width: auto;
+      height: auto;
       a{
         span:first-child{
           display: none;
@@ -528,6 +622,7 @@ main{
         padding: 15px 24px 15px 40px;
         display: flex;
         align-items: center;
+        justify-content: flex-start;
         text-decoration: none;
         gap: 16px;
         &:hover,
@@ -589,6 +684,16 @@ main{
     .p-panelmenu .p-panelmenu-panel .p-panelmenu-header .p-panelmenu-header-content .p-panelmenu-header-action{
       justify-content: flex-start;
       padding: 10px 10px 10px 40px;
+      &:hover{
+        background: transparent;
+        color: #FFF;
+      }
+    }
+    .p-menuitem-text{
+      color: #FFF;
+    }
+    .p-menuitem-icon{
+      color: #FFF;
     }
     .organization-menu__up{
       padding: 0 24px 0 40px;
@@ -601,11 +706,18 @@ main{
       }
     }
     .sidebar-toggle {
-      span{
-        top: 1px;
-        left: 1px;
-        transform: rotate(-180deg);
+      .d_icon{
+        font-size: 8px;
+        transform: rotate(90deg);
+        position: relative;
+        top: -1px;
         transition: all .2s ease;
+      }
+      p{
+        font-size: 14px;
+        display: block;
+        margin: 0;
+        color: #FFF;
       }
     }
     .sidebar_header{
@@ -623,10 +735,10 @@ main{
   }
   .sidebar_header{
     // border-bottom: 1px dashed #464545;
-    margin-bottom: 50px;
+    margin-bottom: 20px;
     position: relative;
     .logo{
-      padding: 10px 15px 10px 15px;
+      padding: 10px 0;
       background: #282828;
       display: flex;
       color: #fff;
