@@ -15,7 +15,7 @@
         <FileUpload mode="basic" name="logo[]" :url="'/rest/file_upload.php?store_id=' + $route.params.id + '&path=logo'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Выбрать" />
         <div class="dart-upload_files">
           <div class="item" v-for="(file, key) in organization.files" :key="key">
-            <img :src="file.thumb" alt="">
+            <img :src="file.url" alt="">
           </div>
         </div>
       </div>
@@ -155,7 +155,6 @@ export default {
       'set_organization_data'
     ]),
     onUpload (data) {
-      console.log(data.xhr)
       if (data.xhr.response) {
         const response = JSON.parse(data.xhr.response)
         if (Object.prototype.hasOwnProperty.call(response.data, 'files')) {
@@ -207,5 +206,9 @@ export default {
   .dart-btn+.dart-btn {
     margin-left: 5px;
   }
+}
+.dart-upload_files .item img {
+  max-width: 52px;
+  width: 100%;
 }
 </style>

@@ -278,11 +278,13 @@ export default ({
     height: 100%;
     &-image{
       position: relative;
-      text-align: center;
+      text-align: left;
+      padding: 10px 10px;
       img{
         max-width: 100%;
-        max-height: 153px;
+        max-height: 52px;
         background: #FFF;
+        border-radius: 50%;
       }
       a{
         position: relative;

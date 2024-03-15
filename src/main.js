@@ -167,3 +167,5 @@ app.config.globalProperties.$filters = {
     return value.toFixed(2)
   }
 }
+
+PrimeVue.changeTheme('aura-light-green', 'aura-light-green', 'theme-link', () => {})

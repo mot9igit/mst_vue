@@ -32,7 +32,7 @@
             <hr/>
             <div class="panel_widget_organization__two-collums">
               <p class="panel_widget_organization__name">Заказы</p>
-              <p class="panel_widget_organization__circle active">5</p>
+              <p class="panel_widget_organization__circle active">{{item.orders.count}}</p>
             </div>
             <!--
             <div class="panel_widget_organization__two-collums">
@@ -78,11 +78,11 @@
             <hr/>
             <div class="panel_widget_organization__two-collums">
               <p class="panel_widget_organization__name">Заказы</p>
-              <p class="panel_widget_organization__circle">5</p>
+              <p class="panel_widget_organization__circle">{{item.orders.count}}</p>
             </div>
             <div class="panel_widget_organization__two-collums">
               <p class="panel_widget_organization__name">Отгрузки</p>
-              <p class="panel_widget_organization__circle">10</p>
+              <p class="panel_widget_organization__circle">{{item.ships.count}}</p>
             </div>
             <!--
             <div class="panel_widget_organization__two-collums">
@@ -128,11 +128,11 @@
             <hr/>
             <div class="panel_widget_organization__two-collums">
               <p class="panel_widget_organization__name">Заказы</p>
-              <p class="panel_widget_organization__circle">5</p>
+              <p class="panel_widget_organization__circle">{{item.orders.count}}</p>
             </div>
             <div class="panel_widget_organization__two-collums">
               <p class="panel_widget_organization__name">Отгрузки</p>
-              <p class="panel_widget_organization__circle">10</p>
+              <p class="panel_widget_organization__circle">{{item.ships.count}}</p>
             </div>
             <!--
             <div class="panel_widget_organization__two-collums">
