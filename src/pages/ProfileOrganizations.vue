@@ -11,8 +11,8 @@
               <div class="panel_widget_organization__icon" v-if="item.image">
                 <img :src="item.image" alt="">
                 <div class="panel_widget_organization__status">
-                  <i class="d_icon d_icon-check"></i>
-                  <!-- <i class="d_icon d_icon-focus"></i> -->
+                  <i class="d_icon d_icon-check" v-if="item.active"></i>
+                  <i class="d_icon d_icon-focus" v-if="!item.active"></i>
                 </div>
               </div>
               <div class="panel_widget_organization__icon" v-else>
@@ -57,8 +57,8 @@
               <div class="panel_widget_organization__icon" v-if="item.image">
                 <img :src="item.image" alt="">
                 <div class="panel_widget_organization__status">
-                  <!-- <i class="d_icon d_icon-check"></i> -->
-                  <i class="d_icon d_icon-focus"></i>
+                  <i class="d_icon d_icon-check" v-if="item.active"></i>
+                  <i class="d_icon d_icon-focus" v-if="!item.active"></i>
                 </div>
               </div>
               <div class="panel_widget_organization__icon" v-else>
@@ -107,8 +107,8 @@
               <div class="panel_widget_organization__icon" v-if="item.image">
                 <img :src="item.image" alt="">
                 <div class="panel_widget_organization__status">
-                  <!-- <i class="d_icon d_icon-check"></i> -->
-                  <i class="d_icon d_icon-focus"></i>
+                  <i class="d_icon d_icon-check" v-if="item.active"></i>
+                  <i class="d_icon d_icon-focus" v-if="!item.active"></i>
                 </div>
               </div>
               <div class="panel_widget_organization__icon" v-else>
