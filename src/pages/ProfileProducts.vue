@@ -1,16 +1,24 @@
 <template>
   <div class="copo">
+    <div class="dart-back-link">
+      <router-link :to="{ name: 'organizations' }">
+        <mdicon name="arrow-left" />
+        <span>Назад к товарам</span>
+      </router-link>
+    </div>
+    <h1 class="h1-mini">Сопоставление товаров</h1>
+    <p class="info-text mb-3">Для работы вам необходимо достигнуть и поддерживать уровень сопоставления товаров по стоимости не менее 80%.</p>
     <div class="analitics-widget">
       <div class="organization" >
         <div class="dart-row">
-          <div class="d-col-md-4" v-if="prods.all">
+          <!-- <div class="d-col-md-4" v-if="prods.all">
             <div class="panel-widget panel-widget-summ">
               <span>Остатки</span>
               <span class="sum">{{ prods.summ }} ₽</span>
               <span class="num">{{ prods.count_all }} шт.</span>
             </div>
-          </div>
-          <div class="d-col-md-4" v-if="prods.all">
+          </div> -->
+          <div class="d-col-md-6" v-if="prods.all">
             <div class="panel-widget panel-widget-remains">
                 <div class="panel-widget-remains__graph">
                   <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem" />
@@ -45,7 +53,7 @@
                 </div>
             </div>
           </div>
-          <div class="d-col-md-4" v-if="prods.all">
+          <div class="d-col-md-6" v-if="prods.all">
             <div class="panel-widget panel-widget-remains">
               <div class="panel-widget-remains__graph">
                 <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-5rem" />
@@ -76,6 +84,135 @@
                     Отчет по сопоставлению
                     <mdicon name="arrow-right" />
                   </router-link>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-col-md-3">
+            <div class="dart-helper dart-helper-1">
+              <div class="dart-helper__nav">
+                <div class="dart-helper__left">
+                  <p>Укажите цену</p>
+                  <span>10</span>
+                </div>
+                <div class="dart-helper__right">
+                  <p>На сумму</p>
+                  <span>500 000 ₽</span>
+                </div>
+              </div>
+              <div class="dart-helper__body">
+                <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
+                <div class="dart-helper__info">
+                  <b>50%</b>
+                  <p>от общего сопоставления</p>
+                </div>
+              </div>
+              <div class="dart-helper-footer show">
+                <div class="dart-helper-footer__text">
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                </div>
+                <div class="dart-helper-footer__icon">
+                  <i class="d_icon d_icon-arrow"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-col-md-3">
+            <div class="dart-helper dart-helper-2">
+              <div class="dart-helper__nav">
+                <div class="dart-helper__left">
+                  <p>Нет бренда</p>
+                  <span>10</span>
+                </div>
+                <div class="dart-helper__right">
+                  <p>На сумму</p>
+                  <span>500 000 ₽</span>
+                </div>
+              </div>
+              <div class="dart-helper__body">
+                <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
+                <div class="dart-helper__info">
+                  <b>50%</b>
+                  <p>от общего сопоставления</p>
+                </div>
+              </div>
+              <div class="dart-helper-footer show">
+                <div class="dart-helper-footer__text">
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                </div>
+                <div class="dart-helper-footer__icon">
+                  <i class="d_icon d_icon-arrow"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-col-md-3">
+            <div class="dart-helper dart-helper-3">
+              <div class="dart-helper__nav">
+                <div class="dart-helper__left">
+                  <p>Нет артикула</p>
+                  <span>10</span>
+                </div>
+                <div class="dart-helper__right">
+                  <p>На сумму</p>
+                  <span>500 000 ₽</span>
+                </div>
+              </div>
+              <div class="dart-helper__body">
+                <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
+                <div class="dart-helper__info">
+                  <b>50%</b>
+                  <p>от общего сопоставления</p>
+                </div>
+              </div>
+              <div class="dart-helper-footer show">
+                <div class="dart-helper-footer__text">
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                </div>
+                <div class="dart-helper-footer__icon">
+                  <i class="d_icon d_icon-arrow"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="d-col-md-3">
+            <div class="dart-helper dart-helper-4">
+              <div class="dart-helper__nav">
+                <div class="dart-helper__left">
+                  <p>Нет карточки</p>
+                  <span>10</span>
+                </div>
+                <div class="dart-helper__right">
+                  <p>На сумму</p>
+                  <span>500 000 ₽</span>
+                </div>
+              </div>
+              <div class="dart-helper__body">
+                <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
+                <div class="dart-helper__info">
+                  <b>50%</b>
+                  <p>от общего сопоставления</p>
+                </div>
+              </div>
+              <div class="dart-helper-footer show">
+                <div class="dart-helper-footer__text">
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                </div>
+                <div class="dart-helper-footer__icon">
+                  <i class="d_icon d_icon-arrow"></i>
                 </div>
               </div>
             </div>
@@ -329,5 +466,194 @@ export default {
 <style lang="scss">
 .analitics-widget{
   margin-bottom: 30px;
+}
+
+.dart-back-link{
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  letter-spacing: 1.25px;
+}
+
+.dart-back-link a{
+  color: #ADADAD !important;
+}
+
+.h1-mini{
+  font-size: 24px;
+  font-weight: 400;
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+
+.info-text{
+  color: #ADADAD;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.dart-helper{
+  border-radius: 8px;
+  background: #FFF;
+  border: 1px solid #0000001F;
+
+  &__nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid #0000001F;
+  }
+
+  p{
+    margin: 0;
+  }
+
+  &__left{
+    display: flex;
+    align-items: center;
+    p{
+      color: #676767;
+      font-size: 14px;
+      margin-right: 16px;
+    }
+
+    span{
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      color: #FFF;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  &__right{
+    p{
+      color: #676767;
+      font-size: 11px;
+    }
+
+    span{
+      font-size: 16px;
+      font-weight: 500;
+    }
+  }
+
+  &__body{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 16px 24px;
+  }
+
+  &__graph{
+    max-height: 60px;
+    max-width: 60px;
+  }
+
+  &__info{
+    b{
+      font-size: 28px;
+      font-weight: 500;
+    }
+
+    p{
+      color: #676767;
+      font-size: 14px;
+      font-weight: 400;
+    }
+  }
+}
+
+.dart-helper-footer{
+  padding-bottom: 12px;
+  &__icon{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .d_icon{
+      transform: rotate(0deg);
+      font-size: 8px;
+    }
+  }
+  &.show{
+    .dart-helper-footer{
+      &__text{
+        max-height: 400px;
+        transition: all 0.4s;
+        padding: 16px 24px;
+      }
+
+      &__icon{
+        .d_icon{
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+  &__text{
+    padding: 0;
+    transition: all 0.4s;
+    max-height: 0;
+    overflow: hidden;
+    p{
+      font-size: 12px;
+      line-height: 1.1;
+      font-weight: 400;
+    }
+
+    p + p{
+      margin-top: 8px;
+    }
+  }
+}
+
+.dart-helper-1{
+  border-top: 3px solid #008FFF;
+
+  .dart-helper{
+    &__left{
+      span{
+        background: #008FFF;
+      }
+    }
+  }
+}
+
+.dart-helper-2{
+  border-top: 3px solid #F363E6;
+  .dart-helper{
+    &__left{
+      span{
+        background: #F363E6;
+      }
+    }
+  }
+}
+
+.dart-helper-3{
+  border-top: 3px solid #FF6221;
+  .dart-helper{
+    &__left{
+      span{
+        background: #FF6221;
+      }
+    }
+  }
+}
+
+.dart-helper-4{
+  border-top: 3px solid #FFD02C;
+  .dart-helper{
+    &__left{
+      span{
+        background: #FFD02C;
+      }
+    }
+  }
 }
 </style>

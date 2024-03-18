@@ -44,10 +44,14 @@
                       <span class="text">Вывести средства</span>
                     </router-link>
                 </div>
-                <div class="dart-payment-status">
+                <div class="dart-payment-status" v-if="org.active">
                   <i class="d_icon d_icon-check"></i>
                   <!-- <i class="d_icon d_icon-focus"></i> -->
                   <span>Включен</span>
+                </div>
+                <div class="dart-payment-status off" v-else>
+                  <i class="d_icon d_icon-focus"></i>
+                  <span>Выключен</span>
                 </div>
             </div>
             </div>
@@ -494,6 +498,11 @@ main{
     margin-top: 16px;
     span{
       display: none;
+    }
+
+    &.off{
+      background: rgba(255, 0, 0, 0.15) !important;
+      border: 1px solid #FF0000 !important;
     }
   }
 
