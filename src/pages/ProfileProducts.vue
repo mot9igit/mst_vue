@@ -89,7 +89,7 @@
             </div>
           </div>
 
-          <div class="d-col-md-3">
+          <div class="d-col-xxl-3 d-col-lg-6">
             <div class="dart-helper dart-helper-1">
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
@@ -119,7 +119,7 @@
               </div>
             </div>
           </div>
-          <div class="d-col-md-3">
+          <div class="d-col-xxl-3 d-col-lg-6">
             <div class="dart-helper dart-helper-2">
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
@@ -151,7 +151,7 @@
               </div>
             </div>
           </div>
-          <div class="d-col-md-3">
+          <div class="d-col-xxl-3 d-col-lg-6">
             <div class="dart-helper dart-helper-3">
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
@@ -183,7 +183,7 @@
               </div>
             </div>
           </div>
-          <div class="d-col-md-3">
+          <div class="d-col-xxl-3 d-col-lg-6">
             <div class="dart-helper dart-helper-4">
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
