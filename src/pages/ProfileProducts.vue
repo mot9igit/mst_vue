@@ -94,21 +94,19 @@
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
                   <p>Укажите цену</p>
-                  <span>10</span>
+                  <span>{{ products.status[5].count }}</span>
                 </div>
                 <div class="dart-helper__right">
-                  <p>На сумму</p>
-                  <span>500 000 ₽</span>
                 </div>
               </div>
               <div class="dart-helper__body">
-                <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
+                <Chart type="doughnut" :data="chartDataHelpOne" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
                 <div class="dart-helper__info">
-                  <b>50%</b>
+                  <b>{{(this.products.status[5].count / (this.products.total / 100)).toFixed(2)}} %</b>
                   <p>от общего сопоставления</p>
                 </div>
               </div>
-              <div class="dart-helper-footer show">
+              <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][0] }">
                 <div class="dart-helper-footer__text">
                   <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
                   <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
@@ -116,7 +114,7 @@
                   <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
                 </div>
                 <div class="dart-helper-footer__icon">
-                  <i class="d_icon d_icon-arrow"></i>
+                  <i class="d_icon d_icon-arrow" @click="helpers[0][0] = !helpers[0][0]"></i>
                 </div>
               </div>
             </div>
@@ -126,21 +124,21 @@
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
                   <p>Нет бренда</p>
-                  <span>10</span>
+                  <span>{{ products.status[1].count }}</span>
                 </div>
                 <div class="dart-helper__right">
                   <p>На сумму</p>
-                  <span>500 000 ₽</span>
+                  <span>{{ products.status[1].sum }} ₽</span>
                 </div>
               </div>
               <div class="dart-helper__body">
-                <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
+                <Chart type="doughnut" :data="chartDataHelpTwo" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
                 <div class="dart-helper__info">
-                  <b>50%</b>
+                  <b>{{(this.products.status[1].count / (this.products.total / 100)).toFixed(2)}} %</b>
                   <p>от общего сопоставления</p>
                 </div>
               </div>
-              <div class="dart-helper-footer show">
+              <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][1] }">
                 <div class="dart-helper-footer__text">
                   <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
                   <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
@@ -148,7 +146,7 @@
                   <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
                 </div>
                 <div class="dart-helper-footer__icon">
-                  <i class="d_icon d_icon-arrow"></i>
+                  <i class="d_icon d_icon-arrow" @click="helpers[0][1] = !helpers[0][1]"></i>
                 </div>
               </div>
             </div>
@@ -158,21 +156,21 @@
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
                   <p>Нет артикула</p>
-                  <span>10</span>
+                  <span>{{ products.status[2].count }}</span>
                 </div>
                 <div class="dart-helper__right">
                   <p>На сумму</p>
-                  <span>500 000 ₽</span>
+                  <span>{{ products.status[2].sum }} ₽</span>
                 </div>
               </div>
               <div class="dart-helper__body">
-                <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
+                <Chart type="doughnut" :data="chartDataHelpThee" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
                 <div class="dart-helper__info">
-                  <b>50%</b>
+                  <b>{{(this.products.status[2].count / (this.products.total / 100)).toFixed(2)}} %</b>
                   <p>от общего сопоставления</p>
                 </div>
               </div>
-              <div class="dart-helper-footer show">
+              <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][2] }">
                 <div class="dart-helper-footer__text">
                   <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
                   <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
@@ -180,7 +178,7 @@
                   <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
                 </div>
                 <div class="dart-helper-footer__icon">
-                  <i class="d_icon d_icon-arrow"></i>
+                  <i class="d_icon d_icon-arrow" @click="helpers[0][2] = !helpers[0][2]"></i>
                 </div>
               </div>
             </div>
@@ -190,29 +188,28 @@
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
                   <p>Нет карточки</p>
-                  <span>10</span>
+                  <span>{{ products.status[4].count }}</span>
                 </div>
                 <div class="dart-helper__right">
                   <p>На сумму</p>
-                  <span>500 000 ₽</span>
+                  <span>{{ products.status[4].sum }} ₽</span>
                 </div>
               </div>
               <div class="dart-helper__body">
-                <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
+                <Chart type="doughnut" :data="chartDataHelpFour" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
                 <div class="dart-helper__info">
-                  <b>50%</b>
+                  <b>{{(this.products.status[4].count / (this.products.total / 100)).toFixed(2)}} %</b>
                   <p>от общего сопоставления</p>
                 </div>
               </div>
-              <div class="dart-helper-footer show">
+              <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][3] }">
                 <div class="dart-helper-footer__text">
                   <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Запросите добавление карточек бренда</p>
+                  <p>Запросите добавление карточки товара</p>
                 </div>
                 <div class="dart-helper-footer__icon">
-                  <i class="d_icon d_icon-arrow"></i>
+                  <i class="d_icon d_icon-arrow" @click="helpers[0][3] = !helpers[0][3]"></i>
                 </div>
               </div>
             </div>
@@ -271,9 +268,19 @@ export default {
     return {
       chartData: null,
       chartDataMoney: null,
+      chartDataHelpOne: null,
+      chartDataHelpTwo: null,
+      chartDataHelpThee: null,
+      chartDataHelpFour: null,
       chartOptions: {
         cutout: '60%'
       },
+      helpers: [{
+        0: false,
+        1: false,
+        2: false,
+        3: false
+      }],
       prods: {
         copo_percent: 0,
         all: 0,
@@ -403,6 +410,50 @@ export default {
         ]
       }
     },
+    setChartDataHelpOne () {
+      return {
+        datasets: [
+          {
+            data: [(this.products.status[5].count / (this.products.total / 100)).toFixed(2), 100 - (this.products.status[5].count / (this.products.total / 100)).toFixed(2)],
+            backgroundColor: ['#008FFF', '#EEEEEE'],
+            hoverBackgroundColor: ['#008FFF', '#EEEEEE']
+          }
+        ]
+      }
+    },
+    setChartDataHelpTwo () {
+      return {
+        datasets: [
+          {
+            data: [(this.products.status[1].count / (this.products.total / 100)).toFixed(2), 100 - (this.products.status[1].count / (this.products.total / 100)).toFixed(2)],
+            backgroundColor: ['#F363E6', '#EEEEEE'],
+            hoverBackgroundColor: ['#F363E6', '#EEEEEE']
+          }
+        ]
+      }
+    },
+    setChartDataHelpTree () {
+      return {
+        datasets: [
+          {
+            data: [(this.products.status[2].count / (this.products.total / 100)).toFixed(2), 100 - (this.products.status[2].count / (this.products.total / 100)).toFixed(2)],
+            backgroundColor: ['#FF6221', '#EEEEEE'],
+            hoverBackgroundColor: ['#FF6221', '#EEEEEE']
+          }
+        ]
+      }
+    },
+    setChartDataHelpFour () {
+      return {
+        datasets: [
+          {
+            data: [(this.products.status[4].count / (this.products.total / 100)).toFixed(2), 100 - (this.products.status[4].count / (this.products.total / 100)).toFixed(2)],
+            backgroundColor: ['#FFD02C', '#EEEEEE'],
+            hoverBackgroundColor: ['#FFD02C', '#EEEEEE']
+          }
+        ]
+      }
+    },
     filter (data) {
       this.get_data_from_api(data)
     },
@@ -419,6 +470,10 @@ export default {
     this.get_organization_from_api().then(() => {
       this.chartData = this.setChartData()
       this.chartDataMoney = this.setChartDataMoney()
+      this.chartDataHelpOne = this.setChartDataHelpOne()
+      this.chartDataHelpTwo = this.setChartDataHelpTwo()
+      this.chartDataHelpThee = this.setChartDataHelpTree()
+      this.chartDataHelpFour = this.setChartDataHelpFour()
       const num = this.organization.products.copo_percent
       this.prods.copo_percent = num
       this.prods.all = this.organization.products.count
@@ -520,7 +575,8 @@ export default {
     }
 
     span{
-      width: 25px;
+      padding: 0 5px;
+      min-width: 25px;
       height: 25px;
       border-radius: 50%;
       color: #FFF;
@@ -532,6 +588,7 @@ export default {
   }
 
   &__right{
+    min-height: 39px;
     p{
       color: #676767;
       font-size: 11px;
@@ -578,13 +635,14 @@ export default {
     .d_icon{
       transform: rotate(0deg);
       font-size: 8px;
+      cursor: pointer;
     }
   }
   &.show{
     .dart-helper-footer{
       &__text{
         max-height: 400px;
-        transition: all 0.4s;
+        transition: all 0.6s;
         padding: 16px 24px;
       }
 
@@ -596,8 +654,8 @@ export default {
     }
   }
   &__text{
-    padding: 0;
-    transition: all 0.4s;
+    padding: 0 24px;
+    transition: all 0.6s;
     max-height: 0;
     overflow: hidden;
     p{
