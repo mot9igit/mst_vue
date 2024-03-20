@@ -89,12 +89,12 @@
             </div>
           </div>
 
-          <div class="d-col-xxl-3 d-col-lg-6">
+          <div class="d-col-xxl-3 d-col-lg-6" v-if="products.status">
             <div class="dart-helper dart-helper-1">
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
                   <p>Укажите цену</p>
-                  <span>{{ products.status[5].count }}</span>
+                  <span>{{ (products.status[5].count).toLocaleString('ru') }}</span>
                 </div>
                 <div class="dart-helper__right">
                 </div>
@@ -102,7 +102,7 @@
               <div class="dart-helper__body">
                 <Chart type="doughnut" :data="chartDataHelpOne" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
                 <div class="dart-helper__info">
-                  <b>{{(this.products.status[5].count / (this.products.total / 100)).toFixed(2)}} %</b>
+                  <b>{{(this.products.status[5].count / (this.products.status.total / 100)).toFixed(2)}} %</b>
                   <p>от общего сопоставления</p>
                 </div>
               </div>
@@ -119,22 +119,22 @@
               </div>
             </div>
           </div>
-          <div class="d-col-xxl-3 d-col-lg-6">
+          <div class="d-col-xxl-3 d-col-lg-6" v-if="products.status">
             <div class="dart-helper dart-helper-2">
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
                   <p>Нет бренда</p>
-                  <span>{{ products.status[1].count }}</span>
+                  <span>{{ (products.status[1].count).toLocaleString('ru') }}</span>
                 </div>
                 <div class="dart-helper__right">
                   <p>На сумму</p>
-                  <span>{{ products.status[1].sum }} ₽</span>
+                  <span>{{ Number((products.status[1].sum)).toLocaleString('ru') }} ₽</span>
                 </div>
               </div>
               <div class="dart-helper__body">
                 <Chart type="doughnut" :data="chartDataHelpTwo" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
                 <div class="dart-helper__info">
-                  <b>{{(this.products.status[1].count / (this.products.total / 100)).toFixed(2)}} %</b>
+                  <b>{{(this.products.status[1].count / (this.products.status.total / 100)).toFixed(2)}} %</b>
                   <p>от общего сопоставления</p>
                 </div>
               </div>
@@ -151,22 +151,22 @@
               </div>
             </div>
           </div>
-          <div class="d-col-xxl-3 d-col-lg-6">
+          <div class="d-col-xxl-3 d-col-lg-6" v-if="products.status">
             <div class="dart-helper dart-helper-3">
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
                   <p>Нет артикула</p>
-                  <span>{{ products.status[2].count }}</span>
+                  <span>{{ (products.status[2].count).toLocaleString('ru') }}</span>
                 </div>
                 <div class="dart-helper__right">
                   <p>На сумму</p>
-                  <span>{{ products.status[2].sum }} ₽</span>
+                  <span>{{ Number((products.status[2].sum)).toLocaleString('ru') }} ₽</span>
                 </div>
               </div>
               <div class="dart-helper__body">
                 <Chart type="doughnut" :data="chartDataHelpThee" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
                 <div class="dart-helper__info">
-                  <b>{{(this.products.status[2].count / (this.products.total / 100)).toFixed(2)}} %</b>
+                  <b>{{(this.products.status[2].count / (this.products.status.total / 100)).toFixed(2)}} %</b>
                   <p>от общего сопоставления</p>
                 </div>
               </div>
@@ -183,22 +183,22 @@
               </div>
             </div>
           </div>
-          <div class="d-col-xxl-3 d-col-lg-6">
+          <div class="d-col-xxl-3 d-col-lg-6" v-if="products.status">
             <div class="dart-helper dart-helper-4">
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
                   <p>Нет карточки</p>
-                  <span>{{ products.status[4].count }}</span>
+                  <span>{{ (products.status[4].count).toLocaleString('ru') }}</span>
                 </div>
                 <div class="dart-helper__right">
                   <p>На сумму</p>
-                  <span>{{ products.status[4].sum }} ₽</span>
+                  <span>{{ Number((products.status[4].sum)).toLocaleString('ru') }} ₽</span>
                 </div>
               </div>
               <div class="dart-helper__body">
                 <Chart type="doughnut" :data="chartDataHelpFour" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
                 <div class="dart-helper__info">
-                  <b>{{(this.products.status[4].count / (this.products.total / 100)).toFixed(2)}} %</b>
+                  <b>{{(this.products.status[4].count / (this.products.status.total / 100)).toFixed(2)}} %</b>
                   <p>от общего сопоставления</p>
                 </div>
               </div>
@@ -218,25 +218,49 @@
       </div>
     </div>
     <div class="products">
-      <v-table
-        :items_data="products.products"
-        :total="products.total"
-        :pagination_items_per_page="this.pagination_items_per_page"
-        :pagination_offset="this.pagination_offset"
-        :page="this.page"
-        :table_data="this.table_data"
-        :filters="this.filters"
-        title="Склад"
-        @filter="filter"
-        @sort="filter"
-        @paginate="paginate"
-      >
-        <template v-slot:desc>
-          <div v-if="organization.yml_file" class="dart-alert dart-alert-info dart-mt-1">
-            <span>Вы можете посмотреть ваш каталог в формате <a :href="organization.yml_file" target="_blank">YML</a>.</span>
-          </div>
-        </template>
-      </v-table>
+      <TabView class="tab-custom">
+          <TabPanel header="По брендам">
+              <v-table
+                :items_data="products.brands? products.brands.items : null"
+                :total="products.brands? products.brands.total : 0"
+                :pagination_items_per_page="this.pagination_items_per_page"
+                :pagination_offset="this.pagination_brand_offset"
+                :page="this.page_brand"
+                :table_data="this.table_data_brand"
+                :filters="this.filters"
+                @filter="filter"
+                @sort="filter"
+                @paginate="paginatebrand"
+              >
+                <template v-slot:desc>
+                  <div v-if="organization.yml_file" class="dart-alert dart-alert-info dart-mt-1">
+                    <span>Вы можете посмотреть ваш каталог в формате <a :href="organization.yml_file" target="_blank">YML</a>.</span>
+                  </div>
+                </template>
+              </v-table>
+          </TabPanel>
+          <TabPanel header="По товарам">
+            <v-table
+              :items_data="products.products"
+              :total="products.total"
+              :pagination_items_per_page="this.pagination_items_per_page"
+              :pagination_offset="this.pagination_offset"
+              :page="this.page"
+              :table_data="this.table_data"
+              :filters="this.filters"
+              @filter="filter"
+              @sort="filter"
+              @paginate="paginate"
+            >
+              <template v-slot:desc>
+                <div v-if="organization.yml_file" class="dart-alert dart-alert-info dart-mt-1">
+                  <span>Вы можете посмотреть ваш каталог в формате <a :href="organization.yml_file" target="_blank">YML</a>.</span>
+                </div>
+              </template>
+            </v-table>
+          </TabPanel>
+      </TabView>
+
     </div>
   </div>
 </template>
@@ -245,6 +269,8 @@
 import { mapActions, mapGetters } from 'vuex'
 import vTable from '../components/table/v-table'
 import Chart from 'primevue/chart'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
 
 export default {
   name: 'ProfileProducts',
@@ -254,6 +280,10 @@ export default {
       default: 25
     },
     pagination_offset: {
+      type: Number,
+      default: 0
+    },
+    pagination_brand_offset: {
       type: Number,
       default: 0
     },
@@ -305,6 +335,7 @@ export default {
         items: []
       },
       page: 1,
+      page_brand: 1,
       filters: {
         name: {
           name: 'Наименование, артикул',
@@ -319,6 +350,38 @@ export default {
             'С привязанным товаром': 1,
             'С не привязанным товаром': 0
           }
+        }
+      },
+      table_data_brand: {
+        name: {
+          label: 'Наименование',
+          type: 'text',
+          sort: true
+        },
+        find: {
+          label: 'Найдено',
+          type: 'text',
+          sort: true
+        },
+        identified: {
+          label: 'Сопоставлено',
+          type: 'text',
+          sort: true
+        },
+        no_identified: {
+          label: 'Не сопоставлено',
+          type: 'text',
+          sort: true
+        },
+        cards: {
+          label: 'Карточек создано',
+          type: 'text',
+          sort: true
+        },
+        percent_identified: {
+          label: '% сопоставления',
+          type: 'text',
+          sort: true
         }
       },
       table_data: {
@@ -414,7 +477,7 @@ export default {
       return {
         datasets: [
           {
-            data: [(this.products.status[5].count / (this.products.total / 100)).toFixed(2), 100 - (this.products.status[5].count / (this.products.total / 100)).toFixed(2)],
+            data: this.products?.status ? [(this.products?.status[5]?.count / (this.products.status.total / 100)).toFixed(2), 100 - (this.products?.status[5]?.count / (this.products.status.total / 100)).toFixed(2)] : [0, 0],
             backgroundColor: ['#008FFF', '#EEEEEE'],
             hoverBackgroundColor: ['#008FFF', '#EEEEEE']
           }
@@ -425,7 +488,7 @@ export default {
       return {
         datasets: [
           {
-            data: [(this.products.status[1].count / (this.products.total / 100)).toFixed(2), 100 - (this.products.status[1].count / (this.products.total / 100)).toFixed(2)],
+            data: this.products?.status ? [(this.products?.status[1]?.count / (this.products.status.total / 100)).toFixed(2), 100 - (this.products?.status[1]?.count / (this.products.status.total / 100)).toFixed(2)] : [0, 0],
             backgroundColor: ['#F363E6', '#EEEEEE'],
             hoverBackgroundColor: ['#F363E6', '#EEEEEE']
           }
@@ -436,7 +499,7 @@ export default {
       return {
         datasets: [
           {
-            data: [(this.products.status[2].count / (this.products.total / 100)).toFixed(2), 100 - (this.products.status[2].count / (this.products.total / 100)).toFixed(2)],
+            data: this.products?.status ? [(this.products?.status[2]?.count / (this.products.status.total / 100)).toFixed(2), 100 - (this.products?.status[2]?.count / (this.products.status.total / 100)).toFixed(2)] : [0, 0],
             backgroundColor: ['#FF6221', '#EEEEEE'],
             hoverBackgroundColor: ['#FF6221', '#EEEEEE']
           }
@@ -447,7 +510,7 @@ export default {
       return {
         datasets: [
           {
-            data: [(this.products.status[4].count / (this.products.total / 100)).toFixed(2), 100 - (this.products.status[4].count / (this.products.total / 100)).toFixed(2)],
+            data: this.products?.status ? [(this.products?.status[4]?.count / (this.products.status.total / 100)).toFixed(2), 100 - (this.products?.status[4]?.count / (this.products.status.total / 100)).toFixed(2)] : [0, 0],
             backgroundColor: ['#FFD02C', '#EEEEEE'],
             hoverBackgroundColor: ['#FFD02C', '#EEEEEE']
           }
@@ -460,11 +523,16 @@ export default {
     paginate (data) {
       this.page = data.page
       this.get_data_from_api(data)
+    },
+    paginatebrand (data) {
+      this.page_brand = data.page_brand
+      this.get_data_from_api(data)
     }
   },
   mounted () {
     this.get_data_from_api({
       page: this.page,
+      page_brand: this.page_brand,
       perpage: this.pagination_items_per_page
     })
     this.get_organization_from_api().then(() => {
@@ -492,7 +560,7 @@ export default {
       this.shipment.items = this.organization.shipment.items
     })
   },
-  components: { vTable, Chart },
+  components: { vTable, Chart, TabView, TabPanel },
   computed: {
     ...mapGetters([
       'products',
@@ -549,6 +617,7 @@ export default {
 }
 
 .dart-helper{
+  margin-bottom: 12px;
   border-radius: 8px;
   background: #FFF;
   border: 1px solid #0000001F;
@@ -578,7 +647,7 @@ export default {
       padding: 0 5px;
       min-width: 25px;
       height: 25px;
-      border-radius: 50%;
+      border-radius: 5px;
       color: #FFF;
       font-size: 14px;
       display: flex;
@@ -712,6 +781,27 @@ export default {
         background: #FFD02C;
       }
     }
+  }
+}
+
+.tab-custom{
+  .p-tabview-nav{
+    margin: 0;
+    border: 0;
+  }
+
+  .p-tabview-header{
+    padding: 0;
+  }
+
+  .p-tabview-nav-link{
+    border-color: #282828;
+    color: #282828;
+    text-decoration: none;
+  }
+
+  .p-tabview-ink-bar{
+    display: none;
   }
 }
 </style>
