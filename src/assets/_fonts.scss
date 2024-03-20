@@ -23,6 +23,11 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
+
+.d_icon-search:before {
+	content: "\e90e";
+}
+
 .d_icon-arrow:before {
 	content: "\e90c";
 }

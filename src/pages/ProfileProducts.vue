@@ -11,13 +11,6 @@
     <div class="analitics-widget">
       <div class="organization" >
         <div class="dart-row">
-          <!-- <div class="d-col-md-4" v-if="prods.all">
-            <div class="panel-widget panel-widget-summ">
-              <span>Остатки</span>
-              <span class="sum">{{ prods.summ }} ₽</span>
-              <span class="num">{{ prods.count_all }} шт.</span>
-            </div>
-          </div> -->
           <div class="d-col-md-6" v-if="prods.all">
             <div class="panel-widget panel-widget-remains">
                 <div class="panel-widget-remains__graph">
@@ -108,10 +101,7 @@
               </div>
               <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][0] }">
                 <div class="dart-helper-footer__text">
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Укажите цену в карточке</p>
                 </div>
                 <div class="dart-helper-footer__icon">
                   <i class="d_icon d_icon-arrow" @click="helpers[0][0] = !helpers[0][0]"></i>
@@ -140,10 +130,7 @@
               </div>
               <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][1] }">
                 <div class="dart-helper-footer__text">
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Укажите актикул в карточке</p>
                 </div>
                 <div class="dart-helper-footer__icon">
                   <i class="d_icon d_icon-arrow" @click="helpers[0][1] = !helpers[0][1]"></i>
@@ -172,10 +159,7 @@
               </div>
               <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][2] }">
                 <div class="dart-helper-footer__text">
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                  <p>Укажите бренд в карточке</p>
                 </div>
                 <div class="dart-helper-footer__icon">
                   <i class="d_icon d_icon-arrow" @click="helpers[0][2] = !helpers[0][2]"></i>
@@ -220,24 +204,6 @@
     <div class="products">
       <TabView class="tab-custom">
           <TabPanel header="По брендам">
-              <!-- <v-table
-                :items_data="products.brands? products.brands.items : null"
-                :total="products.brands? products.brands.total : 0"
-                :pagination_items_per_page="this.pagination_items_per_page"
-                :pagination_offset="this.pagination_brand_offset"
-                :page="this.page_brand"
-                :table_data="this.table_data_brand"
-                :filters="this.filters"
-                @filter="filter"
-                @sort="filter"
-                @paginate="paginatebrand"
-              >
-                <template v-slot:desc>
-                  <div v-if="organization.yml_file" class="dart-alert dart-alert-info dart-mt-1">
-                    <span>Вы можете посмотреть ваш каталог в формате <a :href="organization.yml_file" target="_blank">YML</a>.</span>
-                  </div>
-                </template>
-              </v-table> -->
               <v-table
                 :items_data="report_copo.items"
                 :total="report_copo.total"
@@ -245,7 +211,7 @@
                 :pagination_offset="this.pagination_offset"
                 :page="this.page_brand"
                 :table_data="this.table_data_brand"
-                :filters="this.filters"
+                :filters="this.filtersbrand"
                 @filter="filterbrand"
                 @sort="filterbrand"
                 @paginate="paginatebrand"
@@ -261,20 +227,19 @@
               :page="this.page"
               :table_data="this.table_data"
               :filters="this.filters"
+              title="Сопоставление по товарам"
               @filter="filter"
               @sort="filter"
               @paginate="paginate"
             >
-              <template v-slot:desc>
-                <div v-if="organization.yml_file" class="dart-alert dart-alert-info dart-mt-1">
-                  <span>Вы можете посмотреть ваш каталог в формате <a :href="organization.yml_file" target="_blank">YML</a>.</span>
-                </div>
+              <template v-slot:button>
+                <button class="dart-btn dart-btn-primary"><i class="d_icon d_icon-search"></i> Поиск по каталогу</button>
               </template>
             </v-table>
           </TabPanel>
       </TabView>
-
     </div>
+    <div class="search-for-catalog"></div>
   </div>
 </template>
 
@@ -351,14 +316,24 @@ export default {
           placeholder: 'Наименование, артикул',
           type: 'text'
         },
-        product_id: {
-          name: 'Привязанный товар',
-          type: 'select',
-          values: {
-            'Все товары': '',
-            'С привязанным товаром': 1,
-            'С не привязанным товаром': 0
-          }
+        status: {
+          name: 'Статус',
+          placeholder: 'Статус',
+          type: 'dropdown',
+          values: this.getcardstatus
+        }
+      },
+      filtersbrand: {
+        name: {
+          name: 'Наименование товара, артикул',
+          placeholder: 'Наименование товара, артикул',
+          type: 'text'
+        },
+        instock: {
+          name: 'В наличии',
+          placeholder: 'В наличии',
+          type: 'checkbox',
+          values: 1
         }
       },
       table_data_brand: {
@@ -459,7 +434,8 @@ export default {
     ...mapActions([
       'get_data_from_api',
       'get_organization_from_api',
-      'get_report_copo_from_api'
+      'get_report_copo_from_api',
+      'get_cardstatus_from_api'
     ]),
     setChartData () {
       return {
@@ -528,16 +504,20 @@ export default {
       }
     },
     filter (data) {
+      this.products.total = -1
       this.get_data_from_api(data)
     },
     filterbrand (data) {
+      this.report_copo.total = -1
       this.get_report_copo_from_api(data)
     },
     paginate (data) {
+      this.products.total = -1
       this.page = data.page
       this.get_data_from_api(data)
     },
     paginatebrand (data) {
+      this.report_copo.total = -1
       this.page_brand = data.page
       this.get_report_copo_from_api(data)
     }
@@ -576,6 +556,7 @@ export default {
       this.distr.count = this.organization.distr.count
       this.shipment.total = this.organization.shipment.total
       this.shipment.items = this.organization.shipment.items
+      this.get_cardstatus_from_api()
     })
   },
   components: { vTable, Chart, TabView, TabPanel },
@@ -583,7 +564,8 @@ export default {
     ...mapGetters([
       'products',
       'organization',
-      'report_copo'
+      'report_copo',
+      'getcardstatus'
     ]),
     date () {
       const today = new Date()
@@ -600,6 +582,14 @@ export default {
       const dayNames = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота']
       const today = new Date()
       return dayNames[today.getDay()]
+    }
+  },
+  watch: {
+    getcardstatus: function (newVal, oldVal) {
+      this.filters.status.values = newVal
+    },
+    report_copo_details: function (newVal, oldVal) {
+      this.vendor = newVal.vendor
     }
   }
 }
@@ -828,5 +818,9 @@ export default {
 
 .graph-main{
   max-width: 90px;
+}
+
+.search-for-catalog{
+  width: 560px;
 }
 </style>
