@@ -220,7 +220,7 @@
     <div class="products">
       <TabView class="tab-custom">
           <TabPanel header="По брендам">
-              <v-table
+              <!-- <v-table
                 :items_data="products.brands? products.brands.items : null"
                 :total="products.brands? products.brands.total : 0"
                 :pagination_items_per_page="this.pagination_items_per_page"
@@ -237,6 +237,19 @@
                     <span>Вы можете посмотреть ваш каталог в формате <a :href="organization.yml_file" target="_blank">YML</a>.</span>
                   </div>
                 </template>
+              </v-table> -->
+              <v-table
+                :items_data="report_copo.items"
+                :total="report_copo.total"
+                :pagination_items_per_page="this.pagination_items_per_page"
+                :pagination_offset="this.pagination_offset"
+                :page="this.page_brand"
+                :table_data="this.table_data_brand"
+                :filters="this.filters"
+                @filter="filterbrand"
+                @sort="filterbrand"
+                @paginate="paginatebrand"
+              >
               </v-table>
           </TabPanel>
           <TabPanel header="По товарам">
@@ -280,10 +293,6 @@ export default {
       default: 25
     },
     pagination_offset: {
-      type: Number,
-      default: 0
-    },
-    pagination_brand_offset: {
       type: Number,
       default: 0
     },
@@ -355,7 +364,12 @@ export default {
       table_data_brand: {
         name: {
           label: 'Наименование',
-          type: 'text',
+          type: 'link',
+          link_to: 'report_copo_details',
+          link_params: {
+            id: this.$route.params.id,
+            brand_id: 'id'
+          },
           sort: true
         },
         find: {
@@ -365,11 +379,6 @@ export default {
         },
         identified: {
           label: 'Сопоставлено',
-          type: 'text',
-          sort: true
-        },
-        no_identified: {
-          label: 'Не сопоставлено',
           type: 'text',
           sort: true
         },
@@ -449,7 +458,8 @@ export default {
   methods: {
     ...mapActions([
       'get_data_from_api',
-      'get_organization_from_api'
+      'get_organization_from_api',
+      'get_report_copo_from_api'
     ]),
     setChartData () {
       return {
@@ -520,19 +530,27 @@ export default {
     filter (data) {
       this.get_data_from_api(data)
     },
+    filterbrand (data) {
+      this.get_report_copo_from_api(data)
+    },
     paginate (data) {
       this.page = data.page
       this.get_data_from_api(data)
     },
     paginatebrand (data) {
-      this.page_brand = data.page_brand
-      this.get_data_from_api(data)
+      this.page_brand = data.page
+      this.get_report_copo_from_api(data)
     }
   },
   mounted () {
     this.get_data_from_api({
       page: this.page,
       page_brand: this.page_brand,
+      perpage: this.pagination_items_per_page
+    })
+    this.get_report_copo_from_api({
+      tabledata: this.table_data,
+      page: this.page,
       perpage: this.pagination_items_per_page
     })
     this.get_organization_from_api().then(() => {
@@ -564,7 +582,8 @@ export default {
   computed: {
     ...mapGetters([
       'products',
-      'organization'
+      'organization',
+      'report_copo'
     ]),
     date () {
       const today = new Date()
@@ -786,22 +805,24 @@ export default {
 
 .tab-custom{
   .p-tabview-nav{
-    margin: 0;
-    border: 0;
+    margin: 0 !important;
+    border: 0 !important;
   }
 
   .p-tabview-header{
-    padding: 0;
+    padding: 0 !important;
   }
 
   .p-tabview-nav-link{
-    border-color: #282828;
-    color: #282828;
-    text-decoration: none;
+    border-color: #282828 !important;
+    color: #282828 !important;
+    text-decoration: none !important;
   }
 
   .p-tabview-ink-bar{
-    display: none;
+    height: 3px;
+    padding: 0;
+    background: #282828 !important;
   }
 }
 </style>
