@@ -21,7 +21,7 @@
           <div class="d-col-md-6" v-if="prods.all">
             <div class="panel-widget panel-widget-remains">
                 <div class="panel-widget-remains__graph">
-                  <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem" />
+                  <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem graph-main" />
                   <span class="count">{{ $filters.round(prods.copo_money_percent) }}%</span>
                   <span>сопоставленных<br/> товаров по стоимости</span>
                 </div>
@@ -56,7 +56,7 @@
           <div class="d-col-md-6" v-if="prods.all">
             <div class="panel-widget panel-widget-remains">
               <div class="panel-widget-remains__graph">
-                <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-5rem" />
+                <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-5rem graph-main" />
                 <span class="count">{{ $filters.round(prods.copo_percent) }}%</span>
                 <span>сопоставленных<br/> товаров</span>
               </div>
@@ -79,13 +79,13 @@
                     <span :style="'width: ' + prods.copo_percent + '%;'"></span>
                   </div>
                 </div>
-                <div class="products_href">
+              </div>
+              <div class="products_href">
                   <router-link :to="{ name: 'report_copo', params: { id: $route.params.id } }">
                     Отчет по сопоставлению
                     <mdicon name="arrow-right" />
                   </router-link>
                 </div>
-              </div>
             </div>
           </div>
 
@@ -824,5 +824,9 @@ export default {
     padding: 0;
     background: #282828 !important;
   }
+}
+
+.graph-main{
+  max-width: 90px;
 }
 </style>
