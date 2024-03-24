@@ -233,13 +233,35 @@
               @paginate="paginate"
             >
               <template v-slot:button>
-                <button class="dart-btn dart-btn-primary"><i class="d_icon d_icon-search"></i> Поиск по каталогу</button>
+                <button class="dart-btn dart-btn-primary" @click="modalToggle"><i class="d_icon d_icon-search"></i> Поиск по каталогу</button>
               </template>
             </v-table>
           </TabPanel>
       </TabView>
     </div>
-    <div class="search-for-catalog"></div>
+    <div class="search-for-catalog" v-bind:class="{ active: isModal }" @click="modalToggle">
+        <div class="search-for-catalog__content" @click.stop="">
+            <div class="search-for-catalog__title">
+              <h2>Поиск по каталогу карточек</h2>
+              <i @click="this.isModal = !this.isModal" class="d_icon d_icon-close"></i>
+            </div>
+            <div class="search-for-catalog__table">
+              <v-table
+                :items_data="products.products"
+                :total="products.total"
+                :pagination_items_per_page="this.pagination_items_per_page"
+                :pagination_offset="this.pagination_offset"
+                :page="this.page"
+                :table_data="this.table_modal"
+                :filters="this.filters_modal"
+                title=""
+                @filter="filter"
+                @sort="filter"
+                @paginate="paginate"
+              ></v-table>
+            </div>
+        </div>
+    </div>
   </div>
 </template>
 
@@ -276,6 +298,7 @@ export default {
       chartDataHelpTwo: null,
       chartDataHelpThee: null,
       chartDataHelpFour: null,
+      isModal: false,
       chartOptions: {
         cutout: '60%'
       },
@@ -323,6 +346,13 @@ export default {
           values: this.getcardstatus
         }
       },
+      filters_modal: {
+        name: {
+          name: 'Наименование, артикул',
+          placeholder: 'Наименование, артикул',
+          type: 'text'
+        }
+      },
       filtersbrand: {
         name: {
           name: 'Наименование товара, артикул',
@@ -364,6 +394,32 @@ export default {
         },
         percent_identified: {
           label: '% сопоставления',
+          type: 'text',
+          sort: true
+        }
+      },
+      table_modal: {
+        image: {
+          label: 'Фото',
+          type: 'image'
+        },
+        article: {
+          label: 'Артикул',
+          type: 'text',
+          sort: true
+        },
+        name: {
+          label: 'Наименование',
+          type: 'link',
+          link_to: 'org_product',
+          link_params: {
+            id: this.$route.params.id,
+            product_id: 'id'
+          },
+          sort: true
+        },
+        catalog: {
+          label: 'Категория',
           type: 'text',
           sort: true
         }
@@ -503,6 +559,9 @@ export default {
         ]
       }
     },
+    modalToggle () {
+      this.isModal = !this.isModal
+    },
     filter (data) {
       this.products.total = -1
       this.get_data_from_api(data)
@@ -596,6 +655,81 @@ export default {
 </script>
 
 <style lang="scss">
+
+.search-for-catalog{
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+
+  &__title{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+
+    h2{
+      margin: 0;
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .d_icon{
+      color: #C8C8C8;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  }
+
+  &__content{
+    width: 570px;
+    padding: 60px 40px;
+    height: 100dvh;
+    background: #FFF;
+    position: fixed;
+    right: 0;
+    top: 0;
+    pointer-events: all;
+    transform: translateX(100%);
+    transition: all 0.4s;
+    border-left: 1px solid #E2E2E2;
+  }
+
+  &.active{
+    pointer-events: all !important;
+    .search-for-catalog{
+      &__content{
+        transform: translateX(0);
+      }
+    }
+  }
+
+  &__table{
+    overflow: auto;
+    height: calc(100% - 30px);
+    padding-right: 8px;
+
+    .d-col-md-3{
+      width: 100% !important;
+    }
+
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+      background-color: #e0e0e0; /* blue */
+      border-radius: 9em;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #b4b4b4; /* green */
+        border-radius: 9em;
+    }
+  }
+}
+
 .analitics-widget{
   margin-bottom: 30px;
 }
@@ -820,7 +954,11 @@ export default {
   max-width: 90px;
 }
 
-.search-for-catalog{
-  width: 560px;
+@media (max-width: 600px) {
+  .search-for-catalog__content{
+    width: 100%;
+    padding: 30px 20px;
+  }
 }
+
 </style>

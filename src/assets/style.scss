@@ -4581,46 +4581,46 @@ a.comparison-link{
     .b-wrap{
         padding: 12px 12px;
     }
-    .profile-table{
-        thead{
-            display: none;
-        }
-        tbody{
-            tr{
-                display: flex;
-                flex-wrap: wrap;
-                position: relative;
-                padding: 5px 0;
-                td{
-                    width: 100%;
-                    text-align: left;
-                    padding: 5px 5px 5px 105px;
-                    &.img_abs{
-                        position: absolute;
-                        left: 5px;
-                        top: 10px;
-                        width: 100px;
-                        padding: 0;
-                        img{
-                            max-width: 100%
-                        }
-                    }
-                    &.mobile-33{
-                        width: 33.3333333%;
-                    }
-                    &.mobile-50{
-                        width: 50%;
-                    }
-                    &.mobile-66{
-                        width: 66.6666666%;
-                    }
-                    .mobile-label{
-                        display: inline;
-                    }
-                }
-            }
-        }
-    }
+    // .profile-table{
+    //     thead{
+    //         display: none;
+    //     }
+    //     tbody{
+    //         tr{
+    //             display: flex;
+    //             flex-wrap: wrap;
+    //             position: relative;
+    //             padding: 5px 0;
+    //             td{
+    //                 width: 100%;
+    //                 text-align: left;
+    //                 padding: 5px 5px 5px 105px;
+    //                 &.img_abs{
+    //                     position: absolute;
+    //                     left: 5px;
+    //                     top: 10px;
+    //                     width: 100px;
+    //                     padding: 0;
+    //                     img{
+    //                         max-width: 100%
+    //                     }
+    //                 }
+    //                 &.mobile-33{
+    //                     width: 33.3333333%;
+    //                 }
+    //                 &.mobile-50{
+    //                     width: 50%;
+    //                 }
+    //                 &.mobile-66{
+    //                     width: 66.6666666%;
+    //                 }
+    //                 .mobile-label{
+    //                     display: inline;
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 }
 
 @media (max-width: $small-tablets) {

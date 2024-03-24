@@ -12748,7 +12748,7 @@ ol.comments-list {
   .b-wrap {
     padding: 12px 12px;
   }
-  .profile-table thead {
+  /* .profile-table thead {
     display: none;
   }
   .profile-table tbody tr {
@@ -12771,8 +12771,8 @@ ol.comments-list {
     top: 10px;
     width: 100px;
     padding: 0;
-  }
-  .profile-table tbody tr td.img_abs img {
+  } */
+  /* .profile-table tbody tr td.img_abs img {
     max-width: 100%;
   }
   .profile-table tbody tr td.mobile-33 {
@@ -12786,7 +12786,7 @@ ol.comments-list {
   }
   .profile-table tbody tr td .mobile-label {
     display: inline;
-  }
+  } */
   .main_block .caption > .title {
     font-size: 27px;
     line-height: 1.3;
