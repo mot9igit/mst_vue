@@ -258,7 +258,11 @@
                 @filter="filter"
                 @sort="filter"
                 @paginate="paginate"
-              ></v-table>
+              >
+              <template v-slot:widgets>
+                <a class="search-for-catalog__get">Запросить добавление бренда</a>
+              </template>
+              </v-table>
             </div>
         </div>
     </div>
@@ -399,6 +403,10 @@ export default {
         }
       },
       table_modal: {
+        brand: {
+          label: 'Бренд',
+          type: 'brand'
+        },
         image: {
           label: 'Фото',
           type: 'image'
@@ -491,7 +499,8 @@ export default {
       'get_data_from_api',
       'get_organization_from_api',
       'get_report_copo_from_api',
-      'get_cardstatus_from_api'
+      'get_cardstatus_from_api',
+      'get_vendors_from_api'
     ]),
     setChartData () {
       return {
@@ -616,6 +625,7 @@ export default {
       this.shipment.total = this.organization.shipment.total
       this.shipment.items = this.organization.shipment.items
       this.get_cardstatus_from_api()
+      this.get_vendors_from_api()
     })
   },
   components: { vTable, Chart, TabView, TabPanel },
@@ -624,7 +634,8 @@ export default {
       'products',
       'organization',
       'report_copo',
-      'getcardstatus'
+      'getcardstatus',
+      'getvendors'
     ]),
     date () {
       const today = new Date()
@@ -665,6 +676,20 @@ export default {
   pointer-events: none;
   z-index: 1;
 
+  &__get{
+    width: 100%;
+    text-align: right;
+    display: block;
+    margin-bottom: 24px;
+    color: #ADADAD;
+    cursor: pointer;
+    transition: all 0.4s;
+
+    &:hover{
+      color: #929292;
+    }
+  }
+
   &__title{
     display: flex;
     align-items: center;
@@ -685,8 +710,8 @@ export default {
   }
 
   &__content{
-    width: 570px;
-    padding: 60px 40px;
+    width: 670px;
+    padding: 50px 30px;
     height: 100dvh;
     background: #FFF;
     position: fixed;

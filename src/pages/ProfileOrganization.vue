@@ -177,10 +177,10 @@
                 </template>
                 <template v-slot:widgets>
                   <div class="dart-row">
-                    <div class="d-col-md-3" v-if="avg_info.remains">
+                    <div class="d-col-md-3" v-if="avg_info?.remains">
                       <div class="panel-widget panel-widget-summ panel-widget-blue">
                         <span>Остатков всего</span>
-                        <span class="sum">{{ avg_info.remains }} шт</span>
+                        <span class="sum">{{ avg_info?.remains }} шт</span>
                         <span class="num">шт</span>
                       </div>
                     </div>
