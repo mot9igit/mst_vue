@@ -44,7 +44,7 @@
                       <span class="text">Вывести средства</span>
                     </router-link>
                 </div>
-                <div class="dart-payment-status" v-if="org.active">
+                <div class="dart-payment-status" v-if="organization.active">
                   <i class="d_icon d_icon-check"></i>
                   <!-- <i class="d_icon d_icon-focus"></i> -->
                   <span>Включен</span>
@@ -142,12 +142,12 @@ export default {
     }
     this.user = JSON.parse(localStorage.getItem('user'))
     if (this.user.sudo) {
-      this.menu.push({
-        key: '1',
-        label: 'Вся база товаров',
-        icon: 'd_icon d_icon-database',
-        to: { name: 'copo_all' }
-      })
+      // this.menu.push({
+      //   key: '1',
+      //   label: 'Вся база товаров',
+      //   icon: 'd_icon d_icon-database',
+      //   to: { name: 'copo_all' }
+      // })
     }
   },
   components: { MainHeader, PanelMenu },
@@ -166,32 +166,38 @@ export default {
             label: 'Заказы',
             icon: 'd_icon d_icon-list-bulleted',
             to: { name: 'org_orders', params: { id: this.$route.params.id } }
-          }, {
+          },
+          {
             key: '1',
             label: 'Товары',
             icon: 'd_icon d_icon-products',
             to: { name: 'org_products', params: { id: this.$route.params.id } }
-          }, {
+          },
+          {
             key: '2',
             label: 'Карточка компании',
             icon: 'd_icon d_icon-cog',
             to: { name: 'org_profile', params: { id: this.$route.params.id } }
-          }, {
-            key: '3',
-            label: 'Мои поставщики',
-            icon: 'd_icon d_icon-vendors',
-            to: { name: 'org_opts', params: { id: this.$route.params.id } }
-          }, {
-            key: '4',
-            label: 'Программы оптовиков и производителей',
-            icon: 'd_icon d_icon-star',
-            to: { name: 'org_bonuses', params: { id: this.$route.params.id } }
-          }, {
-            key: '5',
-            label: 'Мастер отчетов',
-            icon: 'd_icon d_icon-analytics',
-            to: { name: 'org_reports', params: { id: this.$route.params.id } }
-          }, {
+          },
+          // {
+          //   key: '3',
+          //   label: 'Мои поставщики',
+          //   icon: 'd_icon d_icon-vendors',
+          //   to: { name: 'org_opts', params: { id: this.$route.params.id } }
+          // },
+          // {
+          //   key: '4',
+          //   label: 'Программы оптовиков и производителей',
+          //   icon: 'd_icon d_icon-star',
+          //   to: { name: 'org_bonuses', params: { id: this.$route.params.id } }
+          // },
+          // {
+          //   key: '5',
+          //   label: 'Мастер отчетов',
+          //   icon: 'd_icon d_icon-analytics',
+          //   to: { name: 'org_reports', params: { id: this.$route.params.id } }
+          // },
+          {
             key: '6',
             label: 'Документы',
             icon: 'd_icon d_icon-file-document',
@@ -204,42 +210,50 @@ export default {
             label: 'Заказы',
             icon: 'd_icon d_icon-list-bulleted',
             to: { name: 'org_orders', params: { id: this.$route.params.id } }
-          }, {
+          },
+          {
             key: '1',
             label: 'Товары',
             icon: 'd_icon d_icon-products',
             to: { name: 'org_products', params: { id: this.$route.params.id } }
-          }, {
+          },
+          {
             key: '2',
             label: 'Карточка компании',
             icon: 'd_icon d_icon-cog',
             to: { name: 'org_profile', params: { id: this.$route.params.id } }
-          }, {
-            key: '3',
-            label: 'Мои магазины',
-            icon: 'd_icon d_icon-cog',
-            to: { name: 'org_dilers', params: { id: this.$route.params.id } }
-          }, {
+          },
+          // {
+          //   key: '3',
+          //   label: 'Мои магазины',
+          //   icon: 'd_icon d_icon-cog',
+          //   to: { name: 'org_dilers', params: { id: this.$route.params.id } }
+          // },
+          {
             key: '4',
             label: 'Отгрузки',
             icon: 'd_icon d_icon-truck',
             to: { name: 'org_shipping', params: { id: this.$route.params.id } }
-          }, {
-            key: '5',
-            label: 'Программы производителей',
-            icon: 'd_icon d_icon-star',
-            to: { name: 'org_bonuses', params: { id: this.$route.params.id } }
-          }, {
-            key: '6',
-            label: 'Мои программы',
-            icon: 'd_icon d_icon-star',
-            to: { name: 'org_ourbonuses', params: { id: this.$route.params.id } }
-          }, {
-            key: '7',
-            label: 'Мастер отчетов',
-            icon: 'd_icon d_icon-analytics',
-            to: { name: 'org_reports', params: { id: this.$route.params.id } }
-          }, {
+          },
+          // {
+          //   key: '5',
+          //   label: 'Программы производителей',
+          //   icon: 'd_icon d_icon-star',
+          //   to: { name: 'org_bonuses', params: { id: this.$route.params.id } }
+          // },
+          // {
+          //   key: '6',
+          //   label: 'Мои программы',
+          //   icon: 'd_icon d_icon-star',
+          //   to: { name: 'org_ourbonuses', params: { id: this.$route.params.id } }
+          // },
+          // {
+          //   key: '7',
+          //   label: 'Мастер отчетов',
+          //   icon: 'd_icon d_icon-analytics',
+          //   to: { name: 'org_reports', params: { id: this.$route.params.id } }
+          // },
+          {
             key: '8',
             label: 'Документы',
             icon: 'd_icon d_icon-file-document',
@@ -252,57 +266,68 @@ export default {
             label: 'Карточка компании',
             icon: 'd_icon d_icon-cog',
             to: { name: 'org_profile', params: { id: this.$route.params.id } }
-          }, {
-            key: '2',
-            label: 'Ассортимент',
-            icon: 'pi pi-database',
-            to: { name: 'org_assortment', params: { id: this.$route.params.id } }
-          }, {
+          },
+          // {
+          //   key: '2',
+          //   label: 'Ассортимент',
+          //   icon: 'pi pi-database',
+          //   to: { name: 'org_assortment', params: { id: this.$route.params.id } }
+          // },
+          {
             key: '3',
             label: 'Товары',
             icon: 'd_icon d_icon-products',
             to: { name: 'org_products', params: { id: this.$route.params.id } }
-          }, {
-            key: '4',
-            label: 'Мои программы',
-            icon: 'd_icon d_icon-star',
-            to: { name: 'org_ourbonuses', params: { id: this.$route.params.id } }
-          }, {
-            key: '5',
-            label: 'Мои магазины',
-            icon: 'd_icon d_icon-cog',
-            to: { name: 'org_dilers', params: { id: this.$route.params.id } }
-          }, {
-            key: '7',
-            label: 'Мои оптовики',
-            icon: 'd_icon d_icon-cog',
-            to: { name: 'org_opts', params: { id: this.$route.params.id } }
-          }, {
-            key: '8',
-            label: 'Отгрузки',
-            icon: 'd_icon d_icon-truck',
-            to: { name: 'org_shipping', params: { id: this.$route.params.id } }
-          }, {
-            key: '9',
-            label: 'АКБ',
-            icon: 'd_icon d_icon-star',
-            to: { name: 'org_akb', params: { id: this.$route.params.id } }
-          }, {
-            key: '10',
-            label: 'Наличие товара',
-            icon: 'd_icon d_icon-star',
-            to: { name: 'org_reports_available', params: { id: this.$route.params.id } }
-          }, {
-            key: '11',
-            label: 'Мастер отчетов',
-            icon: 'd_icon d_icon-analytics',
-            to: { name: 'org_reports', params: { id: this.$route.params.id } }
-          }, {
-            key: '12',
-            label: 'Ключевые матрицы',
-            icon: 'd_icon d_icon-key',
-            to: { name: 'org_matrix', params: { id: this.$route.params.id } }
-          }, {
+          },
+          // {
+          //   key: '4',
+          //   label: 'Мои программы',
+          //   icon: 'd_icon d_icon-star',
+          //   to: { name: 'org_ourbonuses', params: { id: this.$route.params.id } }
+          // },
+          // {
+          //   key: '5',
+          //   label: 'Мои магазины',
+          //   icon: 'd_icon d_icon-cog',
+          //   to: { name: 'org_dilers', params: { id: this.$route.params.id } }
+          // },
+          // {
+          //   key: '7',
+          //   label: 'Мои оптовики',
+          //   icon: 'd_icon d_icon-cog',
+          //   to: { name: 'org_opts', params: { id: this.$route.params.id } }
+          // },
+          // {
+          //   key: '8',
+          //   label: 'Отгрузки',
+          //   icon: 'd_icon d_icon-truck',
+          //   to: { name: 'org_shipping', params: { id: this.$route.params.id } }
+          // },
+          // {
+          //   key: '9',
+          //   label: 'АКБ',
+          //   icon: 'd_icon d_icon-star',
+          //   to: { name: 'org_akb', params: { id: this.$route.params.id } }
+          // },
+          // {
+          //   key: '10',
+          //   label: 'Наличие товара',
+          //   icon: 'd_icon d_icon-star',
+          //   to: { name: 'org_reports_available', params: { id: this.$route.params.id } }
+          // },
+          // {
+          //   key: '11',
+          //   label: 'Мастер отчетов',
+          //   icon: 'd_icon d_icon-analytics',
+          //   to: { name: 'org_reports', params: { id: this.$route.params.id } }
+          // },
+          // {
+          //   key: '12',
+          //   label: 'Ключевые матрицы',
+          //   icon: 'd_icon d_icon-key',
+          //   to: { name: 'org_matrix', params: { id: this.$route.params.id } }
+          // },
+          {
             key: '13',
             label: 'Документы',
             icon: 'd_icon d_icon-file-document',

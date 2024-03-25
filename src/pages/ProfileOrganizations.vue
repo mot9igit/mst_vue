@@ -5,7 +5,7 @@
     </div>
     <div class="organizations" :organizations_data="organizations">
       <div class="dart-row">
-        <div class="d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.stores" v-bind:key="item.id">
+        <div class="d-col-xl-custom d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.stores" v-bind:key="item.id">
           <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
             <div class="panel_widget_organization__top">
               <div class="panel_widget_organization__icon" v-if="item.image">
@@ -51,7 +51,7 @@
     </div>
     <div class="organizations" :organizations_data="organizations">
       <div class="dart-row">
-        <div class="d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.warehouses" v-bind:key="item.id">
+        <div class="d-col-xl-custom d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.warehouses" v-bind:key="item.id">
           <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
             <div class="panel_widget_organization__top">
               <div class="panel_widget_organization__icon" v-if="item.image">
@@ -101,7 +101,7 @@
     </div>
     <div class="organizations" :organizations_data="organizations">
       <div class="dart-row">
-        <div class="d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.vendors" v-bind:key="item.id">
+        <div class="d-col-xl-custom d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.vendors" v-bind:key="item.id">
           <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
             <div class="panel_widget_organization__top">
               <div class="panel_widget_organization__icon" v-if="item.image">

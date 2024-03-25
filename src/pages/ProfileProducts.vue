@@ -243,7 +243,7 @@
         <div class="search-for-catalog__content" @click.stop="">
             <div class="search-for-catalog__title">
               <h2>Поиск по каталогу карточек</h2>
-              <i @click="this.isModal = !this.isModal" class="d_icon d_icon-close"></i>
+              <i @click="modalToggle" class="d_icon d_icon-close"></i>
             </div>
             <div class="search-for-catalog__table">
               <v-table
@@ -260,10 +260,55 @@
                 @paginate="paginateModal"
               >
                 <template v-slot:widgets>
-                  <a class="search-for-catalog__get">Запросить добавление бренда</a>
+                  <a class="search-for-catalog__get" @click="modalToggleBrand">Запросить добавление бренда</a>
                 </template>
               </v-table>
             </div>
+        </div>
+    </div>
+    <div class="add-brand" v-bind:class="{ active: isModalBrand }" @click="modalToggleBrand">
+        <div class="add-brand__content" @click.stop="">
+            <div class="add-brand__title">
+              <h2>Запрос на добавление бренда</h2>
+              <i @click="modalToggleBrand" class="d_icon d_icon-close"></i>
+            </div>
+            <form class="add-brand__body">
+              <p class="info-text mb-3">Прежде чем оставлять запрос, проверьте, не оставлял ли кто-то такой запрос до вас.</p>
+              <div class="dart-row">
+                <div class="d-col-md-6">
+                  <div class="add-brand__el">
+                    <b>Название бренда</b>
+                    <div class="form_input_group input_pl input-parent required mb-4">
+                      <input type="text" id="filter_name" placeholder="Наименование, артикул" name="name" class="dart-form-control">
+                      <label for="product_filter_name" class="s-complex-input__label">Введите название бренда</label>
+                    </div>
+                  </div>
+                </div>
+                <div class="d-col-md-6">
+                  <div class="add-brand__el">
+                    <b>Ссылка на сайт</b>
+                    <div class="form_input_group input_pl input-parent required mb-4">
+                      <input type="text" id="filter_name" placeholder="Наименование, артикул" name="name" class="dart-form-control">
+                      <label for="product_filter_name" class="s-complex-input__label">Вставьте URL</label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <b>Можете ли вы помочь связаться с брендом?</b>
+              <div class="flex flex-wrap gap-3 mt-2">
+                  <div class="flex align-items-center">
+                    <RadioButton v-model="ingredient" inputId="ingredient1" name="brand_connection" value="1" />
+                    <label for="ingredient1" class="ml-2">Да</label>
+                  </div>
+                  <div class="flex align-items-center">
+                    <RadioButton v-model="ingredient" inputId="ingredient2" name="brand_connection" value="0" />
+                    <label for="ingredient2" class="ml-2">Нет</label>
+                  </div>
+              </div>
+              <div class="add-brand__button">
+                <button class="dart-btn dart-btn-primary">Запросить</button>
+              </div>
+            </form>
         </div>
     </div>
   </div>
@@ -275,6 +320,7 @@ import vTable from '../components/table/v-table'
 import Chart from 'primevue/chart'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import RadioButton from 'primevue/radiobutton'
 
 export default {
   name: 'ProfileProducts',
@@ -303,6 +349,7 @@ export default {
       chartDataHelpThee: null,
       chartDataHelpFour: null,
       isModal: false,
+      isModalBrand: false,
       chartOptions: {
         cutout: '60%'
       },
@@ -356,6 +403,18 @@ export default {
           name: 'Наименование, артикул',
           placeholder: 'Наименование, артикул',
           type: 'text'
+        },
+        vendor: {
+          name: 'Выберите бренд',
+          placeholder: 'Выберите бренд',
+          type: 'dropdown',
+          values: this.getvendors
+        },
+        parent_name: {
+          name: 'Выберите категорию',
+          placeholder: 'Выберите категорию',
+          type: 'tree',
+          values: this.getcatalog
         }
       },
       filtersbrand: {
@@ -498,7 +557,8 @@ export default {
       'get_report_copo_from_api',
       'get_cardstatus_from_api',
       'get_vendors_from_api',
-      'get_msproducts_from_api'
+      'get_msproducts_from_api',
+      'get_catalog_from_api'
     ]),
     setChartData () {
       return {
@@ -568,6 +628,27 @@ export default {
     },
     modalToggle () {
       this.isModal = !this.isModal
+      if (this.isModal) {
+        this.globalIsModal.push('-_-')
+        document.body.style.overflow = 'hidden'
+      } else if (!this.isModal && this.globalIsModal.length === 1) {
+        this.globalIsModal.pop()
+        document.body.style.overflow = 'auto'
+      } else {
+        this.globalIsModal.pop()
+      }
+    },
+    modalToggleBrand () {
+      this.isModalBrand = !this.isModalBrand
+      if (this.isModalBrand) {
+        this.globalIsModal.push('-_-')
+        document.body.style.overflow = 'hidden'
+      } else if (!this.isModalBrand && this.globalIsModal.length === 1) {
+        this.globalIsModal.pop()
+        document.body.style.overflow = 'auto'
+      } else {
+        this.globalIsModal.pop()
+      }
     },
     filter (data) {
       this.products.total = -1
@@ -633,6 +714,7 @@ export default {
       this.shipment.items = this.organization.shipment.items
       this.get_cardstatus_from_api()
       this.get_vendors_from_api()
+      this.get_catalog_from_api()
       this.get_msproducts_from_api({
         tabledata: this.table_modal,
         page: this.page_modal,
@@ -640,7 +722,7 @@ export default {
       })
     })
   },
-  components: { vTable, Chart, TabView, TabPanel },
+  components: { vTable, Chart, TabView, TabPanel, RadioButton },
   computed: {
     ...mapGetters([
       'products',
@@ -648,7 +730,8 @@ export default {
       'report_copo',
       'getcardstatus',
       'getvendors',
-      'msproducts'
+      'msproducts',
+      'getcatalog'
     ]),
     date () {
       const today = new Date()
@@ -673,12 +756,92 @@ export default {
     },
     report_copo_details: function (newVal, oldVal) {
       this.vendor = newVal.vendor
+    },
+    getvendors: function (newVal, oldVal) {
+      this.filters_modal.vendor.values = newVal
+    },
+    getcatalog: function (newVal, oldVal) {
+      this.filters_modal.parent_name.values = newVal
     }
   }
 }
 </script>
 
 <style lang="scss">
+
+.add-brand{
+  width: 100vw;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 100;
+  background: rgba($color: #000000, $alpha: 0);
+  transition: all 0.5s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__button{
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &__el{
+    display: flex;
+    flex-direction: column;
+
+    b{
+      margin-bottom: 16px;
+    }
+  }
+
+  &__title{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 10px;
+
+    h2{
+      margin: 0;
+      font-size: 20px;
+      font-weight: 500;
+    }
+
+    .d_icon{
+      color: #C8C8C8;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  }
+
+  &__content{
+    width: 800px;
+    padding: 40px;
+    max-height: 80dvh;
+    background: #FFF;
+    pointer-events: all;
+    transition: all 0.4s;
+    border: 1px solid #E2E2E2;
+    opacity: 0;
+    transition: all 0.3s;
+    border-radius: 8px;
+    pointer-events: none;
+  }
+
+  &.active{
+    pointer-events: all !important;
+    background: rgba($color: #000000, $alpha: 0.6);
+    .add-brand{
+      &__content{
+        opacity: 1;
+        pointer-events: all;
+      }
+    }
+  }
+}
 
 .search-for-catalog{
   width: 100vw;
@@ -687,7 +850,7 @@ export default {
   left: 0;
   height: 100vh;
   pointer-events: none;
-  z-index: 1;
+  z-index: 100;
 
   &__get{
     width: 100%;
@@ -963,6 +1126,12 @@ export default {
       }
     }
   }
+}
+
+.p-dropdown .p-dropdown-clear-icon{
+  position: absolute;
+  top: 50%;
+  transform: translate(0, -50%);
 }
 
 .tab-custom{
