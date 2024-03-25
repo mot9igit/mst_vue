@@ -247,21 +247,21 @@
             </div>
             <div class="search-for-catalog__table">
               <v-table
-                :items_data="products.products"
-                :total="products.total"
+                :items_data="msproducts.items"
+                :total="msproducts.total"
                 :pagination_items_per_page="this.pagination_items_per_page"
                 :pagination_offset="this.pagination_offset"
-                :page="this.page"
+                :page="this.page_modal"
                 :table_data="this.table_modal"
                 :filters="this.filters_modal"
                 title=""
-                @filter="filter"
-                @sort="filter"
-                @paginate="paginate"
+                @filter="filterModal"
+                @sort="filterModal"
+                @paginate="paginateModal"
               >
-              <template v-slot:widgets>
-                <a class="search-for-catalog__get">Запросить добавление бренда</a>
-              </template>
+                <template v-slot:widgets>
+                  <a class="search-for-catalog__get">Запросить добавление бренда</a>
+                </template>
               </v-table>
             </div>
         </div>
@@ -337,6 +337,7 @@ export default {
       },
       page: 1,
       page_brand: 1,
+      page_modal: 1,
       filters: {
         name: {
           name: 'Наименование, артикул',
@@ -403,30 +404,26 @@ export default {
         }
       },
       table_modal: {
-        brand: {
+        vendor_name: {
           label: 'Бренд',
-          type: 'brand'
+          type: 'text',
+          sort: true
         },
         image: {
           label: 'Фото',
           type: 'image'
         },
-        article: {
+        vendor_article: {
           label: 'Артикул',
           type: 'text',
           sort: true
         },
-        name: {
+        pagetitle: {
           label: 'Наименование',
-          type: 'link',
-          link_to: 'org_product',
-          link_params: {
-            id: this.$route.params.id,
-            product_id: 'id'
-          },
+          type: 'text',
           sort: true
         },
-        catalog: {
+        parent_name: {
           label: 'Категория',
           type: 'text',
           sort: true
@@ -500,7 +497,8 @@ export default {
       'get_organization_from_api',
       'get_report_copo_from_api',
       'get_cardstatus_from_api',
-      'get_vendors_from_api'
+      'get_vendors_from_api',
+      'get_msproducts_from_api'
     ]),
     setChartData () {
       return {
@@ -575,9 +573,18 @@ export default {
       this.products.total = -1
       this.get_data_from_api(data)
     },
+    filterModal (data) {
+      this.msproducts.total = -1
+      this.get_msproducts_from_api(data)
+    },
     filterbrand (data) {
       this.report_copo.total = -1
       this.get_report_copo_from_api(data)
+    },
+    paginateModal (data) {
+      this.msproducts.total = -1
+      this.page_modal = data.page
+      this.get_msproducts_from_api(data)
     },
     paginate (data) {
       this.products.total = -1
@@ -626,6 +633,11 @@ export default {
       this.shipment.items = this.organization.shipment.items
       this.get_cardstatus_from_api()
       this.get_vendors_from_api()
+      this.get_msproducts_from_api({
+        tabledata: this.table_modal,
+        page: this.page_modal,
+        perpage: this.pagination_items_per_page
+      })
     })
   },
   components: { vTable, Chart, TabView, TabPanel },
@@ -635,7 +647,8 @@ export default {
       'organization',
       'report_copo',
       'getcardstatus',
-      'getvendors'
+      'getvendors',
+      'msproducts'
     ]),
     date () {
       const today = new Date()

@@ -37,7 +37,8 @@ export default {
     report_copo: [],
     report_copo_details: [],
     report_copo_all: [],
-    report_copo_all_details: []
+    report_copo_all_details: [],
+    msproducts: []
   },
   actions: {
     get_available_stores_from_api ({ commit }, { filter, selected }) {
@@ -1145,6 +1146,35 @@ export default {
           }
         })
     },
+    get_msproducts_from_api ({ commit }, { filter, filtersdata, page, sort, perpage }) {
+      return Axios('/rest/front_getobjects', {
+        method: 'POST',
+        data: {
+          id: router.currentRoute._value.params.id,
+          type: 'msproducts',
+          filter: filter,
+          filtersdata: filtersdata,
+          sort: sort,
+          page: page,
+          perpage: perpage
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_MSPRODUCTS', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    unset_msproducts ({ commit }) {
+      commit('UNSET_MSPRODUCTS')
+    },
     unset_ship_data ({ commit }) {
       commit('UNSET_SHIPDATA_TO_VUEX')
     },
@@ -1222,6 +1252,9 @@ export default {
     }
   },
   mutations: {
+    SET_MSPRODUCTS: (state, data) => {
+      state.msproducts = data.data
+    },
     SET_SHIPDATA_TO_VUEX: (state, data) => {
       state.shipdata = data.data
     },
@@ -1242,6 +1275,9 @@ export default {
     },
     SET_PROGRAMFILES_TO_VUEX: (state, data) => {
       state.programfiles = data.data
+    },
+    UNSET_MSPRODUCTS: (state) => {
+      state.msproducts = []
     },
     UNSET_FEEDS: (state) => {
       state.feeds = []
@@ -1412,6 +1448,9 @@ export default {
   getters: {
     getakbdata (state) {
       return state.akbdata
+    },
+    msproducts (state) {
+      return state.msproducts
     },
     getmatrixes (state) {
       return state.matrix
