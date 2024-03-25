@@ -460,6 +460,11 @@ export default {
           label: '% сопоставления',
           type: 'text',
           sort: true
+        },
+        vendor_price: {
+          label: 'Сумма товара, ₽',
+          type: 'text',
+          sort: true
         }
       },
       table_modal: {
@@ -537,6 +542,7 @@ export default {
           type: 'text',
           sort: true
         },
+        /*
         price_rrc: {
           label: 'Цена, РРЦ',
           type: 'text',
@@ -544,6 +550,12 @@ export default {
         },
         price_rrc_delta: {
           label: 'РРЦ дельта',
+          type: 'text',
+          sort: true
+        },
+        */
+        summ: {
+          label: 'Сумма товара, ₽',
           type: 'text',
           sort: true
         }
