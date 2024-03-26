@@ -297,11 +297,11 @@
               <b>Можете ли вы помочь связаться с брендом?</b>
               <div class="flex flex-wrap gap-3 mt-2">
                   <div class="flex align-items-center">
-                    <RadioButton v-model="ingredient" inputId="ingredient1" name="brand_connection" value="1" />
+                    <RadioButton inputId="ingredient1" name="brand_connection" value="1" />
                     <label for="ingredient1" class="ml-2">Да</label>
                   </div>
                   <div class="flex align-items-center">
-                    <RadioButton v-model="ingredient" inputId="ingredient2" name="brand_connection" value="0" />
+                    <RadioButton inputId="ingredient2" name="brand_connection" value="0" />
                     <label for="ingredient2" class="ml-2">Нет</label>
                   </div>
               </div>
