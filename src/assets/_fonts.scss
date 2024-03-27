@@ -24,6 +24,10 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.d_icon-edit:before {
+	content: "\e90f";
+}
+
 .d_icon-search:before {
 	content: "\e90e";
 }

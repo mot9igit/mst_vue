@@ -54,6 +54,196 @@
                 </div>
             </div>
           </div>
+          <div class="d-col-md-4">
+            <div class="operating-mode">
+                <div class="operating-mode__title"><p>Режим работы</p><i class="d_icon d_icon-edit" @click="this.showOperatingModeModal = !this.showOperatingModeModal"></i></div>
+                <div class="operating-mode__container">
+                  <div class="operating-mode__el">
+                    <p>Понедельник</p>
+                    <p>09:00 - 21:00 </p>
+                  </div>
+                  <div class="operating-mode__el">
+                    <p>Вторник</p>
+                    <p>09:00 - 21:00 </p>
+                  </div>
+                  <div class="operating-mode__el">
+                    <p>Среда</p>
+                    <p>09:00 - 21:00 </p>
+                  </div>
+                  <div class="operating-mode__el">
+                    <p>Четверг</p>
+                    <p>09:00 - 21:00 </p>
+                  </div>
+                  <div class="operating-mode__el">
+                    <p>Пятница</p>
+                    <p>09:00 - 21:00 </p>
+                  </div>
+                  <div class="operating-mode__el off">
+                    <p>Суббота</p>
+                    <p>Выходной</p>
+                  </div>
+                  <div class="operating-mode__el off">
+                    <p>Воскресенье</p>
+                    <p>Выходной</p>
+                  </div>
+                </div>
+            </div>
+          </div>
+          <div class="d-col-md-4">
+            <div class="operating-mode-calend">
+              <div class="operating-mode-calend__title"><p>Выходные и короткие дни</p><i class="d_icon d_icon-edit" @click="this.showOperatingModeCalendarModal = !this.showOperatingModeCalendarModal"></i></div>
+              <Calendar
+              is-expanded
+              title-position="left"
+              :attributes="attributes"
+              :masks="{ weekdays: 'WW' }"/>
+            </div>
+          </div>
+          <custom-modal class="operating-mode-modal" v-model="showOperatingModeModal" @confirm="confirm" @cancel="cancel" >
+            <template v-slot:title>Режим работы</template>
+            <form class="operating-mode-change" action="">
+                <div class="operating-mode-change__el">
+                  <div class="flex align-items-center">
+                    <!-- <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
+                    <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label> -->
+                    <Checkbox value="1"/>
+                    <label class="ml-2">Понедельник</label>
+                  </div>
+                  <div class="operating-mode-change__values">
+                    <div class="form_input_group input_pl input-parent required">
+                      <input type="text" id="filter_name" placeholder="09:00" name="name" class="dart-form-control">
+                    </div>
+                    <div class="operating-mode-change__line"></div>
+                    <div class="form_input_group input_pl input-parent required">
+                      <input type="text" id="filter_name" placeholder="21:00" name="name" class="dart-form-control">
+                    </div>
+                  </div>
+                </div>
+                <div class="operating-mode-change__el">
+                  <div class="flex align-items-center">
+                    <!-- <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
+                    <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label> -->
+                    <Checkbox value="1"/>
+                    <label class="ml-2">Понедельник</label>
+                  </div>
+                  <div class="operating-mode-change__values">
+                    <div class="form_input_group input_pl input-parent required">
+                      <input type="text" id="filter_name" placeholder="09:00" name="name" class="dart-form-control">
+                    </div>
+                    <div class="operating-mode-change__line"></div>
+                    <div class="form_input_group input_pl input-parent required">
+                      <input type="text" id="filter_name" placeholder="21:00" name="name" class="dart-form-control">
+                    </div>
+                  </div>
+                </div>
+                <div class="operating-mode-change__el">
+                  <div class="flex align-items-center">
+                    <!-- <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
+                    <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label> -->
+                    <Checkbox value="1"/>
+                    <label class="ml-2">Понедельник</label>
+                  </div>
+                  <div class="operating-mode-change__values">
+                    <div class="form_input_group input_pl input-parent required">
+                      <input type="text" id="filter_name" placeholder="09:00" name="name" class="dart-form-control">
+                    </div>
+                    <div class="operating-mode-change__line"></div>
+                    <div class="form_input_group input_pl input-parent required">
+                      <input type="text" id="filter_name" placeholder="21:00" name="name" class="dart-form-control">
+                    </div>
+                  </div>
+                </div>
+                <div class="operating-mode-change__el">
+                  <div class="flex align-items-center">
+                    <!-- <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
+                    <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label> -->
+                    <Checkbox value="1"/>
+                    <label class="ml-2">Понедельник</label>
+                  </div>
+                  <div class="operating-mode-change__values">
+                    <div class="form_input_group input_pl input-parent required">
+                      <input type="text" id="filter_name" placeholder="09:00" name="name" class="dart-form-control">
+                    </div>
+                    <div class="operating-mode-change__line"></div>
+                    <div class="form_input_group input_pl input-parent required">
+                      <input type="text" id="filter_name" placeholder="21:00" name="name" class="dart-form-control">
+                    </div>
+                  </div>
+                </div>
+                <div class="operating-mode-change__el">
+                  <div class="flex align-items-center">
+                    <!-- <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
+                    <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label> -->
+                    <Checkbox value="1"/>
+                    <label class="ml-2">Понедельник</label>
+                  </div>
+                  <div class="operating-mode-change__values">
+                    <p>Выходной</p>
+                  </div>
+                </div>
+                <div class="operating-mode-change__el">
+                  <div class="flex align-items-center">
+                    <!-- <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
+                    <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label> -->
+                    <Checkbox value="1"/>
+                    <label class="ml-2">Понедельник</label>
+                  </div>
+                  <div class="operating-mode-change__values">
+                    <p>Выходной</p>
+                  </div>
+                </div>
+                <div class="operating-mode-change__buttons">
+                  <button class="dart-btn dart-btn-secondary alert_change_btn" type="button"><span>Сбросить</span></button>
+                  <button class="dart-btn dart-btn-primary">Добавить</button>
+                </div>
+            </form>
+          </custom-modal>
+
+          <custom-modal class="operating-mode-calend-modal" v-model="showOperatingModeCalendarModal" @confirm="confirm" @cancel="cancel" >
+            <template v-slot:title>Выходные и короткие дни</template>
+            <div>
+              <Calendar
+              :attributes="attributes"
+              is-expanded
+              :masks="{ weekdays: 'WW' }"/>
+
+              <div class="operating-mode-calend-modal__radio">
+                <div class="flex align-items-center">
+                  <div class="p-radiobutton p-component" data-pc-name="radiobutton" data-p-highlight="false">
+                    <input id="ingredient1" type="radio" class="p-radiobutton-input" name="brand_connection" data-pc-section="input" value="1">
+                    <div class="p-radiobutton-box" data-pc-section="box">
+                      <div class="p-radiobutton-icon" data-pc-section="icon"></div>
+                    </div>
+                  </div>
+                  <label for="ingredient1" class="ml-2">Выходной</label>
+                </div>
+                <div class="flex align-items-center">
+                  <div class="p-radiobutton p-component" data-pc-name="radiobutton" data-p-highlight="false">
+                    <input id="ingredient1" type="radio" class="p-radiobutton-input" name="brand_connection" data-pc-section="input" value="1">
+                    <div class="p-radiobutton-box" data-pc-section="box">
+                      <div class="p-radiobutton-icon" data-pc-section="icon"></div>
+                    </div>
+                  </div>
+                  <label for="ingredient1" class="ml-2">Короткий день</label>
+                </div>
+              </div>
+
+              <div class="operating-mode-calend-modal__values">
+                <div class="form_input_group input_pl input-parent required">
+                  <input type="text" id="filter_name" placeholder="09:00" name="name" class="dart-form-control">
+                </div>
+                <div class="operating-mode-calend-modal__line"></div>
+                <div class="form_input_group input_pl input-parent required">
+                  <input type="text" id="filter_name" placeholder="21:00" name="name" class="dart-form-control">
+                </div>
+              </div>
+              <div class="operating-mode-calend-modal__buttons">
+                <button class="dart-btn dart-btn-secondary alert_change_btn" type="button"><span>Удалить</span></button>
+                <button class="dart-btn dart-btn-primary">Сохранить</button>
+              </div>
+            </div>
+          </custom-modal>
+
           <div class="d-col-md-2" v-for="item in organization.brands" :key="item.id">
             <div class="panel-widget panel-widget-summ">
               <span> {{ item.name }} </span>
@@ -213,6 +403,10 @@
 import { mapActions, mapGetters } from 'vuex'
 import Chart from 'primevue/chart'
 import vTable from '@/components/table/v-table'
+import { Calendar } from 'v-calendar'
+import 'v-calendar/dist/style.css'
+import customModal from '@/components/popup/CustomModal.vue'
+import Checkbox from 'primevue/checkbox'
 
 export default {
   name: 'ProfileOrganization',
@@ -234,8 +428,26 @@ export default {
   },
   data () {
     return {
+      showOperatingModeModal: false,
+      showOperatingModeCalendarModal: false,
       chartData: null,
       page: 1,
+      attributes: [{
+        dot: 'red',
+        dates: [
+          '2024-03-27',
+          '2024-03-17',
+          '2024-03-23'
+        ]
+      },
+      {
+        dot: 'blue',
+        dates: [
+          '2024-03-21',
+          '2024-03-3',
+          '2024-03-7'
+        ]
+      }],
       chartOptions: {
         cutout: '60%'
       },
@@ -464,7 +676,7 @@ export default {
       })
     })
   },
-  components: { Chart, vTable },
+  components: { Chart, vTable, Calendar, customModal, Checkbox },
   computed: {
     ...mapGetters([
       'organization',
@@ -788,6 +1000,206 @@ export default {
         line-height: 1.3;
         letter-spacing: 0.25px;
         text-transform: uppercase;
+      }
+    }
+  }
+
+  .operating-mode-calend-modal{
+    .vc-container{
+      width: 100%;
+      border: none;
+    }
+    .dart-form-control{
+      text-align: center;
+    }
+    .vc-title-wrapper button{
+      background-color: #FFF;
+    }
+
+    &__radio{
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 0 16px;
+    }
+
+    &__values{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 0 16px;
+      margin-top: 16px;
+    }
+
+    &__line{
+      width: 12px;
+      background: #000000;
+      height: 1px;
+    }
+
+    &__buttons{
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      padding: 0 16px;
+      margin-top: 24px;
+      button{
+        width: calc(50% - 6px);
+      }
+    }
+
+    .form_input_group{
+      margin: 0;
+      width: calc(50% - 14px);
+    }
+  }
+
+  .operating-mode-calend-modal,
+  .operating-mode-modal{
+    .form_input_group.input_pl .dart-form-control:not(:placeholder-shown){
+      padding: 10px 15px;
+    }
+
+    .modal-content{
+      max-width: 500px;
+    }
+
+    .modal__title{
+      color: #282828;
+      font-size: 20px;
+      font-weight: 500;
+    }
+  }
+
+  .operating-mode-change{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    &__buttons{
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 8px;
+      button{
+        width: calc(50% - 6px);
+      }
+    }
+    &__el{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 39px;
+
+      label{
+        font-size: 14px;
+      }
+    }
+    &__values{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      max-width: 250px;
+      width: 100%;
+
+      p{
+        margin: 0;
+        color: #A0A0A0;
+        font-size: 14px;
+      }
+    }
+    &__line{
+      width: 12px;
+      background: #000000;
+      height: 1px;
+    }
+
+    .form_input_group{
+      margin: 0;
+      max-width: 115px
+    }
+  }
+
+  .operating-mode-calend{
+    background: #FFF;
+    border-radius: 5px;
+    border: 1px solid #0000001F;
+    .vc-container{
+      width: 100%;
+      border: none;
+    }
+    .vc-title-wrapper button{
+      background-color: #FFF;
+    }
+    &__title{
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      p{
+        margin: 0;
+        color: #676767;
+        font-size: 16px;
+        font-weight: 400;
+        letter-spacing: 0.25px;
+      }
+      .d_icon{
+        color: #a0a0a0;
+        font-size: 24px;
+        cursor: pointer;
+      }
+    }
+  }
+
+  .operating-mode{
+    padding: 24px;
+    background: #FFF;
+    border-radius: 5px;
+    border: 1px solid #0000001F;
+
+    &__title{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 30px;
+      p{
+        margin: 0;
+        color: #676767;
+        font-size: 16px;
+        font-weight: 400;
+        letter-spacing: 0.25px;
+      }
+      .d_icon{
+        color: #a0a0a0;
+        font-size: 24px;
+        cursor: pointer;
+      }
+    }
+    &__container{
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    &__el{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      p{
+        margin: 0;
+        color: #282828;
+        font-size: 14px;
+        font-weight: 400px;
+      }
+
+      &.off{
+        p{
+          color: #A0A0A0;
+        }
       }
     }
   }
