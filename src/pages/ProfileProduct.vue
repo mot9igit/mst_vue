@@ -7,9 +7,9 @@
       <span>Назад к товарам</span>
     </router-link>
   </div>
-  <div class="profile-content b-wrap">
+  <!-- <div class="profile-content b-wrap"> -->
     <div class="profile-content__title">
-      <span class="title">{{ product.name }} (арт. {{ product.article }})</span>
+      <span class="title">{{ product.pagetitle }} (Артикул: {{ product.article }})</span>
     </div>
     <div class="main-widgets">
       <div class="dart-row">
@@ -54,7 +54,28 @@
     <div class="product_form">
       <div class="dart-row dart-align-items-center">
         <div class="d-col-lg-6" v-if="product.product_id > 0">
-          <div class="linked_product">
+          <div class="profile-content__title">
+            <span class="title mt-4">Привязка товара</span>
+          </div>
+          <p class="info-text">Чтобы привязать товар из 1С, найдите этот товар в нашем каталоге. Если товара в каталоге нет, оформите запрос на создание карточки товара. </p>
+            <div class="form_input_group">
+              <AutoComplete
+                v-model="form.selectedProduct"
+                :suggestions="form.filteredProduct"
+                optionLabel="label"
+                :dropdown="true"
+                placeholder='Начните вводить наименование товара'
+                @complete="searchProduct($event)"
+                @change="setProduct($event)"
+              >
+                  <template #item="slotProps">
+                  <img :alt="slotProps.item.label" :src="'http://mst.tools/' + slotProps.item.image" />
+                  <div>{{ slotProps.item.label }}</div>
+                </template>
+              </AutoComplete>
+              <a href="#" class="request_alert" @click.prevent="showRequestModal = true" v-if="getrequests.total < 1 && product.product_id == 0">Запросить создание карточки товара</a>
+            </div>
+          <div class="linked_product mt-4">
             <div class="image">
               <img :src="'http://mst.tools/' + product.image" alt="">
             </div>
@@ -84,26 +105,6 @@
             </v-table>
           </div>
         </div>
-        <div class="d-col-lg-6">
-          <div class="form_input_group">
-            <label>Привяжите товар</label>
-            <AutoComplete
-              v-model="form.selectedProduct"
-              :suggestions="form.filteredProduct"
-              optionLabel="label"
-              :dropdown="true"
-              placeholder='Начните вводить наименование товара'
-              @complete="searchProduct($event)"
-              @change="setProduct($event)"
-            >
-                <template #item="slotProps">
-                <img :alt="slotProps.item.label" :src="'http://mst.tools/' + slotProps.item.image" />
-                <div>{{ slotProps.item.label }}</div>
-              </template>
-            </AutoComplete>
-            <a href="#" class="request_alert" @click.prevent="showRequestModal = true" v-if="getrequests.total < 1 && product.product_id == 0">Запросить создание карточки товара</a>
-          </div>
-        </div>
       </div>
       <div class="product_remains dart-mt-2">
         <div class="profile-content__title">
@@ -112,6 +113,7 @@
         <div class="dart-row">
           <div class="d-col-lg-6">
             <Calendar
+            class="calendar-history"
             is-expanded
             title-position="left"
             :attributes="product.dates"
@@ -120,7 +122,7 @@
         </div>
       </div>
     </div>
-  </div>
+  <!-- </div> -->
   <teleport to="body">
     <custom-modal v-model="showRequestModal" @cancel="cancelRequest" class="plan-modal">
       <template v-slot:title>Запрос на создание карточки товара</template>
@@ -348,6 +350,23 @@ export default {
 </script>
 
 <style lang="scss">
+  .calendar-history{
+    width: 100%;
+    .dart-form-control{
+      text-align: center;
+    }
+    .vc-title-wrapper button{
+      background-color: #FFF;
+    }
+    .vc-header{
+      margin-bottom: 16px;
+    }
+    .vc-weekdays{
+      padding: 6px 0 4px 0;
+      border-top: 0.5px solid #ADADAD;
+      border-bottom: 0.5px solid #ADADAD;
+    }
+  }
   .request_alert{
     display: inline-block;
     margin-top: 5px;
@@ -369,6 +388,7 @@ export default {
     }
   }
   .profile-content__title{
+    margin-bottom: 16px;
     .sub_title{
       display: block;
       width: 100%;
@@ -423,12 +443,12 @@ export default {
   }
   .panel_widget {
     background: #FFFFFF;
-    padding: 40px 40px;
+    padding: 24px;
     border: 1px solid rgba(0, 0, 0, 0.12);
     border-radius: 5px;
     margin-bottom: 20px;
     &_number {
-      min-height: 200px;
+      // min-height: 200px;
       position: relative;
       span{
         display: block;
@@ -437,7 +457,8 @@ export default {
           font-weight: 500;
           font-size: 20px;
           line-height: 1.3;
-          color: #282828;
+          margin-bottom: 8px;
+          color: #676767;
         }
         &.desc{
           font-style: normal;
@@ -445,7 +466,7 @@ export default {
           font-size: 14px;
           line-height: 1.3;
           letter-spacing: 0.25px;
-          color: #282828;
+          color: #A0A0A0;
         }
         &.value{
           font-style: normal;
@@ -454,9 +475,10 @@ export default {
           line-height: 1.3;
           letter-spacing: 0.0025em;
           color: #282828;
-          position: absolute;
-          bottom: 40px;
-          right: 40px;
+          margin-top: 20px
+          // position: absolute;
+          // bottom: 40px;
+          // right: 40px;
         }
       }
     }

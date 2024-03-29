@@ -87,7 +87,7 @@
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
                   <p>Укажите цену</p>
-                  <span>{{ (products.status[5].count).toLocaleString('ru') }}</span>
+                  <span>{{ (products.status[5]?.count)?.toLocaleString('ru') }}</span>
                 </div>
                 <div class="dart-helper__right">
                 </div>
@@ -95,7 +95,7 @@
               <div class="dart-helper__body">
                 <Chart type="doughnut" :data="chartDataHelpOne" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
                 <div class="dart-helper__info">
-                  <b>{{(this.products.status[5].count / (this.products.status.total / 100)).toFixed(2)}} %</b>
+                  <b>{{(this.products.status[5]?.count / (this.products.status.total / 100)).toFixed(2)}} %</b>
                   <p>от общего сопоставления</p>
                 </div>
               </div>
@@ -114,17 +114,17 @@
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
                   <p>Нет бренда</p>
-                  <span>{{ (products.status[1].count).toLocaleString('ru') }}</span>
+                  <span>{{ (products.status[1]?.count)?.toLocaleString('ru') }}</span>
                 </div>
                 <div class="dart-helper__right">
                   <p>На сумму</p>
-                  <span>{{ Number((products.status[1].sum)).toLocaleString('ru') }} ₽</span>
+                  <span>{{ Number((products.status[1]?.sum))?.toLocaleString('ru') }} ₽</span>
                 </div>
               </div>
               <div class="dart-helper__body">
                 <Chart type="doughnut" :data="chartDataHelpTwo" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
                 <div class="dart-helper__info">
-                  <b>{{(this.products.status[1].count / (this.products.status.total / 100)).toFixed(2)}} %</b>
+                  <b>{{(this.products.status[1]?.count / (this.products.status.total / 100)).toFixed(2)}} %</b>
                   <p>от общего сопоставления</p>
                 </div>
               </div>
@@ -143,17 +143,17 @@
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
                   <p>Нет артикула</p>
-                  <span>{{ (products.status[2].count).toLocaleString('ru') }}</span>
+                  <span>{{ (products.status[2]?.count)?.toLocaleString('ru') }}</span>
                 </div>
                 <div class="dart-helper__right">
                   <p>На сумму</p>
-                  <span>{{ Number((products.status[2].sum)).toLocaleString('ru') }} ₽</span>
+                  <span>{{ Number((products.status[2]?.sum))?.toLocaleString('ru') }} ₽</span>
                 </div>
               </div>
               <div class="dart-helper__body">
                 <Chart type="doughnut" :data="chartDataHelpThee" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
                 <div class="dart-helper__info">
-                  <b>{{(this.products.status[2].count / (this.products.status.total / 100)).toFixed(2)}} %</b>
+                  <b>{{(this.products.status[2]?.count / (this.products.status.total / 100)).toFixed(2)}} %</b>
                   <p>от общего сопоставления</p>
                 </div>
               </div>
@@ -172,17 +172,17 @@
               <div class="dart-helper__nav">
                 <div class="dart-helper__left">
                   <p>Нет карточки</p>
-                  <span>{{ (products.status[4].count).toLocaleString('ru') }}</span>
+                  <span>{{ (products.status[4]?.count)?.toLocaleString('ru') }}</span>
                 </div>
                 <div class="dart-helper__right">
                   <p>На сумму</p>
-                  <span>{{ Number((products.status[4].sum)).toLocaleString('ru') }} ₽</span>
+                  <span>{{ Number((products.status[4]?.sum))?.toLocaleString('ru') }} ₽</span>
                 </div>
               </div>
               <div class="dart-helper__body">
                 <Chart type="doughnut" :data="chartDataHelpFour" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
                 <div class="dart-helper__info">
-                  <b>{{(this.products.status[4].count / (this.products.status.total / 100)).toFixed(2)}} %</b>
+                  <b>{{(this.products.status[4]?.count / (this.products.status.total / 100)).toFixed(2)}} %</b>
                   <p>от общего сопоставления</p>
                 </div>
               </div>
