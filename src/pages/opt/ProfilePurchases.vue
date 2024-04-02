@@ -10,10 +10,10 @@
         <HomeMinSwiper />
 
         <span class="h2 mb-3 mt-5">Готовимся к сезону</span>
-        <SeasonSwiper />
+        <SeasonSwiper :items="this.mainpage.season_slider"/>
 
         <span class="h2 mb-3 mt-5">Новинки</span>
-        <NewSwiper />
+        <NewSwiper :items="this.mainpage.new_slider"/>
       </div>
     </div>
     <div class="d-col-map">
@@ -23,47 +23,51 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import HomeSwiper from '../components/swipers/HomeSwiper.vue'
-import CatalogMenu from '../components/CatalogMenu.vue'
-import HomeMinSwiper from '../components/swipers/HomeMinSwiper.vue'
-import SeasonSwiper from '../components/swipers/SeasonSwiper.vue'
-import NewSwiper from '../components/swipers/NewSwiper.vue'
+import HomeSwiper from '../../components/swipers/HomeSwiper.vue'
+import CatalogMenu from '../../components/CatalogMenu.vue'
+import HomeMinSwiper from '../../components/swipers/HomeMinSwiper.vue'
+import SeasonSwiper from '../../components/swipers/SeasonSwiper.vue'
+import NewSwiper from '../../components/swipers/NewSwiper.vue'
 
 export default {
-  name: 'DocsMain',
+  name: 'OptsMain',
   props: {
-    pagination_items_per_page: {
-      type: Number,
-      default: 25
-    },
-    pagination_offset: {
-      type: Number,
-      default: 0
-    },
-    page: {
-      type: Number,
-      default: 1
-    }
   },
   data () {
     return {
       loading: false,
-      reloading: false
+      reloading: false,
+      opt_mainpage: {},
+      opt_catalog: {}
     }
   },
   components: { HomeSwiper, CatalogMenu, HomeMinSwiper, SeasonSwiper, NewSwiper },
-  computed: {
-    ...mapGetters([])
-  },
   mounted () {
+    this.get_opt_mainpage_from_api().then(
+      this.opt_mainpage = this.mainpage
+    )
+    this.get_opt_catalog_from_api().then(
+      this.opt_catalog = this.optcatalog
+    )
   },
   unmounted () {
   },
   methods: {
     ...mapActions([
+      'get_opt_mainpage_from_api',
+      'get_opt_catalog_from_api'
+    ])
+  },
+  computed: {
+    ...mapGetters([
+      'mainpage',
+      'optcatalog'
     ])
   },
   watch: {
+    mainpage: function (newVal, oldVal) {
+      this.opt_mainpage = newVal
+    }
   }
 }
 </script>
@@ -109,7 +113,7 @@ export default {
     position: sticky;
   }
 
-  .main_content{
+  .main_content.white{
     background: #F5F5F5;
   }
 

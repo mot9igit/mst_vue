@@ -3,38 +3,17 @@
         class="homeMinSwiper"
         :slides-per-view="4"
         :space-between="8"
-        @swiper="onSwiper"
-        @slideChange="onSlideChange"
         loop
         navigation
         :pagination="{ clickable: true }"
         :scrollbar="{ draggable: true }"
     >
-        <swiper-slide class="promoSwiper__slide">
-          <router-link to="/">
-              <img src="https://mst.tools/assets/cache_image/assets/content/images/slider/season/gotovimsya-k-sezonu-cadovyie-izmelchiteli_747x972_c79.jpg" alt="">
-          </router-link>
-        </swiper-slide>
-        <swiper-slide class="promoSwiper__slide">
-          <router-link to="/">
-              <img src="https://mst.tools/assets/cache_image/assets/content/images/slider/season/gotovimsya-k-sezonu-motobloki_747x972_c79.jpg" alt="">
-          </router-link>
-        </swiper-slide>
-        <swiper-slide class="promoSwiper__slide">
-          <router-link to="/">
-              <img src="https://mst.tools/assets/cache_image/assets/content/images/slider/season/gotovimsya-k-sezonu-trimmeryi_747x972_c79.jpg" alt="">
-          </router-link>
-        </swiper-slide>
-        <swiper-slide class="promoSwiper__slide">
-          <router-link to="/">
-              <img src="https://mst.tools/assets/cache_image/assets/content/images/slider/season/gotovimsya-k-sezonu-pilyi_747x972_c79.jpg" alt="">
-          </router-link>
-        </swiper-slide>
-        <swiper-slide class="promoSwiper__slide">
-          <router-link to="/">
-              <img src="https://mst.tools/assets/cache_image/assets/content/images/slider/season/gotovimsya-k-sezonu-tachki_747x972_c79.jpg" alt="">
-          </router-link>
-        </swiper-slide>
+
+      <swiper-slide v-for="item in items" v-bind:key="item.id" class="promoSwiper__slide">
+        <router-link to="/">
+          <img :src="item.image">
+        </router-link>
+      </swiper-slide>
     </swiper>
 </template>
 <script>
@@ -44,7 +23,7 @@ import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules'
 import 'swiper/css'
 
 export default {
-  name: 'bonusParticipants',
+  name: 'SeasonSwiper',
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -53,6 +32,9 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
+    },
+    items: {
+      type: Array
     }
   },
   data () {
@@ -65,18 +47,11 @@ export default {
     ])
   },
   mounted () {
+    console.log(this.items)
   },
   components: { Swiper, SwiperSlide },
   setup () {
-    const onSwiper = (swiper) => {
-      console.log(swiper)
-    }
-    const onSlideChange = () => {
-      console.log('slide change')
-    }
     return {
-      onSwiper,
-      onSlideChange,
       modules: [Navigation, Pagination, Scrollbar, A11y]
     }
   },

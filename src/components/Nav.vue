@@ -2,14 +2,14 @@
     <div class="navmain">
         <div class="navmain__hand">
             <Link class="navmain__logo" href="#">
-                <img src="/logo.svg" alt="Логотип" />
+                <img src="../../src/assets/img/logo_alt.svg" alt="Логотип" />
                 <span>для бизнеса</span>
             </Link>
 
-            <div class="navmain__search dart-input dart-input-search">
+            <div class="navmain__search a-dart-input a-dart-input-search">
                 <div class="navmain__search_btn">
                     <input type="text" placeholder="Найти во всех магазинах" />
-                    <a href="/search.html" class="navmain__dart_btn dart-btn dart-btn-primary">Найти</a>
+                    <a href="/search.html" class="navmain__dart_btn a-dart-btn a-dart-btn-primary">Найти</a>
                 </div>
             </div>
         </div>
@@ -24,7 +24,7 @@
 import { mapActions, mapGetters } from 'vuex'
 
 export default {
-  name: 'bonusParticipants',
+  name: 'Nav',
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -121,4 +121,307 @@ export default {
             transition: width .4s;
         }
     }
+
+    .a-dart-btn{
+        border-radius: 5px;
+        padding: 15px 24px;
+        text-decoration: none;
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 19px;
+        transition: all 0.3s;
+        display: inline-flex;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        cursor: pointer;
+
+        .d_icon{
+            font-size: 18px;
+        }
+    }
+
+    .a-d_icon-hover{
+        color: var(--secondary-color);
+        transition: all 0.3s;
+
+        &:hover{
+            color: var(--link-color-hover);
+        }
+    }
+
+    .a-dart-btn-primary{
+        background: var(--primary-color);
+        color: var(--white-color);
+
+        &:hover{
+            background: var(--primary-hover);
+            color: var(--white-color);
+        }
+    }
+
+    .a-dart-btn-primary-mini{
+        font-size: 14px;
+        padding: 8px 16px;
+        background: var(--primary-color);
+        color: var(--white-color);
+
+        &:hover{
+            background: var(--primary-hover);
+            color: var(--white-color);
+        }
+    }
+
+    .a-dart-btn-secondary{
+        background: var(--white-color);
+        color: var(--secondary-color);
+        border: 1px solid #E2E2E2;
+
+        &:hover{
+            background: var(--btn-secondary-color);
+            color: var(--secondary-color);
+        }
+    }
+
+    .a-dart-btn-secondary-mini{
+        font-size: 14px;
+        padding: 8px 16px;
+        background: var(--white-color);
+        color: var(--secondary-color);
+        border: 1px solid #E2E2E2;
+
+        &:hover{
+            background: var(--btn-secondary-color);
+            color: var(--secondary-color);
+        }
+    }
+
+    .a-dart-btn-choice{
+        background: var(--btn-secondary-outline-background);
+        justify-content: space-between;
+
+        p{
+            color: var(--text-color-dop);
+            font-weight: 400;
+            font-size: 16px;
+            line-height: 16px;
+        }
+        i{
+            color: var(--secondary-color);
+            font-size: 24px;
+        }
+
+        &:hover{
+            background: var(--btn-secondary-outline-hover);
+        }
+    }
+
+    .a-dart-btn-secondary-outline{
+        background: var(--btn-secondary-outline-background);
+        color: var(--btn-secondary-outline-color);
+
+        &:hover{
+            background: var(--btn-secondary-outline-hover);
+            color: var(--btn-secondary-outline-color);
+        }
+    }
+
+    .a-dart-btn-secondary-outline-mini{
+        font-size: 14px;
+        padding: 8px 16px;
+        background: var(--btn-secondary-outline-background);
+        color: var(--btn-secondary-outline-color);
+
+        &:hover{
+            background: var(--btn-secondary-outline-hover);
+            color: var(--btn-secondary-outline-color);
+        }
+
+        .d_icon{
+            font-size: 16px;
+        }
+    }
+
+    .a-dart-btn-icon-list{
+        color: var(--secondary-color);
+        border: 1px solid var(--border-color);
+        background: var(--white-color);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        .d_icon-down-arrow{
+            font-size: 12px;
+            position: relative;
+            top: 2px;
+        }
+
+        &:hover{
+            color: var(--secondary-color);
+            background-color: var(--btn-secondary-color);
+        }
+    }
+
+    .a-dart-btn-radio{
+        padding: 0;
+        input{
+            display: none;
+        }
+
+        label{
+            background-color: var(--btn-secondary-outline-background);
+            color: var(--secondary-color);
+            cursor: pointer;
+            padding: 15px 24px;
+            border-radius: 5px;
+
+            &:hover{
+                background-color: var(--btn-secondary-outline-hover);
+            }
+        }
+
+        input:checked + label{
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+        }
+    }
+
+    .a-dart-btn-radio-mini{
+        padding: 0 !important;
+        input{
+            display: none;
+        }
+
+        label{
+            background-color: var(--btn-secondary-outline-background);
+            color: var(--secondary-color);
+            cursor: pointer;
+            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 5px;
+
+            &:hover{
+                background-color: var(--btn-secondary-outline-hover);
+            }
+        }
+
+        input:checked + label{
+            background-color: var(--secondary-color);
+            color: var(--white-color);
+        }
+    }
+
+    .a-dart-input input{
+        outline: none;
+        border-radius: 5px;
+        background: var(--btn-secondary-outline-background);
+        transition: all 0.3s;
+        color: var(--secondary-color);
+        font-size: 16px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 16px;
+        width: 100%;
+    }
+
+    .a-dart-input-search input{
+        padding: 14px 44px;
+        border: 1px solid transparent;
+
+        &:focus{
+            border: 1px solid var(--border-color);
+        }
+    }
+
+    .a-dart-input-search{
+        position: relative;
+        &::before{
+            content: "\e908";
+            position: absolute;
+            font-size: 18px;
+            font-family: 'primeicons' !important;
+            top: 50%;
+            transform: translate(0, -50%);
+            left: 12px;
+            z-index: 3;
+            color: #282828;
+        }
+    }
+
+    .a-dart-input-text input{
+        padding: 16px 12px;
+        border: 1px solid transparent;
+
+        &:focus{
+            border: 1px solid var(--border-color);
+        }
+    }
+
+    .a-dart-btn-next{
+        &:hover{
+            background: var(--color-prev-hover);
+            filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.08));
+            transition: all .3s;
+        }
+    }
+
+    .a-dart-btn-prev{
+        &:hover{
+            background: var(--color-prev-hover);
+            filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.08));
+            transition: all .3s;
+        }
+    }
+
+    .a-dart-link-all{
+        &:hover{
+            color: var(--link-color-hover);
+            transition: all .3s;
+        }
+    }
+
+    .a-btn-close{
+        cursor: pointer;
+        background: var(--color-sitebar-text);
+        opacity: 0.3;
+        color: var(--white-color) !important;
+        width: 24px !important;
+        height: 24px !important;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s;
+        padding: 0;
+
+        &:hover{
+            background: var(--color-sitebar-text);
+            opacity: 0.5;
+            color: var(--white-color) !important;
+        }
+
+        .d_icon{
+            font-size: 8px;
+        }
+    }
+
+    .a-dart-textarea{
+        width: 100%;
+        background: var(--btn-secondary-outline-background);
+        border-radius: 5px;
+        padding: 16px 12px;
+        transition: all 0.3s;
+        color: var(--secondary-color);
+        font-size: 16px;
+        border: 1px solid transparent;
+        outline: none;
+        resize: none;
+
+        &:focus{
+            border: 1px solid var(--border-color);
+        }
+    }
+
 </style>

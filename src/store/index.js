@@ -20,6 +20,7 @@ import warehouses from './warehouses'
 import matrixs from './matrixs'
 import matrix from './matrix'
 import getAvailableProd from './get_available_prod'
+import opt from './opt'
 
 export default new Vuex.Store({
   modules: {
@@ -42,6 +43,7 @@ export default new Vuex.Store({
     warehouses,
     matrixs,
     matrix,
-    getAvailableProd
+    getAvailableProd,
+    opt
   }
 })
