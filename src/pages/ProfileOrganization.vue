@@ -104,92 +104,128 @@
             <form class="operating-mode-change" action="">
                 <div class="operating-mode-change__el">
                   <div class="flex align-items-center">
-                    <!-- <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
-                    <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label> -->
-                    <Checkbox value="1"/>
-                    <label class="ml-2">Понедельник</label>
+                    <Checkbox v-model="work.days[1].active" :binary="true" inputId="workday_1"/>
+                    <label for="workday_1" class="ml-2">Понедельник</label>
                   </div>
-                  <div class="operating-mode-change__values">
+                  <div class="operating-mode-change__values" v-if="work.days[1].active">
                     <div class="form_input_group input_pl input-parent required">
-                      <input type="text" id="filter_name" placeholder="09:00" name="name" class="dart-form-control">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[1].start" timeOnly stepMinute="15"/>
                     </div>
                     <div class="operating-mode-change__line"></div>
                     <div class="form_input_group input_pl input-parent required">
-                      <input type="text" id="filter_name" placeholder="21:00" name="name" class="dart-form-control">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[1].end" timeOnly stepMinute="15"/>
                     </div>
                   </div>
-                </div>
-                <div class="operating-mode-change__el">
-                  <div class="flex align-items-center">
-                    <!-- <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
-                    <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label> -->
-                    <Checkbox value="1"/>
-                    <label class="ml-2">Понедельник</label>
-                  </div>
-                  <div class="operating-mode-change__values">
-                    <div class="form_input_group input_pl input-parent required">
-                      <input type="text" id="filter_name" placeholder="09:00" name="name" class="dart-form-control">
-                    </div>
-                    <div class="operating-mode-change__line"></div>
-                    <div class="form_input_group input_pl input-parent required">
-                      <input type="text" id="filter_name" placeholder="21:00" name="name" class="dart-form-control">
-                    </div>
-                  </div>
-                </div>
-                <div class="operating-mode-change__el">
-                  <div class="flex align-items-center">
-                    <!-- <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
-                    <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label> -->
-                    <Checkbox value="1"/>
-                    <label class="ml-2">Понедельник</label>
-                  </div>
-                  <div class="operating-mode-change__values">
-                    <div class="form_input_group input_pl input-parent required">
-                      <input type="text" id="filter_name" placeholder="09:00" name="name" class="dart-form-control">
-                    </div>
-                    <div class="operating-mode-change__line"></div>
-                    <div class="form_input_group input_pl input-parent required">
-                      <input type="text" id="filter_name" placeholder="21:00" name="name" class="dart-form-control">
-                    </div>
-                  </div>
-                </div>
-                <div class="operating-mode-change__el">
-                  <div class="flex align-items-center">
-                    <!-- <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
-                    <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label> -->
-                    <Checkbox value="1"/>
-                    <label class="ml-2">Понедельник</label>
-                  </div>
-                  <div class="operating-mode-change__values">
-                    <div class="form_input_group input_pl input-parent required">
-                      <input type="text" id="filter_name" placeholder="09:00" name="name" class="dart-form-control">
-                    </div>
-                    <div class="operating-mode-change__line"></div>
-                    <div class="form_input_group input_pl input-parent required">
-                      <input type="text" id="filter_name" placeholder="21:00" name="name" class="dart-form-control">
-                    </div>
-                  </div>
-                </div>
-                <div class="operating-mode-change__el">
-                  <div class="flex align-items-center">
-                    <!-- <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
-                    <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label> -->
-                    <Checkbox value="1"/>
-                    <label class="ml-2">Понедельник</label>
-                  </div>
-                  <div class="operating-mode-change__values">
+                  <div class="operating-mode-change__values off" v-else>
                     <p>Выходной</p>
                   </div>
                 </div>
                 <div class="operating-mode-change__el">
                   <div class="flex align-items-center">
-                    <!-- <Checkbox v-model="filtersdata[i]" :inputId="'input' + i" :name="i" value="1" @change="setFilter"/>
-                    <label :for="'input' + i" class="ml-2"> {{ ffilter.placeholder }} </label> -->
-                    <Checkbox value="1"/>
-                    <label class="ml-2">Понедельник</label>
+                    <Checkbox v-model="work.days[2].active" :binary="true" inputId="workday_2"/>
+                    <label for="workday_2" class="ml-2">Вторник</label>
                   </div>
-                  <div class="operating-mode-change__values">
+                  <div class="operating-mode-change__values" v-if="work.days[2].active">
+                    <div class="form_input_group input_pl input-parent required">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[2].start" timeOnly stepMinute="15"/>
+                    </div>
+                    <div class="operating-mode-change__line"></div>
+                    <div class="form_input_group input_pl input-parent required">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[2].end" timeOnly stepMinute="15"/>
+                    </div>
+                  </div>
+                  <div class="operating-mode-change__values off" v-else>
                     <p>Выходной</p>
+                  </div>
+                </div>
+                <div class="operating-mode-change__el">
+                  <div class="flex align-items-center">
+                    <Checkbox v-model="work.days[3].active" :binary="true" inputId="workday_3"/>
+                    <label for="workday_3" class="ml-2">Среда</label>
+                  </div>
+                  <div class="operating-mode-change__values" v-if="work.days[3].active">
+                    <div class="form_input_group input_pl input-parent required">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[3].start" timeOnly stepMinute="15"/>
+                    </div>
+                    <div class="operating-mode-change__line"></div>
+                    <div class="form_input_group input_pl input-parent required">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[3].end" timeOnly stepMinute="15"/>
+                    </div>
+                  </div>
+                  <div class="operating-mode-change__values off" v-else>
+                    <p>Выходной</p>
+                  </div>
+                </div>
+                <div class="operating-mode-change__el">
+                  <div class="flex align-items-center">
+                    <Checkbox v-model="work.days[4].active" :binary="true" inputId="workday_4"/>
+                    <label for="workday_4" class="ml-2">Четверг</label>
+                  </div>
+                  <div class="operating-mode-change__values" v-if="work.days[4].active">
+                    <div class="form_input_group input_pl input-parent required">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[4].start" timeOnly stepMinute="15"/>
+                    </div>
+                    <div class="operating-mode-change__line"></div>
+                    <div class="form_input_group input_pl input-parent required">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[4].end" timeOnly stepMinute="15"/>
+                    </div>
+                  </div>
+                  <div class="operating-mode-change__values off" v-else>
+                    <p>Выходной</p>
+                  </div>
+                </div>
+                <div class="operating-mode-change__el">
+                  <div class="flex align-items-center">
+                    <Checkbox v-model="work.days[5].active" :binary="true" inputId="workday_5"/>
+                    <label for="workday_5" class="ml-2">Пятница</label>
+                  </div>
+                  <div class="operating-mode-change__values" v-if="work.days[5].active">
+                    <div class="form_input_group input_pl input-parent required">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[5].start" timeOnly stepMinute="15"/>
+                    </div>
+                    <div class="operating-mode-change__line"></div>
+                    <div class="form_input_group input_pl input-parent required">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[5].end" timeOnly stepMinute="15"/>
+                    </div>
+                  </div>
+                  <div class="operating-mode-change__values off" v-else>
+                    <p>Выходной</p>
+                </div>
+                </div>
+                <div class="operating-mode-change__el">
+                  <div class="flex align-items-center">
+                    <Checkbox v-model="work.days[6].active" :binary="true" inputId="workday_6"/>
+                    <label for="workday_6" class="ml-2">Суббота</label>
+                  </div>
+                  <div class="operating-mode-change__values" v-if="work.days[6].active">
+                    <div class="form_input_group input_pl input-parent required">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[6].start" timeOnly stepMinute="15"/>
+                    </div>
+                    <div class="operating-mode-change__line"></div>
+                    <div class="form_input_group input_pl input-parent required">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[6].end" timeOnly stepMinute="15"/>
+                    </div>
+                  </div>
+                  <div class="operating-mode-change__values off" v-else>
+                    <p>Выходной</p>
+                </div>
+                </div>
+                <div class="operating-mode-change__el">
+                  <div class="flex align-items-center">
+                    <Checkbox v-model="work.days[7].active" :binary="true" inputId="workday_7"/>
+                    <label for="workday_7" class="ml-2">Воскресенье</label>
+                  </div>
+                  <div class="operating-mode-change__values" v-if="work.days[7].active">
+                    <div class="form_input_group input_pl input-parent required">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[7].start" timeOnly stepMinute="15"/>
+                    </div>
+                    <div class="operating-mode-change__line"></div>
+                    <div class="form_input_group input_pl input-parent required">
+                      <primeCalendar id="calendar-timeonly" v-model="work.days[7].end" timeOnly stepMinute="15"/>
+                    </div>
+                  </div>
+                  <div class="operating-mode-change__values off" v-else>
+                      <p>Выходной</p>
                   </div>
                 </div>
                 <div class="operating-mode-change__buttons">
@@ -404,6 +440,7 @@ import { mapActions, mapGetters } from 'vuex'
 import Chart from 'primevue/chart'
 import vTable from '@/components/table/v-table'
 import { Calendar } from 'v-calendar'
+import primeCalendar from 'primevue/calendar'
 import 'v-calendar/dist/style.css'
 import customModal from '@/components/popup/CustomModal.vue'
 import Checkbox from 'primevue/checkbox'
@@ -431,6 +468,45 @@ export default {
       showOperatingModeModal: false,
       showOperatingModeCalendarModal: false,
       chartData: null,
+      work: {
+        days: {
+          1: {
+            active: 0,
+            start: '',
+            end: ''
+          },
+          2: {
+            active: 0,
+            start: '',
+            end: ''
+          },
+          3: {
+            active: 0,
+            start: '',
+            end: ''
+          },
+          4: {
+            active: 0,
+            start: '',
+            end: ''
+          },
+          5: {
+            active: 0,
+            start: '',
+            end: ''
+          },
+          6: {
+            active: 0,
+            start: '',
+            end: ''
+          },
+          7: {
+            active: 0,
+            start: '',
+            end: ''
+          }
+        }
+      },
       page: 1,
       attributes: [{
         dot: 'red',
@@ -676,7 +752,7 @@ export default {
       })
     })
   },
-  components: { Chart, vTable, Calendar, customModal, Checkbox },
+  components: { Chart, vTable, Calendar, customModal, Checkbox, primeCalendar },
   computed: {
     ...mapGetters([
       'organization',
