@@ -39,7 +39,7 @@ import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules'
 import 'swiper/css'
 
 export default {
-  name: 'bonusParticipants',
+  name: 'homeMinSwiper',
   props: {
     pagination_items_per_page: {
       type: Number,

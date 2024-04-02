@@ -89,7 +89,8 @@
         :active="true"
         @clickMenu="clickMenu"
       />
-      <div class="main_content">
+      <Nav v-if="namePathIsNav == 'purchases'"/>
+      <div class="main_content" :class='{"white": namePathIsNav == "purchases"}'>
         <div class="dart_container">
           <router-view></router-view>
         </div>
@@ -102,6 +103,8 @@
 import MainHeader from '../../components/MainHeader'
 import PanelMenu from 'primevue/panelmenu'
 import { mapActions, mapGetters } from 'vuex'
+import Nav from '@/components/Nav.vue'
+import router from '@/router'
 
 export default {
   name: 'ProfilePage',
@@ -109,6 +112,7 @@ export default {
     return {
       sidebar_active: true,
       mobile_menu: false,
+      namePathIsNav: null,
       user: {
       },
       org: {
@@ -150,7 +154,10 @@ export default {
       // })
     }
   },
-  components: { MainHeader, PanelMenu },
+  updated () {
+    this.namePathIsNav = router?.currentRoute?._value.matched[3]?.name
+  },
+  components: { MainHeader, PanelMenu, Nav },
   computed: {
     ...mapGetters([
       'organization'
