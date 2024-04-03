@@ -626,7 +626,7 @@ export default {
     },
     filter (data) {
       this.get_data_from_api(data).then(() => {
-        this.avg_info.remains = this.products.avg_info.remains
+        this.avg_info.remains = this.products.avg_info?.remains
         this.avg_info.no_money = this.products.avg_info.no_money
         this.avg_info.sales_speed = this.products.avg_info.sales_speed
       })
@@ -634,7 +634,7 @@ export default {
     paginate (data) {
       this.page = data.page
       this.get_data_from_api(data).then(() => {
-        this.avg_info.remains = this.products.avg_info.remains
+        this.avg_info.remains = this.products.avg_info?.remains
         this.avg_info.no_money = this.products.avg_info.no_money
         this.avg_info.sales_speed = this.products.avg_info.sales_speed
       })
@@ -670,7 +670,7 @@ export default {
         page: this.page,
         perpage: this.pagination_items_per_page
       }).then(() => {
-        this.avg_info.remains = this.products.avg_info.remains
+        this.avg_info.remains = this.products.avg_info?.remains
         this.avg_info.no_money = this.products.avg_info.no_money
         this.avg_info.sales_speed = this.products.avg_info.sales_speed
       })

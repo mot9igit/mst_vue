@@ -1,8 +1,6 @@
 <template>
     <div class="dart-catalog-menu">
-        <!-- {catalog.map((item: any) => (
-            <CatalogEl key={item.label} item={item}/>
-        ))} -->
+        <CatalogEl v-for="item in items" v-bind:key="item.id" :items="item"/>
     </div>
     <div class="closemenu">
         <i class="pi pi-angle-left"></i>
@@ -11,9 +9,10 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import CatalogEl from './CatalogEl.vue'
 
 export default {
-  name: 'bonusParticipants',
+  name: 'CatalogMenu',
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -22,6 +21,9 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
+    },
+    items: {
+      type: Array
     }
   },
   data () {
@@ -34,8 +36,9 @@ export default {
     ])
   },
   mounted () {
+    console.log(this.items)
   },
-  components: { },
+  components: { CatalogEl },
   computed: {
     ...mapGetters([
     ])
