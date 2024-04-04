@@ -2,7 +2,7 @@
     <li class="dart-catalog-menu__category" :class="{'active' : this.active}">
             <div @click="setActive($event)" class="dart-catalog-menu__el link-no-link">
                 <img :src="items.menu_image" :alt="items.pagetitle"/>
-                {{ items.pagetitle }}
+                <span>{{ items.pagetitle }}</span>
             </div>
             <ul class="dart-catalog-menu__list">
                 <a v-for="item in items.children" v-bind:key="item.id" href="/" class="dart-catalog-menu__el"><li>{{item.pagetitle}}</li></a>

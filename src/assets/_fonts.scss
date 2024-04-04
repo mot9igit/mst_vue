@@ -24,6 +24,10 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.d_icon-busket:before {
+	content: "\e910";
+}
+
 .d_icon-edit:before {
 	content: "\e90f";
 }

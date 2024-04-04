@@ -3,6 +3,7 @@
         <table class="k-table">
             <thead>
                 <tr>
+                    <th class="k-table__name"></th>
                     <th class="k-table__name">Артикул</th>
                     <th class="k-table__name">Фото</th>
                     <th class="k-table__name k-table__th-title">Название</th>
@@ -132,9 +133,39 @@ export default {
         display: none;
     }
 
+    tr.no-active-el{
+        .pi-angle-up{
+            transform: rotate(180deg);
+            transition: all 0.4s;
+        }
+    }
+
+    tr.active-el{
+        .pi-angle-up{
+            transform: rotate(0deg);
+            transition: all 0.4s;
+        }
+    }
+
     // td + td{
     //     border-top: 1px solid #0000001F;
     // }
+
+    tr.active:hover{
+        .k-table__form{
+            opacity: 1;
+        }
+    }
+
+    &__form{
+        align-items: center;
+        display: flex;
+        gap: 12px;
+        opacity: 0;
+        transition: all 0.4s;
+        width: 100%;
+        justify-content: center;
+    }
 
     &__header{
         display: flex;

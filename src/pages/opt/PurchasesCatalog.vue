@@ -1,8 +1,7 @@
 <template>
+    <ChangeVendorsModal :items="this.opt_vendors"/>
     <div class="dart-custom-grid">
-      <div class="d-col-menu menuShow">
-        <CatalogMenu :items="opt_catalog" />
-      </div>
+      <CatalogMenu :items="opt_catalog" />
       <div class="d-col-content">
         <div class="dart-home dart-window">
             <Breadcrumbs/>
@@ -23,6 +22,7 @@ import Basket from '../../components/opt/Basket.vue'
 import Vendors from '../../components/opt/Vendors.vue'
 import Breadcrumbs from '../../components/opt/Breadcrumbs.vue'
 import TableCatalog from '../../components/opt/TableCatalog.vue'
+import ChangeVendorsModal from '../../components/opt/ChangeVendorsModal.vue'
 
 export default {
   name: 'OptsCatalog',
@@ -34,7 +34,8 @@ export default {
       reloading: false,
       opt_mainpage: {},
       opt_catalog: {},
-      opt_vendors: {}
+      opt_vendors: {},
+      opt_products: {}
     }
   },
   components: {
@@ -42,7 +43,8 @@ export default {
     Basket,
     Vendors,
     Breadcrumbs,
-    TableCatalog
+    TableCatalog,
+    ChangeVendorsModal
   },
   mounted () {
     this.get_opt_mainpage_from_api().then(
@@ -54,6 +56,11 @@ export default {
     this.get_opt_vendors_from_api().then(
       this.opt_vendors = this.optvendors
     )
+    this.get_opt_products_from_api({
+      category: 1
+    }).then(
+      this.opt_products = this.optproducts
+    )
   },
   unmounted () {
   },
@@ -61,14 +68,16 @@ export default {
     ...mapActions([
       'get_opt_mainpage_from_api',
       'get_opt_catalog_from_api',
-      'get_opt_vendors_from_api'
+      'get_opt_vendors_from_api',
+      'get_opt_products_from_api'
     ])
   },
   computed: {
     ...mapGetters([
       'mainpage',
       'optcatalog',
-      'optvendors'
+      'optvendors',
+      'optproducts'
     ])
   },
   watch: {
@@ -80,6 +89,9 @@ export default {
     },
     optvendors: function (newVal, oldVal) {
       this.opt_vendors = newVal
+    },
+    optproducts: function (newVal, oldVal) {
+      this.opt_products = newVal
     }
   }
 }

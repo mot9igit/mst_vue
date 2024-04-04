@@ -1,8 +1,7 @@
 <template>
+  <ChangeVendorsModal :items="this.opt_vendors"/>
   <div class="dart-custom-grid">
-    <div class="d-col-menu menuShow">
-      <CatalogMenu :items="opt_catalog" />
-    </div>
+    <CatalogMenu :items="opt_catalog" />
     <div class="d-col-content">
       <div class="dart-home dart-window">
         <span class="h2">Акции</span>
@@ -31,6 +30,7 @@ import SeasonSwiper from '../../components/swipers/SeasonSwiper.vue'
 import NewSwiper from '../../components/swipers/NewSwiper.vue'
 import Basket from '../../components/opt/Basket.vue'
 import Vendors from '../../components/opt/Vendors.vue'
+import ChangeVendorsModal from '../../components/opt/ChangeVendorsModal.vue'
 
 export default {
   name: 'OptsMain',
@@ -52,7 +52,8 @@ export default {
     SeasonSwiper,
     NewSwiper,
     Basket,
-    Vendors
+    Vendors,
+    ChangeVendorsModal
   },
   mounted () {
     this.get_opt_mainpage_from_api().then(
@@ -117,16 +118,10 @@ export default {
     display: flex;
   }
 
-  .d-col-menu{
-    width: 287px;
-    height: 100%;
-    position: sticky;
-    top: 8px;
-  }
-
   .d-col-content{
-    width: calc(100% - calc(287px + 350px));
+    max-width: calc(100% - calc(287px + 350px));
     padding: 0 24px;
+    transition: all 0.4s;
   }
 
   .d-col-map{
