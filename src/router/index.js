@@ -213,7 +213,7 @@ const routes = [
             name: 'purchases_home',
             component: ProfilePurchases
           }, {
-            path: ':catalog_id',
+            path: ':category_id',
             name: 'purchases_catalog',
             component: PurchasesCatalog
           }]

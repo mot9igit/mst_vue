@@ -1,16 +1,16 @@
 <template>
-    <ChangeVendorsModal :items="this.opt_vendors"/>
+    <ChangeVendorsModal :items="this.opt_vendors" />
     <div class="dart-custom-grid">
       <CatalogMenu :items="opt_catalog" />
       <div class="d-col-content">
         <div class="dart-home dart-window">
             <Breadcrumbs/>
-            <h1 class="h1-mini">Дрели / Шуруповерты</h1>
-            <TableCatalog />
+            <h1 class="h1-mini">{{opt_products?.page?.pagetitle}}</h1>
+            <TableCatalog v-if="opt_products.total !== 0" :items="opt_products"/>
         </div>
       </div>
       <div class="d-col-map">
-        <Vendors :items="this.opt_vendors" />
+        <Vendors :items="this.opt_vendors"/>
         <Basket />
       </div>
     </div>
@@ -57,7 +57,8 @@ export default {
       this.opt_vendors = this.optvendors
     )
     this.get_opt_products_from_api({
-      category: 1
+      page: 1,
+      perpage: 25
     }).then(
       this.opt_products = this.optproducts
     )

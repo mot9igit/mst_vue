@@ -214,7 +214,7 @@ export default {
             key: '7',
             label: 'Закупки',
             icon: 'd_icon d_icon-file-document',
-            to: { name: 'purchases', params: { id: this.$route.params.id } }
+            to: { name: 'purchases_home', params: { id: this.$route.params.id } }
           }]
         }
         if (this.organization.type === 2) {
@@ -276,7 +276,7 @@ export default {
             key: '9',
             label: 'Закупки',
             icon: 'd_icon d_icon-file-document',
-            to: { name: 'purchases', params: { id: this.$route.params.id } }
+            to: { name: 'purchases_home', params: { id: this.$route.params.id } }
           }]
         }
         if (this.organization.type === 3) {
@@ -356,7 +356,7 @@ export default {
             key: '14',
             label: 'Закупки',
             icon: 'd_icon d_icon-file-document',
-            to: { name: 'purchases', params: { id: this.$route.params.id } }
+            to: { name: 'purchases_home', params: { id: this.$route.params.id } }
           }]
         }
         return []

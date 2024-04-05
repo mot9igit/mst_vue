@@ -19,30 +19,7 @@
                 </tr>
             </thead>
             <tbody>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
-                <TableCatalogRow/>
+                <TableCatalogRow v-for="item in items.items" v-bind:key="item.id" :items="item"/>
             </tbody>
         </table>
     </div>
@@ -61,6 +38,9 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
+    },
+    items: {
+      type: Array
     }
   },
   data () {
@@ -98,6 +78,10 @@ export default {
         background-color: #b4b4b4; /* green */
         border-radius: 9em;
     }
+}
+
+.event-none{
+    pointer-events: none;
 }
 
 .k-table{

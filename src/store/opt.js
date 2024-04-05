@@ -75,13 +75,15 @@ export default {
           }
         })
     },
-    get_opt_products_from_api ({ commit }, { category }) {
+    get_opt_products_from_api ({ commit }, { page, perpage }) {
       return Axios('/rest/front_opt', {
         method: 'POST',
         data: {
           id: router.currentRoute._value.params.id,
           type: router.currentRoute._value.params.type,
-          category_id: category,
+          category_id: router.currentRoute._value.params.category_id,
+          page: page,
+          perpage: perpage,
           action: 'get/products'
         },
         headers: {

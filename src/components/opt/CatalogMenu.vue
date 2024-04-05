@@ -51,6 +51,7 @@ export default {
 
     .d-col-menu.active + .d-col-content{
         max-width: calc(100% - calc(64px + 350px));
+        min-width: calc(100% - calc(64px + 350px));
         transition: all 0.4s
     }
 

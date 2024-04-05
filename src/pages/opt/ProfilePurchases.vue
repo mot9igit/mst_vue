@@ -120,6 +120,7 @@ export default {
 
   .d-col-content{
     max-width: calc(100% - calc(287px + 350px));
+    min-width: calc(100% - calc(287px + 350px));
     padding: 0 24px;
     transition: all 0.4s;
   }

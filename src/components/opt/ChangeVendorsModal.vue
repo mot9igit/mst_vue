@@ -1,14 +1,14 @@
 <template>
-    <div class="changeshop" :class="{'show' : this.modalChangeVendor}">
+    <div class="changeshop" :class="{'show' : this.modalIsActive}">
         <div class="changeshop__menu modal-stores-map__form">
             <div class="changeshop__map" id="changeshop__map"></div>
             <div class="changeshop__list">
                 <div class="changeshop__settings">
                 <div class="dart-home__title">
                     <span class="h2">Выбор поставщиков</span>
-                    <a href="#" class="btn-close link-no-style btnActiveChangeshopOff"></a>
+                    <a href="#" class="btn-close link-no-style" @click="modalToggle"></a>
 
-                    <div class="btn-back btnActiveChangeshopOff">
+                    <div class="btn-back" @click="modalToggle">
                         <i class="pi pi-times"></i>
                     </div>
                 </div>
@@ -88,14 +88,14 @@
                     <input type="text" class="store_complete" placeholder="Адрес или наименование поставщика" autocomplete="off">
                 </div>
                 <div class="changeshop__listvendors">
-                    <div v-for="item in items" v-bind:key="item.id" class="flex align-items-start changevendor">
-                        <Checkbox v-model="item.id" :inputId="'changevendor' + item.id" name="" value="" />
+                    <div v-for="item in items.items" v-bind:key="item.id" class="flex align-items-start changevendor">
+                        <Checkbox v-model="this.changeVendors" :inputId="'changevendor' + item.id" name="changeVendors" :value="item.id" />
                         <label :for="'changevendor' + item.id" class="changevendor__label">
                             <div class="changevendor__text">
-                                <b>«Barsuk Brigadir»</b>
-                                <p>г. Новосибирск, ул. Тюменская, 4</p>
+                                <b>{{item.name_short}}</b>
+                                <p>{{item.address_short}}</p>
                             </div>
-                            <img src="/assets/content/images/shops_logo/mstoldlogo.png" alt="">
+                            <img :src="item.image" :alt="item.name">
                         </label>
                     </div>
                 </div>
@@ -113,11 +113,17 @@ export default {
   props: {
     items: {
       type: Array
-    }
+    },
+    active: {
+      type: Boolean
+    },
+    setActive: {}
   },
   data () {
     return {
-      loading: true
+      loading: true,
+      changeVendors: null,
+      modalIsActive: false
     }
   },
   methods: {
@@ -130,6 +136,11 @@ export default {
   computed: {
     ...mapGetters([
     ])
+  },
+  watch: {
+    active: function (newVal, oldVal) {
+      this.modalIsActive = newVal
+    }
   }
 }
 </script>
@@ -156,8 +167,9 @@ export default {
             flex-direction: column;
             gap: 24px;
             margin-top: 30px;
-            max-height: calc(100% - 690px);
+            height: calc(100% - 400px);
             overflow-y: auto;
+            padding-bottom: 50px;
 
             &::-webkit-scrollbar {
                 width: 7px;
@@ -180,6 +192,13 @@ export default {
 
                 p{
                     margin: 0;
+                    font-size: 14px;
+                    line-height: 18px;
+                }
+
+                b{
+                    font-size: 16px;
+                    line-height: 16px;
                 }
             }
 
@@ -233,6 +252,8 @@ export default {
 
         &__settings{
             margin-bottom: 40px;
+            height: 100%;
+            position: relative;
         }
 
         &__vendors{

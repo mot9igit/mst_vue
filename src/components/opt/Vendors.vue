@@ -1,6 +1,6 @@
 <template>
     <div className="d-col-shop mb-2">
-        <div className="d-col-shop__left" @click="modalToggle">
+        <div className="d-col-shop__left">
             <span className="d-col-shop__span">Выбранные поставщики</span>
             <span className="h3 btnActiveChangeshopOn">0 из {{ this.items.count }}<i className="pi pi-angle-down"></i></span>
         </div>
@@ -35,10 +35,7 @@ export default {
   },
   methods: {
     ...mapActions([
-    ]),
-    modalToggle () {
-      this.modalChangeVendor = !this.modalChangeVendor
-    }
+    ])
   },
   mounted () {
   },
