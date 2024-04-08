@@ -131,6 +131,7 @@ export default {
     ])
   },
   mounted () {
+    this.modalIsActive = this.modalChangeVendor
   },
   components: { Checkbox },
   computed: {
@@ -138,7 +139,7 @@ export default {
     ])
   },
   watch: {
-    active: function (newVal, oldVal) {
+    modalChangeVendor: function (newVal, oldVal) {
       this.modalIsActive = newVal
     }
   }

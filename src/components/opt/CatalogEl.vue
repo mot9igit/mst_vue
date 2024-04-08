@@ -1,12 +1,13 @@
 <template>
-    <li @click="setActive($event)" class="dart-catalog-menu__category" :class="{'active' : this.active}">
-        <div class="dart-catalog-menu__el">
+    <li class="dart-catalog-menu__category" :class="{'active' : this.active}">
+        <div @click="setActive($event)" class="dart-catalog-menu__el">
             <img :src="items.menu_image" :alt="items.pagetitle"/>
             <span>{{ items.pagetitle }}</span>
         </div>
         <ul class="dart-catalog-menu__list">
-            <a v-for="item in items.children" v-bind:key="item.id" :href="'purchases/'+item.id" class="dart-catalog-menu__el"><li>{{item.pagetitle}}</li></a>
-        </ul>
+            <!-- <a v-for="item in items.children" v-bind:key="item.id" :href="'purchases/'+item.id" class="dart-catalog-menu__el"><li>{{item.pagetitle}}</li></a> -->
+            <RouterLink :to="{ name: 'purchases_catalog', params: { category_id: item.id }}" v-for="item in items.children" v-bind:key="item.id" class="dart-catalog-menu__el"><li>{{item.pagetitle}}</li></RouterLink>
+          </ul>
         </li>
 </template>
 <script>
@@ -38,12 +39,12 @@ export default {
     ]),
     setActive (e) {
       this.active = !this.active
-
-      if (e.target.parentNode.querySelector('.dart-catalog-menu__list')) {
-        if (e.target.parentNode.querySelector('.dart-catalog-menu__list').style.maxHeight) {
-          e.target.parentNode.querySelector('.dart-catalog-menu__list').style.maxHeight = null
+      // console.log(e.target.parentNode.querySelector('.dart-catalog-menu__list'))
+      if (e.target.parentNode.parentNode.querySelector('.dart-catalog-menu__list')) {
+        if (e.target.parentNode.parentNode.querySelector('.dart-catalog-menu__list').style.maxHeight) {
+          e.target.parentNode.parentNode.querySelector('.dart-catalog-menu__list').style.maxHeight = null
         } else {
-          e.target.parentNode.querySelector('.dart-catalog-menu__list').style.maxHeight = e.target.parentNode.querySelector('.dart-catalog-menu__list').scrollHeight + 'px'
+          e.target.parentNode.parentNode.querySelector('.dart-catalog-menu__list').style.maxHeight = e.target.parentNode.parentNode.querySelector('.dart-catalog-menu__list').scrollHeight + 'px'
         }
       }
     }

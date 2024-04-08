@@ -63,6 +63,7 @@ export default {
       this.opt_products = this.optproducts
     )
   },
+  updated () {},
   unmounted () {
   },
   methods: {
