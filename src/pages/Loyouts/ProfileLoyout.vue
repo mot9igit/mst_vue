@@ -96,6 +96,23 @@
         </div>
       </div>
     </main>
+    <div class="fixedHelpButton">
+      <div class="fixedHelpButton__button" @click="helpMenuToggle">
+        <i class="pi pi-question"></i>
+        <div class="fixedHelpButton__info">
+          <b>Нашли ошибку?</b>
+          <p>Пожалуйста, сообщите нам об этом</p>
+        </div>
+      </div>
+    </div>
+    <div class="helpModal" :class="{'show': this.menuHelp}">
+      <div class="helpModal__content" @stop="helpMenuToggle">
+        <div class="helpModal__close" @click="helpMenuToggle">
+          <i class="pi pi-times"></i>
+        </div>
+        <div class="helpModal__men"></div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -113,6 +130,7 @@ export default {
       sidebar_active: true,
       mobile_menu: false,
       namePathIsNav: null,
+      menuHelp: false,
       user: {
       },
       org: {
@@ -380,6 +398,9 @@ export default {
     clickMenu () {
       this.sidebar_active = 1
       this.mobile_menu = !this.mobile_menu
+    },
+    helpMenuToggle () {
+      this.menuHelp = !this.menuHelp
     }
   },
   watch: {
@@ -397,6 +418,144 @@ export default {
 </script>
 
 <style lang="scss">
+
+.fixedHelpButton{
+  position: fixed;
+  right: 40px;
+  bottom: 30px;
+
+  &__button{
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    cursor: pointer;
+    background: #FF0000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .pi{
+      color: #FFF;
+      font-size: 20px;
+    }
+
+    &:hover{
+      .fixedHelpButton__info{
+        opacity: 1;
+        pointer-events: all;
+      }
+    }
+  }
+
+  &__info{
+    right: 70px;
+    transition: all 0.4s;
+    position: absolute;
+    padding: 16px 24px;
+    background: #282828;
+    border-radius: 8px;
+    color: #FFF;
+    opacity: 0;
+    pointer-events: none;
+
+    &::before{
+      content: "";
+      width: 22px;
+      height: 22px;
+      background: #282828;
+      border-radius: 5px;
+      position: absolute;
+      right: -9px;
+      z-index: -1;
+      top: 50%;
+      transform: translate(0, -50%) rotate(45deg);
+    }
+
+    b{
+      white-space: nowrap;
+      font-weight: 400;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    p{
+      font-weight: 400;
+      font-size: 12px;
+      white-space: nowrap;
+      color: #7B7B7B;
+      margin-top: 8px;
+      margin-bottom: 0;
+      padding-top: 8px;
+      border-top: 1px solid #414141;
+    }
+  }
+}
+
+.helpModal{
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  pointer-events: none;
+  background: rgba($color: #000000, $alpha: 0);
+  transition: all 0.5s;
+
+  &__content{
+    width: 800px;
+    background: #FFF;
+    position: fixed;
+    right: 0;
+    height: 100vh;
+    transform: translateX(100%);
+    transition: all 0.5s;
+  }
+
+  &.show{
+    background: rgba($color: #000000, $alpha: 0.5);
+    pointer-events: all;
+
+    .helpModal{
+      &__content{
+        transform: translateX(0);
+      }
+
+      &__close{
+        left: -45px;
+      }
+    }
+  }
+
+  &__close{
+    position: absolute;
+    left: 0px;
+    top: 20px;
+    width: 45px;
+    height: 35px;
+    background: #FF0000;
+    border-radius: 20px 0 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s;
+
+    .pi{
+      color: #FFF;
+      font-size: 16px;
+    }
+
+    &:hover{
+      background: #ff5e5e;
+
+      .pi{
+        font-size: 18px;
+      }
+    }
+  }
+}
+
 .p-panelmenu-panel{
   border: 0;
 }
