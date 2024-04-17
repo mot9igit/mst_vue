@@ -100,17 +100,26 @@
       <div class="fixedHelpButton__button" @click="helpMenuToggle">
         <i class="pi pi-question"></i>
         <div class="fixedHelpButton__info">
-          <b>Нашли ошибку?</b>
-          <p>Пожалуйста, сообщите нам об этом</p>
+          <b>Нужна помощь?</b>
+          <p>Поможем разобраться в нужном вопросе</p>
         </div>
       </div>
     </div>
-    <div class="helpModal" :class="{'show': this.menuHelp}">
-      <div class="helpModal__content" @stop="helpMenuToggle">
+    <div class="helpModal" @click="helpMenuToggle" :class="{'show': this.menuHelp}">
+      <div class="helpModal__content" @click.stop="">
         <div class="helpModal__close" @click="helpMenuToggle">
           <i class="pi pi-times"></i>
         </div>
-        <div class="helpModal__men"></div>
+        <div class="helpModal__catalog-mobile" @click="this.menuHelpMobile = !this.menuHelpMobile">
+          <i class="pi pi-align-right"></i>
+        </div>
+        <div class="helpModal__menu" :class="{'show': this.menuHelpMobile || !this.menuHelp}">
+          <CatalogMenu :active1="this.index1" :active2="this.index2" @getMenuIndex="changeContentTraining" :items="training_catalog"/>
+        </div>
+        <div class="helpModal__text">
+          <p class="helpModal__title">{{ this.index2 == null? training_catalog[this.index1]?.pagetitle : training_catalog[this.index1].children[this.index2]?.pagetitle}}</p>
+          <div v-html="this.index2 == null? training_catalog[this.index1]?.content : training_catalog[this.index1].children[this.index2]?.content"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -122,6 +131,7 @@ import PanelMenu from 'primevue/panelmenu'
 import { mapActions, mapGetters } from 'vuex'
 import Nav from '@/components/Nav.vue'
 import router from '@/router'
+import CatalogMenu from '@/components/training/CatalogMenu.vue'
 
 export default {
   name: 'ProfilePage',
@@ -131,8 +141,12 @@ export default {
       mobile_menu: false,
       namePathIsNav: null,
       menuHelp: false,
+      menuHelpMobile: false,
+      training_catalog: {},
       user: {
       },
+      index1: 0,
+      index2: null,
       org: {
         image: '',
         balance: '',
@@ -153,11 +167,10 @@ export default {
   },
   props: { },
   mounted () {
-    this.get_organization_from_api().then(() => {
-      // this.org.image = this.organization.image
-      // this.org.name = this.organization.name
-      // this.org.balance = this.organization.balance
-    })
+    this.get_organization_from_api().then(() => {})
+    this.get_training_catalog_from_api().then(
+      this.training_catalog = this.trainingcatalog
+    )
     const sidebarCookie = Number(this.$cookies.get('sidebar_active'))
     if (sidebarCookie === 0 || sidebarCookie === 1) {
       this.sidebar_active = sidebarCookie
@@ -174,11 +187,15 @@ export default {
   },
   updated () {
     this.namePathIsNav = router?.currentRoute?._value.matched[3]?.name
+    this.get_training_catalog_from_api().then(
+      this.training_catalog = this.trainingcatalog
+    )
   },
-  components: { MainHeader, PanelMenu, Nav },
+  components: { MainHeader, PanelMenu, Nav, CatalogMenu },
   computed: {
     ...mapGetters([
-      'organization'
+      'organization',
+      'trainingcatalog'
     ]),
     getYear () {
       return new Date().getFullYear()
@@ -386,8 +403,14 @@ export default {
   methods: {
     ...mapActions([
       'get_organization_from_api',
-      'delete_organization_from_api'
+      'delete_organization_from_api',
+      'get_training_catalog_from_api'
     ]),
+    changeContentTraining (elem) {
+      console.log(elem)
+      this.index1 = elem.index1
+      this.index2 = elem.index2
+    },
     sidebarToggle () {
       this.sidebar_active = !this.sidebar_active
       this.$cookies.set('sidebar_active', Number(this.sidebar_active))
@@ -401,9 +424,21 @@ export default {
     },
     helpMenuToggle () {
       this.menuHelp = !this.menuHelp
+      if (this.menuHelp) {
+        this.globalIsModal.push('-_-')
+        document.body.style.overflow = 'hidden'
+      } else if (!this.menuHelp && this.globalIsModal.length === 1) {
+        this.globalIsModal.pop()
+        document.body.style.overflow = 'auto'
+      } else {
+        this.globalIsModal.pop()
+      }
     }
   },
   watch: {
+    trainingcatalog: function (newVal, oldVal) {
+      this.trainin_catalog = newVal
+    },
     $route () {
       this.get_organization_from_api()
     },
@@ -510,6 +545,29 @@ export default {
     height: 100vh;
     transform: translateX(100%);
     transition: all 0.5s;
+    display: flex;
+  }
+
+  &__text{
+    padding: 40px 24px;
+    height: 100vh;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+      background-color: #e0e0e0; /* blue */
+      border-radius: 9em;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #b4b4b4; /* green */
+        border-radius: 9em;
+    }
+  }
+
+  &__title{
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 24px;
   }
 
   &.show{
@@ -523,6 +581,37 @@ export default {
 
       &__close{
         left: -45px;
+      }
+    }
+  }
+
+  &__catalog-mobile{
+    position: absolute;
+    left: 0px;
+    top: 60px;
+    width: 45px;
+    height: 35px;
+    background: #FF0000;
+    border-radius: 20px 0 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s;
+    rotate: 180deg;
+    z-index: 2;
+    display: none;
+
+    .pi{
+      color: #FFF;
+      font-size: 16px;
+    }
+
+    &:hover{
+      background: #ff5e5e;
+
+      .pi{
+        font-size: 18px;
       }
     }
   }
@@ -1287,6 +1376,40 @@ main{
 }
 
 @media (max-width: 991px) {
+
+  .helpModal.show .helpModal__content{
+    width: 100%;
+  }
+
+  .helpModal__close{
+    rotate: 180deg;
+    left: 0 !important;
+    z-index: 2;
+  }
+  .helpModal__menu{
+    position: fixed;
+    left: 0;
+    height: 100vh;
+    z-index: 1;
+    padding-top: 100px;
+    background: #F3F3F3;
+    transform: translateX(-100%);
+    transition: all 0.4s;
+
+    &.show{
+      transform: translateX(0);
+    }
+  }
+
+  .helpModal__catalog-mobile{
+    display: flex;
+    background: #282828;
+
+    &:hover{
+      background: #1a1a1a;
+    }
+  }
+
   .sidebars{
     left: -3000px;
     .sidebar-toggle{

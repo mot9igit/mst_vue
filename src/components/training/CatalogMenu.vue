@@ -1,11 +1,10 @@
 <template>
     <div class="d-col-menu menuShow" :class="{'active' : this.isMenuActive}">
         <div class="dart-catalog-menu">
-            <CatalogEl v-for="item in items" v-bind:key="item.id" :items="item"/>
-        </div>
-        <div @click="this.isMenuActive = !this.isMenuActive" class="closemenu">
-            <i class="pi pi-angle-left"></i>
-            <p>Скрыть</p>
+            <div class="dart-catalog-menu__title">
+                <p>Поддержка МСТ</p>
+            </div>
+            <CatalogEl :active1="this.active1" :active2="this.active2" @menuIndex="changeMenuEl" v-for="item in items" v-bind:key="item.id" :items="item"/>
         </div>
     </div>
 </template>
@@ -14,7 +13,7 @@ import { mapActions, mapGetters } from 'vuex'
 import CatalogEl from './CatalogEl.vue'
 
 export default {
-  name: 'CatalogMenu',
+  name: 'TraningCatalogMenu',
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -26,6 +25,12 @@ export default {
     },
     items: {
       type: Array
+    },
+    active1: {
+      type: Number
+    },
+    active2: {
+      type: Number
     }
   },
   data () {
@@ -34,9 +39,15 @@ export default {
       isMenuActive: false
     }
   },
+  emits: ['getMenuIndex'],
   methods: {
     ...mapActions([
-    ])
+    ]),
+    changeMenuEl (elem) {
+      const index1 = elem.index1
+      const index2 = elem.index2
+      this.$emit('getMenuIndex', { index1, index2 })
+    }
   },
   mounted () {
   },
@@ -47,21 +58,21 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 
-    .d-col-menu.active + .d-col-content{
-        max-width: calc(100% - calc(64px + 350px));
-        min-width: calc(100% - calc(64px + 350px));
-        transition: all 0.4s
-    }
+    //.d-col-menu.active + .d-col-content{
+    //    max-width: calc(100% - calc(64px + 350px));
+    //    min-width: calc(100% - calc(64px + 350px));
+    //    transition: all 0.4s
+    //}
 
     .d-col-menu{
-        max-width: 287px;
-        min-width: 287px;
+    //    max-width: 287px;
+    //    min-width: 287px;
         height: 100%;
-        position: sticky;
-        top: 8px;
-        transition: all 0.4s
+    //    position: sticky;
+    //    top: 8px;
+    //    transition: all 0.4s
     }
 
     .d-col-menu.active{
@@ -150,10 +161,11 @@ export default {
     .dart-catalog-menu{
         border-radius: 5px;
         padding: 18px;
-        background: #FFF;
+        background: #F3F3F3;
         margin-bottom: 10px;
-        height: calc(100vh - 88px);
-        overflow-y: auto;
+        height: 100%;
+        width: 230px;
+        font-size: 14px;
 
         &::-webkit-scrollbar {
             width: 4px;
@@ -163,6 +175,16 @@ export default {
         &::-webkit-scrollbar-thumb {
             background-color: #b4b4b4; /* green */
             border-radius: 9em;
+        }
+
+        &__title{
+            display: flex;
+            justify-content: center;
+            p{
+                font-weight: 500;
+                font-size: 20px;
+                color: #282828;
+            }
         }
 
         ul{
@@ -178,8 +200,9 @@ export default {
             ul{
                 li{
                     list-style: none;
+                    cursor: pointer;
                 }
-                padding-left: 50px;
+                padding-left: 16px;
             }
         }
 
@@ -191,7 +214,7 @@ export default {
             transition: all 0.5s;
             transform: scale(1);
             text-decoration: none;
-            width: calc(100% - 25px);
+            width: calc(100% - 20px);
 
             &::after{
                 width: 55px;
@@ -199,7 +222,7 @@ export default {
                 height: 100%;
                 position: absolute;
                 z-index: 1;
-                background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 44%);
+                background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(243 243 243) 44%);
                 right: -65px;
                 transform: translate(-50%, 0);
             }
@@ -244,6 +267,7 @@ export default {
             max-height: 0;
             // opacity: 0;
             transition: max-height .5s;
+            font-size: 14px;
             a{
                 color: #282828;
                 width: 100%;
