@@ -1,8 +1,7 @@
 <template>
+  <ChangeVendorsModal :items="this.opt_vendors"/>
   <div class="dart-custom-grid">
-    <div class="d-col-menu menuShow">
-      <CatalogMenu />
-    </div>
+    <CatalogMenu :items="opt_catalog" />
     <div class="d-col-content">
       <div class="dart-home dart-window">
         <span class="h2">Акции</span>
@@ -17,17 +16,21 @@
       </div>
     </div>
     <div class="d-col-map">
-      <!-- <RightMenu /> -->
+      <Vendors :items="this.opt_vendors" />
+      <Basket />
     </div>
   </div>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import HomeSwiper from '../../components/swipers/HomeSwiper.vue'
-import CatalogMenu from '../../components/CatalogMenu.vue'
+import CatalogMenu from '../../components/opt/CatalogMenu.vue'
 import HomeMinSwiper from '../../components/swipers/HomeMinSwiper.vue'
 import SeasonSwiper from '../../components/swipers/SeasonSwiper.vue'
 import NewSwiper from '../../components/swipers/NewSwiper.vue'
+import Basket from '../../components/opt/Basket.vue'
+import Vendors from '../../components/opt/Vendors.vue'
+import ChangeVendorsModal from '../../components/opt/ChangeVendorsModal.vue'
 
 export default {
   name: 'OptsMain',
@@ -38,10 +41,20 @@ export default {
       loading: false,
       reloading: false,
       opt_mainpage: {},
-      opt_catalog: {}
+      opt_catalog: {},
+      opt_vendors: {}
     }
   },
-  components: { HomeSwiper, CatalogMenu, HomeMinSwiper, SeasonSwiper, NewSwiper },
+  components: {
+    HomeSwiper,
+    CatalogMenu,
+    HomeMinSwiper,
+    SeasonSwiper,
+    NewSwiper,
+    Basket,
+    Vendors,
+    ChangeVendorsModal
+  },
   mounted () {
     this.get_opt_mainpage_from_api().then(
       this.opt_mainpage = this.mainpage
@@ -49,24 +62,35 @@ export default {
     this.get_opt_catalog_from_api().then(
       this.opt_catalog = this.optcatalog
     )
+    this.get_opt_vendors_from_api().then(
+      this.opt_vendors = this.optvendors
+    )
   },
   unmounted () {
   },
   methods: {
     ...mapActions([
       'get_opt_mainpage_from_api',
-      'get_opt_catalog_from_api'
+      'get_opt_catalog_from_api',
+      'get_opt_vendors_from_api'
     ])
   },
   computed: {
     ...mapGetters([
       'mainpage',
-      'optcatalog'
+      'optcatalog',
+      'optvendors'
     ])
   },
   watch: {
     mainpage: function (newVal, oldVal) {
       this.opt_mainpage = newVal
+    },
+    optcatalog: function (newVal, oldVal) {
+      this.opt_catalog = newVal
+    },
+    optvendors: function (newVal, oldVal) {
+      this.opt_vendors = newVal
     }
   }
 }
@@ -94,16 +118,11 @@ export default {
     display: flex;
   }
 
-  .d-col-menu{
-    width: 287px;
-    height: 100%;
-    position: sticky;
-    top: 8px;
-  }
-
   .d-col-content{
-    width: calc(100% - calc(287px + 350px));
+    max-width: calc(100% - calc(287px + 350px));
+    min-width: calc(100% - calc(287px + 350px));
     padding: 0 24px;
+    transition: all 0.4s;
   }
 
   .d-col-map{
@@ -132,6 +151,7 @@ export default {
     font-weight: 500;
     line-height: 1;
     margin-bottom: 20px;
+    margin-top: 0
   }
 
   h2, .h2{

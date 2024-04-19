@@ -26,6 +26,9 @@ const app = createApp(App)
 app.config.globalProperties.site_url = 'https://a.mst.tools/'
 app.config.globalProperties.site_url_prefix = 'https://mst.tools/'
 app.config.globalProperties.globalIsModal = []
+app.config.globalProperties.modalChangeVendor = false
+
+app.config.globalProperties.trainingIdPage = 0
 
 app
   .use(i18n)

@@ -1,19 +1,20 @@
 <template>
-    <div class="dart-catalog-menu">
-        <!-- {catalog.map((item: any) => (
-            <CatalogEl key={item.label} item={item}/>
-        ))} -->
-    </div>
-    <div class="closemenu">
-        <i class="pi pi-angle-left"></i>
-        <p>Скрыть</p>
+    <div class="d-col-menu menuShow" :class="{'active' : this.isMenuActive}">
+        <div class="dart-catalog-menu">
+            <CatalogEl v-for="item in items" v-bind:key="item.id" :items="item"/>
+        </div>
+        <div @click="this.isMenuActive = !this.isMenuActive" class="closemenu">
+            <i class="pi pi-angle-left"></i>
+            <p>Скрыть</p>
+        </div>
     </div>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import CatalogEl from './CatalogEl.vue'
 
 export default {
-  name: 'bonusParticipants',
+  name: 'CatalogMenu',
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -22,11 +23,15 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
+    },
+    items: {
+      type: Array
     }
   },
   data () {
     return {
-      loading: true
+      loading: true,
+      isMenuActive: false
     }
   },
   methods: {
@@ -35,14 +40,66 @@ export default {
   },
   mounted () {
   },
-  components: { },
+  components: { CatalogEl },
   computed: {
     ...mapGetters([
     ])
   }
 }
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
+
+    .d-col-menu.active + .d-col-content{
+        max-width: calc(100% - calc(64px + 350px));
+        min-width: calc(100% - calc(64px + 350px));
+        transition: all 0.4s
+    }
+
+    .d-col-menu{
+        max-width: 287px;
+        min-width: 287px;
+        height: 100%;
+        position: sticky;
+        top: 8px;
+        transition: all 0.4s
+    }
+
+    .d-col-menu.active{
+        max-width: 64px;
+        min-width: 64px;
+
+        .closemenu{
+            p{
+                max-width: 0;
+            }
+
+            i{
+                transform: rotate(180deg);
+                left: 6px;
+            }
+        }
+
+        .dart-catalog-menu{
+            padding: 10px;
+            // overflow: hidden;
+            &__el{
+                height: 40px;
+                width: 100%;
+                span{
+                    max-width: 0px;
+                    overflow: hidden;
+                }
+                &.link-no-link::before{
+                    display: none;
+                }
+
+                &::after{
+                    display: none;
+                }
+            }
+
+        }
+    }
 
     .closemenu{
         height: 48px;
@@ -59,6 +116,15 @@ export default {
 
         p{
             margin: 0;
+            max-width: 100px;
+            transition: all 0.4s;
+            overflow: hidden;
+        }
+
+        i{
+            transition: all 0.4s;
+            position: relative;
+            left: 0px;
         }
     }
 

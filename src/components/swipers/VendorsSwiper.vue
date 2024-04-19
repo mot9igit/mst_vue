@@ -1,8 +1,9 @@
 <template>
     <swiper
         class="homeMinSwiper"
-        :slides-per-view="4"
-        :space-between="8"
+        :slides-per-view="6"
+        :space-between="0"
+        :slides-per-group="3"
         loop
         navigation
         :pagination="{ clickable: true }"
@@ -10,9 +11,9 @@
     >
 
       <swiper-slide v-for="item in items" v-bind:key="item.id" class="promoSwiper__slide">
-        <router-link to="/">
+        <div class="vendors__el">
           <img :src="item.image">
-        </router-link>
+        </div>
       </swiper-slide>
     </swiper>
 </template>
@@ -23,7 +24,7 @@ import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules'
 import 'swiper/css'
 
 export default {
-  name: 'SeasonSwiper',
+  name: 'VendorsSwiper',
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -61,8 +62,25 @@ export default {
 }
 </script>
 <style lang="scss">
-    .homeMinSwiper{
-        margin-top: 8px;
+    .vendors{
+      &__el {
         position: relative;
-    }
+        min-width: 60px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 1px solid #E8E8E8;
+        overflow: hidden;
+      }
+
+      &__el:not(:first-child) {
+        margin-left: -10px;
+      }
+
+      &__el img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+  }
 </style>

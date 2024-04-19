@@ -51,6 +51,7 @@ import ReportCopoDetails from '../pages/store/report_copo_details'
 import ProductsAssortmentMain from '../pages/products/main'
 import notFound from '../pages/NotFound'
 import ProfilePurchases from '../pages/opt/ProfilePurchases.vue'
+import PurchasesCatalog from '../pages/opt/PurchasesCatalog.vue'
 
 const routes = [
   {
@@ -207,7 +208,15 @@ const routes = [
         {
           path: 'purchases',
           name: 'purchases',
-          component: ProfilePurchases
+          children: [{
+            path: '',
+            name: 'purchases_home',
+            component: ProfilePurchases
+          }, {
+            path: ':category_id',
+            name: 'purchases_catalog',
+            component: PurchasesCatalog
+          }]
         },
         {
           path: 'orders',

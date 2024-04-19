@@ -96,6 +96,32 @@
         </div>
       </div>
     </main>
+    <div class="fixedHelpButton">
+      <div class="fixedHelpButton__button" @click="helpMenuToggle">
+        <i class="pi pi-question"></i>
+        <div class="fixedHelpButton__info">
+          <b>Нужна помощь?</b>
+          <p>Поможем разобраться в нужном вопросе</p>
+        </div>
+      </div>
+    </div>
+    <div class="helpModal" @click="helpMenuToggle" :class="{'show': this.menuHelp}">
+      <div class="helpModal__content" @click.stop="">
+        <div class="helpModal__close" @click="helpMenuToggle">
+          <i class="pi pi-times"></i>
+        </div>
+        <div class="helpModal__catalog-mobile" @click="this.menuHelpMobile = !this.menuHelpMobile">
+          <i class="pi pi-align-right"></i>
+        </div>
+        <div class="helpModal__menu" :class="{'show': this.menuHelpMobile || !this.menuHelp}">
+          <CatalogMenu :active1="this.index1" :active2="this.index2" @getMenuIndex="changeContentTraining" :items="training_catalog"/>
+        </div>
+        <div class="helpModal__text">
+          <p class="helpModal__title">{{ this.index2 == null? training_catalog[this.index1]?.pagetitle : training_catalog[this.index1].children[this.index2]?.pagetitle}}</p>
+          <div v-html="this.index2 == null? training_catalog[this.index1]?.content : training_catalog[this.index1].children[this.index2]?.content"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -105,6 +131,7 @@ import PanelMenu from 'primevue/panelmenu'
 import { mapActions, mapGetters } from 'vuex'
 import Nav from '@/components/Nav.vue'
 import router from '@/router'
+import CatalogMenu from '@/components/training/CatalogMenu.vue'
 
 export default {
   name: 'ProfilePage',
@@ -113,8 +140,13 @@ export default {
       sidebar_active: true,
       mobile_menu: false,
       namePathIsNav: null,
+      menuHelp: false,
+      menuHelpMobile: false,
+      training_catalog: {},
       user: {
       },
+      index1: 0,
+      index2: null,
       org: {
         image: '',
         balance: '',
@@ -135,11 +167,10 @@ export default {
   },
   props: { },
   mounted () {
-    this.get_organization_from_api().then(() => {
-      // this.org.image = this.organization.image
-      // this.org.name = this.organization.name
-      // this.org.balance = this.organization.balance
-    })
+    this.get_organization_from_api().then(() => {})
+    this.get_training_catalog_from_api().then(
+      this.training_catalog = this.trainingcatalog
+    )
     const sidebarCookie = Number(this.$cookies.get('sidebar_active'))
     if (sidebarCookie === 0 || sidebarCookie === 1) {
       this.sidebar_active = sidebarCookie
@@ -156,11 +187,15 @@ export default {
   },
   updated () {
     this.namePathIsNav = router?.currentRoute?._value.matched[3]?.name
+    this.get_training_catalog_from_api().then(
+      this.training_catalog = this.trainingcatalog
+    )
   },
-  components: { MainHeader, PanelMenu, Nav },
+  components: { MainHeader, PanelMenu, Nav, CatalogMenu },
   computed: {
     ...mapGetters([
-      'organization'
+      'organization',
+      'trainingcatalog'
     ]),
     getYear () {
       return new Date().getFullYear()
@@ -214,7 +249,7 @@ export default {
             key: '7',
             label: 'Закупки',
             icon: 'd_icon d_icon-file-document',
-            to: { name: 'purchases', params: { id: this.$route.params.id } }
+            to: { name: 'purchases_home', params: { id: this.$route.params.id } }
           }]
         }
         if (this.organization.type === 2) {
@@ -276,7 +311,7 @@ export default {
             key: '9',
             label: 'Закупки',
             icon: 'd_icon d_icon-file-document',
-            to: { name: 'purchases', params: { id: this.$route.params.id } }
+            to: { name: 'purchases_home', params: { id: this.$route.params.id } }
           }]
         }
         if (this.organization.type === 3) {
@@ -356,7 +391,7 @@ export default {
             key: '14',
             label: 'Закупки',
             icon: 'd_icon d_icon-file-document',
-            to: { name: 'purchases', params: { id: this.$route.params.id } }
+            to: { name: 'purchases_home', params: { id: this.$route.params.id } }
           }]
         }
         return []
@@ -368,8 +403,14 @@ export default {
   methods: {
     ...mapActions([
       'get_organization_from_api',
-      'delete_organization_from_api'
+      'delete_organization_from_api',
+      'get_training_catalog_from_api'
     ]),
+    changeContentTraining (elem) {
+      console.log(elem)
+      this.index1 = elem.index1
+      this.index2 = elem.index2
+    },
     sidebarToggle () {
       this.sidebar_active = !this.sidebar_active
       this.$cookies.set('sidebar_active', Number(this.sidebar_active))
@@ -380,9 +421,24 @@ export default {
     clickMenu () {
       this.sidebar_active = 1
       this.mobile_menu = !this.mobile_menu
+    },
+    helpMenuToggle () {
+      this.menuHelp = !this.menuHelp
+      if (this.menuHelp) {
+        this.globalIsModal.push('-_-')
+        document.body.style.overflow = 'hidden'
+      } else if (!this.menuHelp && this.globalIsModal.length === 1) {
+        this.globalIsModal.pop()
+        document.body.style.overflow = 'auto'
+      } else {
+        this.globalIsModal.pop()
+      }
     }
   },
   watch: {
+    trainingcatalog: function (newVal, oldVal) {
+      this.trainin_catalog = newVal
+    },
     $route () {
       this.get_organization_from_api()
     },
@@ -397,6 +453,198 @@ export default {
 </script>
 
 <style lang="scss">
+
+.fixedHelpButton{
+  position: fixed;
+  right: 40px;
+  bottom: 30px;
+
+  &__button{
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    cursor: pointer;
+    background: #FF0000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    .pi{
+      color: #FFF;
+      font-size: 20px;
+    }
+
+    &:hover{
+      .fixedHelpButton__info{
+        opacity: 1;
+        pointer-events: all;
+      }
+    }
+  }
+
+  &__info{
+    right: 70px;
+    transition: all 0.4s;
+    position: absolute;
+    padding: 16px 24px;
+    background: #282828;
+    border-radius: 8px;
+    color: #FFF;
+    opacity: 0;
+    pointer-events: none;
+
+    &::before{
+      content: "";
+      width: 22px;
+      height: 22px;
+      background: #282828;
+      border-radius: 5px;
+      position: absolute;
+      right: -9px;
+      z-index: -1;
+      top: 50%;
+      transform: translate(0, -50%) rotate(45deg);
+    }
+
+    b{
+      white-space: nowrap;
+      font-weight: 400;
+      font-size: 14px;
+      margin: 0;
+    }
+
+    p{
+      font-weight: 400;
+      font-size: 12px;
+      white-space: nowrap;
+      color: #7B7B7B;
+      margin-top: 8px;
+      margin-bottom: 0;
+      padding-top: 8px;
+      border-top: 1px solid #414141;
+    }
+  }
+}
+
+.helpModal{
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 100;
+  pointer-events: none;
+  background: rgba($color: #000000, $alpha: 0);
+  transition: all 0.5s;
+
+  &__content{
+    width: 800px;
+    background: #FFF;
+    position: fixed;
+    right: 0;
+    height: 100vh;
+    transform: translateX(100%);
+    transition: all 0.5s;
+    display: flex;
+  }
+
+  &__text{
+    padding: 40px 24px;
+    height: 100vh;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+      background-color: #e0e0e0; /* blue */
+      border-radius: 9em;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: #b4b4b4; /* green */
+        border-radius: 9em;
+    }
+  }
+
+  &__title{
+    font-size: 24px;
+    font-weight: 500;
+    margin-bottom: 24px;
+  }
+
+  &.show{
+    background: rgba($color: #000000, $alpha: 0.5);
+    pointer-events: all;
+
+    .helpModal{
+      &__content{
+        transform: translateX(0);
+      }
+
+      &__close{
+        left: -45px;
+      }
+    }
+  }
+
+  &__catalog-mobile{
+    position: absolute;
+    left: 0px;
+    top: 60px;
+    width: 45px;
+    height: 35px;
+    background: #FF0000;
+    border-radius: 20px 0 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s;
+    rotate: 180deg;
+    z-index: 2;
+    display: none;
+
+    .pi{
+      color: #FFF;
+      font-size: 16px;
+    }
+
+    &:hover{
+      background: #ff5e5e;
+
+      .pi{
+        font-size: 18px;
+      }
+    }
+  }
+
+  &__close{
+    position: absolute;
+    left: 0px;
+    top: 20px;
+    width: 45px;
+    height: 35px;
+    background: #FF0000;
+    border-radius: 20px 0 0 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.4s;
+
+    .pi{
+      color: #FFF;
+      font-size: 16px;
+    }
+
+    &:hover{
+      background: #ff5e5e;
+
+      .pi{
+        font-size: 18px;
+      }
+    }
+  }
+}
+
 .p-panelmenu-panel{
   border: 0;
 }
@@ -1128,6 +1376,40 @@ main{
 }
 
 @media (max-width: 991px) {
+
+  .helpModal.show .helpModal__content{
+    width: 100%;
+  }
+
+  .helpModal__close{
+    rotate: 180deg;
+    left: 0 !important;
+    z-index: 2;
+  }
+  .helpModal__menu{
+    position: fixed;
+    left: 0;
+    height: 100vh;
+    z-index: 1;
+    padding-top: 100px;
+    background: #F3F3F3;
+    transform: translateX(-100%);
+    transition: all 0.4s;
+
+    &.show{
+      transform: translateX(0);
+    }
+  }
+
+  .helpModal__catalog-mobile{
+    display: flex;
+    background: #282828;
+
+    &:hover{
+      background: #1a1a1a;
+    }
+  }
+
   .sidebars{
     left: -3000px;
     .sidebar-toggle{

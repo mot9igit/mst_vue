@@ -14,7 +14,7 @@
             </div>
         </div>
 
-        <a href="#" class="navmain__components_desctop dart-btn">
+        <a href="#" class="navmain__components_desctop a-dart-btn">
             <i class="pi pi-sliders-h"></i>
             <b>Сравнение</b>
         </a>
