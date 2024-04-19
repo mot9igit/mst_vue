@@ -828,6 +828,44 @@ export default {
           }
         })
     },
+    delete_work_from_api ({ commit }, workData) {
+      return Axios('/rest/front_deleteobject', {
+        method: 'POST',
+        data: workData,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          // commit('SET_MATRIX_TO_VUEX', response.data)
+          // console.log(workData)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    set_work_to_api ({ commit }, workData) {
+      return Axios('/rest/front_setobjects', {
+        method: 'POST',
+        data: workData,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          // commit('SET_MATRIX_TO_VUEX', response.data)
+          console.log(workData)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
     set_connection_to_api ({ commit }, data) {
       return Axios('/rest/front_setobjects', {
         method: 'POST',

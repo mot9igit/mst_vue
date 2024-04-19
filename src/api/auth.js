@@ -5,8 +5,12 @@ export default function (instance) {
         return res
       }).catch(function (err) {
         // TODO: подключить компонент обработки ошибок
-        console.log(err)
-        alert('Ошибка попробуйте позже.')
+        // console.log(err)
+        if (err.response) {
+          return false
+        } else {
+          return 'technical error'
+        }
       })
       return data
     },

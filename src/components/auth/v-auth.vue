@@ -1,5 +1,6 @@
 <template>
   <form class="form-signin" @submit.prevent="formSubmit">
+    <Toast />
     <div class="logo text-center">
       <img src="img/logo.svg" alt="" width="200">
     </div>
@@ -21,7 +22,7 @@
     />
     <button class="dart-btn dart-btn-primary dart-btn-block" type="submit">Войти</button>
     <teleport to="body">
-      <custom-modal v-model="showForgotModal" @confirm="confirm" @cancel="cancel">
+      <custom-modal v-model="showForgotModal" @cancel="cancel">
         <template v-slot:title>Восстановление пароля</template>
         <v-forgot />
       </custom-modal>
@@ -38,6 +39,7 @@
 <script>
 import customModal from '../../components/popup/CustomModal'
 import vForgot from '../../components/auth/v-forgot'
+import Toast from 'primevue/toast'
 
 export default {
   name: 'auth-form',
@@ -67,10 +69,17 @@ export default {
           username: this.form.email,
           password: this.form.password
         })
-        console.log(data.data)
-        localStorage.setItem('user', JSON.stringify(data.data.data))
-        this.$store.dispatch('user/setUser', data.data.data)
-        this.$router.push({ name: 'organizations' })
+        if (data) {
+          if (data === 'technical error') {
+            this.$toast.add({ severity: 'info', summary: 'Техническая ошибка', detail: 'Попробуйте позже.', life: 3000 })
+          } else {
+            localStorage.setItem('user', JSON.stringify(data.data.data))
+            this.$store.dispatch('user/setUser', data.data.data)
+            this.$router.push({ name: 'organizations' })
+          }
+        } else {
+          this.$toast.add({ severity: 'info', summary: 'Вход запрещен', detail: 'Введен некорректный логин или пароль.', life: 3000 })
+        }
       })
     },
     cancel (close) {
@@ -79,7 +88,8 @@ export default {
   },
   components: {
     customModal,
-    vForgot
+    vForgot,
+    Toast
   }
 }
 </script>

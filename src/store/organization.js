@@ -17,7 +17,8 @@ export default {
       return Axios('/rest/front_organization', {
         method: 'POST',
         data: {
-          id: router.currentRoute._value.params.id
+          id: router.currentRoute._value.params.id,
+          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
         },
         headers: {
           'Access-Control-Allow-Origin': '*'
