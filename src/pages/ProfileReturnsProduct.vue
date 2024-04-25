@@ -35,7 +35,7 @@
                                     <tr>
                                         <td class="table-tbody__td table-tbody__td_center">
                                             <div class="table-tbody__image table-tbody__image_margin">
-                                                <img :src="this.return_product[0]?.image" alt="">
+                                                <img :src="site_url_prefix + this.return_product[0]?.image" alt="">
                                             </div>
                                         </td>
                                         <td class="table-tbody__td table-tbody__td_center table-tbody__td_mobile-left">
@@ -61,14 +61,14 @@
 
                         <div class="d-col-xxl-8 d-col-xl-10 d-col-lg-10 d-col-md-9 padding-null">
                             <div class="status-menu">
-                                <div class="status-menu__title status-menu__title_green-color">Ожидание решения поставщика</div>
+                                <div class="status-menu__title status-menu__title_green-color">{{ this.return_product[0]?.status_name }}</div>
                                 <div class="status-menu__item">
                                     <span>Сообщения и комментарии от МП</span>
                                     <span>{{ this.return_product[0]?.comments_mp }}</span>
                                 </div>
                                 <div class="status-menu__item">
                                     <span>Решение</span>
-                                    <span>-</span>
+                                    <span>{{ this.return_product[0]?.decision }}</span>
                                 </div>
                                 <div class="status-menu__item">
                                     <span>Необходимые действия</span>
@@ -82,36 +82,16 @@
 
                             <h5 class="h5_margin">Причина возврата</h5>
                             <div class="status-menu">
-                                <div class="status-menu__title">Товар ненадлежащего качества</div>
+                                <div class="status-menu__title">{{ this.return_product[0]?.reason }}</div>
                                 <div class="status-menu__item status-menu__item_small-text">
-                                    <span>Lorem ipsum dolor sit amet consectetur adipisicing elit. Asperiores aspernatur laudantium minus ipsam ut recusandae autem exercitationem deleniti quasi dolore neque ad, aut itaque ab quaerat quia. Excepturi, fugit obcaecati!</span>
+                                    <span>{{ this.return_product[0]?.comments_buyer }}</span>
                                 </div>
                             </div>
 
                             <h5 class="h5_margin">Фото</h5>
                             <div class="small-photo-gallery">
-                                <div class="d-col-xxl-3 d-col-lg-3 d-col-md-3 d-col-sm-3 d-col-3 padding-null">
-                                    <a href="/img/products/1.png"><img class="small-photo-gallery__imgage" src="img/products/1.png" alt=""></a>
-                                </div>
-
-                                <div class="d-col-xxl-3 d-col-lg-3 d-col-md-3 d-col-sm-3 d-col-3 padding-null">
-                                    <a href="/img/products/1.png"><img class="small-photo-gallery__imgage" src="img/products/1.png" alt=""></a>
-                                </div>
-
-                                <div class="d-col-xxl-3 d-col-lg-3 d-col-md-3 d-col-sm-3 d-col-3 padding-null">
-                                    <a href="/img/products/1.png"><img class="small-photo-gallery__imgage" src="img/products/1.png" alt=""></a>
-                                </div>
-
-                                <div class="d-col-xxl-3 d-col-lg-3 d-col-md-3 d-col-sm-3 d-col-3 padding-null">
-                                    <a href="/img/products/1.png"><img class="small-photo-gallery__imgage" src="img/products/1.png" alt=""></a>
-                                </div>
-
-                                <div class="d-col-xxl-3 d-col-lg-3 d-col-md-3 d-col-sm-3 d-col-3 padding-null">
-                                    <a href="/img/products/1.png"><img class="small-photo-gallery__imgage" src="img/products/1.png" alt=""></a>
-                                </div>
-
-                                <div class="d-col-xxl-3 d-col-lg-3 d-col-md-3 d-col-sm-3 d-col-3 padding-null">
-                                    <a href="/img/products/1.png"><img class="small-photo-gallery__imgage" src="img/products/1.png" alt=""></a>
+                                <div v-for="item in this.return_product[0]?.files" :key="item.id" class="d-col-xxl-3 d-col-lg-3 d-col-md-3 d-col-sm-3 d-col-3 padding-null">
+                                    <img class="small-photo-gallery__imgage" :src="item.file" alt="">
                                 </div>
                             </div>
 
@@ -119,7 +99,7 @@
 
                             <div class="status-menu">
                                 <div class="status-menu__item status-menu__item_black-color">
-                                    <span>Вернуть денежные средства</span>
+                                    <span>{{this.return_product[0]?.requirement}}</span>
                                 </div>
                             </div>
 
@@ -128,23 +108,23 @@
                             <div class="status-menu status-menu_padding-small">
                                 <div class="status-menu__item status-menu__item_padding-small">
                                     <span>ФИО</span>
-                                    <span>Иванов Иван Иванович</span>
+                                    <span>{{this.return_product[0]?.full_name}}</span>
                                 </div>
                                 <div class="status-menu__item status-menu__item_padding-small">
                                     <span>Наименование банка</span>
-                                    <span>Сбербанк</span>
+                                    <span>{{this.return_product[0]?.bank_name}}</span>
                                 </div>
                                 <div class="status-menu__item status-menu__item_padding-small">
                                     <span>БИК банка</span>
-                                    <span>4566477568</span>
+                                    <span>{{this.return_product[0]?.bank_bik}}</span>
                                 </div>
                                 <div class="status-menu__item status-menu__item_padding-small">
                                     <span>Корреспондентский счет</span>
-                                    <span>4566477568</span>
+                                    <span>{{this.return_product[0]?.corr_account}}</span>
                                 </div>
                                 <div class="status-menu__item status-menu__item_padding-small">
                                     <span>Расчетный счет</span>
-                                    <span>4566477568</span>
+                                    <span>{{this.return_product[0]?.pay_account}}</span>
                                 </div>
                             </div>
 
@@ -1227,10 +1207,6 @@ export default {
 
     .return-container_display-flex{
         overflow-x: auto;
-    }
-
-    .return-table{
-        margin-bottom: 0;
     }
 
     .scroll-attention{
