@@ -52,6 +52,8 @@ import ProductsAssortmentMain from '../pages/products/main'
 import notFound from '../pages/NotFound'
 import ProfilePurchases from '../pages/opt/ProfilePurchases.vue'
 import PurchasesCatalog from '../pages/opt/PurchasesCatalog.vue'
+import ProfileReturns from '../pages/ProfileReturns.vue'
+import ProfileReturnsProduct from '../pages/ProfileReturnsProduct.vue'
 
 const routes = [
   {
@@ -216,6 +218,19 @@ const routes = [
             path: ':category_id',
             name: 'purchases_catalog',
             component: PurchasesCatalog
+          }]
+        },
+        {
+          path: 'returns',
+          name: 'returns',
+          children: [{
+            path: '',
+            name: 'returns_home',
+            component: ProfileReturns
+          }, {
+            path: ':returns_id',
+            name: 'returns_catalog',
+            component: ProfileReturnsProduct
           }]
         },
         {

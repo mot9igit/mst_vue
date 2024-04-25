@@ -221,6 +221,12 @@ export default {
             icon: 'd_icon d_icon-cog',
             to: { name: 'org_profile', params: { id: this.$route.params.id } }
           },
+          {
+            key: '3',
+            label: 'Возвраты',
+            icon: 'd_icon d_icon-vendors',
+            to: { name: 'returns_home', params: { id: this.$route.params.id } }
+          },
           // {
           //   key: '3',
           //   label: 'Мои поставщики',

@@ -22,6 +22,7 @@ import matrix from './matrix'
 import getAvailableProd from './get_available_prod'
 import opt from './opt'
 import training from './training'
+import returns from './returns'
 
 export default new Vuex.Store({
   modules: {
@@ -46,6 +47,7 @@ export default new Vuex.Store({
     matrix,
     getAvailableProd,
     opt,
-    training
+    training,
+    returns
   }
 })
