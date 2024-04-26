@@ -1,5 +1,27 @@
 <template>
-  <v-table
+  <TabView class="tab-custom">
+      <TabPanel header="Подборки товаров">
+        <v-table
+          :items_data="matrixs.items"
+          :total="matrixs.total"
+          :pagination_items_per_page="this.pagination_items_per_page"
+          :pagination_offset="this.pagination_offset"
+          :page="this.page"
+          :table_data="this.table_data"
+          :filters="this.filters"
+          :title="'Подборки товаров'"
+          @filter="filter"
+          @sort="filter"
+          @paginate="paginate"
+        >
+          <template v-slot:button>
+            <RouterLink :to="{ name: 'org_matrix_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Создать подборку</RouterLink>
+          </template>
+        </v-table>
+      </TabPanel>
+  </TabView>
+
+  <!-- <v-table
     :items_data="matrixs.items"
     :total="matrixs.total"
     :pagination_items_per_page="this.pagination_items_per_page"
@@ -15,13 +37,15 @@
     <template v-slot:button>
       <RouterLink :to="{ name: 'org_matrix_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Добавить матрицу</RouterLink>
     </template>
-  </v-table>
+  </v-table> -->
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import vTable from '../components/table/v-table'
 import { RouterLink } from 'vue-router'
+import TabView from 'primevue/tabview'
+import TabPanel from 'primevue/tabpanel'
 
 export default {
   name: 'ProfileMatrix',
@@ -43,15 +67,9 @@ export default {
     return {
       filters: {
         name: {
-          name: 'Наименование, артикул',
-          placeholder: 'Наименование, артикул',
+          name: 'Название, бренд или артикул',
+          placeholder: 'Название, бренд или артикул',
           type: 'text'
-        },
-        range: {
-          name: 'Период действия',
-          placeholder: 'Период действия',
-          type: 'range',
-          range: 'all'
         }
       },
       table_data: {
@@ -95,7 +113,7 @@ export default {
       perpage: this.pagination_items_per_page
     })
   },
-  components: { vTable, RouterLink },
+  components: { vTable, RouterLink, TabView, TabPanel },
   computed: {
     ...mapGetters([
       'matrixs'
@@ -105,4 +123,27 @@ export default {
 </script>
 
 <style lang="scss">
+
+.tab-custom{
+  .p-tabview-nav{
+    margin: 0 !important;
+    border: 0 !important;
+  }
+
+  .p-tabview-header{
+    padding: 0 !important;
+  }
+
+  .p-tabview-nav-link{
+    border-color: #282828 !important;
+    color: #282828 !important;
+    text-decoration: none !important;
+  }
+
+  .p-tabview-ink-bar{
+    height: 3px;
+    padding: 0;
+    background: #282828 !important;
+  }
+}
 </style>

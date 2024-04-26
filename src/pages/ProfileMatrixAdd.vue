@@ -22,7 +22,7 @@
       </div>
       <div class="dart-form-group picker-wrap">
         <label for="name">Добавление товаров</label>
-        <PickList v-model="available_products.products" :selection="form.products" listStyle="height:342px" dataKey='id' :showSourceControls="false" :showTargetControls="false"
+        <!-- <PickList v-model="available_products.products" :selection="form.products" listStyle="height:342px" dataKey='id' :showSourceControls="false" :showTargetControls="false"
         @update:selection="saveData(data)">
           <template #sourceheader>
             <div class="source_list">
@@ -56,7 +56,37 @@
                   </div>
               </div>
           </template>
-        </PickList>
+        </PickList> -->
+
+        <div class="PickList">
+          <div class="PickList__product">
+            <b class="PickList__title">Доступные товары</b>
+            <div class="PickList__products">
+              <div class="PickList__el" v-for="item in this.available_products?.products" :key="item.id">
+                <img :src="'https://mst.tools' + item.image" alt="">
+                <div class="PickList__product-info">
+                  <div class="PickList__name">{{item.name}}</div>
+                  <div class="PickList__article">{{item.article}}</div>
+                </div>
+                <div class="PickList__select"><i class="pi pi-angle-right"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="PickList__selected">
+            <b class="PickList__title">Доступные товары</b>
+            <div class="PickList__products">
+              <div class="PickList__el" v-for="item in this.available_products?.products" :key="item.id">
+                <img :src="'https://mst.tools' + item.image" alt="">
+                <div class="PickList__product-info">
+                  <div class="PickList__name">{{item.name}}</div>
+                  <div class="PickList__article">{{item.article}}</div>
+                </div>
+                <div class="PickList__select"><i class="pi pi-times"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="dart-form-group picker-wrap">
         <label for="name">Настройка номенклатуры</label>
@@ -106,7 +136,6 @@
 import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
 import Calendar from 'primevue/calendar'
-import PickList from 'primevue/picklist'
 import InputNumber from 'primevue/inputnumber'
 
 export default {
@@ -157,7 +186,7 @@ export default {
   mounted () {
     this.get_available_products_from_api({ filter: '', selected: [] })
   },
-  components: { Calendar, PickList, InputNumber },
+  components: { Calendar, InputNumber },
   computed: {
     ...mapGetters([
       'available_products'
@@ -208,6 +237,82 @@ export default {
     align-items: center;
     .dart-btn + .dart-btn {
         margin-left: 5px;
+    }
+  }
+
+  .PickList{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    &__title{
+      width: 100%;
+      display: flex;
+      padding: 24px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 15px;
+    }
+
+    &__product{
+      width: 40%;
+      border-radius: 5px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    &__selected{
+      width: calc(60% - 100px);
+      border-radius: 5px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+    }
+
+    &__products{
+      height: 550px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      padding: 24px;
+    }
+
+    &__el{
+      display: flex;
+      img{
+        width: 85px;
+        height: 50px !important;
+        object-fit: contain;
+      }
+    }
+
+    &__product-info{
+      width: calc(100% - 85px);
+    }
+
+    &__name{
+      width: 80%;
+      font-size: 14px;
+      line-height: 16px;
+      color: #282828;
+      margin-bottom: 8px;
+    }
+
+    &__article{
+      color: #ADADAD;
+      font-size: 14px;
+      line-height: 16px;
+    }
+
+    &__select{
+      border-radius: 5px;
+      width: 44px;
+      height: 44px;
+      background: #282828;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      cursor: pointer;
     }
   }
 </style>
