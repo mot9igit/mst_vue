@@ -1,25 +1,95 @@
 <template>
   <form @submit.prevent="formSubmit">
     <div class="profile-content__title">
-        <span class="title">Добавление ключевой матрицы</span>
+        <span class="maintitle">Настройка программы</span>
         <div class="buttons_container">
-          <RouterLink :to="{ name: 'org_matrix', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary">Отменить</RouterLink>
-          <button type="submit" class="dart-btn dart-btn-primary" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Добавить</button>
+          <RouterLink :to="{ name: 'org_matrix', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary btn-padding">Отменить</RouterLink>
+          <button type="submit" class="dart-btn dart-btn-primary btn-padding" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Добавить</button>
         </div>
     </div>
     <div>
-      <div class="dart-form-group">
-        <label for="name">Название ключевой матрицы</label>
-        <input v-model="form.name" type="text" name="name" placeholder="Укажите название ключевой матрицы" class="dart-form-control">
+      <div class="dart-form-group mb-4">
+        <span class="ktitle">Наименование программы</span>
+        <label for="name">Введите наименование, которое будет отражать смысл вашей программы.</label>
+        <input v-model="form.name" type="text" name="name" placeholder="Укажите название программы" class="dart-form-control">
       </div>
-      <div class="dart-form-group">
-        <label for="name">Целевое значение представленности ключевой матрицы в %</label>
-        <input v-model="form.percent" type="text" name="percent" placeholder="Введите целевое значение" class="dart-form-control">
+
+      <div class="dart-form-group mb-4">
+        <div class="upload-banner">
+          <div class="upload-banner__text">
+            <span class="ktitle">Баннер</span>
+            <span>Чтобы обложка выглядела качественно на всех устройствах, советуем загрузить изображение размером не менее 1920х1080 пикс. Размер файла - не более ?? МБ. Форматы файла - ???.</span>
+          </div>
+          <div class="dart-btn dart-btn-secondary btn-padding">Загрузить</div>
+        </div>
+        <div class="upload-banner__image">
+        </div>
       </div>
-      <div class="dart-form-group">
-        <label for="name">Период действия</label>
-        <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите диапазон дат" :manualInput="false" showIcon/>
+
+      <div class="dart-form-group mb-4">
+        <div class="upload-banner">
+          <div class="upload-banner__text">
+            <span class="ktitle">Иконка</span>
+            <span>Вы можете загрузить свое изображение или выбрать изображение из банка иконок</span>
+          </div>
+          <div class="dart-btn dart-btn-secondary btn-padding">Загрузить</div>
+        </div>
+        <div class="upload-icon__image">
+        </div>
       </div>
+
+      <div class="dart-form-group mb-4">
+        <span class="ktitle">Описание</span>
+        <input v-model="form.percent" type="text" name="description" placeholder="Укажите описание программы" class="dart-form-control">
+      </div>
+
+      <div class="dart-form-group mb-4">
+        <span class="ktitle">Вознаграждение</span>
+        <input v-model="form.percent" type="text" name="description" placeholder="Укажите вознаграждение" class="dart-form-control">
+        <Dropdown v-model="selectedCity" :options="this.award" optionLabel="name" placeholder="Выберите тип цен" class="mt-2 w-full md:w-14rem" />
+      </div>
+
+      <div class="dart-form-group mb-4">
+        <span class="ktitle">Совместимость скидок</span>
+        <div class="flex align-items-center mt-3">
+          <Checkbox v-model="filtersdata" name="compatibility" value="1"/>
+          <label for="compatibility" class="ml-2">Совместим со всеми акциями</label>
+        </div>
+        <div class="flex align-items-center mt-3">
+          <Checkbox v-model="filtersdata" name="compatibility" value="2"/>
+          <label for="compatibility" class="ml-2">Не совместим со всеми акциями</label>
+        </div>
+        <div class="flex align-items-center mt-3">
+          <Checkbox v-model="filtersdata" name="compatibility" value="3"/>
+          <label for="compatibility" class="ml-2">Применяется большая скидка</label>
+        </div>
+        <div class="flex align-items-center mt-3">
+          <Checkbox v-model="filtersdata" name="compatibility" value="4"/>
+          <label for="compatibility" class="ml-2">Складывается с выбранными акциями</label>
+        </div>
+      </div>
+
+      <div class="dart-form-group mb-4">
+        <span class="ktitle">Совместимость отсрочек</span>
+        <div class="flex align-items-center mt-3">
+          <Checkbox v-model="filtersdata" name="compatibility" value="1"/>
+          <label for="compatibility" class="ml-2">Совместим со всеми акциями</label>
+        </div>
+        <div class="flex align-items-center mt-3">
+          <Checkbox v-model="filtersdata" name="compatibility" value="2"/>
+          <label for="compatibility" class="ml-2">Не совместим со всеми акциями</label>
+        </div>
+        <div class="flex align-items-center mt-3">
+          <Checkbox v-model="filtersdata" name="compatibility" value="3"/>
+          <label for="compatibility" class="ml-2">Применяется большая отсрочка</label>
+        </div>
+      </div>
+
+      <div class="dart-form-group mb-4">
+        <span class="ktitle">Даты проведения</span>
+        <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите даты" :manualInput="false" showIcon/>
+      </div>
+
       <div class="dart-form-group picker-wrap">
         <label for="name">Добавление товаров</label>
 
@@ -61,14 +131,14 @@
           <div class="PickList__selected">
             <div class="PickList__title mb-4">
               <b>Добавленные товары</b>
-              <div class="PickList__title-left">
+              <!-- <div class="PickList__title-left">
                 <b>Скидка в %</b>
                 <b>Скидка в ₽</b>
                 <b>Итоговая цена в ₽</b>
-              </div>
+              </div> -->
             </div>
             <div class="PickList__products">
-              <div class="PickList__el" v-for="(item, index) in this.selected" :key="item.id">
+              <div class="PickList__el" v-for="(item) in this.selected" :key="item.id">
                 <img :src="'https://mst.tools' + item.image" alt="">
                   <div class="PickList__info">
                   <div class="PickList__product-info off">
@@ -76,43 +146,29 @@
                     <div class="PickList__article">{{item.article}}</div>
                     <div class="PickList__price">{{Number(item.price).toFixed(0)}} ₽</div>
                   </div>
-                  <div class="PickList__values">
-                    <InputNumber
-                      v-model="this.selected[index].discount_proccent"
-                      inputId="horizontal-buttons"
-                      :step="1"
-                      min="0"
-                      max="100"
-                      suffix=" %"
-                      @update:modelValue="setPrices(index, 'discount_proccent', this.selected[index].discount_proccent)"
-                      incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-                    />
-                    <InputNumber
-                      v-model="selected[index].discount_money"
-                      inputId="horizontal-buttons"
-                      :step="1"
-                      min="0"
-                      :max="item.price"
-                      mode="currency" currency="RUB"
-                      @input="setPrices(index, 'discount_money', this.selected[index].discount_money)"
-                      incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-                    />
-                    <InputNumber
-                      v-model="selected[index].final_price"
-                      inputId="horizontal-buttons"
-                      :step="1"
-                      :max="item.price"
-                      mode="currency" currency="RUB"
-                      min="0"
-                      @input="setPrices(index, 'final_price', this.selected[index].final_price)"
-                      incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-                    />
-                  </div>
                 </div>
                 <div @click="deleteSelect(item.id)" class="PickList__select"><i class="pi pi-times"></i></div>
               </div>
             </div>
           </div>
+        </div>
+      </div>
+      <div class="selectedProducts">
+        <span class="title">Таблица добавленных товаров</span>
+        <div class="selectedProductsTable">
+          <v-table
+            :total="10"
+            :items_data="this.selected"
+            :pagination_items_per_page="this.pagination_items_per_page"
+            :pagination_offset="this.pagination_offset"
+            :page="this.page"
+            :table_data="this.table_data"
+            :filters="this.filters"
+            @filter="filter"
+            @sort="filter"
+            @paginate="paginate"
+          >
+          </v-table>
         </div>
       </div>
     </div>
@@ -123,14 +179,19 @@
 import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
 import Calendar from 'primevue/calendar'
-import InputNumber from 'primevue/inputnumber'
 import TreeSelect from 'primevue/treeselect'
+import vTable from '../components/table/v-table'
+import Dropdown from 'primevue/dropdown'
+import Checkbox from 'primevue/checkbox'
 
 export default {
   name: 'ProfileMatrixAdd',
   props: { },
   data () {
     return {
+      pagination_items_per_page: 25,
+      pagination_offset: 0,
+      page: 1,
       loading: false,
       filter: {
         name: '',
@@ -140,7 +201,40 @@ export default {
       products: [],
       form: {
       },
-      get_catalog: []
+      get_catalog: [],
+      table_data: {
+        checkbox: {
+          type: 'checkbox'
+        },
+        image: {
+          label: 'Фото',
+          type: 'image'
+        },
+        name: {
+          label: 'Наименование',
+          type: 'link',
+          link_to: 'org_matrix_edit',
+          link_params: {
+            id: this.$route.params.id,
+            matrix_id: 'id'
+          }
+        },
+        price: {
+          label: 'РРЦ (₽)',
+          type: 'text'
+        },
+        article: {
+          label: 'Скидка по формуле',
+          type: 'text'
+        }
+      },
+      award: [
+        { name: 'New York' },
+        { name: 'Rome' },
+        { name: 'London' },
+        { name: 'Istanbul' },
+        { name: 'Paris' }
+      ]
     }
   },
   methods: {
@@ -153,23 +247,27 @@ export default {
       const product = this.products.find(r => r.id === id)
       this.selected.push(product)
       this.products = this.products.filter((r) => r.id !== id)
+      const data = { filter: this.filter, selected: this.selected }
+      this.get_available_products_from_api(data)
     },
-    setPrices (index, name, value) {
-      switch (name) {
-        case 'discount_proccent':
-          this.selected[index].discount_money = (Number(this.selected[index].price) / 100) * value
-          this.selected[index].final_price = Number(this.selected[index].price) - this.selected[index].discount_money
-          break
-        case 'discount_money':
-          break
-        case 'final_price':
-          break
-      }
-    },
+    // setPrices (index, name, value) {
+    //   switch (name) {
+    //     case 'discount_proccent':
+    //       this.selected[index].discount_money = (Number(this.selected[index].price) / 100) * value
+    //       this.selected[index].final_price = Number(this.selected[index].price) - this.selected[index].discount_money
+    //       break
+    //     case 'discount_money':
+    //       break
+    //     case 'final_price':
+    //       break
+    //   }
+    // },
     deleteSelect (id) {
       const product = this.selected.find(r => r.id === id)
       this.products.push(product)
       this.selected = this.selected.filter((r) => r.id !== id)
+      const data = { filter: this.filter, selected: this.selected }
+      this.get_available_products_from_api(data)
     },
     setFilter () {
       const data = { filter: this.filter, selected: this.selected }
@@ -207,7 +305,7 @@ export default {
       this.get_catalog = this.getcatalog
     )
   },
-  components: { Calendar, TreeSelect, InputNumber },
+  components: { Calendar, TreeSelect, vTable, Dropdown, Checkbox },
   computed: {
     ...mapGetters([
       'available_products',
@@ -220,12 +318,85 @@ export default {
     },
     available_products: function (newVal, oldVal) {
       this.products = newVal.products
+      this.seleselected = newVal.selected
     }
   }
 }
 </script>
 
 <style lang="scss">
+
+  .btn-padding{
+    padding-left: 55px;
+    padding-right: 55px;
+  }
+
+  .maintitle{
+    font-size: 24px;
+    font-weight: 400;
+  }
+
+  .ktitle{
+    display: block;
+    font-style: normal;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 1.3;
+    color: #282828;
+    margin-bottom: 8px;
+  }
+
+  .upload-icon__image{
+    background: #D9D9D9;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-top: 16px;
+  }
+
+  .upload-banner{
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    &__text{
+      max-width: 450px;
+
+      span{
+        color: #ADADAD;
+        font-size: 14px;
+      }
+
+      span.ktitle{
+        display: block;
+        font-style: normal;
+        font-weight: 500;
+        font-size: 20px;
+        line-height: 1.3;
+        color: #282828;
+        margin-bottom: 8px;
+      }
+    }
+
+    &__image{
+      width: 287px;
+      height: 160px;
+      background: #D9D9D9;
+      margin-top: 16px;
+    }
+  }
+
+  .selectedProducts{
+    .title{
+      display: block;
+      font-style: normal;
+      font-weight: 500;
+      font-size: 20px;
+      line-height: 1.3;
+      color: #282828;
+      margin-top: 40px;
+    }
+  }
   .product-settings{
     margin: 0;
     .item{
@@ -273,7 +444,6 @@ export default {
   .PickList{
     width: 100%;
     display: flex;
-    justify-content: space-between;
     gap: 40px;
 
     &__title{
@@ -295,7 +465,7 @@ export default {
     }
 
     &__selected{
-      width: 60%;
+      width: 40%;
       border-radius: 5px;
       border: 1px solid rgba(0, 0, 0, 0.12);
     }
