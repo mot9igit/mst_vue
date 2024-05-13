@@ -52,20 +52,20 @@
       <div class="dart-form-group mb-4">
         <span class="ktitle">Совместимость скидок</span>
         <div class="flex align-items-center mt-3">
-          <Checkbox v-model="filtersdata" name="compatibility" value="1"/>
-          <label for="compatibility" class="ml-2">Совместим со всеми акциями</label>
+          <RadioButton v-model="this.compatibilityDiscount" id="compatibilityDiscount-1" name="compatibilityDiscount" value="1"/>
+          <label for="compatibilityDiscount-1" class="ml-2">Совместим со всеми акциями</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <Checkbox v-model="filtersdata" name="compatibility" value="2"/>
-          <label for="compatibility" class="ml-2">Не совместим со всеми акциями</label>
+          <RadioButton v-model="this.compatibilityDiscount" id="compatibilityDiscount-2" name="compatibilityDiscount" value="2"/>
+          <label for="compatibilityDiscount-2" class="ml-2">Не совместим со всеми акциями</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <Checkbox v-model="filtersdata" name="compatibility" value="3"/>
-          <label for="compatibility" class="ml-2">Применяется большая скидка</label>
+          <RadioButton v-model="this.compatibilityDiscount" id="compatibilityDiscount-3" name="compatibilityDiscount" value="3"/>
+          <label for="compatibilityDiscount-3" class="ml-2">Применяется большая скидка</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <Checkbox v-model="filtersdata" name="compatibility" value="4"/>
-          <label for="compatibility" class="ml-2">Складывается с выбранными акциями</label>
+          <RadioButton v-model="this.compatibilityDiscount" id="compatibilityDiscount-4" name="compatibilityDiscount" value="4"/>
+          <label for="compatibilityDiscount-4" class="ml-2">Складывается с выбранными акциями</label>
         </div>
       </div>
 
@@ -91,7 +91,7 @@
       </div>
 
       <div class="dart-form-group picker-wrap">
-        <label for="name">Добавление товаров</label>
+        <span class="ktitle">Добавление товаров</span>
 
         <div class="PickList">
           <div class="PickList__product">
@@ -153,22 +153,79 @@
           </div>
         </div>
       </div>
-      <div class="selectedProducts">
+      <div class="selectedProducts mb-5" v-if="this.total_selected > 0">
         <span class="title">Таблица добавленных товаров</span>
         <div class="selectedProductsTable">
           <v-table
-            :total="10"
+            :total="this.total_selected"
             :items_data="this.selected"
-            :pagination_items_per_page="this.pagination_items_per_page"
-            :pagination_offset="this.pagination_offset"
-            :page="this.page"
+            :pagination_items_per_page="this.pagination_items_per_page_selected"
+            :pagination_offset="this.pagination_offset_selected"
+            :page="this.page_selected"
             :table_data="this.table_data"
             :filters="this.filters"
             @filter="filter"
             @sort="filter"
             @paginate="paginate"
+            @editNumber="editNumber"
           >
           </v-table>
+        </div>
+      </div>
+
+      <div class="dart-form-group picker-wrap">
+        <span class="ktitle">Участники</span>
+
+        <div class="PickList">
+          <div class="PickList__product">
+            <b class="PickList__title">Добавление отдельных компаний</b>
+            <div class="PickList__filters">
+              <div class="form_input_group input_pl input-parent required">
+                <input
+                type="text"
+                id="filter_name"
+                placeholder="Введите артикул или название"
+                class="dart-form-control"
+                v-model="filter.name"
+                @input="setFilter('filter')"
+                />
+                <label for="product_filter_name" class="s-complex-input__label">Введите название компании</label>
+                <div class="form_input_group__icon">
+                    <i class="d_icon d_icon-search"></i>
+                </div>
+              </div>
+            </div>
+            <div class="PickList__products">
+              <div class="PickList__el" v-for="item in this.products" :key="item.id">
+                <img :src="'https://mst.tools' + item.image" alt="">
+                <div class="PickList__product-info">
+                  <div class="PickList__name">{{item.name}}</div>
+                  <div class="PickList__article">{{item.article}}</div>
+                  <div class="PickList__price">{{Number(item.price).toFixed(0)}} ₽</div>
+                </div>
+                <div @click="select(item.id)" class="PickList__select"><i class="pi pi-angle-right"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="PickList__selected">
+            <div class="PickList__title mb-4">
+              <b>Добавленные компании</b>
+            </div>
+            <div class="PickList__products">
+              <div class="PickList__el" v-for="(item) in this.selected" :key="item.id">
+                <img :src="'https://mst.tools' + item.image" alt="">
+                  <div class="PickList__info">
+                  <div class="PickList__product-info off">
+                    <div class="PickList__name">{{item.name}}</div>
+                    <div class="PickList__article">{{item.article}}</div>
+                    <div class="PickList__price">{{Number(item.price).toFixed(0)}} ₽</div>
+                  </div>
+                </div>
+                <div @click="deleteSelect(item.id)" class="PickList__select"><i class="pi pi-times"></i></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -183,29 +240,29 @@ import TreeSelect from 'primevue/treeselect'
 import vTable from '../components/table/v-table'
 import Dropdown from 'primevue/dropdown'
 import Checkbox from 'primevue/checkbox'
+import RadioButton from 'primevue/radiobutton'
 
 export default {
   name: 'ProfileMatrixAdd',
   props: { },
   data () {
     return {
-      pagination_items_per_page: 25,
-      pagination_offset: 0,
-      page: 1,
+      pagination_items_per_page_selected: 25,
+      pagination_offset_selected: 0,
+      page_selected: 1,
+      total_selected: 0,
       loading: false,
+      compatibilityDiscount: 0,
       filter: {
         name: '',
         category: {}
       },
-      selected: [],
+      selected: {},
       products: [],
       form: {
       },
       get_catalog: [],
       table_data: {
-        checkbox: {
-          type: 'checkbox'
-        },
         image: {
           label: 'Фото',
           type: 'image'
@@ -219,13 +276,25 @@ export default {
             matrix_id: 'id'
           }
         },
+        article: {
+          label: 'Артикул',
+          type: 'text'
+        },
         price: {
           label: 'РРЦ (₽)',
           type: 'text'
         },
-        article: {
-          label: 'Скидка по формуле',
-          type: 'text'
+        discountInterest: {
+          label: 'Скидка в %',
+          type: 'number'
+        },
+        discountInRubles: {
+          label: 'Скидка в ₽',
+          type: 'number'
+        },
+        finalPrice: {
+          label: 'Цена со скидкой',
+          type: 'number'
         }
       },
       award: [
@@ -243,34 +312,58 @@ export default {
       'set_matrix_to_api',
       'get_catalog_from_api'
     ]),
+    paginate (obj) {
+      this.page_selected = obj.page
+      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected }
+      this.get_available_products_from_api(data)
+      // this.get_data_from_api(data).then(() => {
+      //   this.avg_info.remains = this.products.avg_info?.remains
+      //   this.avg_info.no_money = this.products.avg_info.no_money
+      //   this.avg_info.sales_speed = this.products.avg_info.sales_speed
+      // })
+    },
     select (id) {
       const product = this.products.find(r => r.id === id)
-      this.selected.push(product)
+      product.discountInRubles = 0
+      product.discountInterest = 0
+      product.finalPrice = Number(product.price)
+
+      this.selected[product.id] = product
       this.products = this.products.filter((r) => r.id !== id)
-      const data = { filter: this.filter, selected: this.selected }
+      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected }
       this.get_available_products_from_api(data)
+      this.total_selected++
     },
-    // setPrices (index, name, value) {
-    //   switch (name) {
-    //     case 'discount_proccent':
-    //       this.selected[index].discount_money = (Number(this.selected[index].price) / 100) * value
-    //       this.selected[index].final_price = Number(this.selected[index].price) - this.selected[index].discount_money
-    //       break
-    //     case 'discount_money':
-    //       break
-    //     case 'final_price':
-    //       break
-    //   }
-    // },
+    editNumber (object) {
+      // console.log(object)
+      // this.selected.map((select) => ({ ...select, object.name: select.id === 1 ? 'other text' : select.text }))
+      // console.log(this.selected)
+      this.selected[object.id][object.name] = object.value
+      switch (object.name) {
+        case 'discountInterest':
+          this.selected[object.id].discountInRubles = this.selected[object.id].price / 100 * object.value
+          this.selected[object.id].finalPrice = this.selected[object.id].price - this.selected[object.id].discountInRubles
+          break
+        case 'discountInRubles':
+          this.selected[object.id].discountInterest = object.value / this.selected[object.id].price / 100
+          this.selected[object.id].finalPrice = this.selected[object.id].price - this.selected[object.id].discountInRubles
+          break
+        case 'finalPrice':
+          this.selected[object.id].discountInRubles = this.selected[object.id].price - object.value
+          this.selected[object.id].discountInterest = this.selected[object.id].discountInRubles / this.selected[object.id].price / 100
+          break
+      }
+    },
     deleteSelect (id) {
       const product = this.selected.find(r => r.id === id)
       this.products.push(product)
       this.selected = this.selected.filter((r) => r.id !== id)
-      const data = { filter: this.filter, selected: this.selected }
+      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected }
       this.get_available_products_from_api(data)
+      this.total_selected--
     },
     setFilter () {
-      const data = { filter: this.filter, selected: this.selected }
+      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected }
       this.get_available_products_from_api(data)
     },
     saveData () {
@@ -305,7 +398,7 @@ export default {
       this.get_catalog = this.getcatalog
     )
   },
-  components: { Calendar, TreeSelect, vTable, Dropdown, Checkbox },
+  components: { Calendar, TreeSelect, vTable, Dropdown, Checkbox, RadioButton },
   computed: {
     ...mapGetters([
       'available_products',
@@ -318,7 +411,6 @@ export default {
     },
     available_products: function (newVal, oldVal) {
       this.products = newVal.products
-      this.seleselected = newVal.selected
     }
   }
 }
@@ -568,7 +660,7 @@ export default {
       }
 
       .form_input_group {
-        width: 50%;
+        width: 100%;
       }
 
       .form_input_group__icon{

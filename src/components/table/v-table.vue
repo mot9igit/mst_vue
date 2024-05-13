@@ -111,6 +111,7 @@
                     @checkElem="checkElem"
                     @approveElem="approveElem"
                     @disapproveElem="disapproveElem"
+                    @editNumber="editNumber"
                 />
             </tbody>
             <tbody v-else>
@@ -158,7 +159,7 @@ import Skeleton from 'primevue/skeleton'
 
 export default {
   name: 'v-table',
-  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem', 'filter', 'sort', 'paginate', 'setAllCheck', 'checkElem', 'approveElem', 'disapproveElem'],
+  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem', 'filter', 'sort', 'paginate', 'setAllCheck', 'checkElem', 'approveElem', 'disapproveElem', 'editNumber'],
   components: {
     vTableRow,
     // vTableFilter,
@@ -272,6 +273,9 @@ export default {
     },
     disapproveElem (data) {
       this.$emit('disapproveElem', data)
+    },
+    editNumber (object) {
+      this.$emit('editNumber', object)
     },
     setFilter (type = '0') {
       if (type === 'filter') {

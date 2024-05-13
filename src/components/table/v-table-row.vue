@@ -14,6 +14,7 @@
           @checkElem="checkElem"
           @approveElem="approveElem"
           @disapproveElem="disapproveElem"
+          @editNumber="editNumber"
       />
     </tr>
     <slot name="add_data"></slot>
@@ -24,7 +25,7 @@ import vTableCell from './v-table-cell'
 
 export default ({
   name: 'v-table-row',
-  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem', 'checkElem', 'approveElem', 'disapproveElem'],
+  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem', 'checkElem', 'approveElem', 'disapproveElem', 'editNumber'],
   props: {
     editMode: {
       type: Boolean,
@@ -67,6 +68,9 @@ export default ({
     },
     disapproveElem (data) {
       this.$emit('disapproveElem', data)
+    },
+    editNumber (object) {
+      this.$emit('editNumber', object)
     }
   },
   components: {

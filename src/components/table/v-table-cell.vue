@@ -74,16 +74,26 @@
         </Button>
       </span>
     </div>
+    <div class="cell_value" v-else-if="cell_data.type == 'number'">
+      {{ console.log("TEST", value) }}
+      <InputNumber
+        v-model="numbers[cell_key]"
+        :inputId="'input_' + cell_key"
+        incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+        @update:modelValue="editValue(numbers[cell_key], cell_key)"
+      />
+    </div>
   </td>
 </template>
 
 <script>
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
+import InputNumber from 'primevue/inputnumber'
 
 export default ({
   name: 'v-table-cell',
-  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem', 'checkElem', 'approveElem', 'disapproveElem'],
+  emits: ['deleteElem', 'updateElem', 'editElem', 'clickElem', 'checkElem', 'approveElem', 'disapproveElem', 'editNumber'],
   props: {
     editMode: {
       type: Boolean,
@@ -115,7 +125,8 @@ export default ({
   data () {
     return {
       check: false,
-      blank: {}
+      blank: {},
+      numbers: {}
     }
   },
   methods: {
@@ -140,6 +151,12 @@ export default ({
       if (action === 'disapprove') {
         this.$emit('disapproveElem', this.value)
       }
+    },
+    editValue (number, name) {
+      this.$emit('editNumber', { value: number, id: this.value.id, name: name })
+      setTimeout(() => {
+        this.numbers[this.cell_key] = this.value[this.cell_key]
+      }, 1000)
     },
     checkRow (data) {
       const val = this.value
@@ -185,9 +202,13 @@ export default ({
         }
       }
     }
+    if (this.cell_data.type === 'number') {
+      this.numbers[this.cell_key] = this.value[this.cell_key]
+    }
   },
   components: {
     Button,
+    InputNumber,
     Checkbox
   },
   watch: {
@@ -204,6 +225,10 @@ export default ({
       if (this.cell_data.type === 'editmode') {
         this.check = newVal.checked
       }
+      if (this.cell_data.type === 'number') {
+        this.numbers[this.cell_key] = this.value[this.cell_key]
+      }
+      console.log('watch value')
     }
   }
 })

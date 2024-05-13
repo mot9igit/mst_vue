@@ -6,12 +6,13 @@ export default {
     products: []
   },
   actions: {
-    get_available_products_from_api ({ commit }, { filter, selected }) {
+    get_available_products_from_api ({ commit }, { filter, selected, pageselected }) {
       // console.log(filter)
       const data = {
         id: router.currentRoute._value.params.id,
         filter: filter,
-        selected: selected
+        selected: selected,
+        page_selected: pageselected
       }
       return Axios('/rest/front_getavproducts', {
         method: 'POST',
