@@ -60,11 +60,21 @@ export default {
         },
         customer: {
           label: 'Покупатель',
-          type: 'text'
+          type: 'link',
+          link_to: 'org_order',
+          link_params: {
+            id: this.$route.params.id,
+            order_id: 'id'
+          }
         },
         createdon: {
           label: 'Дата',
-          type: 'text',
+          type: 'link',
+          link_to: 'org_order',
+          link_params: {
+            id: this.$route.params.id,
+            order_id: 'id'
+          },
           sort: true
         },
         status: {
@@ -73,16 +83,31 @@ export default {
         },
         cost: {
           label: 'Сумма',
-          type: 'text',
+          type: 'link',
+          link_to: 'org_order',
+          link_params: {
+            id: this.$route.params.id,
+            order_id: 'id'
+          },
           sort: true
         },
         delivery: {
           label: 'Доставка',
-          type: 'text'
+          type: 'link',
+          link_to: 'org_order',
+          link_params: {
+            id: this.$route.params.id,
+            order_id: 'id'
+          }
         },
         payment: {
           label: 'Оплата',
-          type: 'text'
+          type: 'link',
+          link_to: 'org_order',
+          link_params: {
+            id: this.$route.params.id,
+            order_id: 'id'
+          }
         }
       }
     }
