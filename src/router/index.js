@@ -54,6 +54,8 @@ import ProfilePurchases from '../pages/opt/ProfilePurchases.vue'
 import PurchasesCatalog from '../pages/opt/PurchasesCatalog.vue'
 import ProfileReturns from '../pages/ProfileReturns.vue'
 import ProfileReturnsProduct from '../pages/ProfileReturnsProduct.vue'
+import Sales from '../pages/sales/Sales.vue'
+import SalesAdd from '../pages/sales/SalesAdd.vue'
 
 const routes = [
   {
@@ -415,6 +417,27 @@ const routes = [
           }, {
             path: ':matrix_id',
             name: 'org_matrix_edit',
+            props: true,
+            label: 'Редактирование матрицы',
+            component: ProfileMatrixEdit
+          }]
+        }, {
+          path: 'sales',
+          children: [{
+            path: '',
+            name: 'org_sales',
+            props: true,
+            label: 'Ключевые матрицы',
+            component: Sales
+          }, {
+            path: 'add',
+            name: 'org_sales_add',
+            props: true,
+            label: 'Добавление ключевой матрицы',
+            component: SalesAdd
+          }, {
+            path: ':sales_id',
+            name: 'org_sales_edit',
             props: true,
             label: 'Редактирование матрицы',
             component: ProfileMatrixEdit

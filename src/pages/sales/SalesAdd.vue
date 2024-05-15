@@ -204,7 +204,7 @@
       <div class="dart-form-group picker-wrap mt-4">
         <span class="ktitle">Участники</span>
         <span class="kgraytext mb-3">Выберите компании, которым будет доступна ваша программа</span>
-        <div class="kenost-checkbox-container mb-3">
+        <!-- <div class="kenost-checkbox-container mb-3">
           <div class="flex align-items-center">
               <Checkbox v-model="availability" inputId="availability1" name="pizza" value="1" />
               <label for="availability1" class="ml-2"> Доступен для розницы </label>
@@ -213,7 +213,7 @@
               <Checkbox v-model="availability" inputId="availability2" name="pizza" value="2" />
               <label for="availability2" class="ml-2"> Доступен для опта </label>
           </div>
-        </div>
+        </div> -->
 
         <div class="PickList">
           <div class="PickList__product">
@@ -272,10 +272,10 @@ import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
 import Calendar from 'primevue/calendar'
 import TreeSelect from 'primevue/treeselect'
-import vTable from '../components/table/v-table'
+import vTable from '../../components/table/v-table'
 // import Dropdown from 'primevue/dropdown'
 import RadioButton from 'primevue/radiobutton'
-import Checkbox from 'primevue/checkbox'
+// import Checkbox from 'primevue/checkbox'
 import Paginate from 'vuejs-paginate-next'
 import FileUpload from 'primevue/fileupload'
 import Toast from 'primevue/toast'
@@ -360,7 +360,7 @@ export default {
   methods: {
     ...mapActions([
       'get_available_products_from_api',
-      'set_matrix_to_api',
+      'set_sales_to_api',
       'get_catalog_from_api',
       'get_all_organizations_from_api'
     ]),
@@ -471,9 +471,9 @@ export default {
       this.selected = this.available_products.products[1]
     },
     formSubmit (event) {
-      this.loading = true
+      // this.loading = true
       this.$load(async () => {
-        await this.set_matrix_to_api({
+        await this.set_sales_to_api({
           action: 'set',
           id: router.currentRoute._value.params.id,
           name: this.form.name,
@@ -487,7 +487,7 @@ export default {
         })
           .then((result) => {
             // this.loading = false
-            router.push({ name: 'org_matrix', params: { id: router.currentRoute._value.params.id } })
+            // router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
           })
           .catch((result) => {
             console.log(result)
@@ -507,7 +507,7 @@ export default {
       this.all_organizations = this.allorganizations
     )
   },
-  components: { Calendar, TreeSelect, vTable, RadioButton, Checkbox, Paginate, FileUpload, Toast },
+  components: { Calendar, TreeSelect, vTable, RadioButton, Paginate, FileUpload, Toast },
   computed: {
     ...mapGetters([
       'available_products',

@@ -75,7 +75,6 @@
       </span>
     </div>
     <div class="cell_value" v-else-if="cell_data.type == 'number'">
-      {{ console.log("TEST", value) }}
       <InputNumber
         v-model="numbers[cell_key]"
         :inputId="'input_' + cell_key"
@@ -154,9 +153,6 @@ export default ({
     },
     editValue (number, name) {
       this.$emit('editNumber', { value: number, id: this.value.id, name: name })
-      setTimeout(() => {
-        this.numbers[this.cell_key] = this.value[this.cell_key]
-      }, 1000)
     },
     checkRow (data) {
       const val = this.value
@@ -205,6 +201,11 @@ export default ({
     if (this.cell_data.type === 'number') {
       this.numbers[this.cell_key] = this.value[this.cell_key]
     }
+  },
+  updated () {
+    console.log('Test updated', this.value, this.cell_key)
+    // console.log(this.cell_key, this.value[this.cell_key])
+    this.numbers[this.cell_key] = this.value[this.cell_key]
   },
   components: {
     Button,
