@@ -52,36 +52,36 @@
       <div class="dart-form-group mb-4">
         <span class="ktitle">Совместимость скидок</span>
         <div class="flex align-items-center mt-3">
-          <RadioButton v-model="this.compatibilityDiscount" id="compatibilityDiscount-1" name="compatibilityDiscount" value="1"/>
-          <label for="compatibilityDiscount-1" class="ml-2">Совместим со всеми акциями</label>
+          <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-1" name="compatibilityDiscount" value="1"/>
+          <label for="compatibilityDiscount-1" class="ml-2 radioLabel">Совместим со всеми акциями</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <RadioButton v-model="this.compatibilityDiscount" id="compatibilityDiscount-2" name="compatibilityDiscount" value="2"/>
-          <label for="compatibilityDiscount-2" class="ml-2">Не совместим со всеми акциями</label>
+          <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-2" name="compatibilityDiscount" value="2"/>
+          <label for="compatibilityDiscount-2" class="ml-2 radioLabel">Не совместим со всеми акциями</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <RadioButton v-model="this.compatibilityDiscount" id="compatibilityDiscount-3" name="compatibilityDiscount" value="3"/>
-          <label for="compatibilityDiscount-3" class="ml-2">Применяется большая скидка</label>
+          <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-3" name="compatibilityDiscount" value="3"/>
+          <label for="compatibilityDiscount-3" class="ml-2 radioLabel">Применяется большая скидка</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <RadioButton v-model="this.compatibilityDiscount" id="compatibilityDiscount-4" name="compatibilityDiscount" value="4"/>
-          <label for="compatibilityDiscount-4" class="ml-2">Складывается с выбранными акциями</label>
+          <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-4" name="compatibilityDiscount" value="4"/>
+          <label for="compatibilityDiscount-4" class="ml-2 radioLabel">Складывается с выбранными акциями</label>
         </div>
       </div>
 
       <div class="dart-form-group mb-4">
         <span class="ktitle">Совместимость отсрочек</span>
         <div class="flex align-items-center mt-3">
-          <Checkbox v-model="filtersdata" name="compatibility" value="1"/>
-          <label for="compatibility" class="ml-2">Совместим со всеми акциями</label>
+          <RadioButton v-model="this.compatibilityPost" inputId="compatibilityPost-1" name="compatibilityPost" value="1"/>
+          <label for="compatibilityPost-1" class="ml-2 radioLabel">Совместим со всеми акциями</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <Checkbox v-model="filtersdata" name="compatibility" value="2"/>
-          <label for="compatibility" class="ml-2">Не совместим со всеми акциями</label>
+          <RadioButton v-model="this.compatibilityPost" inputId="compatibilityPost-2" name="compatibilityPost" value="2"/>
+          <label for="compatibilityPost-2" class="ml-2 radioLabel">Не совместим со всеми акциями</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <Checkbox v-model="filtersdata" name="compatibility" value="3"/>
-          <label for="compatibility" class="ml-2">Применяется большая отсрочка</label>
+          <RadioButton v-model="this.compatibilityPost" inputId="compatibilityPost-3" name="compatibilityPost" value="3"/>
+          <label for="compatibilityPost-3" class="ml-2 radioLabel">Применяется большая отсрочка</label>
         </div>
       </div>
 
@@ -125,6 +125,16 @@
                 </div>
                 <div @click="select(item.id)" class="PickList__select"><i class="pi pi-angle-right"></i></div>
               </div>
+              <paginate
+                :page-count="pagesCount"
+                :click-handler="pagClickCallback"
+                :prev-text="'Пред'"
+                :next-text="'След'"
+                :container-class="'pagination justify-content-center'"
+                :initialPage="this.page"
+                :forcePage="this.page"
+              >
+              </paginate>
             </div>
           </div>
 
@@ -153,9 +163,9 @@
           </div>
         </div>
       </div>
-      <div class="selectedProducts mb-5" v-if="this.total_selected > 0">
+      <div class="selectedProducts mb-5">
         <span class="title">Таблица добавленных товаров</span>
-        <div class="selectedProductsTable">
+        <div class="selectedProductsTable" v-if="this.total_selected > 0">
           <v-table
             :total="this.total_selected"
             :items_data="this.selected"
@@ -164,6 +174,7 @@
             :page="this.page_selected"
             :table_data="this.table_data"
             :filters="this.filters"
+            :editMode="this.editMode"
             @filter="filter"
             @sort="filter"
             @paginate="paginate"
@@ -173,8 +184,19 @@
         </div>
       </div>
 
-      <div class="dart-form-group picker-wrap">
+      <div class="dart-form-group picker-wrap mt-4">
         <span class="ktitle">Участники</span>
+        <span class="kgraytext mb-3">Выберите компании, которым будет доступна ваша программа</span>
+        <div class="kenost-checkbox-container mb-3">
+          <div class="flex align-items-center">
+              <Checkbox v-model="availability" inputId="availability1" name="pizza" value="1" />
+              <label for="availability1" class="ml-2"> Доступен для розницы </label>
+          </div>
+          <div class="flex align-items-center">
+              <Checkbox v-model="availability" inputId="availability2" name="pizza" value="2" />
+              <label for="availability2" class="ml-2"> Доступен для опта </label>
+          </div>
+        </div>
 
         <div class="PickList">
           <div class="PickList__product">
@@ -186,8 +208,8 @@
                 id="filter_name"
                 placeholder="Введите артикул или название"
                 class="dart-form-control"
-                v-model="filter.name"
-                @input="setFilter('filter')"
+                v-model="filter_organizations.name"
+                @input="setFilterOrganization('filter')"
                 />
                 <label for="product_filter_name" class="s-complex-input__label">Введите название компании</label>
                 <div class="form_input_group__icon">
@@ -196,14 +218,12 @@
               </div>
             </div>
             <div class="PickList__products">
-              <div class="PickList__el" v-for="item in this.products" :key="item.id">
-                <img :src="'https://mst.tools' + item.image" alt="">
+              <div class="PickList__el center" v-for="item in this.all_organizations" :key="item.id">
+                <img :src="item.image" alt="">
                 <div class="PickList__product-info">
-                  <div class="PickList__name">{{item.name}}</div>
-                  <div class="PickList__article">{{item.article}}</div>
-                  <div class="PickList__price">{{Number(item.price).toFixed(0)}} ₽</div>
+                  <div>{{item.name}}</div>
                 </div>
-                <div @click="select(item.id)" class="PickList__select"><i class="pi pi-angle-right"></i></div>
+                <div @click="selectOrganization(item.id)" class="PickList__select"><i class="pi pi-angle-right"></i></div>
               </div>
             </div>
           </div>
@@ -213,16 +233,14 @@
               <b>Добавленные компании</b>
             </div>
             <div class="PickList__products">
-              <div class="PickList__el" v-for="(item) in this.selected" :key="item.id">
-                <img :src="'https://mst.tools' + item.image" alt="">
+              <div class="PickList__el center" v-for="(item) in this.all_organizations_selected" :key="item.id">
+                <img :src="item.image" alt="">
                   <div class="PickList__info">
                   <div class="PickList__product-info off">
-                    <div class="PickList__name">{{item.name}}</div>
-                    <div class="PickList__article">{{item.article}}</div>
-                    <div class="PickList__price">{{Number(item.price).toFixed(0)}} ₽</div>
+                    <div>{{item.name}}</div>
                   </div>
                 </div>
-                <div @click="deleteSelect(item.id)" class="PickList__select"><i class="pi pi-times"></i></div>
+                <div @click="deleteSelectOrganization(item.id)" class="PickList__select"><i class="pi pi-times"></i></div>
               </div>
             </div>
           </div>
@@ -239,8 +257,9 @@ import Calendar from 'primevue/calendar'
 import TreeSelect from 'primevue/treeselect'
 import vTable from '../components/table/v-table'
 import Dropdown from 'primevue/dropdown'
-import Checkbox from 'primevue/checkbox'
 import RadioButton from 'primevue/radiobutton'
+import Checkbox from 'primevue/checkbox'
+import Paginate from 'vuejs-paginate-next'
 
 export default {
   name: 'ProfileMatrixAdd',
@@ -249,18 +268,30 @@ export default {
     return {
       pagination_items_per_page_selected: 25,
       pagination_offset_selected: 0,
+      page: 1,
       page_selected: 1,
       total_selected: 0,
       loading: false,
       compatibilityDiscount: 0,
+      compatibilityPost: 0,
+      availability: [],
       filter: {
         name: '',
         category: {}
       },
+      filter_organizations: {
+        name: '',
+        type: [1, 2]
+      },
       selected: {},
       products: [],
+      total_products: 1000,
+      per_page: 25,
+      all_organizations: [],
+      all_organizations_selected: {},
       form: {
       },
+      editMode: true,
       get_catalog: [],
       table_data: {
         image: {
@@ -310,34 +341,15 @@ export default {
     ...mapActions([
       'get_available_products_from_api',
       'set_matrix_to_api',
-      'get_catalog_from_api'
+      'get_catalog_from_api',
+      'get_all_organizations_from_api'
     ]),
     paginate (obj) {
       this.page_selected = obj.page
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected }
+      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
-      // this.get_data_from_api(data).then(() => {
-      //   this.avg_info.remains = this.products.avg_info?.remains
-      //   this.avg_info.no_money = this.products.avg_info.no_money
-      //   this.avg_info.sales_speed = this.products.avg_info.sales_speed
-      // })
-    },
-    select (id) {
-      const product = this.products.find(r => r.id === id)
-      product.discountInRubles = 0
-      product.discountInterest = 0
-      product.finalPrice = Number(product.price)
-
-      this.selected[product.id] = product
-      this.products = this.products.filter((r) => r.id !== id)
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected }
-      this.get_available_products_from_api(data)
-      this.total_selected++
     },
     editNumber (object) {
-      // console.log(object)
-      // this.selected.map((select) => ({ ...select, object.name: select.id === 1 ? 'other text' : select.text }))
-      // console.log(this.selected)
       this.selected[object.id][object.name] = object.value
       switch (object.name) {
         case 'discountInterest':
@@ -354,17 +366,71 @@ export default {
           break
       }
     },
+    select (id) {
+      const product = this.products.find(r => r.id === id)
+      product.discountInRubles = 0
+      product.discountInterest = 0
+      product.finalPrice = Number(product.price)
+
+      this.selected[product.id] = product
+      this.products = this.products.filter((r) => r.id !== id)
+      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      this.get_available_products_from_api(data)
+      this.total_selected++
+    },
     deleteSelect (id) {
-      const product = this.selected.find(r => r.id === id)
-      this.products.push(product)
-      this.selected = this.selected.filter((r) => r.id !== id)
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected }
+      this.products.push(this.selected[id])
+
+      // eslint-disable-next-line camelcase
+      const new_selected = {}
+
+      for (let i = 0; i < Object.keys(this.selected).length; i++) {
+        if (this.selected[Object.keys(this.selected)[i]].id !== id) {
+          new_selected[Object.keys(this.selected)[i]] = this.selected[Object.keys(this.selected)[i]]
+        }
+      }
+
+      // eslint-disable-next-line camelcase
+      this.selected = new_selected
+
+      // this.selected = this.selected.filter((r) => r.id !== id)
+      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
       this.total_selected--
     },
-    setFilter () {
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected }
+    pagClickCallback (pageNum) {
+      this.page = pageNum
+      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
+    },
+    selectOrganization (id) {
+      const organization = this.all_organizations.find(r => r.id === id)
+      this.all_organizations_selected[organization.id] = organization
+      this.all_organizations = this.all_organizations.filter((r) => r.id !== id)
+    },
+    deleteSelectOrganization (id) {
+      this.all_organizations.push(this.all_organizations_selected[id])
+      // eslint-disable-next-line camelcase
+      const new_all_organizations_selected = {}
+
+      for (let i = 0; i < Object.keys(this.all_organizations_selected).length; i++) {
+        if (this.all_organizations_selected[Object.keys(this.all_organizations_selected)[i]].id !== id) {
+          new_all_organizations_selected[Object.keys(this.all_organizations_selected)[i]] = this.all_organizations_selected[Object.keys(this.all_organizations_selected)[i]]
+        }
+      }
+
+      // eslint-disable-next-line camelcase
+      this.all_organizations_selected = new_all_organizations_selected
+    },
+    setFilter () {
+      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      this.get_available_products_from_api(data)
+    },
+    setFilterOrganization () {
+      const data = { filter: this.filter_organizations }
+      this.get_all_organizations_from_api(data).then(
+        this.all_organizations = this.allorganizations
+      )
     },
     saveData () {
       this.selected = this.available_products.products[1]
@@ -391,19 +457,31 @@ export default {
     }
   },
   mounted () {
-    this.get_available_products_from_api({ filter: '', selected: [] }).then(
+    this.get_available_products_from_api({ filter: '', selected: [], page: this.page }).then(
       this.products = this.available_products.products
     )
     this.get_catalog_from_api().then(
       this.get_catalog = this.getcatalog
     )
+    const data = { filter: this.filter_organizations }
+    this.get_all_organizations_from_api(data).then(
+      this.all_organizations = this.allorganizations
+    )
   },
-  components: { Calendar, TreeSelect, vTable, Dropdown, Checkbox, RadioButton },
+  components: { Calendar, TreeSelect, vTable, Dropdown, RadioButton, Checkbox, Paginate },
   computed: {
     ...mapGetters([
       'available_products',
-      'getcatalog'
-    ])
+      'getcatalog',
+      'allorganizations'
+    ]),
+    pagesCount () {
+      let pages = Math.round(this.total_products / this.per_page)
+      if (pages === 0) {
+        pages = 1
+      }
+      return pages
+    }
   },
   watch: {
     getcatalog: function (newVal, oldVal) {
@@ -411,12 +489,30 @@ export default {
     },
     available_products: function (newVal, oldVal) {
       this.products = newVal.products
+    },
+    allorganizations: function (newVal, oldVal) {
+      this.all_organizations = newVal
     }
   }
 }
 </script>
 
 <style lang="scss">
+
+  .kenost-checkbox-container{
+    display: flex;
+    gap: 16px;
+  }
+
+  .kgraytext{
+    color: #ADADAD;
+    font-size: 14px;
+  }
+
+  .radioLabel{
+    margin-bottom: 0 !important;
+    cursor: pointer;
+  }
 
   .btn-padding{
     padding-left: 55px;
@@ -573,6 +669,11 @@ export default {
 
     &__el{
       display: flex;
+
+      &.center{
+        align-items: center
+      }
+
       img{
         width: 85px;
         height: 50px !important;

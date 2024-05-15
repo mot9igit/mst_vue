@@ -3,20 +3,17 @@ import router from '@/router'
 
 export default {
   state: {
-    products: []
+    allorganizations: []
   },
   actions: {
-    get_available_products_from_api ({ commit }, { filter, selected, pageselected, page, perpage }) {
+    get_all_organizations_from_api ({ commit }, { filter }) {
       // console.log(filter)
       const data = {
         id: router.currentRoute._value.params.id,
         filter: filter,
-        selected: selected,
-        page_selected: pageselected,
-        page: page,
-        perpage: perpage
+        type: 'get/organizations'
       }
-      return Axios('/rest/front_getavproducts', {
+      return Axios('/rest/front_getobjects', {
         method: 'POST',
         data: data,
         headers: {
@@ -24,7 +21,7 @@ export default {
         }
       })
         .then((response) => {
-          commit('SET_AV_PR_TO_VUEX', response.data)
+          commit('SET_ALL_ORGANIZATIONS_TO_VUEX', response.data)
         })
         .catch(error => {
           if (error.response.status === 403) {
@@ -35,13 +32,13 @@ export default {
     }
   },
   mutations: {
-    SET_AV_PR_TO_VUEX: (state, data) => {
-      state.products = data.data
+    SET_ALL_ORGANIZATIONS_TO_VUEX: (state, data) => {
+      state.allorganizations = data.data
     }
   },
   getters: {
-    available_products (state) {
-      return state.products
+    allorganizations (state) {
+      return state.allorganizations
     }
   }
 }
