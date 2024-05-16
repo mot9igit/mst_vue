@@ -2,7 +2,8 @@
   <td>
     <div class="cell_value" v-if="cell_data.type == 'image'">
       <div class="img_abs" v-if="value[cell_key]">
-        <img :src="site_url_prefix + value[cell_key]" alt=""/>
+        <img v-if="cell_data.baseurl" :src="value[cell_key]" alt=""/>
+        <img v-if="!cell_data.baseurl" :src="site_url_prefix + value[cell_key]" alt=""/>
       </div>
       <div class="img_abs" v-else>
         <img :src="site_url_prefix + 'assets/files/img/nopic.png'" alt=""/>
@@ -203,7 +204,7 @@ export default ({
     }
   },
   updated () {
-    console.log('Test updated', this.value, this.cell_key)
+    // console.log('Test updated', this.value, this.cell_key)
     // console.log(this.cell_key, this.value[this.cell_key])
     this.numbers[this.cell_key] = this.value[this.cell_key]
   },
@@ -229,7 +230,7 @@ export default ({
       if (this.cell_data.type === 'number') {
         this.numbers[this.cell_key] = this.value[this.cell_key]
       }
-      console.log('watch value')
+      // console.log('watch value')
     }
   }
 })

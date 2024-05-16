@@ -294,7 +294,14 @@ export default {
       compatibilityDiscount: 0,
       compatibilityPost: 0,
       availability: [],
-      files: {},
+      files: {
+        max: {
+          original_href: ''
+        },
+        min: {
+          original_href: ''
+        }
+      },
       filter: {
         name: '',
         category: {}
@@ -362,7 +369,8 @@ export default {
       'get_available_products_from_api',
       'set_sales_to_api',
       'get_catalog_from_api',
-      'get_all_organizations_from_api'
+      'get_all_organizations_from_api',
+      'get_sales_to_api'
     ]),
     paginate (obj) {
       this.page_selected = obj.page
@@ -506,13 +514,15 @@ export default {
     this.get_all_organizations_from_api(data).then(
       this.all_organizations = this.allorganizations
     )
+    this.get_sales_to_api({ id: router.currentRoute._value.params.sales_id, actionid: router.currentRoute._value.params.sales_id })
   },
   components: { Calendar, TreeSelect, vTable, RadioButton, Paginate, FileUpload, Toast },
   computed: {
     ...mapGetters([
       'available_products',
       'getcatalog',
-      'allorganizations'
+      'allorganizations',
+      'actions'
     ]),
     pagesCount () {
       let pages = Math.round(this.total_products / this.per_page)
@@ -531,6 +541,18 @@ export default {
     },
     allorganizations: function (newVal, oldVal) {
       this.all_organizations = newVal
+    },
+    actions: function (newVal, oldVal) {
+      this.form.name = newVal.name
+      this.files.max.original_href = this.site_url_prefix + newVal.image
+      this.files.min.original_href = this.site_url_prefix + newVal.image_inner
+      this.form.description = newVal.description
+      this.compatibilityDiscount = newVal.compatibility_discount
+      this.compatibilityPost = newVal.compatibility_postponement
+      const dateto = new Date(newVal.date_to)
+      const datefrom = new Date(newVal.date_from)
+      this.form.dates = [datefrom, dateto]
+      this.selected = newVal.products
     }
   }
 }

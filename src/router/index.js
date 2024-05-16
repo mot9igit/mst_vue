@@ -56,6 +56,7 @@ import ProfileReturns from '../pages/ProfileReturns.vue'
 import ProfileReturnsProduct from '../pages/ProfileReturnsProduct.vue'
 import Sales from '../pages/sales/Sales.vue'
 import SalesAdd from '../pages/sales/SalesAdd.vue'
+import SalesEdit from '../pages/sales/SalesEdit.vue'
 
 const routes = [
   {
@@ -427,20 +428,20 @@ const routes = [
             path: '',
             name: 'org_sales',
             props: true,
-            label: 'Ключевые матрицы',
+            label: 'Акции',
             component: Sales
           }, {
             path: 'add',
             name: 'org_sales_add',
             props: true,
-            label: 'Добавление ключевой матрицы',
+            label: 'Добавление акции',
             component: SalesAdd
           }, {
             path: ':sales_id',
             name: 'org_sales_edit',
             props: true,
-            label: 'Редактирование матрицы',
-            component: ProfileMatrixEdit
+            label: 'Редактирование акции',
+            component: SalesEdit
           }]
         }]
       }]

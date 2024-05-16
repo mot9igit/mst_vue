@@ -1,21 +1,21 @@
 <template>
   <TabView class="tab-custom">
-      <TabPanel header="Подборки товаров">
+      <TabPanel header="Акции">
         <v-table
-          :items_data="matrixs.items"
-          :total="matrixs.total"
+          :items_data="actions.items"
+          :total="actions.total"
           :pagination_items_per_page="this.pagination_items_per_page"
           :pagination_offset="this.pagination_offset"
           :page="this.page"
           :table_data="this.table_data"
           :filters="this.filters"
-          :title="'Подборки товаров'"
+          :title="'Мои акции'"
           @filter="filter"
           @sort="filter"
           @paginate="paginate"
         >
           <template v-slot:button>
-            <RouterLink :to="{ name: 'org_matrix_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Создать подборку</RouterLink>
+            <RouterLink :to="{ name: 'org_sales_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Создать подборку</RouterLink>
           </template>
         </v-table>
       </TabPanel>
@@ -48,7 +48,7 @@ import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 
 export default {
-  name: 'ProfileMatrix',
+  name: 'ProfileSales',
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -73,13 +73,18 @@ export default {
         }
       },
       table_data: {
+        image_inner: {
+          label: 'Баннер',
+          type: 'image'
+          // baseurl: true
+        },
         name: {
           label: 'Наименование',
           type: 'link',
-          link_to: 'org_matrix_edit',
+          link_to: 'org_sales_edit',
           link_params: {
             id: this.$route.params.id,
-            matrix_id: 'id'
+            sales_id: 'id'
           },
           sort: true
         },
@@ -98,17 +103,17 @@ export default {
   },
   methods: {
     ...mapActions([
-      'get_matrixs_from_api'
+      'get_sales_to_api'
     ]),
     filter (data) {
-      this.get_matrixs_from_api(data)
+      this.get_sales_to_api(data)
     },
     paginate (data) {
-      this.get_matrixs_from_api(data)
+      this.get_sales_to_api(data)
     }
   },
   mounted () {
-    this.get_matrixs_from_api({
+    this.get_sales_to_api({
       page: this.page,
       perpage: this.pagination_items_per_page
     })
@@ -116,7 +121,7 @@ export default {
   components: { vTable, RouterLink, TabView, TabPanel },
   computed: {
     ...mapGetters([
-      'matrixs'
+      'actions'
     ])
   }
 }
