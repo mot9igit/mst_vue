@@ -2,17 +2,18 @@
   <Toast />
   <form @submit.prevent="formSubmit">
     <div class="profile-content__title">
-        <span class="maintitle">Настройка программы</span>
+        <span class="maintitle">Настройка акции</span>
         <div class="buttons_container">
-          <RouterLink :to="{ name: 'org_matrix', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary btn-padding">Отменить</RouterLink>
+          <RouterLink :to="{ name: 'org_sales', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary btn-padding">Отменить</RouterLink>
           <button type="submit" class="dart-btn dart-btn-primary btn-padding" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Добавить</button>
         </div>
     </div>
     <div>
       <div class="dart-form-group mb-4">
-        <span class="ktitle">Наименование программы</span>
-        <label for="name">Введите наименование, которое будет отражать смысл вашей программы.</label>
-        <input v-model="form.name" type="text" name="name" placeholder="Укажите название программы" class="dart-form-control">
+        <span class="ktitle">Наименование акции</span>
+        <label for="name">Введите наименование, которое будет отражать смысл вашей акции</label>
+        <input v-model="form.name" type="text" name="name" placeholder="Укажите название акции" class="dart-form-control" :class="{'kenost-error':this.validation.name.error}">
+        <span v-if="this.validation.name.error" class="kenost-error-text">{{ this.validation.name.text }}</span>
       </div>
 
       <div class="dart-form-group mb-4">
@@ -57,7 +58,8 @@
 
       <div class="dart-form-group mb-4">
         <span class="ktitle">Описание</span>
-        <input v-model="form.description" type="text" name="description" placeholder="Укажите описание программы" class="dart-form-control">
+        <input v-model="form.description" type="text" name="description" placeholder="Укажите описание акции" class="dart-form-control" :class="{'kenost-error':this.validation.description.error}">
+        <span v-if="this.validation.description.error" class="kenost-error-text">{{ this.validation.description.text }}</span>
       </div>
 
       <!-- <div class="dart-form-group mb-4">
@@ -84,6 +86,7 @@
           <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-4" name="compatibilityDiscount" value="4"/>
           <label for="compatibilityDiscount-4" class="ml-2 radioLabel">Складывается с выбранными акциями</label>
         </div>
+        <span v-if="this.validation.compatibilityDiscount.error" class="kenost-error-text">{{ this.validation.compatibilityDiscount.text }}</span>
       </div>
 
       <div class="dart-form-group mb-4">
@@ -100,18 +103,20 @@
           <RadioButton v-model="this.compatibilityPost" inputId="compatibilityPost-3" name="compatibilityPost" value="3"/>
           <label for="compatibilityPost-3" class="ml-2 radioLabel">Применяется большая отсрочка</label>
         </div>
+        <span v-if="this.validation.compatibilityPost.error" class="kenost-error-text">{{ this.validation.compatibilityPost.text }}</span>
       </div>
 
       <div class="dart-form-group mb-4">
         <span class="ktitle">Даты проведения</span>
-        <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите даты" :manualInput="false" showIcon/>
+        <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите даты" :manualInput="false" showIcon :class="{'kenost-error':this.validation.dates.error}"/>
+        <span v-if="this.validation.dates.error" class="kenost-error-text">{{ this.validation.dates.text }}</span>
       </div>
 
       <div class="dart-form-group picker-wrap">
         <span class="ktitle">Добавление товаров</span>
-
+        <span v-if="this.validation.selected.error" class="kenost-error-text">{{ this.validation.selected.text }}</span>
         <div class="PickList">
-          <div class="PickList__product">
+          <div class="PickList__product" :class="{'kenost-error':this.validation.selected.error}">
             <b class="PickList__title">Доступные товары</b>
             <div class="PickList__filters">
               <div class="form_input_group input_pl input-parent required">
@@ -203,8 +208,8 @@
 
       <div class="dart-form-group picker-wrap mt-4">
         <span class="ktitle">Участники</span>
-        <span class="kgraytext mb-3">Выберите компании, которым будет доступна ваша программа</span>
-        <div class="kenost-checkbox-container mb-3">
+        <span class="kgraytext mb-3">Выберите компании, которым будет доступна ваша акция</span>
+        <!-- <div class="kenost-checkbox-container mb-3">
           <div class="flex align-items-center">
               <Checkbox v-model="availability" inputId="availability1" name="pizza" value="1" />
               <label for="availability1" class="ml-2"> Доступен для розницы </label>
@@ -213,7 +218,7 @@
               <Checkbox v-model="availability" inputId="availability2" name="pizza" value="2" />
               <label for="availability2" class="ml-2"> Доступен для опта </label>
           </div>
-        </div>
+        </div> -->
 
         <div class="PickList">
           <div class="PickList__product">
@@ -272,16 +277,16 @@ import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
 import Calendar from 'primevue/calendar'
 import TreeSelect from 'primevue/treeselect'
-import vTable from '../components/table/v-table'
+import vTable from '../../components/table/v-table'
 // import Dropdown from 'primevue/dropdown'
 import RadioButton from 'primevue/radiobutton'
-import Checkbox from 'primevue/checkbox'
+// import Checkbox from 'primevue/checkbox'
 import Paginate from 'vuejs-paginate-next'
 import FileUpload from 'primevue/fileupload'
 import Toast from 'primevue/toast'
 
 export default {
-  name: 'ProfileMatrixAdd',
+  name: 'ProfileSalesAdd',
   props: { },
   data () {
     return {
@@ -294,6 +299,32 @@ export default {
       compatibilityDiscount: 0,
       compatibilityPost: 0,
       availability: [],
+      validation: {
+        name: {
+          error: false,
+          text: 'Пожалуйста, заполните наименование!'
+        },
+        description: {
+          error: false,
+          text: 'Пожалуйста, заполните описание!'
+        },
+        compatibilityDiscount: {
+          error: false,
+          text: 'Пожалуйста, выберите cовместимость скидок!'
+        },
+        compatibilityPost: {
+          error: false,
+          text: 'Пожалуйста, выберите cовместимость отсрочек!'
+        },
+        dates: {
+          error: false,
+          text: 'Пожалуйста, укажите даты проведения!'
+        },
+        selected: {
+          error: false,
+          text: 'Пожалуйста, добавьте хотя бы 1 товар!'
+        }
+      },
       files: {},
       filter: {
         name: '',
@@ -305,7 +336,7 @@ export default {
       },
       selected: {},
       products: [],
-      total_products: 1000,
+      total_products: 0,
       per_page: 25,
       all_organizations: [],
       all_organizations_selected: {},
@@ -360,7 +391,7 @@ export default {
   methods: {
     ...mapActions([
       'get_available_products_from_api',
-      'set_matrix_to_api',
+      'set_sales_to_api',
       'get_catalog_from_api',
       'get_all_organizations_from_api'
     ]),
@@ -471,28 +502,80 @@ export default {
       this.selected = this.available_products.products[1]
     },
     formSubmit (event) {
-      this.loading = true
-      this.$load(async () => {
-        await this.set_matrix_to_api({
-          action: 'set',
-          id: router.currentRoute._value.params.id,
-          name: this.form.name,
-          description: this.form.description,
-          compatibilityDiscount: this.compatibilityDiscount,
-          compatibilityPost: this.compatibilityPost,
-          dates: this.form.dates,
-          products: this.selected,
-          organizations: this.all_organizations_selected,
-          files: this.files
+      let stop = false
+
+      if (!this.form.name) {
+        this.validation.name.error = true
+        // eslint-disable-next-line no-unused-vars
+        stop = true
+      } else {
+        this.validation.name.error = false
+      }
+
+      if (!this.form.description) {
+        this.validation.description.error = true
+        // eslint-disable-next-line no-unused-vars
+        stop = true
+      } else {
+        this.validation.description.error = false
+      }
+
+      if (this.compatibilityDiscount === 0) {
+        this.validation.compatibilityDiscount.error = true
+        // eslint-disable-next-line no-unused-vars
+        stop = true
+      } else {
+        this.validation.compatibilityDiscount.error = false
+      }
+
+      if (this.compatibilityPost === 0) {
+        this.validation.compatibilityPost.error = true
+        // eslint-disable-next-line no-unused-vars
+        stop = true
+      } else {
+        this.validation.compatibilityPost.error = false
+      }
+
+      if (!this.form.dates) {
+        this.validation.dates.error = true
+        // eslint-disable-next-line no-unused-vars
+        stop = true
+      } else {
+        this.validation.dates.error = false
+      }
+
+      if (this.total_selected === 0) {
+        this.validation.selected.error = true
+        // eslint-disable-next-line no-unused-vars
+        stop = true
+      } else {
+        this.validation.selected.error = false
+      }
+
+      if (!stop) {
+        this.$load(async () => {
+          await this.set_sales_to_api({
+            action: 'set',
+            id: router.currentRoute._value.params.id,
+            name: this.form.name,
+            description: this.form.description,
+            compatibilityDiscount: this.compatibilityDiscount,
+            compatibilityPost: this.compatibilityPost,
+            dates: this.form.dates,
+            products: this.selected,
+            organizations: this.all_organizations_selected,
+            files: this.files
+          })
+            .then((result) => {
+              this.loading = false
+              router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
+            })
+            .catch((result) => {
+              console.log(result)
+            })
         })
-          .then((result) => {
-            // this.loading = false
-            router.push({ name: 'org_matrix', params: { id: router.currentRoute._value.params.id } })
-          })
-          .catch((result) => {
-            console.log(result)
-          })
-      })
+        this.loading = true
+      }
     }
   },
   mounted () {
@@ -507,7 +590,7 @@ export default {
       this.all_organizations = this.allorganizations
     )
   },
-  components: { Calendar, TreeSelect, vTable, RadioButton, Checkbox, Paginate, FileUpload, Toast },
+  components: { Calendar, TreeSelect, vTable, RadioButton, Paginate, FileUpload, Toast },
   computed: {
     ...mapGetters([
       'available_products',
@@ -528,6 +611,7 @@ export default {
     },
     available_products: function (newVal, oldVal) {
       this.products = newVal.products
+      this.total_products = newVal.total
     },
     allorganizations: function (newVal, oldVal) {
       this.all_organizations = newVal
@@ -537,6 +621,16 @@ export default {
 </script>
 
 <style lang="scss">
+
+  .kenost-error{
+    border: 1px solid #FF0000 !important;
+  }
+
+  .kenost-error-text{
+    color: #FF0000;
+    font-size: 14px;
+    margin-top: 4px;
+  }
 
   .kenost-checkbox-container{
     display: flex;

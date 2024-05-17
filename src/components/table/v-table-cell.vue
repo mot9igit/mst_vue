@@ -2,7 +2,8 @@
   <td>
     <div class="cell_value" v-if="cell_data.type == 'image'">
       <div class="img_abs" v-if="value[cell_key]">
-        <img :src="site_url_prefix + value[cell_key]" alt=""/>
+        <img v-if="cell_data.baseurl" :src="value[cell_key]" alt=""/>
+        <img v-if="!cell_data.baseurl" :src="site_url_prefix + value[cell_key]" alt=""/>
       </div>
       <div class="img_abs" v-else>
         <img :src="site_url_prefix + 'assets/files/img/nopic.png'" alt=""/>
@@ -25,7 +26,7 @@
     <div class="cell_value" v-else-if="cell_data.type == 'boolean'">
       <div v-if="value[cell_key] == 0">
         <span class="cell__error" v-if="cell_data.calc == 'positive'">Нет</span>
-        <span class="cell__success" v-else>Нет</span>
+        <span class="cell__error" v-else>Нет</span>
       </div>
       <div v-else>
         <span class="cell__error" v-if="cell_data.calc == 'negative'">Да</span>
@@ -63,6 +64,7 @@
     <div class="cell_value" :class="cell_key == 'actions' ? 'actions' : ''" v-else-if="cell_data.type == 'actions'">
       <span class="p-buttonset">
         <Button
+          class="kenostButton"
           :title="row.label"
           :label="row.label" :icon="row.icon"
           v-for="(row, index) in blank.available"
@@ -75,7 +77,6 @@
       </span>
     </div>
     <div class="cell_value" v-else-if="cell_data.type == 'number'">
-      {{ console.log("TEST", value) }}
       <InputNumber
         v-model="numbers[cell_key]"
         :inputId="'input_' + cell_key"
@@ -154,9 +155,6 @@ export default ({
     },
     editValue (number, name) {
       this.$emit('editNumber', { value: number, id: this.value.id, name: name })
-      setTimeout(() => {
-        this.numbers[this.cell_key] = this.value[this.cell_key]
-      }, 1000)
     },
     checkRow (data) {
       const val = this.value
@@ -206,6 +204,11 @@ export default ({
       this.numbers[this.cell_key] = this.value[this.cell_key]
     }
   },
+  updated () {
+    // console.log('Test updated', this.value, this.cell_key)
+    // console.log(this.cell_key, this.value[this.cell_key])
+    this.numbers[this.cell_key] = this.value[this.cell_key]
+  },
   components: {
     Button,
     InputNumber,
@@ -228,13 +231,24 @@ export default ({
       if (this.cell_data.type === 'number') {
         this.numbers[this.cell_key] = this.value[this.cell_key]
       }
-      console.log('watch value')
+      // console.log('watch value')
     }
   }
 })
 </script>
 
 <style lang="scss" scoped>
+.kenostButton{
+  padding: 8px !important;
+  background: #F8F8F8 !important;
+  box-shadow: 0px 1px 5px 0px #00000033;
+  box-shadow: 0px 3px 1px 0px #0000001F;
+  box-shadow: 0px 2px 2px 0px #00000024;
+  color: #ADADAD;
+}
+.kenostButton + .kenostButton{
+  margin-left: 8px
+}
 .img_abs{
   img{
     max-width: 100px;

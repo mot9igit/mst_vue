@@ -23,6 +23,8 @@ import getAvailableProd from './get_available_prod'
 import opt from './opt'
 import training from './training'
 import returns from './returns'
+import allorganizations from './allOrganizations'
+import sales from './sales'
 
 export default new Vuex.Store({
   modules: {
@@ -48,6 +50,8 @@ export default new Vuex.Store({
     getAvailableProd,
     opt,
     training,
-    returns
+    returns,
+    allorganizations,
+    sales
   }
 })

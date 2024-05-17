@@ -1,7 +1,7 @@
 <template>
     <v-table
         :items_data="returns_product"
-        :total="this.returns_product.length"
+        :total="1"
         :pagination_items_per_page="this.pagination_items_per_page"
         :pagination_offset="this.pagination_offset"
         :page="this.page"

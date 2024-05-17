@@ -227,12 +227,12 @@ export default {
             icon: 'd_icon d_icon-vendors',
             to: { name: 'returns_home', params: { id: this.$route.params.id } }
           },
-          // {
-          //   key: '3',
-          //   label: 'Мои поставщики',
-          //   icon: 'd_icon d_icon-vendors',
-          //   to: { name: 'org_opts', params: { id: this.$route.params.id } }
-          // },
+          {
+            key: '4',
+            label: 'B2B-маркетинг',
+            icon: 'd_icon d_icon-star',
+            to: { name: 'org_sales', params: { id: this.$route.params.id } }
+          },
           // {
           //   key: '4',
           //   label: 'Программы оптовиков и производителей',
@@ -289,6 +289,12 @@ export default {
             icon: 'd_icon d_icon-truck',
             to: { name: 'org_shipping', params: { id: this.$route.params.id } }
           },
+          {
+            key: '5',
+            label: 'B2B-маркетинг',
+            icon: 'd_icon d_icon-star',
+            to: { name: 'org_sales', params: { id: this.$route.params.id } }
+          },
           // {
           //   key: '5',
           //   label: 'Программы производителей',
@@ -338,6 +344,12 @@ export default {
             label: 'Товары',
             icon: 'd_icon d_icon-products',
             to: { name: 'org_products', params: { id: this.$route.params.id } }
+          },
+          {
+            key: '4',
+            label: 'B2B-маркетинг',
+            icon: 'd_icon d_icon-star',
+            to: { name: 'org_sales', params: { id: this.$route.params.id } }
           },
           // {
           //   key: '4',
