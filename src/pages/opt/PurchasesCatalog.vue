@@ -1,6 +1,5 @@
 <template>
-    <ChangeVendorsModal :items="this.opt_vendors" />
-    <div class="dart-custom-grid">
+    <div class="dart-custom-grid" :class="{ loading: loading }">
       <CatalogMenu :items="opt_catalog" />
       <div class="d-col-content">
         <div class="dart-home dart-window">
@@ -22,7 +21,6 @@ import Basket from '../../components/opt/Basket.vue'
 import Vendors from '../../components/opt/Vendors.vue'
 import Breadcrumbs from '../../components/opt/Breadcrumbs.vue'
 import TableCatalog from '../../components/opt/TableCatalog.vue'
-import ChangeVendorsModal from '../../components/opt/ChangeVendorsModal.vue'
 
 export default {
   name: 'OptsCatalog',
@@ -43,13 +41,9 @@ export default {
     Basket,
     Vendors,
     Breadcrumbs,
-    TableCatalog,
-    ChangeVendorsModal
+    TableCatalog
   },
   mounted () {
-    this.get_opt_mainpage_from_api().then(
-      this.opt_mainpage = this.mainpage
-    )
     this.get_opt_catalog_from_api().then(
       this.opt_catalog = this.optcatalog
     )
@@ -63,7 +57,7 @@ export default {
       this.opt_products = this.optproducts
     )
   },
-  updated () {},
+  updated () { },
   unmounted () {
   },
   methods: {
@@ -72,7 +66,24 @@ export default {
       'get_opt_catalog_from_api',
       'get_opt_vendors_from_api',
       'get_opt_products_from_api'
-    ])
+    ]),
+    updatePage (categoryId) {
+      this.loading = true
+      this.get_opt_catalog_from_api().then(
+        this.opt_catalog = this.optcatalog
+      )
+      this.get_opt_vendors_from_api().then(
+        this.opt_vendors = this.optvendors
+      )
+      this.get_opt_products_from_api({
+        page: 1,
+        perpage: 25
+      }).then(() => {
+        this.opt_products = this.optproducts
+        this.loading = false
+      }
+      )
+    }
   },
   computed: {
     ...mapGetters([
@@ -94,6 +105,9 @@ export default {
     },
     optproducts: function (newVal, oldVal) {
       this.opt_products = newVal
+    },
+    $route () {
+      this.updatePage(this.$route.params.category_id)
     }
   }
 }

@@ -18,8 +18,8 @@
       <div class="d-col-md-6">
         <div class="profile-content__title"><span class="title">Охват населенных пунктов</span></div>
         <YandexMap  :settings="settings" :coordinates="coords" class="ymap" :zoom="4">
-          <YandexClusterer :options="{ preset: 'islands#invertedRedClusterIcons' }">
-            <YandexMarker
+          <YandexMapClusterer :options="{ preset: 'islands#invertedRedClusterIcons' }">
+            <YandexMapMarker
               v-for="(item, i) in getakbpunkts.all_cities"
               :key="i"
               :coordinates="item.coords"
@@ -30,8 +30,8 @@
                   <span class="title">{{ item.name }}</span>
                 </div>
               </template>
-            </YandexMarker>
-          </YandexClusterer>
+            </YandexMapMarker>
+          </YandexMapClusterer>
         </YandexMap>
       </div>
     </div>
@@ -40,7 +40,7 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import { YandexMap, YandexMarker, YandexClusterer } from 'vue-yandex-maps'
+import { YandexMap, YandexMapMarker, YandexMapClusterer } from 'vue-yandex-maps'
 import vTable from '@/components/table/v-table'
 
 export default {
@@ -90,7 +90,7 @@ export default {
       }
     }
   },
-  components: { vTable, YandexMap, YandexMarker, YandexClusterer },
+  components: { vTable, YandexMap, YandexMapMarker, YandexMapClusterer },
   computed: {
     ...mapGetters([
       'getakbpunkts'

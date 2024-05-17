@@ -1,4 +1,5 @@
 import { createApp } from 'vue'
+import { createYmaps } from 'vue-yandex-maps'
 import store from './store'
 import App from './App.vue'
 import './registerServiceWorker'
@@ -162,6 +163,9 @@ app
   })
   .use(ToastService)
   .use(ConfirmationService)
+  .use(createYmaps({
+    apikey: '7270e707-f1a7-4397-a1d7-0c545cf0b735'
+  }))
   .component('AutoComplete', AutoComplete)
   .mount('#app')
 

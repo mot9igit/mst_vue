@@ -5,10 +5,10 @@
             <span>{{ items.pagetitle }}</span>
         </div>
         <ul class="dart-catalog-menu__list">
-            <!-- <a v-for="item in items.children" v-bind:key="item.id" :href="'purchases/'+item.id" class="dart-catalog-menu__el"><li>{{item.pagetitle}}</li></a> -->
-            <RouterLink :to="{ name: 'purchases_catalog', params: { category_id: item.id }}" v-for="item in items.children" v-bind:key="item.id" class="dart-catalog-menu__el"><li>{{item.pagetitle}}</li></RouterLink>
-          </ul>
-        </li>
+          <!-- <a v-for="item in items.children" v-bind:key="item.id" :href="'purchases/'+item.id" class="dart-catalog-menu__el"><li>{{item.pagetitle}}</li></a> -->
+          <RouterLink :to="{ name: 'purchases_catalog', params: { category_id: item.id }}" v-for="item in items.children" v-bind:key="item.id" class="dart-catalog-menu__el"><li>{{item.pagetitle}}</li></RouterLink>
+        </ul>
+      </li>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'

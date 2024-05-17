@@ -47,7 +47,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 
     .d-col-menu.active + .d-col-content{
         max-width: calc(100% - calc(64px + 350px));
@@ -150,7 +150,7 @@ export default {
     .dart-catalog-menu{
         border-radius: 5px;
         padding: 18px;
-        background: #FFF;
+        background: #fff;
         margin-bottom: 10px;
         height: calc(100vh - 88px);
         overflow-y: auto;

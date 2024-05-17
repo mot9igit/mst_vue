@@ -460,6 +460,38 @@ export default {
 
 <style lang="scss">
 
+.loading {
+  position: relative;
+  color: transparent;
+  min-height: 100px;
+  &:hover {
+    color: transparent;
+  }
+  &::before {
+    content: "";
+    position: absolute;
+    height: 100%;
+    background-image: url(https://mst.tools/assets/templates/img/loader.svg);
+    z-index: 2;
+    width: 20%;
+    max-width: 95px;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    left: 50%;
+    transform: translate(-50%, 0px);
+  }
+  &::after {
+    position: absolute;
+    left: 0;
+    top: 0;
+    content: "";
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.6);
+  }
+}
+
 .fixedHelpButton{
   position: fixed;
   right: 40px;
@@ -1692,5 +1724,89 @@ main{
 }
 .p-radiobutton.p-variant-filled:not(.p-disabled):has(.p-radiobutton-input:hover).p-highlight .p-radiobutton-box {
   background: #ffffff;
+}
+.btn-close {
+  cursor: pointer;
+  background: #595959;
+  opacity: 0.3;
+  color: #fff !important;
+  width: 24px !important;
+  height: 24px !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s;
+  padding: 0;
+  text-decoration: none;
+  &:hover {
+    background: #595959;
+    opacity: 0.5;
+    color: #fff !important;
+  }
+  .d_icon {
+    font-size: 8px;
+  }
+}
+
+.modalright{
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  z-index: 102;
+  width: 100%;
+  background: #fff;
+  max-width: 1100px;
+  right: -9999px;
+  transition: all .2s ease;
+  &.active{
+    right: 0;
+    transition: all .2s ease;
+  }
+  &__header{
+    display: block;
+    position: relative;
+    margin-top: 40px;
+    padding: 20px 32px 20px;
+    span.title{
+      display: block;
+      font-family: "Roboto", sans-serif;
+      font-weight: 500;
+      font-size: 28px;
+      line-height: 107%;
+      color: #282828;
+      padding-right: 36px;
+    }
+    .btn-close{
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translate(0, -50%);
+    }
+  }
+  &__content{
+    height: 100%;
+    & > .dart-row{
+      height: 100%;
+    }
+    .map{
+      height: 100%;
+      width: 100%;
+    }
+  }
+  &__loyout{
+    position: fixed;
+    z-index: 101;
+    right: -9999px;
+    background: rgba(0,0,0,.78);
+    transition: all .2s ease;
+    &.active{
+      left: 0;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      transition: all .2s ease;
+    }
+  }
 }
 </style>
