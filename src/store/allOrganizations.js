@@ -6,11 +6,12 @@ export default {
     allorganizations: []
   },
   actions: {
-    get_all_organizations_from_api ({ commit }, { filter }) {
+    get_all_organizations_from_api ({ commit }, { filter, selected }) {
       // console.log(filter)
       const data = {
         id: router.currentRoute._value.params.id,
         filter: filter,
+        selected: selected,
         type: 'get/organizations'
       }
       return Axios('/rest/front_getobjects', {

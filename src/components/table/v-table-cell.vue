@@ -26,7 +26,7 @@
     <div class="cell_value" v-else-if="cell_data.type == 'boolean'">
       <div v-if="value[cell_key] == 0">
         <span class="cell__error" v-if="cell_data.calc == 'positive'">Нет</span>
-        <span class="cell__success" v-else>Нет</span>
+        <span class="cell__error" v-else>Нет</span>
       </div>
       <div v-else>
         <span class="cell__error" v-if="cell_data.calc == 'negative'">Да</span>
@@ -64,6 +64,7 @@
     <div class="cell_value" :class="cell_key == 'actions' ? 'actions' : ''" v-else-if="cell_data.type == 'actions'">
       <span class="p-buttonset">
         <Button
+          class="kenostButton"
           :title="row.label"
           :label="row.label" :icon="row.icon"
           v-for="(row, index) in blank.available"
@@ -237,6 +238,17 @@ export default ({
 </script>
 
 <style lang="scss" scoped>
+.kenostButton{
+  padding: 8px !important;
+  background: #F8F8F8 !important;
+  box-shadow: 0px 1px 5px 0px #00000033;
+  box-shadow: 0px 3px 1px 0px #0000001F;
+  box-shadow: 0px 2px 2px 0px #00000024;
+  color: #ADADAD;
+}
+.kenostButton + .kenostButton{
+  margin-left: 8px
+}
 .img_abs{
   img{
     max-width: 100px;

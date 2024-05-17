@@ -13,6 +13,9 @@
           @filter="filter"
           @sort="filter"
           @paginate="paginate"
+          @editElem="editElem"
+          @approveElem="approveElem"
+          @deleteElem="deleteElem"
         >
           <template v-slot:button>
             <RouterLink :to="{ name: 'org_sales_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Создать подборку</RouterLink>
@@ -46,6 +49,7 @@ import vTable from '../../components/table/v-table'
 import { RouterLink } from 'vue-router'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import router from '@/router'
 
 export default {
   name: 'ProfileSales',
@@ -97,19 +101,82 @@ export default {
           label: 'Действует до',
           type: 'text',
           sort: true
+        },
+        active: {
+          label: 'Активно',
+          type: 'boolean'
+        },
+        actions: {
+          label: 'Действия',
+          type: 'actions',
+          sort: false,
+          available: {
+            edit: {
+              icon: 'pi pi-pencil',
+              label: 'Редактировать'
+            },
+            approve: {
+              icon: 'pi pi-power-off',
+              label: 'Включить'
+            },
+            delete: {
+              icon: 'pi pi-trash',
+              label: 'Удалить'
+            }
+          }
         }
       }
     }
   },
   methods: {
     ...mapActions([
-      'get_sales_to_api'
+      'get_sales_to_api',
+      'set_sales_to_api'
     ]),
     filter (data) {
       this.get_sales_to_api(data)
     },
     paginate (data) {
       this.get_sales_to_api(data)
+    },
+    editElem (value) {
+      router.push({ name: 'org_sales_edit', params: { id: this.$route.params.id, sales_id: value.id } })
+    },
+    approveElem (value) {
+      this.$load(async () => {
+        await this.set_sales_to_api({
+          action: 'off/on',
+          store_id: router.currentRoute._value.params.id,
+          action_id: value.id
+        })
+          .then((result) => {
+            this.get_sales_to_api({
+              page: this.page,
+              perpage: this.pagination_items_per_page
+            })
+          })
+          .catch((result) => {
+            console.log(result)
+          })
+      })
+    },
+    deleteElem (value) {
+      this.$load(async () => {
+        await this.set_sales_to_api({
+          action: 'delete',
+          store_id: router.currentRoute._value.params.id,
+          action_id: value.id
+        })
+          .then((result) => {
+            this.get_sales_to_api({
+              page: this.page,
+              perpage: this.pagination_items_per_page
+            })
+          })
+          .catch((result) => {
+            console.log(result)
+          })
+      })
     }
   },
   mounted () {
