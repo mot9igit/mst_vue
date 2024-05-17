@@ -6,18 +6,18 @@
                 <span>для бизнеса</span>
             </Link>
 
-            <div class="navmain__search a-dart-input a-dart-input-search">
+            <!-- <div class="navmain__search a-dart-input a-dart-input-search">
                 <div class="navmain__search_btn">
                     <input type="text" placeholder="Найти во всех магазинах" />
                     <a href="/search.html" class="navmain__dart_btn a-dart-btn a-dart-btn-primary">Найти</a>
                 </div>
-            </div>
+            </div> -->
         </div>
 
-        <a href="#" class="navmain__components_desctop a-dart-btn">
+        <!-- <a href="#" class="navmain__components_desctop a-dart-btn">
             <i class="pi pi-sliders-h"></i>
             <b>Сравнение</b>
-        </a>
+        </a> -->
     </div>
 </template>
 <script>

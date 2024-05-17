@@ -11,7 +11,7 @@
           </form>
         </td>
         <td>{{items.total_stores}}</td>
-        <td>от 37 020 ₽</td>
+        <td>от {{Math.round(getMinPrice(items.stores)).toLocaleString('ru')}} ₽</td>
         <td></td>
         <td></td>
         <td></td>
@@ -31,8 +31,8 @@
           </form>
         </td>
         <td></td>
-        <td>{{item.price}} ₽</td>
-        <td>44 395 ₽ + 1 000 ₽</td>
+        <td>{{Math.round(item.price).toLocaleString('ru')}} ₽</td>
+        <td>{{Math.round(item.price).toLocaleString('ru')}} ₽ + 1 000 ₽</td>
         <td>50 дн</td>
         <td>Поставщик</td>
         <td>от 5 дн (5 апреля)</td>
@@ -67,7 +67,21 @@ export default {
   },
   methods: {
     ...mapActions([
-    ])
+    ]),
+    getMinPrice (stores) {
+      let minPrice
+
+      for (let i = 0; i < stores.length; i++) {
+        if (i === 0) {
+          // eslint-disable-next-line no-unused-vars
+          minPrice = stores[i].price
+        } else if (stores[i].price < minPrice) {
+          minPrice = stores[i].price
+        }
+      }
+
+      return minPrice
+    }
   },
   mounted () {
   },

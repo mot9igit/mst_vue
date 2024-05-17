@@ -6,6 +6,16 @@
             <Breadcrumbs/>
             <h1 class="h1-mini">{{opt_products?.page?.pagetitle}}</h1>
             <TableCatalog v-if="opt_products.total !== 0" :items="opt_products"/>
+            <paginate
+                :page-count="this.opt_products.total / this.perpage"
+                :click-handler="pagClickCallback"
+                :prev-text="'Пред'"
+                :next-text="'След'"
+                :container-class="'pagination justify-content-center'"
+                :initialPage="this.page"
+                :forcePage="this.page"
+              >
+            </paginate>
         </div>
       </div>
       <div class="d-col-map">
@@ -20,6 +30,7 @@ import CatalogMenu from '../../components/opt/CatalogMenu.vue'
 import Basket from '../../components/opt/Basket.vue'
 import Vendors from '../../components/opt/Vendors.vue'
 import Breadcrumbs from '../../components/opt/Breadcrumbs.vue'
+import Paginate from 'vuejs-paginate-next'
 import TableCatalog from '../../components/opt/TableCatalog.vue'
 
 export default {
@@ -33,7 +44,9 @@ export default {
       opt_mainpage: {},
       opt_catalog: {},
       opt_vendors: {},
-      opt_products: {}
+      opt_products: {},
+      page: 1,
+      perpage: 25
     }
   },
   components: {
@@ -41,7 +54,8 @@ export default {
     Basket,
     Vendors,
     Breadcrumbs,
-    TableCatalog
+    TableCatalog,
+    Paginate
   },
   mounted () {
     this.get_opt_catalog_from_api().then(
@@ -51,8 +65,8 @@ export default {
       this.opt_vendors = this.optvendors
     )
     this.get_opt_products_from_api({
-      page: 1,
-      perpage: 25
+      page: this.page,
+      perpage: this.perpage
     }).then(
       this.opt_products = this.optproducts
     )
@@ -67,6 +81,15 @@ export default {
       'get_opt_vendors_from_api',
       'get_opt_products_from_api'
     ]),
+    pagClickCallback (pageNum) {
+      this.page = pageNum
+      this.get_opt_products_from_api({
+        page: this.page,
+        perpage: this.perpage
+      }).then(
+        this.opt_products = this.optproducts
+      )
+    },
     updatePage (categoryId) {
       this.loading = true
       this.get_opt_catalog_from_api().then(
@@ -76,8 +99,8 @@ export default {
         this.opt_vendors = this.optvendors
       )
       this.get_opt_products_from_api({
-        page: 1,
-        perpage: 25
+        page: this.page,
+        perpage: this.perpage
       }).then(() => {
         this.opt_products = this.optproducts
         this.loading = false
