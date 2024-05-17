@@ -68,6 +68,10 @@ export default {
         max-width: 64px;
         min-width: 64px;
 
+        .dart-catalog-menu__list{
+            max-height: 0px !important;
+        }
+
         .closemenu{
             p{
                 max-width: 0;
@@ -132,6 +136,7 @@ export default {
         &.menuShow{
             .dart-catalog-menu{
                 display: block;
+                width: 100%;
             }
 
             .dart-menu-category{
