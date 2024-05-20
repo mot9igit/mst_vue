@@ -158,7 +158,7 @@ export default {
     SET_OPT_PRODUCTS_TO_VUEX: (state, data) => {
       state.optproducts = data.data
     },
-    SET_BASKET_TO_VUEX: (state, data) => {
+    SET_BUSKET_TO_VUEX: (state, data) => {
       state.optbasket = data.data
     }
   },
@@ -174,6 +174,9 @@ export default {
     },
     optproducts (state) {
       return state.optproducts
+    },
+    optbasket (state) {
+      return state.optbasket
     }
   }
 }

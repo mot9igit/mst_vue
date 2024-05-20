@@ -1,17 +1,55 @@
 <template>
     <div className="d-col-basket">
-        <span class="d-col-basket__title">Корзина</span>
-        <div className="basket-empty">
+        <p class="d-col-basket__title">Корзина</p>
+        <div className="basket-empty" v-if="!this.basket">
             <div className="basket-empty__content">
-            <img src="../../assets/img/icons/basket-empty.svg" alt="" />
+            <img src="" alt="" />
             <h3>В вашей корзине пока пусто</h3>
             </div>
         </div>
+        <div class="basket-container">
+            <div v-for="store in this.basket.stores" v-bind:key="store.id">
+                <div class="basket-container__adres" :style="{'background': store.color}">
+                    {{store.name}}
+                </div>
+                <div v-for="product in store.products" v-bind:key="product.id" class="basket-container__card">
+                    <img
+                        class="basket-container__img"
+                        :src="product.image"
+                        :alt="product.name"
+                    />
+                    <div class="basket-container__info">
+                        <div class="basket-container__title">
+                            <p>
+                                {{product.name}}
+                            </p>
+                            <a href="#" class="btn-close link-no-style"
+                                ><i class="d_icon d_icon-close"></i
+                            ></a>
+                        </div>
+                        <p class="basket-container__article">{{product.article}}</p>
+                        <!-- <div class="basket-container__count">
+                            <p>В наличии <span>50 шт.</span></p>
+                            <p>На складе <span>100 шт.</span></p>
+                        </div> -->
+                        <div class="basket-container__price">
+                            <Counter :min="1" :max="100" :value="product.quantity"/>
+                            <b>{{(product.quantity * product.price).toLocaleString('ru')}} ₽</b>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a class="a-dart-btn a-dart-btn-primary btn-arrange button-basket"
+            >Оформить заказ <span>{{ this.basket?.cost?.toLocaleString('ru') }} ₽</span></a
+        >
     </div>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
+import Counter from './Counter.vue'
 
 export default {
   name: 'Basket',
@@ -42,15 +80,25 @@ export default {
       this.basket = this.optbasket
     )
   },
-  components: { },
+  components: { Counter },
   computed: {
     ...mapGetters([
-      'basket'
+      'optbasket'
     ])
+  },
+  watch: {
+    optbasket: function (newVal, oldVal) {
+      this.basket = newVal
+    }
   }
 }
 </script>
 <style lang="scss">
+    .button-basket{
+        width: 100%;
+        margin-top: 16px;
+    }
+
     .d-col-basket{
         overflow: hidden;
         padding: 20px;
@@ -94,6 +142,7 @@ export default {
             font-weight: 500;
             line-height: 24px;
             color: #282828;
+            margin-bottom: 16px
         }
 
         h3{
@@ -142,6 +191,7 @@ export default {
                     font-style: normal;
                     font-weight: 400;
                     line-height: 18px;
+                    margin: 0;
                 }
 
                 p{
@@ -151,6 +201,7 @@ export default {
                     font-style: normal;
                     font-weight: 400;
                     line-height: 18px;
+                    margin: 0;
                 }
             }
 
@@ -170,7 +221,8 @@ export default {
             }
 
             &__img{
-                width: 108px;
+                width: 40px;
+                height: 40px !important;
                 object-fit: contain;
             }
 
