@@ -57,6 +57,8 @@ import ProfileReturnsProduct from '../pages/ProfileReturnsProduct.vue'
 import Sales from '../pages/sales/Sales.vue'
 import SalesAdd from '../pages/sales/SalesAdd.vue'
 import SalesEdit from '../pages/sales/SalesEdit.vue'
+import ActionAdd from '../pages/marketing/ActionAdd.vue'
+import Actions from '../pages/marketing/Actions.vue'
 
 const routes = [
   {
@@ -439,6 +441,27 @@ const routes = [
           }, {
             path: ':sales_id',
             name: 'org_sales_edit',
+            props: true,
+            label: 'Редактирование акции',
+            component: SalesEdit
+          }]
+        }, {
+          path: 'marketing',
+          children: [{
+            path: '',
+            name: 'org_actions',
+            props: true,
+            label: 'Акции',
+            component: Actions
+          }, {
+            path: 'add',
+            name: 'org_action_add',
+            props: true,
+            label: 'Добавление акции',
+            component: ActionAdd
+          }, {
+            path: ':action_id',
+            name: 'org_action_edit',
             props: true,
             label: 'Редактирование акции',
             component: SalesEdit

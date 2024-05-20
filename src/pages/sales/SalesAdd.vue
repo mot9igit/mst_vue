@@ -556,6 +556,7 @@ export default {
         this.$load(async () => {
           await this.set_sales_to_api({
             action: 'set',
+            type: 'b2b',
             id: router.currentRoute._value.params.id,
             name: this.form.name,
             description: this.form.description,
