@@ -6,7 +6,8 @@ export default {
     mainpage: [],
     optcatalog: [],
     optvendors: [],
-    optproducts: []
+    optproducts: [],
+    optbasket: []
   },
   actions: {
     set_vendors_to_api ({ commit }, data) {
@@ -124,6 +125,24 @@ export default {
             router.push({ name: 'home' })
           }
         })
+    },
+    busket_from_api ({ commit }, data) {
+      return Axios('/rest/front_opt', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_BUSKET_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
     }
   },
   mutations: {
@@ -138,6 +157,9 @@ export default {
     },
     SET_OPT_PRODUCTS_TO_VUEX: (state, data) => {
       state.optproducts = data.data
+    },
+    SET_BASKET_TO_VUEX: (state, data) => {
+      state.optbasket = data.data
     }
   },
   getters: {

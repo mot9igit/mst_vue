@@ -17,6 +17,7 @@ import { mapActions, mapGetters } from 'vuex'
 
 export default {
   name: 'Counter',
+  emits: ['ElemCount'],
   props: {
     min: {
       type: Number,
@@ -46,11 +47,13 @@ export default {
       if (this.d_value > this.d_min) {
         this.d_value = this.d_value - 1
       }
+      this.$emit('ElemCount', this.d_value)
     },
     onPlus () {
       if (this.d_value < this.d_max) {
         this.d_value = this.d_value + 1
       }
+      this.$emit('ElemCount', this.d_value)
     }
   },
   mounted () {

@@ -11,6 +11,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import router from '@/router'
 
 export default {
   name: 'Basket',
@@ -26,18 +27,25 @@ export default {
   },
   data () {
     return {
-      loading: true
+      loading: true,
+      basket: {}
     }
   },
   methods: {
     ...mapActions([
+      'busket_from_api'
     ])
   },
   mounted () {
+    const data = { action: 'basket/get', id: router.currentRoute._value.params.id }
+    this.busket_from_api(data).then(
+      this.basket = this.optbasket
+    )
   },
   components: { },
   computed: {
     ...mapGetters([
+      'basket'
     ])
   }
 }

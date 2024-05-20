@@ -26,8 +26,8 @@
         <td class="k-table__title">{{item.name}}</td>
         <td class="k-table__busket">
           <form class="k-table__form" action="">
-            <Counter :min="0" :max="100" :value="0"/>
-            <button class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></button>
+            <Counter @ElemCount="ElemCount" :min="1" :max="item.remains" :value="this.value"/>
+            <div @click="addBasket(item.product_id, this.value, item.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
           </form>
         </td>
         <td></td>
@@ -43,6 +43,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import Counter from './Counter.vue'
+import router from '@/router'
 
 export default {
   name: 'TableCatalogRow',
@@ -62,11 +63,13 @@ export default {
   data () {
     return {
       loading: true,
-      active: false
+      active: false,
+      value: 1
     }
   },
   methods: {
     ...mapActions([
+      'busket_from_api'
     ]),
     getMinPrice (stores) {
       let minPrice
@@ -81,13 +84,22 @@ export default {
       }
 
       return minPrice
+    },
+    addBasket (id, value, storeid) {
+      const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_product: id, value, store_id: storeid }
+      this.busket_from_api(data).then()
+    },
+    ElemCount (value) {
+      this.value = value
     }
   },
   mounted () {
+
   },
   components: { Counter },
   computed: {
     ...mapGetters([
+      'basket'
     ])
   }
 }
