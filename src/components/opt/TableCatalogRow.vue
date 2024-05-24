@@ -47,6 +47,7 @@ import router from '@/router'
 
 export default {
   name: 'TableCatalogRow',
+  emits: ['updateBasket'],
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -88,9 +89,10 @@ export default {
     addBasket (id, value, storeid) {
       const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_product: id, value, store_id: storeid }
       this.busket_from_api(data).then()
+      this.$emit('updateBasket')
     },
-    ElemCount (value) {
-      this.value = value
+    ElemCount (object) {
+      this.value = object.value
     }
   },
   mounted () {

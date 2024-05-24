@@ -233,6 +233,12 @@ export default {
             icon: 'd_icon d_icon-star',
             to: { name: 'org_sales', params: { id: this.$route.params.id } }
           },
+          {
+            key: '4',
+            label: 'B2C-маркетинг',
+            icon: 'd_icon d_icon-star',
+            to: { name: 'org_actions', params: { id: this.$route.params.id } }
+          },
           // {
           //   key: '4',
           //   label: 'Программы оптовиков и производителей',
@@ -295,6 +301,12 @@ export default {
             icon: 'd_icon d_icon-star',
             to: { name: 'org_sales', params: { id: this.$route.params.id } }
           },
+          {
+            key: '6',
+            label: 'B2C-маркетинг',
+            icon: 'd_icon d_icon-star',
+            to: { name: 'org_actions', params: { id: this.$route.params.id } }
+          },
           // {
           //   key: '5',
           //   label: 'Программы производителей',
@@ -350,6 +362,12 @@ export default {
             label: 'B2B-маркетинг',
             icon: 'd_icon d_icon-star',
             to: { name: 'org_sales', params: { id: this.$route.params.id } }
+          },
+          {
+            key: '5',
+            label: 'B2C-маркетинг',
+            icon: 'd_icon d_icon-star',
+            to: { name: 'org_actions', params: { id: this.$route.params.id } }
           },
           // {
           //   key: '4',

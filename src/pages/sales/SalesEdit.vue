@@ -44,6 +44,19 @@
         </div>
       </div>
 
+      <div class="dart-form-group mb-4">
+        <div class="upload-banner">
+          <div class="upload-banner__text">
+            <span class="ktitle">Иконка</span>
+            <span>Вы можете загрузить свое изображение или выбрать изображение из банка иконок</span>
+          </div>
+          <FileUpload class="kenost-upload-button" mode="basic" name="icon[]" :url="'/rest/file_upload.php?banner=icon'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+        </div>
+        <div class="upload-icon__image">
+          <img :src="files?.icon?.original_href" v-if="files?.icon?.original_href">
+        </div>
+      </div>
+
       <!-- <div class="dart-form-group mb-4">
         <div class="upload-banner">
           <div class="upload-banner__text">

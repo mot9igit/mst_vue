@@ -1,14 +1,14 @@
 <template>
     <div className="d-col-basket">
-        <p class="d-col-basket__title">Корзина</p>
+        <p class="d-col-basket__title"><span>Корзина</span> <span v-if="this.basket" @click="clearBasket" class="basketClear">Очистить</span></p>
         <div className="basket-empty" v-if="!this.basket">
             <div className="basket-empty__content">
-            <img src="" alt="" />
+            <img src="../../../public/img/opt/basket.svg" alt="" />
             <h3>В вашей корзине пока пусто</h3>
             </div>
         </div>
         <div class="basket-container">
-            <div v-for="store in this.basket.stores" v-bind:key="store.id">
+            <div v-for="store in this.basket?.stores" v-bind:key="store.id">
                 <div class="basket-container__adres" :style="{'background': store.color}">
                     {{store.name}}
                 </div>
@@ -23,9 +23,9 @@
                             <p>
                                 {{product.name}}
                             </p>
-                            <a href="#" class="btn-close link-no-style"
+                            <div @click="clearBasketProduct(product.store_id, product.id)" class="btn-close link-no-style"
                                 ><i class="d_icon d_icon-close"></i
-                            ></a>
+                            ></div>
                         </div>
                         <p class="basket-container__article">{{product.article}}</p>
                         <!-- <div class="basket-container__count">
@@ -33,7 +33,7 @@
                             <p>На складе <span>100 шт.</span></p>
                         </div> -->
                         <div class="basket-container__price">
-                            <Counter :min="1" :max="100" :value="product.quantity"/>
+                            <Counter @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.quantity" :id="product.id" :store_id="product.store_id"/>
                             <b>{{(product.quantity * product.price).toLocaleString('ru')}} ₽</b>
                         </div>
                     </div>
@@ -72,7 +72,25 @@ export default {
   methods: {
     ...mapActions([
       'busket_from_api'
-    ])
+    ]),
+    updateBasket () {
+    //   const data = { action: 'basket/get', id: router.currentRoute._value.params.id }
+    //   this.busket_from_api(data).then(
+    //     this.basket = this.optbasket
+    //   )
+    },
+    ElemCount (object) {
+      const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_product: object.id, value: object.value, store_id: object.store_id }
+      this.busket_from_api(data).then()
+    },
+    clearBasket () {
+      const data = { action: 'basket/clear', id: router.currentRoute._value.params.id }
+      this.busket_from_api(data).then()
+    },
+    clearBasketProduct (storeid, productid) {
+      const data = { action: 'basket/clear', id: router.currentRoute._value.params.id, store_id: storeid, id_product: productid }
+      this.busket_from_api(data).then()
+    }
   },
   mounted () {
     const data = { action: 'basket/get', id: router.currentRoute._value.params.id }
@@ -94,6 +112,14 @@ export default {
 }
 </script>
 <style lang="scss">
+
+    .basketClear{
+        color: #ACABAB;
+        font-size: 14px;
+        font-weight: 400;
+        cursor: pointer;
+    }
+
     .button-basket{
         width: 100%;
         margin-top: 16px;
@@ -142,7 +168,10 @@ export default {
             font-weight: 500;
             line-height: 24px;
             color: #282828;
-            margin-bottom: 16px
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
         h3{

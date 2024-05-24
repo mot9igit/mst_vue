@@ -5,7 +5,7 @@
         <div class="dart-home dart-window">
             <Breadcrumbs/>
             <h1 class="h1-mini">{{opt_products?.page?.pagetitle}}</h1>
-            <TableCatalog v-if="opt_products.total !== 0" :items="opt_products"/>
+            <TableCatalog @updateBasket="updateBasket" v-if="opt_products.total !== 0" :items="opt_products"/>
             <paginate
                 :page-count="this.opt_products.total / this.perpage"
                 :click-handler="pagClickCallback"
@@ -20,7 +20,7 @@
       </div>
       <div class="d-col-map">
         <Vendors :items="this.opt_vendors"/>
-        <Basket />
+        <Basket ref="childComponent"/>
       </div>
     </div>
   </template>
@@ -106,6 +106,9 @@ export default {
         this.loading = false
       }
       )
+    },
+    updateBasket () {
+      this.$refs.childComponent.updateBasket()
     }
   },
   computed: {

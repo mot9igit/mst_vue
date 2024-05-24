@@ -2,20 +2,20 @@
     <Toast />
     <form @submit.prevent="formSubmit">
       <div class="profile-content__title">
-          <span class="maintitle">Создание акции</span>
+          <span class="maintitle">Редактирование акции</span>
           <div class="buttons_container">
-            <RouterLink :to="{ name: 'org_sales', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary btn-padding">Отменить</RouterLink>
-            <button type="submit" class="dart-btn dart-btn-primary btn-padding" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Добавить</button>
+            <RouterLink :to="{ name: 'org_actions', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary btn-padding">Отменить</RouterLink>
+            <button type="submit" class="dart-btn dart-btn-primary btn-padding" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Сохранить</button>
           </div>
       </div>
       <div>
 
-        <!-- <div>
-            <p class="kgraytext m-0">Статус: <span>Отказ</span></p>
-            <p class="kgraytext">Комментарий от модератора: ???</p>
-        </div> -->
+        <div>
+            <p class="kgraytext m-0">Статус: <span>{{this.status}}</span></p>
+            <p class="kgraytext" v-if="this.moderator_comment != ''">Комментарий от модератора: {{ this.moderator_comment }}</p>
+        </div>
 
-        <div class="dart-form-group mb-4">
+        <div class="dart-form-group mt-2 mb-4">
           <span class="ktitle">Заголовок</span>
           <!-- <label for="name">Введите наименование, которое будет отражать смысл вашей акции</label> -->
           <input v-model="form.name" type="text" name="name" placeholder="Укажите название акции" class="dart-form-control" :class="{'kenost-error':this.validation.name.error}">
@@ -74,9 +74,9 @@
                 <div class="rules-container__text">
                     <span class="ktitle">Правила акции</span>
                     <p class="kgraytext">Загрузите файл с подробными правилами акции</p>
-                    <a target="_blank" :href="files?.file?.original_href" class="kenost-add-file" v-if="files?.file?.name">
+                    <a target="_blank" :href="files?.file?.original_href" class="kenost-add-file" v-if="files?.file?.original_href">
                         <img src="../../../public/img/files/pdf.png" alt="">
-                        <p>{{files?.file?.name}}</p>
+                        <p>{{files?.file?.name? files?.file?.name : "Файл загружен!"}}</p>
                     </a>
                 </div>
                 <FileUpload class="kenost-upload-button" mode="basic" name="icon[]" :url="'/rest/file_upload.php?banner=file'" accept="application/pdf" :maxFileSize="20000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
@@ -263,7 +263,20 @@ export default {
         }
       },
       region_all: [],
-      files: {},
+      files: {
+        max: {
+          original_href: ''
+        },
+        min: {
+          original_href: ''
+        },
+        icon: {
+          original_href: ''
+        },
+        file: {
+          original_href: ''
+        }
+      },
       filter: {
         name: '',
         category: {}
@@ -287,7 +300,8 @@ export default {
       'get_available_products_from_api',
       'set_sales_to_api',
       'get_catalog_from_api',
-      'get_regions_from_api'
+      'get_regions_from_api',
+      'get_sales_to_api'
     ]),
     paginate (obj) {
       this.page_selected = obj.page
@@ -421,7 +435,8 @@ export default {
             products: this.selected,
             files: this.files,
             regins: this.select_regions,
-            region_all: reginsall
+            region_all: reginsall,
+            action_id: router.currentRoute._value.params.action_id
           })
             .then((result) => {
               this.loading = false
@@ -445,13 +460,15 @@ export default {
     this.get_regions_from_api().then(
       this.regions = this.getregions
     )
+    this.get_sales_to_api({ id: router.currentRoute._value.params.sales_id, actionid: router.currentRoute._value.params.action_id })
   },
   components: { Calendar, TreeSelect, Paginate, FileUpload, Toast, InputNumber, Checkbox },
   computed: {
     ...mapGetters([
       'available_products',
       'getcatalog',
-      'getregions'
+      'getregions',
+      'actions'
     ]),
     pagesCount () {
       let pages = Math.round(this.total_products / this.per_page)
@@ -471,12 +488,53 @@ export default {
     },
     getregions: function (newVal, oldVal) {
       this.regions = this.getregions
+    },
+    actions: function (newVal, oldVal) {
+      this.form.name = newVal.name
+      if (newVal.image) {
+        this.files.max.original_href = this.site_url_prefix + newVal.image
+      }
+      if (newVal.image_inner) {
+        this.files.min.original_href = this.site_url_prefix + newVal.image_inner
+      }
+      if (newVal.icon) {
+        this.files.icon.original_href = this.site_url_prefix + newVal.icon
+      }
+      if (newVal.rules_file) {
+        this.files.file.original_href = this.site_url_prefix + newVal.rules_file
+      }
+      const dateto = new Date(newVal.date_to)
+      const datefrom = new Date(newVal.date_from)
+      this.form.dates = [datefrom, dateto]
+      this.selected = newVal.products
+      this.total_selected = newVal.total_products
+      this.form.conditions = newVal.conditions
+      this.status = newVal.status
+      this.moderator_comment = newVal.moderator_comment
+
+      if (newVal.global) {
+        this.region_all = ['1']
+      } else {
+        this.select_regions = newVal.regions_and_sities
+      }
+
+      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      this.get_available_products_from_api(data)
     }
   }
 }
 </script>
 
-  <style lang="scss">
+<style lang="scss">
+
+    .kenost-upload-button{
+      background: #F8F8F8 !important;
+      border: 1px solid #F8F8F8 !important;
+      color: #282828 !important;
+      box-shadow: 0px 1px 5px 0px #00000033 !important;
+      box-shadow: 0px 3px 1px 0px #0000001F !important;
+      box-shadow: 0px 2px 2px 0px #00000024 !important;
+    }
 
     .kenost-add-file{
         display: flex;

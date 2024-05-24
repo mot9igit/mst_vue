@@ -1,4 +1,5 @@
 <template>
+    <span class="maintitle">Мой маркетинг</span>
     <TabView class="tab-custom">
         <TabPanel header="Акции">
           <v-table
@@ -9,7 +10,7 @@
             :page="this.page"
             :table_data="this.table_data"
             :filters="this.filters"
-            :title="'Мои акции'"
+            :title="'Акции'"
             @filter="filter"
             @sort="filter"
             @paginate="paginate"
@@ -18,7 +19,7 @@
             @deleteElem="deleteElem"
           >
             <template v-slot:button>
-              <RouterLink :to="{ name: 'org_sales_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Создать подборку</RouterLink>
+              <RouterLink :to="{ name: 'org_action_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Создать подборку</RouterLink>
             </template>
           </v-table>
         </TabPanel>
@@ -85,10 +86,10 @@ export default {
         name: {
           label: 'Наименование',
           type: 'link',
-          link_to: 'org_sales_edit',
+          link_to: 'org_action_edit',
           link_params: {
             id: this.$route.params.id,
-            sales_id: 'id'
+            action_id: 'id'
           },
           sort: true
         },
@@ -99,6 +100,11 @@ export default {
         },
         date_to: {
           label: 'Действует до',
+          type: 'text',
+          sort: true
+        },
+        status: {
+          label: 'Статус',
           type: 'text',
           sort: true
         },
@@ -134,13 +140,15 @@ export default {
       'set_sales_to_api'
     ]),
     filter (data) {
+      data.type = 'b2c'
       this.get_sales_to_api(data)
     },
     paginate (data) {
+      data.type = 'b2c'
       this.get_sales_to_api(data)
     },
     editElem (value) {
-      router.push({ name: 'org_sales_edit', params: { id: this.$route.params.id, sales_id: value.id } })
+      router.push({ name: 'org_action_edit', params: { id: this.$route.params.id, action_id: value.id } })
     },
     approveElem (value) {
       this.$load(async () => {
@@ -152,7 +160,8 @@ export default {
           .then((result) => {
             this.get_sales_to_api({
               page: this.page,
-              perpage: this.pagination_items_per_page
+              perpage: this.pagination_items_per_page,
+              type: 'b2c'
             })
           })
           .catch((result) => {
@@ -170,7 +179,8 @@ export default {
           .then((result) => {
             this.get_sales_to_api({
               page: this.page,
-              perpage: this.pagination_items_per_page
+              perpage: this.pagination_items_per_page,
+              type: 'b2c'
             })
           })
           .catch((result) => {
@@ -182,7 +192,8 @@ export default {
   mounted () {
     this.get_sales_to_api({
       page: this.page,
-      perpage: this.pagination_items_per_page
+      perpage: this.pagination_items_per_page,
+      type: 'b2c'
     })
   },
   components: { vTable, RouterLink, TabView, TabPanel },

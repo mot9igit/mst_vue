@@ -30,6 +30,14 @@ export default {
     value: {
       type: Number,
       default: 0
+    },
+    id: {
+      type: Number,
+      default: 0
+    },
+    store_id: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -47,13 +55,23 @@ export default {
       if (this.d_value > this.d_min) {
         this.d_value = this.d_value - 1
       }
-      this.$emit('ElemCount', this.d_value)
+      const data = {
+        value: this.d_value,
+        id: this.id,
+        store_id: this.store_id
+      }
+      this.$emit('ElemCount', data)
     },
     onPlus () {
       if (this.d_value < this.d_max) {
         this.d_value = this.d_value + 1
       }
-      this.$emit('ElemCount', this.d_value)
+      const data = {
+        value: this.d_value,
+        id: this.id,
+        store_id: this.store_id
+      }
+      this.$emit('ElemCount', data)
     }
   },
   mounted () {

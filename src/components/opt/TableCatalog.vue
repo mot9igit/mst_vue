@@ -19,7 +19,7 @@
                 </tr>
             </thead>
             <tbody>
-                <TableCatalogRow v-for="item in items.items" v-bind:key="item.id" :items="item"/>
+                <TableCatalogRow @updateBasket="updateBasket" v-for="item in items.items" v-bind:key="item.id" :items="item"/>
             </tbody>
         </table>
     </div>
@@ -30,6 +30,7 @@ import TableCatalogRow from './TableCatalogRow.vue'
 
 export default {
   name: 'TableCatalog',
+  emits: ['updateBasket'],
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -50,7 +51,10 @@ export default {
   },
   methods: {
     ...mapActions([
-    ])
+    ]),
+    updateBasket () {
+      this.$emit('updateBasket')
+    }
   },
   mounted () {
   },

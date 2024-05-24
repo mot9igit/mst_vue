@@ -59,6 +59,7 @@ import SalesAdd from '../pages/sales/SalesAdd.vue'
 import SalesEdit from '../pages/sales/SalesEdit.vue'
 import ActionAdd from '../pages/marketing/ActionAdd.vue'
 import Actions from '../pages/marketing/Actions.vue'
+import ActionEdit from '../pages/marketing/ActionEdit.vue'
 
 const routes = [
   {
@@ -464,7 +465,7 @@ const routes = [
             name: 'org_action_edit',
             props: true,
             label: 'Редактирование акции',
-            component: SalesEdit
+            component: ActionEdit
           }]
         }]
       }]

@@ -134,9 +134,11 @@ export default {
       'set_sales_to_api'
     ]),
     filter (data) {
+      data.type = 'b2b'
       this.get_sales_to_api(data)
     },
     paginate (data) {
+      data.type = 'b2b'
       this.get_sales_to_api(data)
     },
     editElem (value) {
@@ -152,7 +154,8 @@ export default {
           .then((result) => {
             this.get_sales_to_api({
               page: this.page,
-              perpage: this.pagination_items_per_page
+              perpage: this.pagination_items_per_page,
+              type: 'b2b'
             })
           })
           .catch((result) => {
@@ -170,7 +173,8 @@ export default {
           .then((result) => {
             this.get_sales_to_api({
               page: this.page,
-              perpage: this.pagination_items_per_page
+              perpage: this.pagination_items_per_page,
+              type: 'b2b'
             })
           })
           .catch((result) => {
@@ -182,7 +186,8 @@ export default {
   mounted () {
     this.get_sales_to_api({
       page: this.page,
-      perpage: this.pagination_items_per_page
+      perpage: this.pagination_items_per_page,
+      type: 'b2b'
     })
   },
   components: { vTable, RouterLink, TabView, TabPanel },

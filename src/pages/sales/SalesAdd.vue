@@ -23,7 +23,7 @@
             <span>Чтобы обложка выглядела качественно на всех устройствах, советуем загрузить изображение размером не менее 1108х332 пикс. Размер файла - не более ?? МБ. Форматы файла - ???.</span>
           </div>
           <!-- <div class="dart-btn dart-btn-secondary btn-padding">Загрузить</div> -->
-          <FileUpload mode="basic" name="banner[]" :url="'/rest/file_upload.php?banner=max'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+          <FileUpload class="kenost-upload-button" mode="basic" name="banner[]" :url="'/rest/file_upload.php?banner=max'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
         </div>
         <div class="upload-banner__image upload-banner__banner">
           <img :src="files?.max?.original_href" v-if="files?.max?.original_href">
@@ -37,10 +37,23 @@
             <span>Чтобы обложка выглядела качественно на всех устройствах, советуем загрузить изображение размером не менее 500х500 пикс. Размер файла - не более ?? МБ. Форматы файла - ???.</span>
           </div>
           <!-- <div class="dart-btn dart-btn-secondary btn-padding">Загрузить</div> -->
-          <FileUpload mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+          <FileUpload class="kenost-upload-button" mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
         </div>
         <div class="upload-banner__image">
           <img :src="files?.min?.original_href" v-if="files?.min?.original_href">
+        </div>
+      </div>
+
+      <div class="dart-form-group mb-4">
+        <div class="upload-banner">
+          <div class="upload-banner__text">
+            <span class="ktitle">Иконка</span>
+            <span>Вы можете загрузить свое изображение или выбрать изображение из банка иконок</span>
+          </div>
+          <FileUpload class="kenost-upload-button" mode="basic" name="icon[]" :url="'/rest/file_upload.php?banner=icon'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+        </div>
+        <div class="upload-icon__image">
+          <img :src="files?.icon?.original_href" v-if="files?.icon?.original_href">
         </div>
       </div>
 
@@ -114,8 +127,12 @@
 
       <div class="dart-form-group picker-wrap">
         <span class="ktitle">Добавление товаров</span>
+        <div class="flex align-items-center mb-3">
+          <Checkbox v-model="this.all_product" inputId="all_product" name="region_all" value="1" />
+          <label for="all_product" class="ml-2"> Доступна для всех товаров </label>
+        </div>
         <span v-if="this.validation.selected.error" class="kenost-error-text">{{ this.validation.selected.text }}</span>
-        <div class="PickList">
+        <div v-if="this.all_product.length == 0" class="PickList">
           <div class="PickList__product" :class="{'kenost-error':this.validation.selected.error}">
             <b class="PickList__title">Доступные товары</b>
             <div class="PickList__filters">
@@ -185,26 +202,481 @@
           </div>
         </div>
       </div>
-      <div class="selectedProducts mb-5">
+      <div v-if="Object.keys(this.selected).length > 0 && this.all_product.length == 0" class="selectedProducts mb-5">
         <span class="title">Таблица добавленных товаров</span>
-        <div class="selectedProductsTable" v-if="this.total_selected > 0">
-          <v-table
-            :total="this.total_selected"
-            :items_data="this.selected"
-            :pagination_items_per_page="this.pagination_items_per_page_selected"
-            :pagination_offset="this.pagination_offset_selected"
-            :page="this.page_selected"
-            :table_data="this.table_data"
-            :filters="this.filters"
-            :editMode="this.editMode"
-            @filter="filter"
-            @sort="filter"
-            @paginate="paginate"
-            @editNumber="editNumber"
-          >
-          </v-table>
+        <div class="selectedProductsTable" >
+          <table class="kenost-action-table">
+            <thead>
+                <tr>
+                    <th class="kenost-action-table__name center kenost-th__сheckbox"><Checkbox @update:modelValue="kenostTableCheckedAll" v-model="this.kenost_table_all" inputId="kenost_table_all" value="1" /></th>
+                    <th class="kenost-action-table__name kenost-th__name">Товар</th>
+                    <th class="kenost-action-table__name center kenost-th__price">РРЦ (₽)</th>
+                    <th class="kenost-action-table__name center kenost-th__formula">Скидка по формуле</th>
+                    <th class="kenost-action-table__name kenost-th__typePrice">Тип цен</th>
+                    <th class="kenost-action-table__name center kenost-th__number">Скидка в %</th>
+                    <th class="kenost-action-table__name center kenost-th__number">Скидка в ₽</th>
+                    <th class="kenost-action-table__name center kenost-th__number">Цена со скидкой</th>
+                    <th class="kenost-action-table__name kenost-th__discount-condition">Условие скидки</th>
+                    <th class="kenost-action-table__name kenost-th__discount-condition"></th>
+                    <th class="kenost-action-table__name"></th>
+                    <th class="kenost-action-table__name"></th>
+                    <th class="kenost-action-table__name center kenost-th__number">Отсрочка (дн)</th>
+                    <th class="kenost-action-table__name kenost-th__discount-condition">Условие отсрочки</th>
+                    <th class="kenost-action-table__name kenost-th__number"></th>
+                    <th class="kenost-action-table__name kenost-th__discount-condition">Оплата доставки</th>
+                    <th class="kenost-action-table__name kenost-th__discount-condition">Условие оплаты доставки</th>
+                    <th class="kenost-action-table__name"></th>
+                    <th class="kenost-action-table__name kenost-th__discount-condition">Регион доставки</th>
+                    <th class="kenost-action-table__name kenost-th__discount-condition">Условие отгрузки</th>
+                    <th class="kenost-action-table__name"></th>
+                </tr>
+            </thead>
+            <tbody v-for="(item, index) in this.selected" :key="item.id">
+                <tr >
+                  <td class="center kenost-action-table-td__сheckbox">
+                    <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
+                  </td>
+                  <td class="kenost-action-table-td__name">
+                    <img class="mt-4" :src="'https://mst.tools' + item.image">
+                    <div class="kenost-action-table-td__text mt-4">
+                      <p>{{ item.name }}</p>
+                      <span>{{item.article}}</span>
+                    </div>
+                  </td>
+                  <td class="center mt-4">
+                    {{ (Number(item.price).toFixed(0)).toLocaleString('ru') }}
+                  </td>
+                  <td class="center">
+                    <div @click="this.visible = true, this.discountFormul.index = index, this.discountFormul.price = Number(item.price)" class="dart-btn dart-btn-secondary mt-4">Задать скидку по формуле</div>
+                  </td>
+                  <td class="">
+                    <div class="kenost-wiget">
+                      <p>&nbsp;</p>
+                      <Dropdown v-model="item.typePrice" :options="this.typePrice" optionLabel="name" placeholder="Тип цены" class="mt-2 w-full md:w-14rem" />
+                    </div>
+                  </td>
+                  <td class="center kenost-action-table-td__number">
+                    <div class="kenost-wiget">
+                      <p>&nbsp;</p>
+                      <InputNumber
+                          v-model="this.selected[index].discountInterest"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          max="100"
+                          suffix=" %"
+                          @update:modelValue="setPrices(index, 'discountInterest', this.selected[index].discountInterest)"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                  </td>
+                  <td class="center kenost-action-table-td__number">
+                    <div class="kenost-wiget">
+                      <p>&nbsp;</p>
+                      <InputNumber
+                          v-model="selected[index].discountInRubles"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          :max="item.price"
+                          mode="currency" currency="RUB"
+                          @update:modelValue="setPrices(index, 'discountInRubles', this.selected[index].discountInRubles)"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                  </td>
+                  <td class="center kenost-action-table-td__number">
+                    <div class="kenost-wiget">
+                      <p>&nbsp;</p>
+                      <InputNumber
+                          v-model="selected[index].finalPrice"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          :max="item.price"
+                          mode="currency" currency="RUB"
+                          min="0"
+                          @update:modelValue="setPrices(index, 'finalPrice', this.selected[index].finalPrice)"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                  </td>
+                  <td class="kenost-action-table-td__discount-condition">
+                    <div class="kenost-wiget">
+                      <p>&nbsp;</p>
+                      <Dropdown v-model="item.condition" :options="this.condition" optionLabel="name" placeholder="Условие скидки" class="w-full md:w-14rem" />
+                    </div>
+                  </td>
+                  <td :class="{'kenost-action-table-td__discount-condition' : item.condition.key == 1 || item.condition.key == 2, 'kenost-action-table-td__num' : item.condition.key == 0 || item.condition.key == 3}">
+                    <div class="kenost-wiget" v-if="item.condition.key == 1 || item.condition.key == 2">
+                      <p>Тип товара</p>
+                      <Dropdown v-model="item.conditionInfo.productType" :options="this.productType" optionLabel="name" placeholder="Тип товара" class="w-full md:w-14rem" />
+                    </div>
+                    <div class="kenost-wiget" v-if="item.condition.key == 0">
+                      <p>Кратность</p>
+                      <InputNumber
+                        v-model="selected[index].conditionInfo.multiplicity"
+                        inputId="horizontal-buttons"
+                        :step="1"
+                        min="0"
+                        incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                    <div class="kenost-wiget" v-if="item.condition.key == 3">
+                      <p>Мин общая сумма</p>
+                      <InputNumber
+                          v-model="selected[index].conditionInfo.minTotalAmount"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                  </td>
+                  <td class="kenost-action-table-td__num">
+                    <div class="kenost-wiget" v-if="item.condition.key == 1">
+                      <p>Кратность</p>
+                      <InputNumber
+                          v-model="selected[index].conditionInfo.multiplicity"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                    <div class="kenost-wiget" v-if="item.condition.key == 2">
+                      <p>Мин общая сумма</p>
+                      <InputNumber
+                          v-model="selected[index].conditionInfo.minTotalAmount"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                  </td>
+                  <td class="kenost-action-table-td__num">
+                    <div class="kenost-wiget" v-if="item.condition.key == 2">
+                      <p>Мин общее кол-во SKU</p>
+                      <InputNumber
+                          v-model="selected[index].conditionInfo.minTotalSKU"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                  </td>
+                  <td class="center kenost-action-table-td__number">
+                    <div class="kenost-wiget">
+                      <p>&nbsp;</p>
+                      <InputNumber
+                          v-model="selected[index].delay"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                  </td>
+                  <td class="kenost-action-table-td__discount-condition">
+                    <div class="kenost-wiget">
+                      <p>&nbsp;</p>
+                      <Dropdown v-model="item.postponementConditions" :options="this.postponementConditions" optionLabel="name" placeholder="Условие отсрочки" class="w-full md:w-14rem" />
+                    </div>
+                    </td>
+                  <td class="kenost-action-table-td__number">
+                    <div class="kenost-wiget" v-if="item.postponementConditions.key == 0">
+                      <p>Мин общая сумма</p>
+                      <InputNumber
+                          v-model="selected[index].postponementConditionsInfo.minTotalAmount"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                    <div class="kenost-wiget" v-if="item.postponementConditions.key == 1">
+                      <p>Мин кол-во товара</p>
+                      <InputNumber
+                          v-model="selected[index].postponementConditionsInfo.minQuantity"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                  </td>
+                  <td class="kenost-action-table-td__discount-condition">
+                    <div class="kenost-wiget">
+                      <p>&nbsp;</p>
+                      <Dropdown v-model="item.paymentDelivery" :options="this.paymentDelivery" optionLabel="name" placeholder="Оплата доставки" class="w-full md:w-14rem" />
+                    </div>
+                    </td>
+                  <td class="kenost-action-table-td__discount-condition">
+                    <div class="kenost-wiget">
+                      <p>&nbsp;</p>
+                      <Dropdown v-model="item.conditionPaymentDelivery" :options="this.conditionPaymentDelivery" optionLabel="name" placeholder="Условие оплаты доставки" class="w-full md:w-14rem" />
+                    </div>
+                    </td>
+                  <td class="kenost-action-table-td__number">
+                    <div class="kenost-wiget">
+                      <p>Минимальная общая сумма</p>
+                      <InputNumber
+                          v-model="selected[index].postponementConditionsInfo.minTotalAmount"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                  </td>
+                  <td class="kenost-action-table-td__discount-condition">
+                    <div class="kenost-wiget">
+                      <p>&nbsp;</p>
+                      <Dropdown v-model="item.conditionPaymentDelivery" :options="this.conditionPaymentDelivery" optionLabel="name" placeholder="Условие оплаты доставки" class="w-full md:w-14rem" />
+                    </div>
+                  </td>
+                  <td class="kenost-action-table-td__discount-condition">
+                    <div class="kenost-wiget">
+                      <p>&nbsp;</p>
+                      <Dropdown v-model="item.shipmentCondition" :options="this.shipmentCondition" optionLabel="name" placeholder="Условие отгрузки" class="w-full md:w-14rem" />
+                    </div>
+                  </td>
+                  <td class="kenost-action-table-td__number">
+                    <div class="kenost-wiget">
+                      <p>Значение в ₽</p>
+                      <InputNumber
+                          v-model="selected[index].postponementConditionsInfo.minTotalAmount"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                  </td>
+              </tr>
+              <tr>
+                  <td class="not-padding center"></td>
+                  <td class="not-padding kenost-action-table-td__name"></td>
+                  <td class="not-padding center"></td>
+                  <td class="not-padding center"></td>
+                  <td class="not-padding"></td>
+                  <td class="not-padding center kenost-action-table-td__number"></td>
+                  <td class="not-padding center kenost-action-table-td__number"></td>
+                  <td class="not-padding center kenost-action-table-td__number"></td>
+                  <td class="not-padding"></td>
+                  <td class="not-padding kenost-action-table-td__discount-condition">
+                    <div class="kenost-wiget" v-if="item.condition.key == 1 || item.condition.key == 2">
+                      <p>Тип товара</p>
+                      <Dropdown v-model="item.conditionInfo.productTypeTwo" :options="this.productType" optionLabel="name" placeholder="Тип товара" class="w-full md:w-14rem" />
+                    </div>
+                  </td>
+                  <td class="not-padding kenost-action-table-td__num">
+                    <div class="kenost-wiget" v-if="item.condition.key == 1">
+                      <p>Кол-во</p>
+                      <InputNumber
+                          v-model="selected[index].conditionInfo.quantity"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                    <div class="kenost-wiget" v-if="item.condition.key == 2">
+                      <p>Мин общая сумма</p>
+                      <InputNumber
+                          v-model="selected[index].conditionInfo.minTotalAmountTwo"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                  </td>
+                  <td class="not-padding kenost-action-table-td__num">
+                    <div class="kenost-wiget" v-if="item.condition.key == 2">
+                      <p>Мин общее кол-во SKU</p>
+                      <InputNumber
+                          v-model="selected[index].conditionInfo.minTotalAmountTwo"
+                          inputId="horizontal-buttons"
+                          :step="1"
+                          min="0"
+                          incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                      />
+                    </div>
+                  </td>
+                  <td class="not-padding"></td>
+                  <td class="not-padding"></td>
+                  <td class="not-padding"></td>
+                  <td class="not-padding"></td>
+                  <td class="not-padding"></td>
+                  <td class="not-padding"></td>
+                  <td class="not-padding"></td>
+                  <td class="not-padding"></td>
+                  <td class="not-padding"></td>
+              </tr>
+            </tbody>
+        </table>
         </div>
       </div>
+
+      <div class="kenost-all-table-activity">
+        <div class="kenost-wiget">
+          <p>Массовое действие</p>
+          <Dropdown v-model="this.kenostActivityAll.type" :options="this.massAction" optionLabel="name" placeholder="Массовое действие" class="w-full md:w-14rem" />
+        </div>
+        <div class="kenost-wiget">
+          <p>Тип цен</p>
+          <Dropdown v-model="this.kenostActivityAll.type_price" :options="this.typePrice" optionLabel="name" placeholder="Тип цен" class="w-full md:w-14rem" />
+        </div>
+        <div class="kenost-wiget">
+          <p>%</p>
+          <InputNumber
+              v-model="this.kenostActivityAll.value"
+              inputId="horizontal-buttons"
+              :step="1"
+              min="0"
+              incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+          />
+        </div>
+        <div class="kenost-wiget">
+          <p>Условие скидки к выбранным товарам</p>
+          <Dropdown v-model="this.kenostActivityAll.condition" :options="this.condition" optionLabel="name" placeholder="Условие скидки к выбранным товарам" class="w-full md:w-14rem" />
+        </div>
+        <div class="kenost-wiget" v-if="this.kenostActivityAll.condition.key == 0">
+          <p>Кратность</p>
+          <InputNumber
+            v-model="this.kenostActivityAll.multiplicity"
+            inputId="horizontal-buttons"
+            :step="1"
+            min="0"
+            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+          />
+        </div>
+
+        <div v-if="this.kenostActivityAll.condition.key == 1 || this.kenostActivityAll.condition.key == 2">
+          <div class="kenost-wiget">
+            <p>Тип товара</p>
+            <Dropdown v-model="this.kenostActivityAll.productType" :options="this.productType" optionLabel="name" placeholder="Тип товара" class="w-full md:w-14rem" />
+          </div>
+          <div class="kenost-wiget mt-2">
+            <p>Тип товара</p>
+            <Dropdown v-model="this.kenostActivityAll.productTypeTwo" :options="this.productType" optionLabel="name" placeholder="Тип товара" class="w-full md:w-14rem" />
+          </div>
+        </div>
+        <div v-if="this.kenostActivityAll.condition.key == 1">
+          <div class="kenost-wiget">
+            <p>Кратность</p>
+            <InputNumber
+              v-model="this.kenostActivityAll.multiplicity"
+              inputId="horizontal-buttons"
+              :step="1"
+              min="0"
+              incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+            />
+          </div>
+          <div class="kenost-wiget mt-2">
+            <p>Кол-во</p>
+            <InputNumber
+              v-model="this.kenostActivityAll.quantity"
+              inputId="horizontal-buttons"
+              :step="1"
+              min="0"
+              incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+            />
+          </div>
+        </div>
+        <div v-if="this.kenostActivityAll.condition.key == 2">
+          <div class="kenost-wiget">
+            <p>Мин общая сумма</p>
+            <InputNumber
+              v-model="this.kenostActivityAll.minTotalAmount"
+              inputId="horizontal-buttons"
+              :step="1"
+              min="0"
+              incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+            />
+          </div>
+          <div class="kenost-wiget mt-2">
+            <p>Мин общая сумма</p>
+            <InputNumber
+              v-model="this.kenostActivityAll.minTotalAmountTwo"
+              inputId="horizontal-buttons"
+              :step="1"
+              min="0"
+              incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+            />
+          </div>
+        </div>
+        <div v-if="this.kenostActivityAll.condition.key == 2">
+          <div class="kenost-wiget">
+            <p>Мин общее кол-во SKU</p>
+            <InputNumber
+              v-model="this.kenostActivityAll.minTotalSKU"
+              inputId="horizontal-buttons"
+              :step="1"
+              min="0"
+              incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+            />
+          </div>
+          <div class="kenost-wiget mt-2">
+            <p>Мин общее кол-во SKU</p>
+            <InputNumber
+              v-model="this.kenostActivityAll.minTotalSKUTwo"
+              inputId="horizontal-buttons"
+              :step="1"
+              min="0"
+              incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+            />
+          </div>
+        </div>
+        <div class="kenost-wiget" v-if="this.kenostActivityAll.condition.key == 3">
+          <p>Мин общая сумма</p>
+          <InputNumber
+            v-model="this.kenostActivityAll.minTotalAmount"
+            inputId="horizontal-buttons"
+            :step="1"
+            min="0"
+            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+          />
+        </div>
+        <div @click="massActionTable" class="dart-btn dart-btn-primary mt-3"><i class="pi pi-check"></i></div>
+      </div>
+
+      <Dialog v-model:visible="this.visible" header="Скидка по формуле" :style="{ width: '25rem' }">
+          <div class="kenost-modal-price">
+            <div class="kenost-wiget">
+              <p>Базовая цена</p>
+              <InputNumber
+                  v-model="this.discountFormul.price"
+                  inputId="horizontal-buttons"
+                  :step="1"
+                  min="0"
+                  disabled
+                  mode="currency" currency="RUB"
+                  incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+              />
+            </div>
+            <div class="mt-2">—</div>
+            <div class="kenost-wiget">
+              <p>Значение</p>
+              <InputNumber
+                  v-model="this.discountFormul.value"
+                  inputId="horizontal-buttons"
+                  :step="1"
+                  min="0"
+                  incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+              />
+            </div>
+            <div class="kenost-wiget">
+              <p>&nbsp;</p>
+              <Dropdown v-model="this.discountFormul.type" :options="this.typeFormul" optionLabel="name" placeholder="" class="w-full md:w-14rem" />
+            </div>
+          </div>
+          <div class="kenost-modal-price__button">
+            <div class="dart-btn dart-btn-primary" @click="setDiscountFormul">Подтвердить</div>
+          </div>
+      </Dialog>
 
       <div class="dart-form-group picker-wrap mt-4">
         <span class="ktitle">Участники</span>
@@ -277,13 +749,15 @@ import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
 import Calendar from 'primevue/calendar'
 import TreeSelect from 'primevue/treeselect'
-import vTable from '../../components/table/v-table'
-// import Dropdown from 'primevue/dropdown'
+// import vTable from '../../components/table/v-table'
+import Dropdown from 'primevue/dropdown'
 import RadioButton from 'primevue/radiobutton'
-// import Checkbox from 'primevue/checkbox'
+import Checkbox from 'primevue/checkbox'
 import Paginate from 'vuejs-paginate-next'
 import FileUpload from 'primevue/fileupload'
 import Toast from 'primevue/toast'
+import InputNumber from 'primevue/inputnumber'
+import Dialog from 'primevue/dialog'
 
 export default {
   name: 'ProfileSalesAdd',
@@ -299,6 +773,30 @@ export default {
       compatibilityDiscount: 0,
       compatibilityPost: 0,
       availability: [],
+      kenost_table_all: [],
+      kenost_table: [],
+      all_product: [],
+      discountFormul: {
+        index: 0,
+        price: 0,
+        value: 0,
+        type: { name: '₽', key: 0 }
+      },
+      visible: false,
+      kenostActivityAll: {
+        type_price: '',
+        value: 0,
+        condition: '',
+        multiplicity: 0, // Кратность
+        multiplicityTwo: 0, // Кратность
+        productType: 0, // Тип товара
+        productTypeTwo: 0, // Тип товара
+        quantity: 0, // Количество
+        minTotalAmount: 0, // Мин общая сумма
+        minTotalAmountTwo: 0, // Мин общая сумма
+        minTotalSKU: 0, // Мин общее кол-во SKU
+        minTotalSKUTwo: 0 // Мин общее кол-во SKU
+      },
       validation: {
         name: {
           error: false,
@@ -385,6 +883,48 @@ export default {
         { name: 'London' },
         { name: 'Istanbul' },
         { name: 'Paris' }
+      ],
+      typePrice: [
+        { name: 'Заданная', key: 0 },
+        { name: 'Заданная', key: 1 },
+        { name: 'Заданная', key: 2 },
+        { name: 'Заданная', key: 3 },
+        { name: 'Заданная', key: 4 }
+      ],
+      condition: [
+        { name: 'Купи Х товаров по цене Y', key: 0 },
+        { name: 'Получи подарок при покупке Х товаров', key: 1 },
+        { name: 'Купи на Х рублей - получи Y скидку на выбранный товар', key: 2 },
+        { name: 'Купи на Х рублей - получи скидку на Y %', key: 3 }
+      ],
+      productType: [
+        { name: 'Условие', key: 0 },
+        { name: 'Подарок', key: 1 },
+        { name: 'Товар со скидкой', key: 2 }
+      ],
+      postponementConditions: [
+        { name: 'При покупке на Х рублей получи отсрочку', key: 0 },
+        { name: 'При покупке Х товара получи отсрочку на него', key: 1 }
+      ],
+      paymentDelivery: [
+        { name: 'Покупатель', key: 0 },
+        { name: 'Компания', key: 1 }
+      ],
+      conditionPaymentDelivery: [
+        { name: 'Купи на Х рублей', key: 0 },
+        { name: 'Купи на Х рублей', key: 1 }
+      ],
+      shipmentCondition: [
+        { name: 'Минимальная сумма заказа', key: 0 },
+        { name: 'Минимальная сумма заказа', key: 1 }
+      ],
+      massAction: [
+        { name: 'Добавить скидку к выбранным товарам', key: 0 },
+        { name: 'Добавить скидку к выбранным товарам', key: 1 }
+      ],
+      typeFormul: [
+        { name: '₽', key: 0 },
+        { name: '%', key: 1 }
       ]
     }
   },
@@ -432,11 +972,49 @@ export default {
           break
       }
     },
+    setPrices (index, name, value) {
+      switch (name) {
+        case 'discountInterest':
+          this.selected[index].discountInRubles = (Number(this.selected[index].price) / 100) * value
+          this.selected[index].finalPrice = Number(this.selected[index].price) - this.selected[index].discountInRubles
+          break
+        case 'discountInRubles':
+          this.selected[index].discountInterest = value / (Number(this.selected[index].price) / 100)
+          this.selected[index].finalPrice = Number(this.selected[index].price) - this.selected[index].discountInRubles
+          break
+        case 'finalPrice':
+          this.selected[index].discountInRubles = Number(this.selected[index].price) - value
+          this.selected[index].discountInterest = this.selected[index].discountInRubles / (Number(this.selected[index].price) / 100)
+          break
+      }
+    },
     select (id) {
       const product = this.products.find(r => r.id === id)
       product.discountInRubles = 0
       product.discountInterest = 0
       product.finalPrice = Number(product.price)
+      product.typePrice = ''
+      product.condition = ''
+      product.conditionInfo = {
+        multiplicity: 0, // Кратность
+        multiplicityTwo: 0, // Кратность
+        productType: 0, // Тип товара
+        productTypeTwo: 0, // Тип товара
+        quantity: 0, // Количество
+        minTotalAmount: 0, // Мин общая сумма
+        minTotalAmountTwo: 0, // Мин общая сумма
+        minTotalSKU: 0, // Мин общее кол-во SKU
+        minTotalSKUTwo: 0 // Мин общее кол-во SKU
+      }
+      product.delay = 0
+      product.postponementConditions = ''
+      product.postponementConditionsInfo = {
+        minTotalAmount: 0,
+        minQuantity: 0
+      }
+      product.paymentDelivery = ''
+      product.conditionPaymentDelivery = 0
+      product.shipmentCondition = 0
 
       this.selected[product.id] = product
       this.products = this.products.filter((r) => r.id !== id)
@@ -577,6 +1155,59 @@ export default {
         })
         this.loading = true
       }
+    },
+    kenostTableCheckedAll () {
+      if (this.kenost_table_all.length === 0) {
+        this.kenost_table = []
+        for (let i = 0; i < Object.keys(this.selected).length; i++) {
+          this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
+          // console.log(this.selected[Object.keys(this.selected)[i]])
+        }
+      } else {
+        this.kenost_table = []
+      }
+    },
+    setDiscountFormul () {
+      if (this.discountFormul.type) {
+        if (this.discountFormul.type.key === 0) {
+          if (this.discountFormul.value) {
+            this.selected[this.discountFormul.index].discountInRubles = this.discountFormul.value
+            this.selected[this.discountFormul.index].discountInterest = this.discountFormul.value / (this.discountFormul.price / 100)
+            this.selected[this.discountFormul.index].finalPrice = this.discountFormul.price - this.discountFormul.value
+          }
+        } else if (this.discountFormul.type.key === 1) {
+          if (this.discountFormul.value) {
+            this.selected[this.discountFormul.index].discountInRubles = (this.discountFormul.price / 100) * this.discountFormul.value
+            this.selected[this.discountFormul.index].discountInterest = this.discountFormul.value
+            this.selected[this.discountFormul.index].finalPrice = this.discountFormul.price - (this.discountFormul.price / 100) * this.discountFormul.value
+          }
+        }
+        this.visible = false
+      }
+    },
+    massActionTable () {
+      console.log(this.kenost_table)
+      console.log(this.kenostActivityAll.type)
+      for (let i = 0; i < this.kenost_table.length; i++) {
+        this.selected[this.kenost_table[i]].condition = this.kenostActivityAll.condition
+        this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.type_price
+
+        this.selected[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value
+        this.selected[this.kenost_table[i]].discountInRubles = (Number(this.selected[this.kenost_table[i]].price) / 100) * this.kenostActivityAll.value
+        this.selected[this.kenost_table[i]].finalPrice = Number(this.selected[this.kenost_table[i]].price) - (Number(this.selected[this.kenost_table[i]].price) / 100) * this.kenostActivityAll.value
+
+        this.selected[this.kenost_table[i]].conditionInfo = {
+          multiplicity: this.kenostActivityAll.multiplicity, // Кратность
+          multiplicityTwo: this.kenostActivityAll.multiplicityTwo, // Кратность
+          productType: this.kenostActivityAll.productType, // Тип товара
+          productTypeTwo: this.kenostActivityAll.productTypeTwo, // Тип товара
+          quantity: this.kenostActivityAll.quantity, // Количество
+          minTotalAmount: this.kenostActivityAll.minTotalAmount, // Мин общая сумма
+          minTotalAmountTwo: this.kenostActivityAll.minTotalAmountTwo, // Мин общая сумма
+          minTotalSKU: this.kenostActivityAll.minTotalSKU, // Мин общее кол-во SKU
+          minTotalSKUTwo: this.kenostActivityAll.minTotalSKUTwo // Мин общее кол-во SKU
+        }
+      }
     }
   },
   mounted () {
@@ -591,7 +1222,7 @@ export default {
       this.all_organizations = this.allorganizations
     )
   },
-  components: { Calendar, TreeSelect, vTable, RadioButton, Paginate, FileUpload, Toast },
+  components: { Calendar, TreeSelect, RadioButton, Paginate, FileUpload, Toast, Checkbox, Dropdown, InputNumber, Dialog },
   computed: {
     ...mapGetters([
       'available_products',
@@ -622,6 +1253,176 @@ export default {
 </script>
 
 <style lang="scss">
+
+  .kenost-modal-price{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .p-inputnumber{
+      width: 104px;
+    }
+
+    .p-dropdown{
+      width: 74px;
+    }
+
+    &__button{
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+  }
+
+  .kenost-wiget{
+    p{
+      color: #A0A0A0;
+      font-weight: 400;
+      font-size: 12px;
+      margin: 0;
+    }
+  }
+
+  .kenost-all-table-activity{
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    .p-dropdown{
+      width: 290px;
+    }
+
+    .p-inputnumber{
+      width: 104px;
+    }
+  }
+
+  .selectedProductsTable{
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .kenost-th{
+    &__name{
+      width: 300px;
+    }
+
+    &__price{
+      width: 70px;
+    }
+
+    &__formula{
+      width: 255px;
+    }
+
+    &__typePrice{
+      width: 115px;
+    }
+
+    &__number{
+      width: 135px;
+    }
+
+    &__discount-condition{
+      width: 300px;
+    }
+
+    &__сheckbox{
+      width: 30px;
+    }
+  }
+
+  .kenost-action-table{
+    width: 4252px;
+
+    tbody + tbody{
+      border-top: 1px solid #ADADAD;
+    }
+
+    .p-dropdown{
+      margin: 0 !important;
+    }
+
+    td:not(.not-padding){
+      padding: 16px 0 0 0;
+    }
+
+    td.not-padding{
+      padding: 8px 0 16px 0;
+    }
+
+    td{
+      &.center{
+        text-align: center;
+      }
+    }
+
+    &__name{
+      color: #282828;
+      font-size: 14px;
+      font-weight: 500px;
+      padding: 8px 0 24px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1215686275);
+
+      &.center{
+        text-align: center;
+      }
+    }
+  }
+
+  .kenost-action-table-td{
+    &__name{
+      width: 300px;
+      display: flex;
+      gap: 8px;
+      img{
+        width: 38px;
+        height: 38px !important;
+        object-fit: contain;
+        border-radius: 5px;
+      }
+    }
+
+    &__number{
+      .p-component{
+        width: 85%;
+      }
+    }
+
+    &__text{
+      p{
+        margin: 0;
+        font-size: 14px;
+        font-weight: 400;
+        color: #282828;
+        line-height: 1;
+      }
+
+      span{
+        font-size: 12px;
+        font-weight: 400;
+        color: #ADADAD;
+        line-height: 1;
+      }
+    }
+
+    &__discount-condition{
+      .p-dropdown{
+        width: 290px !important;
+      }
+    }
+
+    &__num{
+      width: 170px;
+      padding: 16px 8px 0 8px !important;
+
+      &.not-padding{
+        padding: 0 8px 0 8px !important;
+      }
+    }
+  }
 
   .kenost-error{
     border: 1px solid #FF0000 !important;
