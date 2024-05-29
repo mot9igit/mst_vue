@@ -1,11 +1,280 @@
 <template>
-    <div class="k-order">
+    <div class="k-order show">
+        <div class="k-order__content">
+            <div class="k-order__title">
+                <h1>Оформление заказа</h1>
+                <div class="k-order__close">
+                    <i class="pi pi-times"></i>
+                </div>
+            </div>
+            <div class="k-order__orders">
+                <div class="k-order__order">
+                    <h3>Заказ у поставщика «СПО»</h3>
+                    <div class="k-order__shop">
+                        <img src="../../assets/img/ava.png" alt="">
+                        <p :style="{'background': '#6CA632'}">СПО, г.Екатеринбург, ул.Предельная 57/3</p>
+                    </div>
+                    <div class="k-order__product">
+                        <img class="k-order__product-img" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg" alt="">
+                        <div class="k-order__product-info">
+                            <div class="k-order__main-info">
+                                <p>Аккумуляторная дрель-шуруповерт ИНТЕРСКОЛ ДА-10/14.4Л2 425.0.2.00</p>
+                                <div class="k-order__actions">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <div class="k-order__actions-el last">+3</div>
+                                </div>
+                                <Counter :min="1" :max="100" :value="this.value"/>
+                                <b>13 290 ₽</b>
+                            </div>
+                            <div class="k-order__product-data">
+                                <span class="k-order__article">844337</span>
+                                <p class="k-order__info">Отсрочка: <span>50 дн.</span></p>
+                                <p class="k-order__info">Оплата доставки: <span>Покупатель</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="k-order__product">
+                        <img class="k-order__product-img" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg" alt="">
+                        <div class="k-order__product-info">
+                            <div class="k-order__main-info">
+                                <p>Аккумуляторная дрель-шуруповерт ИНТЕРСКОЛ ДА-10/14.4Л2 425.0.2.00</p>
+                                <div class="k-order__actions">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <div class="k-order__actions-el last">+3</div>
+                                </div>
+                                <Counter :min="1" :max="100" :value="this.value"/>
+                                <b>13 290 ₽</b>
+                            </div>
+                            <div class="k-order__product-data">
+                                <span class="k-order__article">844337</span>
+                                <p class="k-order__info">Отсрочка: <span>50 дн.</span></p>
+                                <p class="k-order__info">Оплата доставки: <span>Покупатель</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="k-order__final">
+                        <div class="k-order__final-info">
+                            <div class="k-order__colums">
+                                <p>Кол-во SKU с отсрочкой Х</p>
+                                <p>50</p>
+                            </div>
+                            <div class="k-order__colums">
+                                <p>Вес заказа (кг)</p>
+                                <p>50</p>
+                            </div>
+                            <div class="k-order__colums">
+                                <p>Кол-во SKU с отсрочкой Y</p>
+                                <p>50</p>
+                            </div>
+                            <div class="k-order__colums">
+                                <p>Объем заказа (шт)</p>
+                                <p>50</p>
+                            </div>
+                        </div>
+                        <div class="k-order__final-button">
+                            <div class="a-dart-btn a-dart-btn-secondary">Скачать</div>
+                            <div class="a-dart-btn a-dart-btn-primary k-order__oplata"><p>Отправить заказ</p> <p>26 580 ₽</p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="k-order__order">
+                    <h3>Заказ у поставщика «СПО»</h3>
+                    <div class="k-order__shop">
+                        <img src="../../assets/img/ava.png" alt="">
+                        <p :style="{'background': '#6CA632'}">СПО, г.Екатеринбург, ул.Предельная 57/3</p>
+                    </div>
+                    <div class="k-order__product">
+                        <img class="k-order__product-img" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg" alt="">
+                        <div class="k-order__product-info">
+                            <div class="k-order__main-info">
+                                <p>Аккумуляторная дрель-шуруповерт ИНТЕРСКОЛ ДА-10/14.4Л2 425.0.2.00</p>
+                                <div class="k-order__actions">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <div class="k-order__actions-el last">+3</div>
+                                </div>
+                                <Counter :min="1" :max="100" :value="this.value"/>
+                                <b>13 290 ₽</b>
+                            </div>
+                            <div class="k-order__product-data">
+                                <span class="k-order__article">844337</span>
+                                <p class="k-order__info">Отсрочка: <span>50 дн.</span></p>
+                                <p class="k-order__info">Оплата доставки: <span>Покупатель</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="k-order__product">
+                        <img class="k-order__product-img" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg" alt="">
+                        <div class="k-order__product-info">
+                            <div class="k-order__main-info">
+                                <p>Аккумуляторная дрель-шуруповерт ИНТЕРСКОЛ ДА-10/14.4Л2 425.0.2.00</p>
+                                <div class="k-order__actions">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <div class="k-order__actions-el last">+3</div>
+                                </div>
+                                <Counter :min="1" :max="100" :value="this.value"/>
+                                <b>13 290 ₽</b>
+                            </div>
+                            <div class="k-order__product-data">
+                                <span class="k-order__article">844337</span>
+                                <p class="k-order__info">Отсрочка: <span>50 дн.</span></p>
+                                <p class="k-order__info">Оплата доставки: <span>Покупатель</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="k-order__final">
+                        <div class="k-order__final-info">
+                            <div class="k-order__colums">
+                                <p>Кол-во SKU с отсрочкой Х</p>
+                                <p>50</p>
+                            </div>
+                            <div class="k-order__colums">
+                                <p>Вес заказа (кг)</p>
+                                <p>50</p>
+                            </div>
+                            <div class="k-order__colums">
+                                <p>Кол-во SKU с отсрочкой Y</p>
+                                <p>50</p>
+                            </div>
+                            <div class="k-order__colums">
+                                <p>Объем заказа (шт)</p>
+                                <p>50</p>
+                            </div>
+                        </div>
+                        <div class="k-order__final-button">
+                            <div class="a-dart-btn a-dart-btn-secondary">Скачать</div>
+                            <div class="a-dart-btn a-dart-btn-primary k-order__oplata"><p>Отправить заказ</p> <p>26 580 ₽</p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="k-order__order">
+                    <h3>Заказ у поставщика «СПО»</h3>
+                    <div class="k-order__shop">
+                        <img src="../../assets/img/ava.png" alt="">
+                        <p :style="{'background': '#6CA632'}">СПО, г.Екатеринбург, ул.Предельная 57/3</p>
+                    </div>
+                    <div class="k-order__product">
+                        <img class="k-order__product-img" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg" alt="">
+                        <div class="k-order__product-info">
+                            <div class="k-order__main-info">
+                                <p>Аккумуляторная дрель-шуруповерт ИНТЕРСКОЛ ДА-10/14.4Л2 425.0.2.00</p>
+                                <div class="k-order__actions">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <div class="k-order__actions-el last">+3</div>
+                                </div>
+                                <Counter :min="1" :max="100" :value="this.value"/>
+                                <b>13 290 ₽</b>
+                            </div>
+                            <div class="k-order__product-data">
+                                <span class="k-order__article">844337</span>
+                                <p class="k-order__info">Отсрочка: <span>50 дн.</span></p>
+                                <p class="k-order__info">Оплата доставки: <span>Покупатель</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="k-order__product">
+                        <img class="k-order__product-img" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg" alt="">
+                        <div class="k-order__product-info">
+                            <div class="k-order__main-info">
+                                <p>Аккумуляторная дрель-шуруповерт ИНТЕРСКОЛ ДА-10/14.4Л2 425.0.2.00</p>
+                                <div class="k-order__actions">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                    <div class="k-order__actions-el last">+3</div>
+                                </div>
+                                <Counter :min="1" :max="100" :value="this.value"/>
+                                <b>13 290 ₽</b>
+                            </div>
+                            <div class="k-order__product-data">
+                                <span class="k-order__article">844337</span>
+                                <p class="k-order__info">Отсрочка: <span>50 дн.</span></p>
+                                <p class="k-order__info">Оплата доставки: <span>Покупатель</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="k-order__final">
+                        <div class="k-order__final-info">
+                            <div class="k-order__colums">
+                                <p>Кол-во SKU с отсрочкой Х</p>
+                                <p>50</p>
+                            </div>
+                            <div class="k-order__colums">
+                                <p>Вес заказа (кг)</p>
+                                <p>50</p>
+                            </div>
+                            <div class="k-order__colums">
+                                <p>Кол-во SKU с отсрочкой Y</p>
+                                <p>50</p>
+                            </div>
+                            <div class="k-order__colums">
+                                <p>Объем заказа (шт)</p>
+                                <p>50</p>
+                            </div>
+                        </div>
+                        <div class="k-order__final-button">
+                            <div class="a-dart-btn a-dart-btn-secondary">Скачать</div>
+                            <div class="a-dart-btn a-dart-btn-primary k-order__oplata"><p>Отправить заказ</p> <p>26 580 ₽</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <div class="k-order__order">
+                <h3 class="k-order__line">Итого</h3>
+                <div class="k-order__final">
+                    <div class="k-order__final-info">
+                        <div class="k-order__colums bold">
+                            <p>Кол-во SKU с отсрочкой Х</p>
+                            <p>50</p>
+                        </div>
+                        <div class="k-order__colums bold">
+                            <p>Вес заказа (кг)</p>
+                            <p>50</p>
+                        </div>
+                        <div class="k-order__colums bold">
+                            <p>Кол-во SKU с отсрочкой Y</p>
+                            <p>50</p>
+                        </div>
+                        <div class="k-order__colums bold">
+                            <p>Объем заказа (шт)</p>
+                            <p>50</p>
+                        </div>
+                    </div>
+                    <div class="k-order__final-button">
+                        <div class="a-dart-btn a-dart-btn-secondary"><i class="pi pi-download"></i></div>
+                        <div class="a-dart-btn a-dart-btn-primary k-order__oplata"><p>Отправить заказ</p> <p>26 580 ₽</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
+import Counter from './Counter.vue'
 
 export default {
   name: 'Basket',
@@ -22,7 +291,8 @@ export default {
   data () {
     return {
       loading: true,
-      basket: {}
+      basket: {},
+      value: 1
     }
   },
   methods: {
@@ -48,7 +318,7 @@ export default {
       this.basket = this.optbasket
     )
   },
-  components: { },
+  components: { Counter },
   computed: {
     ...mapGetters([
       'optbasket'
@@ -62,5 +332,275 @@ export default {
 }
 </script>
 <style lang="scss">
+    .k-order{
+        width: 100vw;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        background: rgba($color: #000000, $alpha: 0);
 
+        &__final-info{
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-auto-flow: row;
+            gap: 8px 10px;
+        }
+
+        &__final{
+            justify-content: space-between;
+            display: flex;
+            padding-top: 16px;
+        }
+
+        &__line{
+            border-bottom: 1px solid #E2E2E2;
+            padding-bottom: 16px;
+        }
+
+        &__orders{
+            height: calc(100% - 200px);
+            overflow-y: auto;
+
+            &::-webkit-scrollbar {
+                width: 5px;
+                background-color: #e0e0e0; /* blue */
+            }
+
+            &::-webkit-scrollbar-thumb {
+                background-color: #b4b4b4; /* green */
+                border-radius: 9em;
+            }
+        }
+
+        &__colums{
+            display: flex;
+
+            &.bold{
+                p{
+                    margin: 0;
+                    color: #282828 !important;
+                    font-size: 14px;
+                    font-weight: 500 !important;
+                }
+            }
+
+            p{
+                margin: 0;
+                color: #282828;
+                font-size: 14px;
+                font-weight: 500;
+            }
+
+            p:first-child{
+                color: #ACABAB;
+                font-size: 14px;
+                font-weight: 400;
+                margin-right: 17px;
+            }
+        }
+
+        &__content{
+            width: 950px;
+            height: 100%;
+            background: #FFF;
+            right: 0;
+            position: fixed;
+            transform: translateX(100%);
+            transition: all 0.5s;
+            padding: 60px 32px;
+        }
+
+        &__oplata{
+            display: flex;
+            align-items: center;
+            p{
+                margin: 0;
+                color: #FFFFFF;
+                font-size: 16px;
+                font-weight: 500;
+            }
+        }
+
+        &__final-button{
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        &__product-data{
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        &__info{
+            font-size: 12px;
+            font-weight: 400;
+            color: #ACABAB;
+            margin: 0;
+
+            span{
+                color: #282828;
+            }
+        }
+
+        &__article{
+            font-weight: 400;
+            font-size: 14px;
+            margin: 0;
+            color: #ACABAB;
+        }
+
+        &__actions{
+            display: flex;
+            &-el {
+                min-width: 36px;
+                width: 36px;
+                height: 36px !important;
+                object-fit: cover;
+                border-radius: 50%;
+                border: 1px solid #E8E8E8;
+                overflow: hidden;
+
+                &.last{
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    background: #282828;
+                    border: 1px solid #525252;
+                    color: #fff;
+                    font-size: 14px;
+                }
+
+                &.error{
+                    position: relative;
+                    &::before{
+                        width: 13px;
+                        height: 13px;
+                        background-color: #FB203A;
+                        border-radius: 3px;
+                        rotate: 45deg;
+                        content: "";
+                        position: absolute;
+                    }
+                }
+            }
+
+            &-el:not(:first-child) {
+                margin-left: -10px;
+            }
+        }
+
+        &__title{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            h1{
+                font-size: 28px;
+                font-weight: 500;
+                color: #282828;
+                margin: 0;
+            }
+        }
+
+        &__product{
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 16px 0;
+            border-bottom: 1px solid #E2E2E2;
+        }
+
+        &__main-info{
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+
+            p{
+                width: 340px;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                font-size: 14px;
+                line-height: 18px;
+            }
+        }
+
+        &__product-img{
+            width: 40px;
+        }
+
+        &__order{
+            border: 1px solid #E2E2E2;
+            margin-top: 20px;
+            border-radius: 5px;
+            padding: 20px;
+
+            h3{
+                margin: 0;
+                font-size: 20px;
+                line-height: 24px;
+                font-weight: 500;
+                color: #282828;
+            }
+        }
+
+        &__product-info{
+            width: 100%;
+        }
+
+        &__close{
+            width: 24px;
+            height: 24px;
+            background: #7878784A;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFF;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.4s;
+
+            &:hover{
+                background: #4949494a;
+            }
+
+            i{
+                font-size: 12px;
+            }
+        }
+
+        &__shop{
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            p{
+                margin: 0;
+                color: #FFFFFF;
+                font-size: 14px;
+                font-weight: 400;
+                padding: 4px 8px;
+                border-radius: 5px;
+            }
+
+            img{
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                border: 1px solid #E8E8E8;
+            }
+        }
+
+        &.show{
+            background: rgba($color: #000000, $alpha: 0.5);
+            pointer-events: all;
+            .k-order__content{
+                transform: translateX(0%);
+            }
+        }
+    }
 </style>
