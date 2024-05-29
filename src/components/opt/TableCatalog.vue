@@ -104,9 +104,12 @@ export default {
 
     tbody tr:not(.active){
         border-bottom: 1px solid #0000001F;
-        box-shadow: 0px 4px 12.5px 0px #0000001F;
         transition: border-bottom 0.4s;
         cursor: pointer;
+    }
+
+    tbody tr.active-el{
+        box-shadow: 0px 4px 12.5px 0px #0000001F;
     }
 
     tbody tr.active-el{

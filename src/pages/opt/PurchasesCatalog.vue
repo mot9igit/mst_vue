@@ -23,6 +23,7 @@
         <Basket ref="childComponent"/>
       </div>
     </div>
+    <OrderModal />
   </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
@@ -32,6 +33,7 @@ import Vendors from '../../components/opt/Vendors.vue'
 import Breadcrumbs from '../../components/opt/Breadcrumbs.vue'
 import Paginate from 'vuejs-paginate-next'
 import TableCatalog from '../../components/opt/TableCatalog.vue'
+import OrderModal from '../../components/opt/OrderModal.vue'
 
 export default {
   name: 'OptsCatalog',
@@ -55,7 +57,8 @@ export default {
     Vendors,
     Breadcrumbs,
     TableCatalog,
-    Paginate
+    Paginate,
+    OrderModal
   },
   mounted () {
     this.get_opt_catalog_from_api().then(
