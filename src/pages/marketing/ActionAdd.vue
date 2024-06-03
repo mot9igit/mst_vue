@@ -25,13 +25,13 @@
         <div class="dart-form-group mb-4">
           <div class="upload-banner">
             <div class="upload-banner__text">
-              <span class="ktitle">Вертикальный баннер</span>
-              <span>Чтобы обложка выглядела качественно на всех устройствах, советуем загрузить изображение размером не менее 1108х332 пикс. Размер файла - не более ?? МБ. Форматы файла - ???.</span>
+              <span class="ktitle">Большой баннер</span>
+              <span>Загрузить изображение нужно размером не менее 1108х332, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в два раза больше указанного размера.</span>
             </div>
             <!-- <div class="dart-btn dart-btn-secondary btn-padding">Загрузить</div> -->
             <FileUpload class="kenost-upload-button" mode="basic" name="banner[]" :url="'/rest/file_upload.php?banner=max'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
           </div>
-          <div class="upload-banner__image upload-banner__banner">
+          <div class="upload-banner__image">
             <img :src="files?.max?.original_href" v-if="files?.max?.original_href">
           </div>
         </div>
@@ -39,8 +39,8 @@
         <div class="dart-form-group mb-4">
           <div class="upload-banner">
             <div class="upload-banner__text">
-              <span class="ktitle">Мобильный баннер</span>
-              <span>Чтобы обложка выглядела качественно на всех устройствах, советуем загрузить изображение размером не менее 500х500 пикс. Размер файла - не более ?? МБ. Форматы файла - ???.</span>
+              <span class="ktitle">Малый баннер</span>
+              <span>Загрузить изображение нужно размером не менее 324х161, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
             </div>
             <!-- <div class="dart-btn dart-btn-secondary btn-padding">Загрузить</div> -->
             <FileUpload class="kenost-upload-button" mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
@@ -53,12 +53,12 @@
         <div class="dart-form-group mb-4">
           <div class="upload-banner">
             <div class="upload-banner__text">
-              <span class="ktitle">Иконка</span>
-              <span>Вы можете загрузить свое изображение или выбрать изображение из банка иконок</span>
+              <span class="ktitle">Квадратный баннер</span>
+              <span>Загрузить изображение нужно размером не менее 459х459, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
             </div>
             <FileUpload class="kenost-upload-button" mode="basic" name="icon[]" :url="'/rest/file_upload.php?banner=icon'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
           </div>
-          <div class="upload-icon__image">
+          <div class="upload-banner__image">
             <img :src="files?.icon?.original_href" v-if="files?.icon?.original_href">
           </div>
         </div>
@@ -572,8 +572,8 @@ export default {
       }
 
       &__image{
-        width: 250px;
-        height: 250px;
+        width: 287px;
+        height: 160px;
         background: #D9D9D9;
         margin-top: 16px;
         overflow: hidden;
