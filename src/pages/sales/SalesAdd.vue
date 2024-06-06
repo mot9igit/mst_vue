@@ -61,10 +61,15 @@
             </div>
 
             <div class="dart-form-group mb-4">
+                <span class="ktitle">Вознаграждение</span>
+                <input v-model="this.form.award" type="text" name="award" placeholder="Укажите вознаграждение" class="dart-form-control">
+            </div>
+
+            <div class="dart-form-group mb-4">
                 <span class="ktitle">Совместимость скидок</span>
                 <div class="flex align-items-center mt-3">
-                <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-1" name="compatibilityDiscount" value="1"/>
-                <label for="compatibilityDiscount-1" class="ml-2 radioLabel">Совместим со всеми акциями</label>
+                  <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-1" name="compatibilityDiscount" value="1"/>
+                  <label for="compatibilityDiscount-1" class="ml-2 radioLabel">Совместим со всеми акциями</label>
                 </div>
                 <div class="flex align-items-center mt-3">
                 <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-2" name="compatibilityDiscount" value="2"/>
@@ -272,6 +277,75 @@
                       </div>
                     </div>
                 </div>
+
+                <div class="table-kenost mt-4">
+                  <p class="table-kenost__title">Таблица добавленных товаров</p>
+                  <div class="table-kenost__filters">
+                    <div class="table-kenost__filters-left">
+                      <div class="form_input_group input_pl input-parent required">
+                          <input
+                          type="text"
+                          id="filter_name"
+                          placeholder="Введите артикул или название"
+                          class="dart-form-control"
+                          v-model="filter.name"
+                          @input="setFilter('filter')"
+                          />
+                          <label for="product_filter_name" class="s-complex-input__label">Введите артикул или название</label>
+                          <div class="form_input_group__icon">
+                              <i class="d_icon d_icon-search"></i>
+                          </div>
+                      </div>
+                      <div class="dart-form-group">
+                          <TreeSelect v-model="this.filter.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
+                      </div>
+                    </div>
+                    <button type="submit" class="dart-btn dart-btn-primary btn-padding">Создать комплект</button>
+                  </div>
+                  <table class="table-kenost__table">
+                    <thead>
+                        <tr>
+                            <th class="table-kenost__name table-kenost__name-checkbox"><Checkbox @update:modelValue="kenostTableCheckedAll" v-model="this.kenost_table_all" inputId="kenost_table_all" value="1" /></th>
+                            <th class="table-kenost__name table-kenost__name-product">Товар</th>
+                            <th class="table-kenost__name">РРЦ (₽)</th>
+                            <th class="table-kenost__name">Скидка %</th>
+                            <th class="table-kenost__name">Цена со скидкой за шт.</th>
+                            <th class="table-kenost__name">Кратность</th>
+                            <th class="table-kenost__name">Сумма</th>
+                        </tr>
+                    </thead>
+                    <tbody v-for="(item, index) in this.selected" :key="item.id">
+                        <tr >
+                          <td class="table-kenost__checkbox">
+                            <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
+                          </td>
+                          <td class="table-kenost__product">
+                            <img :src="'https://mst.tools' + item.image">
+                            <div class="table-kenost__product-text">
+                              <p>{{ item.name }}</p>
+                              <span>{{item.article}}</span>
+                            </div>
+                          </td>
+                          <td>
+                            {{(Number(item.price).toFixed(0)).toLocaleString('ru')}} ₽
+                          </td>
+                          <td>
+                            {{(Number(item.discountInterest).toFixed(0)).toLocaleString('ru')}}
+                          </td>
+                          <td>
+                            {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru')}} ₽
+                            <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_index = index" >Настроить</p>
+                          </td>
+                          <td>
+                            <Counter class="margin-auto" @ElemCount="ElemCount" :min="1" :value="item.multiplicity"/>
+                          </td>
+                          <td>
+                            {{(Number(item.price).toFixed(0)).toLocaleString('ru')}} ₽
+                          </td>
+                        </tr>
+                    </tbody>
+                  </table>
+                </div>
             </div>
 
         </div>
@@ -313,6 +387,120 @@
             </div>
         </div>
     </Dialog>
+
+    <Dialog v-model:visible="this.modals.price" :header="this.modals.headers[this.modals.price_step]" :style="{ width: '600px' }">
+        <div class="kenost-modal-price">
+            <div class="product-kenost-card">
+              <img :src="'https://mst.tools' + this.selected[this.modals.product_index]?.image">
+              <div class="product-kenost-card__text">
+                <p>{{ this.selected[this.modals.product_index]?.name }}</p>
+                <span>{{this.selected[this.modals.product_index]?.article}}</span>
+              </div>
+            </div>
+            <div class="kenost-method-edit-flex" v-if="this.modals.price_step == 0">
+              <div class="flex align-items-center mt-3">
+                <RadioButton v-model="this.modals.type_price" inputId="type_price-1" name="type_price" value="1"/>
+                <label for="type_price-1" class="ml-2 radioLabel">Скидка по формуле</label>
+              </div>
+              <div class="flex align-items-center mt-3">
+                <RadioButton v-model="this.modals.type_price" inputId="type_price-2" name="type_price" value="2"/>
+                <label for="type_price-2" class="ml-2 radioLabel">Тип цен</label>
+              </div>
+              <div class="flex align-items-center mt-3">
+                <RadioButton v-model="this.modals.type_price" inputId="type_price-3" name="type_price" value="3"/>
+                <label for="type_price-3" class="ml-2 radioLabel">Задать вручную</label>
+              </div>
+            </div>
+
+            <div v-if="this.modals.price_step == 1" class="two-colums mt-3">
+              <div class="kenost-wiget">
+                  <p>Тип цены</p>
+                  <Dropdown v-model="this.selected[this.modals.product_index].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
+              </div>
+              <div class="kenost-wiget-two">
+                <div class="kenost-wiget">
+                  <p>Значение</p>
+                  <InputNumber
+                    v-model="this.form.conditionPaymentDeliveryValue"
+                    inputId="horizontal-buttons"
+                    :step="0.1"
+                    min="0"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                  />
+                </div>
+                <div class="kenost-wiget">
+                  <p>&nbsp;</p>
+                  <Dropdown v-model="this.selected[this.modals.product_index].typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
+                </div>
+              </div>
+            </div>
+
+            <div v-if="this.modals.price_step == 2" class="two-colums mt-3">
+              <div class="kenost-wiget">
+                  <p>Тип цены</p>
+                  <Dropdown v-model="this.selected[this.modals.product_index].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
+              </div>
+            </div>
+
+            <div v-if="this.modals.price_step == 3" class="two-colums mt-3">
+              <div class="kenost-wiget">
+                <p>Скидка в %</p>
+                <InputNumber
+                    v-model="this.selected[this.modals.product_index].discountInterest"
+                    inputId="horizontal-buttons"
+                    :step="1"
+                    min="0"
+                    max="100"
+                    suffix=" %"
+                    @update:modelValue="setPrices(this.modals.product_index, 'discountInterest', this.selected[this.modals.product_index].discountInterest)"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                />
+              </div>
+              <div class="kenost-wiget">
+                <p>Скидка в ₽</p>
+                <InputNumber
+                    v-model="selected[this.modals.product_index].discountInRubles"
+                    inputId="horizontal-buttons"
+                    :step="1"
+                    min="0"
+                    :max="selected[this.modals.product_index].price"
+                    mode="currency" currency="RUB"
+                    @update:modelValue="setPrices(this.modals.product_index, 'discountInRubles', this.selected[this.modals.product_index].discountInRubles)"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                />
+              </div>
+              <div class="kenost-wiget">
+                <p>Цена со скидкой</p>
+                <InputNumber
+                    v-model="selected[this.modals.product_index].finalPrice"
+                    inputId="horizontal-buttons"
+                    :step="1"
+                    :max="selected[this.modals.product_index].price"
+                    mode="currency" currency="RUB"
+                    min="0"
+                    @update:modelValue="setPrices(this.modals.product_index, 'finalPrice', this.selected[this.modals.product_index].finalPrice)"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                />
+              </div>
+            </div>
+
+            <div class="kenost-info-line" v-if="this.modals.price_step != 0">
+              <p>РРЦ: {{this.selected[this.modals.product_index]?.price}} ₽</p>
+              <p>Скидка: {{this.selected[this.modals.product_index]?.discountInterest}}%</p>
+              <p>Цена со скидой: {{this.selected[this.modals.product_index]?.finalPrice}} ₽</p>
+            </div>
+
+            <div class="kenost-modal-price__button kenost-modal-price__flex">
+                <span v-if="this.modals.price_step == 0"></span>
+                <div v-if="this.modals.price_step != 0" class="dart-btn dart-btn-secondary btn-padding" @click="this.modals.price_step = 0">
+                  Назад
+                </div>
+                <div class="dart-btn dart-btn-primary btn-padding" @click="this.modals.price_step = Number(this.modals.type_price)">
+                  Далее
+                </div>
+            </div>
+        </div>
+    </Dialog>
 </template>
 <script>
 
@@ -325,6 +513,8 @@ import Dialog from 'primevue/dialog'
 import InputNumber from 'primevue/inputnumber'
 import TreeSelect from 'primevue/treeselect'
 import DropZone from 'dropzone-vue'
+import Checkbox from 'primevue/checkbox'
+import Counter from '../../components/opt/Counter.vue'
 
 export default {
   name: 'ProfileSalesAdd',
@@ -337,13 +527,17 @@ export default {
         category: {}
       },
       selected: {},
+      kenost_table_all: [],
+      kenost_table: [],
       products: [],
+      get_catalog: [],
       total_products: 0,
       per_page: 25,
       page_selected: 1,
       form: {
         name: '',
         description: '',
+        award: '',
         dates: [],
         compatibilityDiscount: 0,
         compatibilityPost: 0,
@@ -365,7 +559,17 @@ export default {
         delayPercentSum: 0
       },
       modals: {
-        delay: false
+        delay: false,
+        price: false,
+        price_step: 0,
+        type_price: '1',
+        product_index: -1,
+        headers: [
+          'Метод редактирования цены',
+          'Скидка по формуле',
+          'Тип цен',
+          'Скидка вручную'
+        ]
       },
       files: {},
       paymentDelivery: [
@@ -385,12 +589,20 @@ export default {
         { name: 'Получи подарок при покупке Х товаров', key: 1 },
         { name: 'Купи на Х рублей - получи Y скидку на выбранный товар', key: 2 },
         { name: 'Купи на Х рублей - получи скидку на Y %', key: 3 }
+      ],
+      typeFormul: [
+        { name: '₽', key: 0 },
+        { name: '%', key: 1 }
+      ],
+      typePrice: [
+        { name: 'Заданная', key: 0 }
       ]
     }
   },
   methods: {
     ...mapActions([
-      'get_available_products_from_api'
+      'get_available_products_from_api',
+      'get_catalog_from_api'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -421,31 +633,12 @@ export default {
     },
     select (id) {
       const product = this.products.find(r => r.id === id)
-      product.discountInRubles = 0
       product.discountInterest = 0
+      product.discountInRubles = 0
+      product.multiplicity = 1
       product.finalPrice = Number(product.price)
+      product.typeFormul = ''
       product.typePrice = ''
-      product.condition = ''
-      product.conditionInfo = {
-        multiplicity: 0, // Кратность
-        multiplicityTwo: 0, // Кратность
-        productType: 0, // Тип товара
-        productTypeTwo: 0, // Тип товара
-        quantity: 0, // Количество
-        minTotalAmount: 0, // Мин общая сумма
-        minTotalAmountTwo: 0, // Мин общая сумма
-        minTotalSKU: 0, // Мин общее кол-во SKU
-        minTotalSKUTwo: 0 // Мин общее кол-во SKU
-      }
-      product.delay = 0
-      product.postponementConditions = ''
-      product.postponementConditionsValue = 0
-      product.paymentDelivery = ''
-      product.conditionPaymentDelivery = 0
-      product.shipmentCondition = 0
-      product.conditionPaymentDeliveryValue = 0
-      product.select_regions = {}
-      product.shipmentConditionValue = 0
 
       this.selected[product.id] = product
       this.products = this.products.filter((r) => r.id !== id)
@@ -477,11 +670,41 @@ export default {
       this.page = pageNum
       const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
+    },
+    kenostTableCheckedAll () {
+      if (this.kenost_table_all.length === 0) {
+        this.kenost_table = []
+        for (let i = 0; i < Object.keys(this.selected).length; i++) {
+          this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
+          // console.log(this.selected[Object.keys(this.selected)[i]])
+        }
+      } else {
+        this.kenost_table = []
+      }
+    },
+    setPrices (index, name, value) {
+      switch (name) {
+        case 'discountInterest':
+          this.selected[index].discountInRubles = (Number(this.selected[index].price) / 100) * value
+          this.selected[index].finalPrice = Number(this.selected[index].price) - this.selected[index].discountInRubles
+          break
+        case 'discountInRubles':
+          this.selected[index].discountInterest = value / (Number(this.selected[index].price) / 100)
+          this.selected[index].finalPrice = Number(this.selected[index].price) - this.selected[index].discountInRubles
+          break
+        case 'finalPrice':
+          this.selected[index].discountInRubles = Number(this.selected[index].price) - value
+          this.selected[index].discountInterest = this.selected[index].discountInRubles / (Number(this.selected[index].price) / 100)
+          break
+      }
     }
   },
   mounted () {
     this.get_available_products_from_api({ filter: '', selected: [], page: this.page }).then(
       this.products = this.available_products.products
+    )
+    this.get_catalog_from_api().then(
+      this.get_catalog = this.getcatalog
     )
   },
   components: {
@@ -492,22 +715,248 @@ export default {
     Dialog,
     InputNumber,
     TreeSelect,
-    DropZone
+    DropZone,
+    Checkbox,
+    Counter
   },
   computed: {
     ...mapGetters([
-      'available_products'
+      'available_products',
+      'getcatalog'
     ])
   },
   watch: {
     available_products: function (newVal, oldVal) {
       this.products = newVal.products
       this.total_products = newVal.total
+    },
+    getcatalog: function (newVal, oldVal) {
+      this.get_catalog = newVal
     }
   }
 }
 </script>
 <style lang="scss">
+
+    .kenost-info-line{
+      display: flex;
+      padding: 12px 16px;
+      background: #F8F7F5;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 5px;
+      margin-top: 8px;
+
+      p{
+        color: #A0A0A0;
+        font-size: 12px;
+        margin: 0;
+      }
+    }
+
+    .kenost-wiget-two{
+      display: flex;
+      width: 100%;
+      gap: 8px;
+    }
+
+    .margin-auto{
+      margin: auto;
+    }
+
+    .kenost-method-edit-flex{
+      display: flex;
+      gap: 40px;
+    }
+
+    .product-kenost-card{
+        max-width: 400px;
+        display: flex;
+        gap: 8px;
+        img{
+          width: 38px;
+          height: 38px !important;
+          object-fit: contain;
+          border-radius: 5px;
+          margin: 0;
+        }
+
+        &__text{
+          display: flex;
+          flex-direction: column;
+          margin: 0;
+          p{
+            margin: 0;
+            font-size: 14px;
+            font-weight: 400;
+            color: #282828;
+            line-height: 1;
+            text-align: left;
+            margin-bottom: 8px;
+            // display: -webkit-box;
+            // -webkit-line-clamp: 2;
+            // -webkit-box-orient: vertical;
+            // overflow: hidden;
+          }
+
+          span{
+            font-size: 14px;
+            font-weight: 400;
+            color: #ADADAD;
+            line-height: 1;
+            text-align: left;
+          }
+        }
+    }
+
+    .table-kenost{
+      border: 1px solid #E2E2E2;
+      border-radius: 5px;
+      padding: 24px;
+
+      &__title{
+        color: #282828;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 1.1;
+        letter-spacing: 0.25px;
+        margin-bottom: 24px;
+      }
+
+      &__filters{
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+
+        &-left{
+          display: flex;
+          align-items: center;
+          width: 60%;
+          gap: 12px;
+
+          .input_pl{
+            width: 50%;
+          }
+
+          .dart-form-group{
+            width: 40%;
+          }
+        }
+      }
+
+      &__settings{
+        color: #0070F4;
+        font-size: 14px;
+        margin: 0;
+        cursor: pointer;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.4s;
+      }
+
+      &__product{
+        display: flex;
+        gap: 8px;
+        img{
+          width: 38px;
+          height: 38px !important;
+          object-fit: contain;
+          border-radius: 5px;
+          margin: 0;
+        }
+
+        &-text{
+          display: flex;
+          flex-direction: column;
+          margin: 0;
+          p{
+            margin: 0;
+            font-size: 14px;
+            font-weight: 400;
+            color: #282828;
+            line-height: 1;
+            text-align: left;
+            margin-bottom: 8px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+          }
+
+          span{
+            font-size: 14px;
+            font-weight: 400;
+            color: #ADADAD;
+            line-height: 1;
+            text-align: left;
+          }
+        }
+      }
+
+      &__checkbox{
+        text-align: left !important;
+      }
+
+      &__table{
+        width: 100%;
+        margin-top: 24px;
+
+        tbody + tbody{
+          border-top: 1px solid #E2E2E2
+        }
+
+        tr:hover{
+          .table-kenost__settings{
+            opacity: 1;
+            pointer-events: all;
+          }
+        }
+
+        td{
+          text-align: center;
+          padding: 16px 0;
+        }
+
+        th{
+          padding: 12px;
+          // background: #F8F7F5;
+          background: #ffbe3d;
+        }
+
+        td:first-child{
+          padding: 0 0 0 12px;
+        }
+
+        td:last-child{
+          padding: 0 12px 0 0;
+        }
+
+        th:first-child{
+          border-radius: 5px 0 0 0;
+        }
+
+        th:last-child{
+          border-radius: 0 5px 0 0;
+        }
+      }
+
+      &__name{
+        color: #5E5E5E;
+        font-size: 14px;
+        font-weight: 400;
+        text-align: center;
+
+        &-checkbox{
+          width: 40px;
+          text-align: left;
+        }
+
+        &-product{
+          width: 300px;
+          text-align: left;
+        }
+      }
+    }
 
     .kenost-dropzone{
       border: 2px dashed  #E2E2E2 !important;
