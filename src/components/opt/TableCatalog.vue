@@ -14,7 +14,7 @@
                     <th class="k-table__name">Отсрочка</th>
                     <th class="k-table__name">Оплата доставки</th>
                     <th class="k-table__name">Срок доставки</th>
-                    <th class="k-table__name">Акции</th>
+                    <th class="k-table__name k-table__th-actions">Акции</th>
                     <th class="k-table__name">Остатки на складе</th>
                 </tr>
             </thead>
@@ -205,6 +205,11 @@ export default {
     &__th{
         &-title{
             width: 260px;
+        }
+
+        &-actions{
+            width: 150px;
+
         }
     }
 }

@@ -288,6 +288,11 @@ export default {
 
         &__actions{
             display: flex;
+
+            &.center {
+                justify-content: center;
+            }
+
             &-el {
                 min-width: 36px;
                 width: 36px;

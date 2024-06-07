@@ -15,7 +15,7 @@
         <td></td>
         <td></td>
         <td></td>
-        <td>от 5 дн (5 апреля)</td>
+        <td>от {{getMinDelivery(items.stores).delivery}} дн ({{new Date(getMinDelivery(items.stores).delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</td>
         <td></td>
         <td></td>
     </tr>
@@ -30,13 +30,18 @@
             <div @click="addBasket(item.product_id, this.value, item.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
           </form>
         </td>
-        <td></td>
+        <td>{{item.store_name}}</td>
         <td>{{Math.round(item.price).toLocaleString('ru')}} ₽</td>
-        <td>{{Math.round(item.price).toLocaleString('ru')}} ₽ + 1 000 ₽</td>
-        <td>50 дн</td>
-        <td>Поставщик</td>
-        <td>от 5 дн (5 апреля)</td>
-        <td></td>
+        <td>{{Math.round(item.price).toLocaleString('ru')}} ₽ + {{Math.round(item.old_price - item.price).toLocaleString('ru')}} ₽</td>
+        <td>{{item.action.delay ? Number(item.action.delay).toFixed(1) + ' дн' : 'Нет'}}</td>
+        <td>{{ item.action.payer === '0' ? 'Покупатель' : 'Поставщик' }} </td>
+        <td>от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</td>
+        <td>
+          <div class="k-order__actions center">
+            <img :style="index > 2 ? { display: 'none' } : false" v-for="(action, index) in item.actions" v-bind:key="action.id" class="k-order__actions-el" :src="site_url_prefix + action.icon">
+            <div v-if="item.actions.length > 3" class="k-order__actions-el last">+{{ item.actions.length - 3 }}</div>
+          </div>
+        </td>
         <td>{{item.remains}} шт</td>
     </tr>
 </template>
@@ -85,6 +90,27 @@ export default {
       }
 
       return minPrice
+    },
+
+    getMinDelivery (stores) {
+      let minDelivery
+      let minDeliveryDate
+
+      for (let i = 0; i < stores.length; i++) {
+        if (i === 0) {
+          // eslint-disable-next-line no-unused-vars
+          minDelivery = stores[i].delivery
+          minDeliveryDate = stores[i].delivery_day
+        } else if (stores[i].delivery < minDelivery) {
+          minDelivery = stores[i].delivery
+          minDeliveryDate = stores[i].delivery_day
+        }
+      }
+
+      return {
+        delivery: minDelivery,
+        delivery_day: minDeliveryDate
+      }
     },
     addBasket (id, value, storeid) {
       const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_product: id, value, store_id: storeid }
