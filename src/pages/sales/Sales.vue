@@ -79,8 +79,8 @@ export default {
       table_data: {
         image_inner: {
           label: 'Баннер',
-          type: 'image'
-          // baseurl: true
+          type: 'image',
+          baseurl: false
         },
         name: {
           label: 'Наименование',
