@@ -303,7 +303,7 @@
                           <TreeSelect v-model="this.filter.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
                       </div>
                     </div>
-                    <button type="submit" class="dart-btn dart-btn-primary btn-padding">Создать комплект</button>
+                    <button @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</button>
                   </div>
                   <table class="table-kenost__table">
                     <thead>
@@ -317,8 +317,9 @@
                             <th class="table-kenost__name">Сумма</th>
                         </tr>
                     </thead>
-                    <tbody v-for="(item, index) in this.selected" :key="item.id">
-                        <tr >
+                    <!-- Вывод комплектов -->
+                    <tbody v-for="(complect) in this.complects" :key="complect.id">
+                        <tr class="table-kenost__complect" v-for="(item) in complect" :key="item.id">
                           <td class="table-kenost__checkbox">
                             <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
                           </td>
@@ -337,7 +338,7 @@
                           </td>
                           <td>
                             {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru')}} ₽
-                            <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_index = index" >Настроить</p>
+                            <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_id = item.id" >Настроить</p>
                           </td>
                           <td>
                             <Counter class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="item.multiplicity"/>
@@ -346,6 +347,36 @@
                             {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru') * item.multiplicity}} ₽
                           </td>
                         </tr>
+                    </tbody>
+                    <tbody v-for="item in this.selected" :key="item.id">
+                      <tr v-if="this.complects_ids.indexOf(item.id) === -1">
+                        <td class="table-kenost__checkbox">
+                          <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
+                        </td>
+                        <td class="table-kenost__product">
+                          <img :src="'https://mst.tools' + item.image">
+                          <div class="table-kenost__product-text">
+                            <p>{{ item.name }}</p>
+                            <span>{{item.article}}</span>
+                          </div>
+                        </td>
+                        <td>
+                          {{(Number(item.price).toFixed(0)).toLocaleString('ru')}} ₽
+                        </td>
+                        <td>
+                          {{(Number(item.discountInterest).toFixed(2)).toLocaleString('ru')}}
+                        </td>
+                        <td>
+                          {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru')}} ₽
+                          <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_id = item.id" >Настроить</p>
+                        </td>
+                        <td>
+                          <Counter class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="item.multiplicity"/>
+                        </td>
+                        <td>
+                          {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru') * item.multiplicity}} ₽
+                        </td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -380,8 +411,8 @@
                         <label for="access-3" class="ml-2"> Доступно для производителей </label>
                       </div>
                     </div>
-                  <MultiSelect v-model="selectedCities" display="chip" :options="this.regions" optionLabel="name" placeholder="Select Cities"
-                  :maxSelectedLabels="3" class="w-full md:w-20rem" />
+                  <MultiSelect filter v-model="this.regions_select" display="chip" :options="this.regions_all" optionLabel="name" placeholder="Выберите регионы"
+                   class="w-full md:w-20rem kenost-multiselect" />
                   </div>
                 </div>
 
@@ -475,10 +506,10 @@
     <Dialog v-model:visible="this.modals.price" :header="this.modals.headers[this.modals.price_step]" :style="{ width: '600px' }">
         <div class="kenost-modal-price">
             <div class="product-kenost-card">
-              <img :src="'https://mst.tools' + this.selected[this.modals.product_index]?.image">
+              <img :src="'https://mst.tools' + this.selected[this.modals.product_id]?.image">
               <div class="product-kenost-card__text">
-                <p>{{ this.selected[this.modals.product_index]?.name }}</p>
-                <span>{{this.selected[this.modals.product_index]?.article}}</span>
+                <p>{{ this.selected[this.modals.product_id]?.name }}</p>
+                <span>{{this.selected[this.modals.product_id]?.article}}</span>
               </div>
             </div>
             <div class="kenost-method-edit-flex" v-if="this.modals.price_step == 0">
@@ -499,7 +530,7 @@
             <div v-if="this.modals.price_step == 1" class="two-colums mt-3">
               <div class="kenost-wiget">
                   <p>Тип цены</p>
-                  <Dropdown v-model="this.selected[this.modals.product_index].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown v-model="this.selected[this.modals.product_id].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
               </div>
               <div class="kenost-wiget-two">
                 <div class="kenost-wiget">
@@ -509,13 +540,13 @@
                     inputId="horizontal-buttons"
                     :step="0.1"
                     min="0"
-                    @update:modelValue="setDiscountFormul(this.selected[this.modals.product_index].typeFormul, this.saleValue)"
+                    @update:modelValue="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                   />
                 </div>
                 <div class="kenost-wiget">
                   <p>&nbsp;</p>
-                  <Dropdown @change="setDiscountFormul(this.selected[this.modals.product_index].typeFormul, this.saleValue)" v-model="this.selected[this.modals.product_index].typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown @change="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue)" v-model="this.selected[this.modals.product_id].typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
                 </div>
               </div>
             </div>
@@ -523,7 +554,7 @@
             <div v-if="this.modals.price_step == 2" class="two-colums mt-3">
               <div class="kenost-wiget">
                   <p>Тип цены</p>
-                  <Dropdown v-model="this.selected[this.modals.product_index].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown v-model="this.selected[this.modals.product_id].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
               </div>
             </div>
 
@@ -531,48 +562,48 @@
               <div class="kenost-wiget">
                 <p>Скидка в %</p>
                 <InputNumber
-                    v-model="this.selected[this.modals.product_index].discountInterest"
+                    v-model="this.selected[this.modals.product_id].discountInterest"
                     inputId="horizontal-buttons"
                     :step="1"
                     min="0"
                     max="100"
                     suffix=" %"
-                    @update:modelValue="setPrices(this.modals.product_index, 'discountInterest', this.selected[this.modals.product_index].discountInterest)"
+                    @update:modelValue="setPrices(this.modals.product_id, 'discountInterest', this.selected[this.modals.product_id].discountInterest)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                 />
               </div>
               <div class="kenost-wiget">
                 <p>Скидка в ₽</p>
                 <InputNumber
-                    v-model="selected[this.modals.product_index].discountInRubles"
+                    v-model="selected[this.modals.product_id].discountInRubles"
                     inputId="horizontal-buttons"
                     :step="1"
                     min="0"
-                    :max="selected[this.modals.product_index].price"
+                    :max="selected[this.modals.product_id].price"
                     mode="currency" currency="RUB"
-                    @update:modelValue="setPrices(this.modals.product_index, 'discountInRubles', this.selected[this.modals.product_index].discountInRubles)"
+                    @update:modelValue="setPrices(this.modals.product_id, 'discountInRubles', this.selected[this.modals.product_id].discountInRubles)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                 />
               </div>
               <div class="kenost-wiget">
                 <p>Цена со скидкой</p>
                 <InputNumber
-                    v-model="selected[this.modals.product_index].finalPrice"
+                    v-model="selected[this.modals.product_id].finalPrice"
                     inputId="horizontal-buttons"
                     :step="1"
-                    :max="selected[this.modals.product_index].price"
+                    :max="selected[this.modals.product_id].price"
                     mode="currency" currency="RUB"
                     min="0"
-                    @update:modelValue="setPrices(this.modals.product_index, 'finalPrice', this.selected[this.modals.product_index].finalPrice)"
+                    @update:modelValue="setPrices(this.modals.product_id, 'finalPrice', this.selected[this.modals.product_id].finalPrice)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                 />
               </div>
             </div>
 
             <div class="kenost-info-line" v-if="this.modals.price_step != 0">
-              <p>РРЦ: {{this.selected[this.modals.product_index]?.price}} ₽</p>
-              <p>Скидка: {{(this.selected[this.modals.product_index]?.discountInterest).toFixed(2)}} %</p>
-              <p>Цена со скидой: {{this.selected[this.modals.product_index]?.finalPrice}} ₽</p>
+              <p>РРЦ: {{this.selected[this.modals.product_id]?.price}} ₽</p>
+              <p>Скидка: {{(this.selected[this.modals.product_id]?.discountInterest).toFixed(2)}} %</p>
+              <p>Цена со скидой: {{this.selected[this.modals.product_id]?.finalPrice}} ₽</p>
             </div>
 
             <div class="kenost-modal-price__button kenost-modal-price__flex">
@@ -629,6 +660,9 @@ export default {
       page_selected: 1,
       regions: [],
       regions_all: [],
+      regions_select: [],
+      complects: [],
+      complects_ids: [],
       form: {
         name: '',
         description: '',
@@ -660,7 +694,7 @@ export default {
         price: false,
         price_step: 0,
         type_price: '1',
-        product_index: -1,
+        product_id: -1,
         headers: [
           'Метод редактирования цены',
           'Скидка по формуле',
@@ -833,17 +867,27 @@ export default {
           break
       }
     },
+    createSet () {
+      // Создание комлпекта
+      const tempComplect = {}
+      for (let i = 0; i < this.kenost_table.length; i++) {
+        tempComplect[i] = this.selected[this.kenost_table[i]]
+        this.complects_ids.push(this.selected[this.kenost_table[i]].id)
+      }
+      this.complects.push(tempComplect)
+      // console.log(this.complects_ids)
+    },
     setDiscountFormul (type, value) {
       if (type && value !== 0) {
         if (type.key === 0) {
           value = Number(value)
-          this.selected[this.modals.product_index].discountInRubles = value
-          this.selected[this.modals.product_index].discountInterest = value / (this.selected[this.modals.product_index].price / 100)
-          this.selected[this.modals.product_index].finalPrice = this.selected[this.modals.product_index].price - value
+          this.selected[this.modals.product_id].discountInRubles = value
+          this.selected[this.modals.product_id].discountInterest = value / (this.selected[this.modals.product_id].price / 100)
+          this.selected[this.modals.product_id].finalPrice = this.selected[this.modals.product_id].price - value
         } else if (type.key === 1) {
-          this.selected[this.modals.product_index].discountInRubles = (this.selected[this.modals.product_index].price / 100) * value
-          this.selected[this.modals.product_index].discountInterest = value
-          this.selected[this.modals.product_index].finalPrice = this.selected[this.modals.product_index].price - (this.selected[this.modals.product_index].price / 100) * value
+          this.selected[this.modals.product_id].discountInRubles = (this.selected[this.modals.product_id].price / 100) * value
+          this.selected[this.modals.product_id].discountInterest = value
+          this.selected[this.modals.product_id].finalPrice = this.selected[this.modals.product_id].price - (this.selected[this.modals.product_index].price / 100) * value
         }
       }
     }
@@ -861,16 +905,10 @@ export default {
     )
     this.get_regions_from_api().then(() => {
       this.regions = this.getregions
-      console.log(Object.keys(this.regions).length)
-      console.log(this.regions)
-      // console.log(Object.keys(this.regions).length)
-      // for (let i = 0; Object.keys(this.regions).length; i++) {
-      //   if (this.regions[Object.keys(this.regions)[i]]) {
-      //     this.regions_all.push(this.regions[Object.keys(this.regions)[i]])
-      //   }
-      // }
-
-      // console.log(this.regions_all)
+      this.regions_all = this.regions.map(function (el) {
+        return { name: el.label, code: el.key }
+      })
+      console.log(this.regions_all)
     })
   },
   components: {
@@ -912,6 +950,27 @@ export default {
 }
 </script>
 <style lang="scss">
+
+  .p-multiselect-filter-icon{
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+
+  .kenost-multiselect{
+    margin-top: 16px;
+    width: 100%;
+    .p-multiselect-label{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .p-multiselect-trigger{
+      display: flex;
+      align-items: flex-start;
+      padding-top: 12px;
+    }
+  }
 
   .kenost-select-reginos{
     border: 1px solid #E2E2E2;
@@ -1024,6 +1083,10 @@ export default {
       border: 1px solid #E2E2E2;
       border-radius: 5px;
       padding: 24px;
+
+      &__complect{
+        background: #F8F7F5;
+      }
 
       &__title{
         color: #282828;
