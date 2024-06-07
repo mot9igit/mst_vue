@@ -2,13 +2,22 @@
     <div class="k-order" :class="{ show: show }">
         <div class="overlay" @click.prevent="fromOrder"></div>
         <div class="k-order__content" :class="{ loading: loading }">
-            <div class="k-order__title">
+            <div class="k-order__title" v-if="order">
+                <span class="title">Заказ #{{order.id}} оформлен!</span>
+                <div class="k-order__close" @click.prevent="fromOrder">
+                    <i class="pi pi-times"></i>
+                </div>
+            </div>
+            <div class="k-order__title" v-else>
                 <span class="title">Оформление заказа</span>
                 <div class="k-order__close" @click.prevent="fromOrder">
                     <i class="pi pi-times"></i>
                 </div>
             </div>
-            <div class="k-order__orders">
+            <div class="k-order__orders" v-if="order">
+                <p>В ближайшее время с Вами свяжутся наши менеджеры.</p>
+            </div>
+            <div class="k-order__orders" v-else>
                 <div class="k-order__order" v-for="store in this.basket?.stores" v-bind:key="store.id">
                     <h3>Заказ у поставщика «{{store.name}}»</h3>
                     <div class="k-order__shop">
@@ -28,8 +37,8 @@
                                     <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
                                     <div class="k-order__actions-el last">+3</div>
                                 </div>
-                                <Counter @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.quantity" :id="product.id" :store_id="product.store_id"/>
-                                <b>{{(product.quantity * product.price).toLocaleString('ru')}} ₽</b>
+                                <Counter @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.info.count" :id="product.id" :store_id="product.store_id"/>
+                                <b>{{(product.info.count * product.info.price).toLocaleString('ru')}} ₽</b>
                             </div>
                             <div class="k-order__product-data">
                                 <span class="k-order__article">{{product.article}}</span>
@@ -124,6 +133,7 @@ export default {
     return {
       loading: false,
       basket: {},
+      order: false,
       value: 1
     }
   },
@@ -133,11 +143,14 @@ export default {
       'opt_order_api'
     ]),
     fromOrder () {
+      this.order = false
       this.$emit('fromOrder')
     },
     orderSubmit ($storeId) {
       const data = { action: 'order/opt/submit', id: router.currentRoute._value.params.id, store_id: $storeId }
-      this.opt_order_api(data).then(() => {
+      this.opt_order_api(data).then((response) => {
+        console.log(response)
+        this.order = response.data.data.data[0]
         const data = { action: 'basket/get', id: router.currentRoute._value.params.id }
         this.busket_from_api(data).then(
           this.basket = this.optbasket
