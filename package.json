@@ -17,6 +17,7 @@
     "axios": "^1.2.2",
     "chart.js": "^4.2.0",
     "core-js": "^3.8.3",
+    "dropzone-vue": "^0.1.11",
     "mdi-vue": "^3.0.13",
     "moment": "^2.29.4",
     "primeflex": "^3.3.0",

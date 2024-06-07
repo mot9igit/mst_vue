@@ -5,27 +5,27 @@
         <span class="maintitle">Настройка акции</span>
         <div class="buttons_container">
           <RouterLink :to="{ name: 'org_sales', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary btn-padding">Отменить</RouterLink>
-          <button type="submit" class="dart-btn dart-btn-primary btn-padding" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Сохранить</button>
+          <button type="submit" class="dart-btn dart-btn-primary btn-padding" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Добавить</button>
         </div>
     </div>
     <div>
       <div class="dart-form-group mb-4">
         <span class="ktitle">Наименование акции</span>
         <label for="name">Введите наименование, которое будет отражать смысл вашей акции</label>
-        <input v-model="form.name" type="text" name="name" placeholder="Укажите название акции" class="dart-form-control">
+        <input v-model="form.name" type="text" name="name" placeholder="Укажите название акции" class="dart-form-control" :class="{'kenost-error':this.validation.name.error}">
         <span v-if="this.validation.name.error" class="kenost-error-text">{{ this.validation.name.text }}</span>
       </div>
 
       <div class="dart-form-group mb-4">
         <div class="upload-banner">
           <div class="upload-banner__text">
-            <span class="ktitle">Вертикальный баннер</span>
-            <span>Чтобы обложка выглядела качественно на всех устройствах, советуем загрузить изображение размером не менее 1108х332 пикс. Размер файла - не более ?? МБ. Форматы файла - ???.</span>
+            <span class="ktitle">Большой баннер</span>
+            <span>Загрузить изображение нужно размером не менее 1108х332, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в два раза больше указанного размера.</span>
           </div>
           <!-- <div class="dart-btn dart-btn-secondary btn-padding">Загрузить</div> -->
-          <FileUpload mode="basic" name="banner[]" :url="'/rest/file_upload.php?banner=max'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+          <FileUpload class="kenost-upload-button" mode="basic" name="banner[]" :url="'/rest/file_upload.php?banner=max'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
         </div>
-        <div class="upload-banner__image upload-banner__banner">
+        <div class="upload-banner__image">
           <img :src="files?.max?.original_href" v-if="files?.max?.original_href">
         </div>
       </div>
@@ -33,14 +33,14 @@
       <div class="dart-form-group mb-4">
         <div class="upload-banner">
           <div class="upload-banner__text">
-            <span class="ktitle">Мобильный баннер</span>
-            <span>Чтобы обложка выглядела качественно на всех устройствах, советуем загрузить изображение размером не менее 500х500 пикс. Размер файла - не более ?? МБ. Форматы файла - ???.</span>
+            <span class="ktitle">Малый баннер</span>
+            <span>Загрузить изображение нужно размером не менее 324х161, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
           </div>
           <!-- <div class="dart-btn dart-btn-secondary btn-padding">Загрузить</div> -->
-          <FileUpload mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+          <FileUpload class="kenost-upload-button" mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
         </div>
         <div class="upload-banner__image">
-          <img :src="files?.min?.original_href" v-if="files.min.original_href">
+          <img :src="files?.min?.original_href" v-if="files?.min?.original_href">
         </div>
       </div>
 
@@ -54,7 +54,6 @@
         </div>
         <div class="upload-icon__image">
           <img :src="files?.icon?.original_href" v-if="files?.icon?.original_href">
-          3
         </div>
       </div>
 
@@ -72,7 +71,7 @@
 
       <div class="dart-form-group mb-4">
         <span class="ktitle">Описание</span>
-        <input v-model="form.description" type="text" name="description" placeholder="Укажите описание акции" class="dart-form-control">
+        <input v-model="form.description" type="text" name="description" placeholder="Укажите описание акции" class="dart-form-control" :class="{'kenost-error':this.validation.description.error}">
         <span v-if="this.validation.description.error" class="kenost-error-text">{{ this.validation.description.text }}</span>
       </div>
 
@@ -85,19 +84,19 @@
       <div class="dart-form-group mb-4">
         <span class="ktitle">Совместимость скидок</span>
         <div class="flex align-items-center mt-3">
-          <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-1" name="compatibilityDiscount" value='1'/>
+          <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-1" name="compatibilityDiscount" value="1"/>
           <label for="compatibilityDiscount-1" class="ml-2 radioLabel">Совместим со всеми акциями</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-2" name="compatibilityDiscount" value='2'/>
+          <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-2" name="compatibilityDiscount" value="2"/>
           <label for="compatibilityDiscount-2" class="ml-2 radioLabel">Не совместим со всеми акциями</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-3" name="compatibilityDiscount" value='3'/>
+          <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-3" name="compatibilityDiscount" value="3"/>
           <label for="compatibilityDiscount-3" class="ml-2 radioLabel">Применяется большая скидка</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-4" name="compatibilityDiscount" value='4'/>
+          <RadioButton v-model="this.compatibilityDiscount" inputId="compatibilityDiscount-4" name="compatibilityDiscount" value="4"/>
           <label for="compatibilityDiscount-4" class="ml-2 radioLabel">Складывается с выбранными акциями</label>
         </div>
         <span v-if="this.validation.compatibilityDiscount.error" class="kenost-error-text">{{ this.validation.compatibilityDiscount.text }}</span>
@@ -106,15 +105,15 @@
       <div class="dart-form-group mb-4">
         <span class="ktitle">Совместимость отсрочек</span>
         <div class="flex align-items-center mt-3">
-          <RadioButton v-model="this.compatibilityPost" inputId="compatibilityPost-1" name="compatibilityPost" value='1'/>
+          <RadioButton v-model="this.compatibilityPost" inputId="compatibilityPost-1" name="compatibilityPost" value="1"/>
           <label for="compatibilityPost-1" class="ml-2 radioLabel">Совместим со всеми акциями</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <RadioButton v-model="this.compatibilityPost" inputId="compatibilityPost-2" name="compatibilityPost" value='2'/>
+          <RadioButton v-model="this.compatibilityPost" inputId="compatibilityPost-2" name="compatibilityPost" value="2"/>
           <label for="compatibilityPost-2" class="ml-2 radioLabel">Не совместим со всеми акциями</label>
         </div>
         <div class="flex align-items-center mt-3">
-          <RadioButton v-model="this.compatibilityPost" inputId="compatibilityPost-3" name="compatibilityPost" value='3'/>
+          <RadioButton v-model="this.compatibilityPost" inputId="compatibilityPost-3" name="compatibilityPost" value="3"/>
           <label for="compatibilityPost-3" class="ml-2 radioLabel">Применяется большая отсрочка</label>
         </div>
         <span v-if="this.validation.compatibilityPost.error" class="kenost-error-text">{{ this.validation.compatibilityPost.text }}</span>
@@ -122,8 +121,24 @@
 
       <div class="dart-form-group mb-4">
         <span class="ktitle">Даты проведения</span>
-        <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите даты" :manualInput="false" showIcon/>
+        <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите даты" :manualInput="false" showIcon :class="{'kenost-error':this.validation.dates.error}"/>
         <span v-if="this.validation.dates.error" class="kenost-error-text">{{ this.validation.dates.text }}</span>
+      </div>
+
+      <div class="dart-form-group mb-4">
+        <span class="ktitle">Срок отгрузки товаров</span>
+        <div class="flex align-items-center mt-3">
+          <RadioButton v-model="this.typeShipment" inputId="typeShipment-1" name="typeShipment" value="1"/>
+          <label for="typeShipment-1" class="ml-2 radioLabel">Определяется данными из отгрузок</label>
+        </div>
+        <div class="flex align-items-center mt-3">
+          <RadioButton v-model="this.typeShipment" inputId="typeShipment-2" name="typeShipment" value="2"/>
+          <label for="typeShipment-2" class="ml-2 radioLabel">Определяется по расчету доставки СДЭК</label>
+        </div>
+        <div class="flex align-items-center mt-3">
+          <RadioButton v-model="this.typeShipment" inputId="typeShipment-3" name="typeShipment" value="3"/>
+          <label for="typeShipment-3" class="ml-2 radioLabel">Рассчитывается СДЭК от выбранной даты отгрузки</label>
+        </div>
       </div>
 
       <div class="dart-form-group picker-wrap">
@@ -133,9 +148,8 @@
           <label for="all_product" class="ml-2"> Доступна для всех товаров </label>
         </div>
         <span v-if="this.validation.selected.error" class="kenost-error-text">{{ this.validation.selected.text }}</span>
-
-        <div class="PickList" v-if="this.all_product.length == 0">
-          <div class="PickList__product">
+        <div v-if="this.all_product.length == 0" class="PickList">
+          <div class="PickList__product" :class="{'kenost-error':this.validation.selected.error}">
             <b class="PickList__title">Доступные товары</b>
             <div class="PickList__filters">
               <div class="form_input_group input_pl input-parent required">
@@ -524,6 +538,7 @@
       </div>
 
       <div v-if="this.all_product.length != 0" class="selectedProducts mb-5">
+        <!-- <span class="title">Таблица добавленных товаров</span> -->
         <div class="selectedProductsTable" >
           <table class="kenost-action-table kenost-action-table__all">
             <thead>
@@ -650,9 +665,9 @@
                       <p>&nbsp;</p>
                       <Dropdown v-model="this.kenostAllProduct.postponementConditions" :options="this.postponementConditions" optionLabel="name" placeholder="Условие отсрочки" class="w-full md:w-14rem" />
                     </div>
-                  </td>
+                    </td>
                   <td class="kenost-action-table-td__number">
-                    <div class="kenost-wiget" v-if="this.kenostAllProduct.postponementConditions?.key == 0">
+                    <div class="kenost-wiget" v-if="this.kenostAllProduct.postponementConditions.key == 0">
                       <p>Мин общая сумма</p>
                       <InputNumber
                           v-model="this.kenostAllProduct.postponementConditionsValue"
@@ -662,7 +677,7 @@
                           incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                       />
                     </div>
-                    <div class="kenost-wiget" v-if="this.kenostAllProduct.postponementConditions?.key == 1">
+                    <div class="kenost-wiget" v-if="this.kenostAllProduct.postponementConditions.key == 1">
                       <p>Мин кол-во товара</p>
                       <InputNumber
                           v-model="this.kenostAllProduct.postponementConditionsValue"
@@ -1010,16 +1025,16 @@
 import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
 import Calendar from 'primevue/calendar'
+import TreeSelect from 'primevue/treeselect'
+// import vTable from '../../components/table/v-table'
+import Dropdown from 'primevue/dropdown'
 import RadioButton from 'primevue/radiobutton'
-// import Checkbox from 'primevue/checkbox'
+import Checkbox from 'primevue/checkbox'
 import Paginate from 'vuejs-paginate-next'
 import FileUpload from 'primevue/fileupload'
 import Toast from 'primevue/toast'
 import InputNumber from 'primevue/inputnumber'
-// import Dialog from 'primevue/dialog'
-import Dropdown from 'primevue/dropdown'
-import Checkbox from 'primevue/checkbox'
-import TreeSelect from 'primevue/treeselect'
+import Dialog from 'primevue/dialog'
 
 export default {
   name: 'ProfileSalesAdd',
@@ -1029,35 +1044,25 @@ export default {
       pagination_items_per_page_selected: 25,
       pagination_offset_selected: 0,
       page: 1,
+      typeShipment: 0,
       page_selected: 1,
       total_selected: 0,
       loading: false,
       compatibilityDiscount: 0,
-      all_product: [],
-      kenost_table_all: [],
-      kenost_table: [],
       compatibilityPost: 0,
       availability: [],
+      kenost_table_all: [],
+      kenost_table: [],
+      regions: this.getregions,
+      all_product: [],
+      all_product_bool: false,
       discountFormul: {
         index: 0,
         price: 0,
         value: 0,
         type: { name: '₽', key: 0 }
       },
-      kenostActivityAll: {
-        type_price: '',
-        value: 0,
-        condition: '',
-        multiplicity: 0, // Кратность
-        multiplicityTwo: 0, // Кратность
-        productType: 0, // Тип товара
-        productTypeTwo: 0, // Тип товара
-        quantity: 0, // Количество
-        minTotalAmount: 0, // Мин общая сумма
-        minTotalAmountTwo: 0, // Мин общая сумма
-        minTotalSKU: 0, // Мин общее кол-во SKU
-        minTotalSKUTwo: 0 // Мин общее кол-во SKU
-      },
+      visible: false,
       kenostAllProduct: {
         typePrice: 0,
         discountInterest: 0,
@@ -1078,31 +1083,20 @@ export default {
         postponementConditionsValue: 0,
         conditionPaymentDelivery: 0
       },
-      files: {
-        max: {
-          original_href: ''
-        },
-        min: {
-          original_href: ''
-        },
-        icon: {
-          original_href: ''
-        }
+      kenostActivityAll: {
+        type_price: '',
+        value: 0,
+        condition: '',
+        multiplicity: 0, // Кратность
+        multiplicityTwo: 0, // Кратность
+        productType: 0, // Тип товара
+        productTypeTwo: 0, // Тип товара
+        quantity: 0, // Количество
+        minTotalAmount: 0, // Мин общая сумма
+        minTotalAmountTwo: 0, // Мин общая сумма
+        minTotalSKU: 0, // Мин общее кол-во SKU
+        minTotalSKUTwo: 0 // Мин общее кол-во SKU
       },
-      filter: {
-        name: '',
-        category: {}
-      },
-      filter_organizations: {
-        name: '',
-        type: [1, 2]
-      },
-      selected: {},
-      products: [],
-      total_products: 0,
-      per_page: 25,
-      all_organizations: [],
-      all_organizations_selected: {},
       validation: {
         name: {
           error: false,
@@ -1129,6 +1123,21 @@ export default {
           text: 'Пожалуйста, добавьте хотя бы 1 товар!'
         }
       },
+      files: {},
+      filter: {
+        name: '',
+        category: {}
+      },
+      filter_organizations: {
+        name: '',
+        type: [1, 2]
+      },
+      selected: {},
+      products: [],
+      total_products: 0,
+      per_page: 25,
+      all_organizations: [],
+      all_organizations_selected: {},
       form: {
       },
       editMode: true,
@@ -1219,7 +1228,6 @@ export default {
       'set_sales_to_api',
       'get_catalog_from_api',
       'get_all_organizations_from_api',
-      'get_sales_to_api',
       'get_regions_from_api'
     ]),
     paginate (obj) {
@@ -1258,6 +1266,22 @@ export default {
         case 'finalPrice':
           this.selected[object.id].discountInRubles = this.selected[object.id].price - object.value
           this.selected[object.id].discountInterest = this.selected[object.id].discountInRubles / this.selected[object.id].price / 100
+          break
+      }
+    },
+    setPrices (index, name, value) {
+      switch (name) {
+        case 'discountInterest':
+          this.selected[index].discountInRubles = (Number(this.selected[index].price) / 100) * value
+          this.selected[index].finalPrice = Number(this.selected[index].price) - this.selected[index].discountInRubles
+          break
+        case 'discountInRubles':
+          this.selected[index].discountInterest = value / (Number(this.selected[index].price) / 100)
+          this.selected[index].finalPrice = Number(this.selected[index].price) - this.selected[index].discountInRubles
+          break
+        case 'finalPrice':
+          this.selected[index].discountInRubles = Number(this.selected[index].price) - value
+          this.selected[index].discountInterest = this.selected[index].discountInRubles / (Number(this.selected[index].price) / 100)
           break
       }
     },
@@ -1324,11 +1348,6 @@ export default {
       const organization = this.all_organizations.find(r => r.id === id)
       this.all_organizations_selected[organization.id] = organization
       this.all_organizations = this.all_organizations.filter((r) => r.id !== id)
-
-      const data = { filter: this.filter_organizations, selected: this.all_organizations_selected }
-      this.get_all_organizations_from_api(data).then(
-        this.all_organizations = this.allorganizations
-      )
     },
     deleteSelectOrganization (id) {
       this.all_organizations.push(this.all_organizations_selected[id])
@@ -1343,57 +1362,19 @@ export default {
 
       // eslint-disable-next-line camelcase
       this.all_organizations_selected = new_all_organizations_selected
-
-      const data = { filter: this.filter_organizations, selected: this.all_organizations_selected }
-      this.get_all_organizations_from_api(data).then(
-        this.all_organizations = this.allorganizations
-      )
     },
     setFilter () {
       const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
     },
     setFilterOrganization () {
-      const data = { filter: this.filter_organizations, selected: this.all_organizations_selected }
+      const data = { filter: this.filter_organizations }
       this.get_all_organizations_from_api(data).then(
         this.all_organizations = this.allorganizations
       )
     },
-    massActionTable () {
-      for (let i = 0; i < this.kenost_table.length; i++) {
-        this.selected[this.kenost_table[i]].condition = this.kenostActivityAll.condition
-        this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.type_price
-
-        this.selected[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value
-        this.selected[this.kenost_table[i]].discountInRubles = (Number(this.selected[this.kenost_table[i]].price) / 100) * this.kenostActivityAll.value
-        this.selected[this.kenost_table[i]].finalPrice = Number(this.selected[this.kenost_table[i]].price) - (Number(this.selected[this.kenost_table[i]].price) / 100) * this.kenostActivityAll.value
-
-        this.selected[this.kenost_table[i]].conditionInfo = {
-          multiplicity: this.kenostActivityAll.multiplicity, // Кратность
-          multiplicityTwo: this.kenostActivityAll.multiplicityTwo, // Кратность
-          productType: this.kenostActivityAll.productType, // Тип товара
-          productTypeTwo: this.kenostActivityAll.productTypeTwo, // Тип товара
-          quantity: this.kenostActivityAll.quantity, // Количество
-          minTotalAmount: this.kenostActivityAll.minTotalAmount, // Мин общая сумма
-          minTotalAmountTwo: this.kenostActivityAll.minTotalAmountTwo, // Мин общая сумма
-          minTotalSKU: this.kenostActivityAll.minTotalSKU, // Мин общее кол-во SKU
-          minTotalSKUTwo: this.kenostActivityAll.minTotalSKUTwo // Мин общее кол-во SKU
-        }
-      }
-    },
     saveData () {
       this.selected = this.available_products.products[1]
-    },
-    kenostTableCheckedAll () {
-      if (this.kenost_table_all.length === 0) {
-        this.kenost_table = []
-        for (let i = 0; i < Object.keys(this.selected).length; i++) {
-          this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
-          // console.log(this.selected[Object.keys(this.selected)[i]])
-        }
-      } else {
-        this.kenost_table = []
-      }
     },
     formSubmit (event) {
       let stop = false
@@ -1452,8 +1433,22 @@ export default {
         this.all_product_bool = false
       }
 
+      // console.log({
+      //   action: 'set',
+      //   type: 'b2b',
+      //   id: router.currentRoute._value.params.id,
+      //   name: this.form.name,
+      //   description: this.form.description,
+      //   compatibilityDiscount: this.compatibilityDiscount,
+      //   compatibilityPost: this.compatibilityPost,
+      //   dates: this.form.dates,
+      //   products: this.selected,
+      //   organizations: this.all_organizations_selected,
+      //   files: this.files,
+      //   all_products: this.all_product_bool
+      // })
+
       // if (!stop) {
-      this.loading = true
       this.$load(async () => {
         await this.set_sales_to_api({
           action: 'set',
@@ -1468,8 +1463,7 @@ export default {
           organizations: this.all_organizations_selected,
           files: this.files,
           all_products: this.all_product_bool,
-          all_products_info: this.kenostAllProduct,
-          action_id: router.currentRoute._value.params.sales_id
+          all_products_info: this.kenostAllProduct
         })
           .then((result) => {
             this.loading = false
@@ -1479,7 +1473,61 @@ export default {
             console.log(result)
           })
       })
+      this.loading = true
       // }
+    },
+    kenostTableCheckedAll () {
+      if (this.kenost_table_all.length === 0) {
+        this.kenost_table = []
+        for (let i = 0; i < Object.keys(this.selected).length; i++) {
+          this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
+          // console.log(this.selected[Object.keys(this.selected)[i]])
+        }
+      } else {
+        this.kenost_table = []
+      }
+    },
+    setDiscountFormul () {
+      if (this.discountFormul.type) {
+        if (this.discountFormul.type.key === 0) {
+          if (this.discountFormul.value) {
+            this.selected[this.discountFormul.index].discountInRubles = this.discountFormul.value
+            this.selected[this.discountFormul.index].discountInterest = this.discountFormul.value / (this.discountFormul.price / 100)
+            this.selected[this.discountFormul.index].finalPrice = this.discountFormul.price - this.discountFormul.value
+            this.selected[this.discountFormul.index].typePrice = { name: 'Заданная', key: 0 }
+          }
+        } else if (this.discountFormul.type.key === 1) {
+          if (this.discountFormul.value) {
+            this.selected[this.discountFormul.index].discountInRubles = (this.discountFormul.price / 100) * this.discountFormul.value
+            this.selected[this.discountFormul.index].discountInterest = this.discountFormul.value
+            this.selected[this.discountFormul.index].finalPrice = this.discountFormul.price - (this.discountFormul.price / 100) * this.discountFormul.value
+            this.selected[this.discountFormul.index].typePrice = { name: 'Заданная', key: 0 }
+          }
+        }
+        this.visible = false
+      }
+    },
+    massActionTable () {
+      for (let i = 0; i < this.kenost_table.length; i++) {
+        this.selected[this.kenost_table[i]].condition = this.kenostActivityAll.condition
+        this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.type_price
+
+        this.selected[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value
+        this.selected[this.kenost_table[i]].discountInRubles = (Number(this.selected[this.kenost_table[i]].price) / 100) * this.kenostActivityAll.value
+        this.selected[this.kenost_table[i]].finalPrice = Number(this.selected[this.kenost_table[i]].price) - (Number(this.selected[this.kenost_table[i]].price) / 100) * this.kenostActivityAll.value
+
+        this.selected[this.kenost_table[i]].conditionInfo = {
+          multiplicity: this.kenostActivityAll.multiplicity, // Кратность
+          multiplicityTwo: this.kenostActivityAll.multiplicityTwo, // Кратность
+          productType: this.kenostActivityAll.productType, // Тип товара
+          productTypeTwo: this.kenostActivityAll.productTypeTwo, // Тип товара
+          quantity: this.kenostActivityAll.quantity, // Количество
+          minTotalAmount: this.kenostActivityAll.minTotalAmount, // Мин общая сумма
+          minTotalAmountTwo: this.kenostActivityAll.minTotalAmountTwo, // Мин общая сумма
+          minTotalSKU: this.kenostActivityAll.minTotalSKU, // Мин общее кол-во SKU
+          minTotalSKUTwo: this.kenostActivityAll.minTotalSKUTwo // Мин общее кол-во SKU
+        }
+      }
     }
   },
   mounted () {
@@ -1489,33 +1537,20 @@ export default {
     this.get_catalog_from_api().then(
       this.get_catalog = this.getcatalog
     )
-    const data = { filter: this.filter_organizations, selected: this.all_organizations_selected }
+    const data = { filter: this.filter_organizations }
     this.get_all_organizations_from_api(data).then(
       this.all_organizations = this.allorganizations
     )
     this.get_regions_from_api().then(
       this.regions = this.getregions
     )
-    this.get_sales_to_api({ id: router.currentRoute._value.params.sales_id, actionid: router.currentRoute._value.params.sales_id })
   },
-  components: {
-    Calendar,
-    TreeSelect,
-    RadioButton,
-    Paginate,
-    FileUpload,
-    Toast,
-    InputNumber,
-    // Dialog,
-    Dropdown,
-    Checkbox
-  },
+  components: { Calendar, TreeSelect, RadioButton, Paginate, FileUpload, Toast, Checkbox, Dropdown, InputNumber, Dialog },
   computed: {
     ...mapGetters([
       'available_products',
       'getcatalog',
       'allorganizations',
-      'actions',
       'getregions'
     ]),
     pagesCount () {
@@ -1539,99 +1574,201 @@ export default {
     },
     getregions: function (newVal, oldVal) {
       this.regions = this.getregions
-    },
-    actions: function (newVal, oldVal) {
-      this.form.name = newVal.name
-      if (newVal.image) {
-        this.files.max.original_href = this.site_url_prefix + newVal.image
-      }
-      if (newVal.image_inner) {
-        this.files.min.original_href = this.site_url_prefix + newVal.image_inner
-      }
-
-      if (newVal.icon) {
-        this.files.icon.original_href = this.site_url_prefix + newVal.icon
-      }
-
-      this.form.description = newVal.description
-      this.compatibilityDiscount = newVal.compatibility_discount.toString()
-      this.compatibilityPost = newVal.compatibility_postponement.toString()
-      const dateto = new Date(newVal.date_to)
-      const datefrom = new Date(newVal.date_from)
-      this.form.dates = [datefrom, dateto]
-      this.selected = newVal.products
-      this.total_selected = newVal.total_products
-      this.all_organizations_selected = newVal.organization
-
-      if (newVal.all_products) {
-        this.all_product = ['1']
-
-        this.kenostAllProduct = {
-          typePrice: this.typePrice[newVal.type_price],
-          discountInterest: newVal.interest_discount,
-          condition: this.condition[newVal.discount_condition],
-          conditionInfo: {
-            multiplicity: newVal.discount_multiplicity, // Кратность
-            multiplicityTwo: 0, // Кратность
-            productType: this.productType[newVal.discount_type_one], // Тип товара
-            productTypeTwo: this.productType[newVal.discount_type_two], // Тип товара
-            quantity: newVal.discount_quantity, // Количество
-            minTotalAmount: newVal.discount_amount_min_one, // Мин общая сумма
-            minTotalAmountTwo: newVal.discount_amount_min_two, // Мин общая сумма
-            minTotalSKU: newVal.discount_SKU_one, // Мин общее кол-во SKU
-            minTotalSKUTwo: newVal.discount_SKU_two // Мин общее кол-во SKU
-          },
-          delay: newVal.delay,
-          postponementConditions: this.postponementConditions[newVal.condition_delay],
-          postponementConditionsValue: newVal.condition_delay_value,
-          paymentDelivery: this.paymentDelivery[newVal.payment_delivery],
-          conditionPaymentDelivery: this.conditionPaymentDelivery[newVal.delivery_payment_terms],
-          conditionPaymentDeliveryValue: newVal.delivery_payment_value,
-          select_regions: newVal.regions_and_sities,
-          shipmentCondition: this.shipmentCondition[newVal.condition_shipment],
-          shipmentConditionValue: newVal.condition_shipment_value
-        }
-      } else {
-        for (let i = 0; i < Object.keys(this.selected).length; i++) {
-          this.selected[Object.keys(this.selected)[i]].condition = this.condition[this.selected[Object.keys(this.selected)[i]].discount_condition]
-          this.selected[Object.keys(this.selected)[i]].conditionInfo = {
-            multiplicity: this.selected[Object.keys(this.selected)[i]].discount_multiplicity, // Кратность
-            multiplicityTwo: 0, // Кратность
-            productType: this.productType[this.selected[Object.keys(this.selected)[i]].discount_type_one], // Тип товара
-            productTypeTwo: this.productType[this.selected[Object.keys(this.selected)[i]].discount_type_two], // Тип товара
-            quantity: this.selected[Object.keys(this.selected)[i]].discount_quantity, // Количество
-            minTotalAmount: this.selected[Object.keys(this.selected)[i]].discount_amount_min_one, // Мин общая сумма
-            minTotalAmountTwo: this.selected[Object.keys(this.selected)[i]].discount_amount_min_two, // Мин общая сумма
-            minTotalSKU: this.selected[Object.keys(this.selected)[i]].discount_SKU_one, // Мин общее кол-во SKU
-            minTotalSKUTwo: this.selected[Object.keys(this.selected)[i]].discount_SKU_two // Мин общее кол-во SKU
-          }
-          this.selected[Object.keys(this.selected)[i]].typePrice = this.typePrice[this.selected[Object.keys(this.selected)[i]].type_price]
-          this.selected[Object.keys(this.selected)[i]].postponementConditions = this.postponementConditions[this.selected[Object.keys(this.selected)[i]].condition_delay]
-          this.selected[Object.keys(this.selected)[i]].conditionPaymentDelivery = this.conditionPaymentDelivery[this.selected[Object.keys(this.selected)[i]].delivery_payment_terms]
-          this.selected[Object.keys(this.selected)[i]].postponementConditionsValue = this.selected[Object.keys(this.selected)[i]].condition_delay_value
-          this.selected[Object.keys(this.selected)[i]].conditionPaymentDeliveryValue = this.selected[Object.keys(this.selected)[i]].delivery_payment_value
-          this.selected[Object.keys(this.selected)[i]].paymentDelivery = this.paymentDelivery[this.selected[Object.keys(this.selected)[i]].payment_delivery]
-          this.selected[Object.keys(this.selected)[i]].shipmentCondition = this.shipmentCondition[this.selected[Object.keys(this.selected)[i]].condition_shipment]
-          this.selected[Object.keys(this.selected)[i]].shipmentConditionValue = this.selected[Object.keys(this.selected)[i]].condition_shipment_value
-          this.selected[Object.keys(this.selected)[i]].select_regions = this.selected[Object.keys(this.selected)[i]].regions_and_sities
-        }
-      }
-
-      // console.log(this.selected)
-
-      const dataorg = { filter: this.filter_organizations, selected: this.all_organizations_selected }
-      this.get_all_organizations_from_api(dataorg).then(
-        this.all_organizations = this.allorganizations
-      )
-
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
-      this.get_available_products_from_api(data)
     }
   }
 }
 </script>
 
 <style lang="scss">
+
+  .kenost-modal-price{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .p-inputnumber{
+      width: 104px;
+    }
+
+    .p-dropdown{
+      width: 74px;
+    }
+
+    &__button{
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+  }
+
+  .kenost-wiget{
+    p{
+      color: #A0A0A0;
+      font-weight: 400;
+      font-size: 12px;
+      margin: 0;
+    }
+  }
+
+  .kenost-all-table-activity{
+    display: flex;
+    gap: 8px;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    align-items: flex-start;
+
+    .p-dropdown{
+      width: 290px;
+    }
+
+    .p-inputnumber{
+      width: 104px;
+    }
+  }
+
+  .selectedProductsTable{
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .kenost-th{
+    &__name{
+      width: 300px;
+    }
+
+    &__price{
+      width: 70px;
+    }
+
+    &__formula{
+      width: 255px;
+    }
+
+    &__typePrice{
+      width: 115px;
+    }
+
+    &__number{
+      width: 135px;
+    }
+
+    &__discount-condition{
+      width: 300px;
+    }
+
+    &__сheckbox{
+      width: 30px;
+    }
+  }
+
+  .kenost-action-table{
+    width: 4252px;
+
+    &__all{
+      width: 3330px;
+    }
+
+    tbody + tbody{
+      border-top: 1px solid #ADADAD;
+    }
+
+    .p-dropdown{
+      margin: 0 !important;
+    }
+
+    td:not(.not-padding){
+      padding: 16px 0 0 0;
+    }
+
+    td.not-padding{
+      padding: 8px 0 16px 0;
+    }
+
+    td{
+      &.center{
+        text-align: center;
+      }
+    }
+
+    &__name{
+      color: #282828;
+      font-size: 14px;
+      font-weight: 500px;
+      padding: 8px 0 24px 0;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1215686275);
+
+      &.center{
+        text-align: center;
+      }
+    }
+  }
+
+  .kenost-action-table-td{
+    &__name{
+      width: 300px;
+      display: flex;
+      gap: 8px;
+      img{
+        width: 38px;
+        height: 38px !important;
+        object-fit: contain;
+        border-radius: 5px;
+      }
+    }
+
+    &__number{
+      .p-component{
+        width: 85%;
+      }
+    }
+
+    &__text{
+      p{
+        margin: 0;
+        font-size: 14px;
+        font-weight: 400;
+        color: #282828;
+        line-height: 1;
+      }
+
+      span{
+        font-size: 12px;
+        font-weight: 400;
+        color: #ADADAD;
+        line-height: 1;
+      }
+    }
+
+    &__discount-condition{
+      .p-dropdown{
+        width: 290px !important;
+      }
+
+      .p-treeselect{
+        width: 290px !important;
+        position: relative;
+      }
+    }
+
+    &__num{
+      width: 170px;
+      padding: 16px 8px 0 8px !important;
+
+      &.not-padding{
+        padding: 0 8px 0 8px !important;
+      }
+    }
+  }
+
+  .kenost-error{
+    border: 1px solid #FF0000 !important;
+  }
+
+  .kenost-error-text{
+    color: #FF0000;
+    font-size: 14px;
+    margin-top: 4px;
+  }
 
   .kenost-checkbox-container{
     display: flex;
