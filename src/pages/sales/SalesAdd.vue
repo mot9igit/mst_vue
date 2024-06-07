@@ -113,8 +113,8 @@
                 <label for="typeShipment-1" class="ml-2 radioLabel">Определяется данными из отгрузок</label>
                 </div>
                 <div class="flex align-items-center mt-3">
-                <RadioButton v-model="this.form.typeShipment" inputId="typeShipment-2" name="typeShipment" value="2"/>
-                <label for="typeShipment-2" class="ml-2 radioLabel">Определяется по расчету доставки СДЭК</label>
+                  <RadioButton v-model="this.form.typeShipment" inputId="typeShipment-2" name="typeShipment" value="2"/>
+                  <label for="typeShipment-2" class="ml-2 radioLabel">Определяется по расчету доставки СДЭК</label>
                 </div>
                 <div class="flex align-items-center mt-3">
                 <RadioButton v-model="this.form.typeShipment" inputId="typeShipment-3" name="typeShipment" value="3"/>
@@ -181,7 +181,7 @@
                 </div>
             </div>
 
-            <div class="dart-form-group picker-wrap">
+              <div class="dart-form-group picker-wrap">
                 <span class="ktitle">Добавление товаров</span>
                 <div class="flex align-items-center mt-2">
                     <RadioButton v-model="this.form.addProductType" inputId="addProductType-1" name="addProductType" value="1"/>
@@ -191,6 +191,7 @@
                     <RadioButton v-model="this.form.addProductType" inputId="addProductType-2" name="addProductType" value="2"/>
                     <label for="addProductType-2" class="ml-2 radioLabel">Загрузить файлом</label>
                 </div>
+              </div>
 
                 <div v-if="this.form.addProductType == '2'" class="dart-form-group mb-4">
                   <DropZone
@@ -211,10 +212,12 @@
                       </div>
                     </template>
                   </DropZone>
+
+                  <div class="kenost-link-blue mt-2">Скачать шаблон файла</div>
                 </div>
 
                 <div v-if="this.form.addProductType == '1'" class="PickList mt-3">
-                    <div class="PickList__product">
+                    <div class="PickList__product" :style="{ width: '40%' }">
                         <b class="PickList__title">Доступные товары</b>
                         <div class="PickList__filters">
                         <div class="form_input_group input_pl input-parent required">
@@ -258,7 +261,7 @@
                         </div>
                     </div>
 
-                    <div class="PickList__selected">
+                    <div class="PickList__selected" :style="{ width: '40%' }">
                       <div class="PickList__title mb-4">
                       <b>Добавленные товары</b>
                       </div>
@@ -330,24 +333,105 @@
                             {{(Number(item.price).toFixed(0)).toLocaleString('ru')}} ₽
                           </td>
                           <td>
-                            {{(Number(item.discountInterest).toFixed(0)).toLocaleString('ru')}}
+                            {{(Number(item.discountInterest).toFixed(2)).toLocaleString('ru')}}
                           </td>
                           <td>
                             {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru')}} ₽
                             <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_index = index" >Настроить</p>
                           </td>
                           <td>
-                            <Counter class="margin-auto" @ElemCount="ElemCount" :min="1" :value="item.multiplicity"/>
+                            <Counter class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="item.multiplicity"/>
                           </td>
                           <td>
-                            {{(Number(item.price).toFixed(0)).toLocaleString('ru')}} ₽
+                            {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru') * item.multiplicity}} ₽
                           </td>
                         </tr>
                     </tbody>
                   </table>
                 </div>
-            </div>
 
+                <div class="dart-form-group mt-4">
+                  <span class="ktitle">Участники</span>
+                  <div class="flex align-items-center mt-2">
+                    <RadioButton v-model="this.form.participantsType" inputId="participantsType-1" name="participantsType" value="1"/>
+                    <label for="participantsType-1" class="ml-2 radioLabel">Выбрать регион</label>
+                  </div>
+                  <div class="flex align-items-center mt-3">
+                    <RadioButton v-model="this.form.participantsType" inputId="participantsType-2" name="participantsType" value="2"/>
+                    <label for="participantsType-2" class="ml-2 radioLabel">Выбрать отдельные компании</label>
+                  </div>
+                </div>
+
+                <div class="dart-form-group">
+                  <div v-if="this.form.participantsType == '1'" class="kenost-select-reginos">
+                    <p class="kenost-select-reginos__title">Выбор участников по регионам</p>
+                    <p class="kenost-select-reginos__gray">Акция будет доступна в том числе для новых компаний из выбранного региона</p>
+                    <div class="kenost-select-reginos__checkboxs">
+                      <div class="flex align-items-center">
+                        <Checkbox v-model="this.form.access" inputId="access-1" name="access-1" value="1" />
+                        <label for="access-1" class="ml-2"> Доступно для магазинов </label>
+                      </div>
+                      <div class="flex align-items-center">
+                        <Checkbox v-model="this.form.access" inputId="access-2" name="access-1" value="2" />
+                        <label for="access-2" class="ml-2"> Доступно для оптовых компаний </label>
+                      </div>
+                      <div class="flex align-items-center">
+                        <Checkbox v-model="this.form.access" inputId="access-3" name="access-1" value="3" />
+                        <label for="access-3" class="ml-2"> Доступно для производителей </label>
+                      </div>
+                    </div>
+                  <MultiSelect v-model="selectedCities" display="chip" :options="this.regions" optionLabel="name" placeholder="Select Cities"
+                  :maxSelectedLabels="3" class="w-full md:w-20rem" />
+                  </div>
+                </div>
+
+                <div class="PickList" v-if="this.form.participantsType == '2'">
+                  <div class="PickList__product" :style="{ width: '40%' }">
+                    <b class="PickList__title">Добавление отдельных компаний</b>
+                    <div class="PickList__filters">
+                      <div class="form_input_group input_pl input-parent required">
+                        <input
+                        type="text"
+                        id="filter_name"
+                        placeholder="Введите артикул или название"
+                        class="dart-form-control"
+                        v-model="filter_organizations.name"
+                        @input="setFilterOrganization('filter')"
+                        />
+                        <label for="product_filter_name" class="s-complex-input__label">Введите название компании</label>
+                        <div class="form_input_group__icon">
+                            <i class="d_icon d_icon-search"></i>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="PickList__products">
+                      <div class="PickList__el center" v-for="item in this.all_organizations" :key="item.id">
+                        <img :src="item.image" alt="">
+                        <div class="PickList__product-info">
+                          <div>{{item.name}}</div>
+                        </div>
+                        <div @click="selectOrganization(item.id)" class="PickList__select"><i class="pi pi-angle-right"></i></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="PickList__selected" :style="{ width: '40%' }">
+                    <div class="PickList__title mb-4">
+                      <b>Добавленные компании</b>
+                    </div>
+                    <div class="PickList__products">
+                      <div class="PickList__el center" v-for="(item) in this.all_organizations_selected" :key="item.id">
+                        <img :src="item.image" alt="">
+                          <div class="PickList__info">
+                          <div class="PickList__product-info off">
+                            <div>{{item.name}}</div>
+                          </div>
+                        </div>
+                        <div @click="deleteSelectOrganization(item.id)" class="PickList__select"><i class="pi pi-times"></i></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
         </div>
     </form>
     <Dialog v-model:visible="this.modals.delay" header="Настройка отсрочки платежа" :style="{ width: '800px' }">
@@ -421,16 +505,17 @@
                 <div class="kenost-wiget">
                   <p>Значение</p>
                   <InputNumber
-                    v-model="this.form.conditionPaymentDeliveryValue"
+                    v-model="this.saleValue"
                     inputId="horizontal-buttons"
                     :step="0.1"
                     min="0"
+                    @update:modelValue="setDiscountFormul(this.selected[this.modals.product_index].typeFormul, this.saleValue)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                   />
                 </div>
                 <div class="kenost-wiget">
                   <p>&nbsp;</p>
-                  <Dropdown v-model="this.selected[this.modals.product_index].typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown @change="setDiscountFormul(this.selected[this.modals.product_index].typeFormul, this.saleValue)" v-model="this.selected[this.modals.product_index].typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
                 </div>
               </div>
             </div>
@@ -486,7 +571,7 @@
 
             <div class="kenost-info-line" v-if="this.modals.price_step != 0">
               <p>РРЦ: {{this.selected[this.modals.product_index]?.price}} ₽</p>
-              <p>Скидка: {{this.selected[this.modals.product_index]?.discountInterest}}%</p>
+              <p>Скидка: {{(this.selected[this.modals.product_index]?.discountInterest).toFixed(2)}} %</p>
               <p>Цена со скидой: {{this.selected[this.modals.product_index]?.finalPrice}} ₽</p>
             </div>
 
@@ -495,8 +580,8 @@
                 <div v-if="this.modals.price_step != 0" class="dart-btn dart-btn-secondary btn-padding" @click="this.modals.price_step = 0">
                   Назад
                 </div>
-                <div class="dart-btn dart-btn-primary btn-padding" @click="this.modals.price_step = Number(this.modals.type_price)">
-                  Далее
+                <div class="dart-btn dart-btn-primary btn-padding" @click="closeDialogPrice">
+                  {{this.modals.price_step == 0? 'Далее' : 'Готово'}}
                 </div>
             </div>
         </div>
@@ -515,6 +600,7 @@ import TreeSelect from 'primevue/treeselect'
 import DropZone from 'dropzone-vue'
 import Checkbox from 'primevue/checkbox'
 import Counter from '../../components/opt/Counter.vue'
+import MultiSelect from 'primevue/multiselect'
 
 export default {
   name: 'ProfileSalesAdd',
@@ -532,8 +618,17 @@ export default {
       products: [],
       get_catalog: [],
       total_products: 0,
+      saleValue: 0,
       per_page: 25,
+      filter_organizations: {
+        name: '',
+        type: [1, 2]
+      },
+      all_organizations: [],
+      all_organizations_selected: {},
       page_selected: 1,
+      regions: [],
+      regions_all: [],
       form: {
         name: '',
         description: '',
@@ -556,7 +651,9 @@ export default {
             day: 0
           }
         ],
-        delayPercentSum: 0
+        delayPercentSum: 0,
+        participantsType: '1',
+        access: []
       },
       modals: {
         delay: false,
@@ -602,7 +699,9 @@ export default {
   methods: {
     ...mapActions([
       'get_available_products_from_api',
-      'get_catalog_from_api'
+      'get_catalog_from_api',
+      'get_all_organizations_from_api',
+      'get_regions_from_api'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -637,7 +736,7 @@ export default {
       product.discountInRubles = 0
       product.multiplicity = 1
       product.finalPrice = Number(product.price)
-      product.typeFormul = ''
+      product.typeFormul = {}
       product.typePrice = ''
 
       this.selected[product.id] = product
@@ -666,6 +765,31 @@ export default {
       this.get_available_products_from_api(data)
       this.total_selected--
     },
+    selectOrganization (id) {
+      const organization = this.all_organizations.find(r => r.id === id)
+      this.all_organizations_selected[organization.id] = organization
+      this.all_organizations = this.all_organizations.filter((r) => r.id !== id)
+    },
+    setFilterOrganization () {
+      const data = { filter: this.filter_organizations }
+      this.get_all_organizations_from_api(data).then(
+        this.all_organizations = this.allorganizations
+      )
+    },
+    deleteSelectOrganization (id) {
+      this.all_organizations.push(this.all_organizations_selected[id])
+      // eslint-disable-next-line camelcase
+      const new_all_organizations_selected = {}
+
+      for (let i = 0; i < Object.keys(this.all_organizations_selected).length; i++) {
+        if (this.all_organizations_selected[Object.keys(this.all_organizations_selected)[i]].id !== id) {
+          new_all_organizations_selected[Object.keys(this.all_organizations_selected)[i]] = this.all_organizations_selected[Object.keys(this.all_organizations_selected)[i]]
+        }
+      }
+
+      // eslint-disable-next-line camelcase
+      this.all_organizations_selected = new_all_organizations_selected
+    },
     pagClickCallback (pageNum) {
       this.page = pageNum
       const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
@@ -680,6 +804,17 @@ export default {
         }
       } else {
         this.kenost_table = []
+      }
+    },
+    ElemCount (obj) {
+      this.selected[obj.id].multiplicity = obj.value
+    },
+    closeDialogPrice () {
+      if (this.modals.price_step === 0) {
+        this.modals.price_step = Number(this.modals.type_price)
+      } else {
+        this.modals.price_step = 0
+        this.modals.price = false
       }
     },
     setPrices (index, name, value) {
@@ -697,6 +832,20 @@ export default {
           this.selected[index].discountInterest = this.selected[index].discountInRubles / (Number(this.selected[index].price) / 100)
           break
       }
+    },
+    setDiscountFormul (type, value) {
+      if (type && value !== 0) {
+        if (type.key === 0) {
+          value = Number(value)
+          this.selected[this.modals.product_index].discountInRubles = value
+          this.selected[this.modals.product_index].discountInterest = value / (this.selected[this.modals.product_index].price / 100)
+          this.selected[this.modals.product_index].finalPrice = this.selected[this.modals.product_index].price - value
+        } else if (type.key === 1) {
+          this.selected[this.modals.product_index].discountInRubles = (this.selected[this.modals.product_index].price / 100) * value
+          this.selected[this.modals.product_index].discountInterest = value
+          this.selected[this.modals.product_index].finalPrice = this.selected[this.modals.product_index].price - (this.selected[this.modals.product_index].price / 100) * value
+        }
+      }
     }
   },
   mounted () {
@@ -706,6 +855,23 @@ export default {
     this.get_catalog_from_api().then(
       this.get_catalog = this.getcatalog
     )
+    const data = { filter: this.filter_organizations }
+    this.get_all_organizations_from_api(data).then(
+      this.all_organizations = this.allorganizations
+    )
+    this.get_regions_from_api().then(() => {
+      this.regions = this.getregions
+      console.log(Object.keys(this.regions).length)
+      console.log(this.regions)
+      // console.log(Object.keys(this.regions).length)
+      // for (let i = 0; Object.keys(this.regions).length; i++) {
+      //   if (this.regions[Object.keys(this.regions)[i]]) {
+      //     this.regions_all.push(this.regions[Object.keys(this.regions)[i]])
+      //   }
+      // }
+
+      // console.log(this.regions_all)
+    })
   },
   components: {
     FileUpload,
@@ -717,12 +883,15 @@ export default {
     TreeSelect,
     DropZone,
     Checkbox,
-    Counter
+    Counter,
+    MultiSelect
   },
   computed: {
     ...mapGetters([
       'available_products',
-      'getcatalog'
+      'getcatalog',
+      'allorganizations',
+      'getregions'
     ])
   },
   watch: {
@@ -732,11 +901,53 @@ export default {
     },
     getcatalog: function (newVal, oldVal) {
       this.get_catalog = newVal
+    },
+    allorganizations: function (newVal, oldVal) {
+      this.all_organizations = newVal
+    },
+    getregions: function (newVal, oldVal) {
+      this.regions = this.getregions
     }
   }
 }
 </script>
 <style lang="scss">
+
+  .kenost-select-reginos{
+    border: 1px solid #E2E2E2;
+    padding: 24px;
+    border-radius: 5px;
+
+    &__title{
+      font-size: 14px;
+      font-weight: 500;
+      color: #282828;
+      letter-spacing: 0.25px;
+    }
+
+    &__gray{
+      color: #ADADAD;
+      font-size: 14px;
+      font-weight: 400px;
+      margin: 8px 0 16px 0;
+    }
+
+    &__checkboxs{
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 100px;
+    }
+  }
+
+  .kenost-link-blue{
+    color: #1874CF;
+    font-size: 14px;
+    cursor: pointer;
+
+    &:hover{
+      color: #4d8dcc;
+    }
+  }
 
     .kenost-info-line{
       display: flex;
@@ -919,8 +1130,7 @@ export default {
 
         th{
           padding: 12px;
-          // background: #F8F7F5;
-          background: #ffbe3d;
+          background: #F8F7F5;
         }
 
         td:first-child{
