@@ -67,10 +67,28 @@
               <span class="value">{{ order.receiver }}</span>
             </div>
           </div>
+          <div class="d-col-md-6" v-if="order.customer_email">
+            <div class="item">
+              <span class="label">E-mail покупателя</span>
+              <a :href="'tel:' + order.customer_email" class="value">{{ order.customer_email }}</a>
+            </div>
+          </div>
+          <div class="d-col-md-6" v-if="order.customer_phone">
+            <div class="item">
+              <span class="label">Телефон покупателя</span>
+              <a :href="'tel:' + order.customer_phone" class="value">{{ order.customer_phone }}</a>
+            </div>
+          </div>
           <div class="d-col-md-6" v-if="order.address">
             <div class="item">
-              <span class="label">Адрес доставки</span>
+              <span class="label">Адрес покупателя</span>
               <span class="value">{{ order.address }}</span>
+            </div>
+          </div>
+          <div class="d-col-md-6" v-if="delivery_id == 3 && order.address_pvz">
+            <div class="item">
+              <span class="label">Адрес ПВЗ</span>
+              <span class="value">{{ order.address_pvz }}</span>
             </div>
           </div>
           <div class="d-col-md-6">
