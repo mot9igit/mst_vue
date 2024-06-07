@@ -1,7 +1,7 @@
 <template>
     <div class="k-order" :class="{ show: show }">
         <div class="overlay" @click.prevent="fromOrder"></div>
-        <div class="k-order__content">
+        <div class="k-order__content" :class="{ loading: loading }">
             <div class="k-order__title">
                 <span class="title">Оформление заказа</span>
                 <div class="k-order__close" @click.prevent="fromOrder">
@@ -29,7 +29,7 @@
                                     <div class="k-order__actions-el last">+3</div>
                                 </div>
                                 <Counter @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.quantity" :id="product.id" :store_id="product.store_id"/>
-                                <b>{{product.price}} ₽</b>
+                                <b>{{(product.quantity * product.price).toLocaleString('ru')}} ₽</b>
                             </div>
                             <div class="k-order__product-data">
                                 <span class="k-order__article">{{product.article}}</span>
@@ -61,7 +61,7 @@
                             <!--
                             <div class="a-dart-btn a-dart-btn-secondary">Скачать</div>
                             -->
-                            <div class="a-dart-btn a-dart-btn-primary k-order__oplata"><p>Отправить заказ</p> <p>{{ store?.cost?.toLocaleString('ru') }} ₽</p></div>
+                            <div class="a-dart-btn a-dart-btn-primary k-order__oplata" @click.prevent="orderSubmit(store.id)"><p>Отправить заказ</p> <p>{{ store?.cost?.toLocaleString('ru') }} ₽</p></div>
                         </div>
                     </div>
                 </div>
@@ -89,8 +89,10 @@
                         </div>
                     </div>
                     <div class="k-order__final-button">
+                        <!--
                         <div class="a-dart-btn a-dart-btn-secondary"><i class="pi pi-download"></i></div>
-                        <div class="a-dart-btn a-dart-btn-primary k-order__oplata"><p>Отправить заказ</p> <p>{{ this.basket?.cost?.toLocaleString('ru') }} ₽</p></div>
+                        -->
+                        <div class="a-dart-btn a-dart-btn-primary k-order__oplata" @click.prevent="orderSubmit('all')"><p>Отправить заказ</p> <p>{{ this.basket?.cost?.toLocaleString('ru') }} ₽</p></div>
                     </div>
                 </div>
             </div>
@@ -120,17 +122,27 @@ export default {
   },
   data () {
     return {
-      loading: true,
+      loading: false,
       basket: {},
       value: 1
     }
   },
   methods: {
     ...mapActions([
-      'busket_from_api'
+      'busket_from_api',
+      'opt_order_api'
     ]),
     fromOrder () {
       this.$emit('fromOrder')
+    },
+    orderSubmit ($storeId) {
+      const data = { action: 'order/opt/submit', id: router.currentRoute._value.params.id, store_id: $storeId }
+      this.opt_order_api(data).then(() => {
+        const data = { action: 'basket/get', id: router.currentRoute._value.params.id }
+        this.busket_from_api(data).then(
+          this.basket = this.optbasket
+        )
+      })
     },
     ElemCount (object) {
       const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_product: object.id, value: object.value, store_id: object.store_id }
