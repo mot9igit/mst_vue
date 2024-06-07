@@ -20,10 +20,10 @@
       </div>
       <div class="d-col-map">
         <Vendors :items="this.opt_vendors"/>
-        <Basket ref="childComponent"/>
+        <Basket ref="childComponent" @toOrder="toOrder"/>
       </div>
     </div>
-    <OrderModal />
+    <OrderModal :show="show_order" @fromOrder="fromOrder"/>
   </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
@@ -41,6 +41,7 @@ export default {
   },
   data () {
     return {
+      show_order: false,
       loading: false,
       reloading: false,
       opt_mainpage: {},
@@ -112,6 +113,12 @@ export default {
     },
     updateBasket () {
       this.$refs.childComponent.updateBasket()
+    },
+    toOrder () {
+      this.show_order = true
+    },
+    fromOrder () {
+      this.show_order = false
     }
   },
   computed: {
