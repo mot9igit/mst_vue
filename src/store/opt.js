@@ -29,6 +29,25 @@ export default {
           }
         })
     },
+    opt_order_api ({ commit }, data) {
+      return Axios('/rest/front_setobjects', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          // commit('SET_MATRIX_TO_VUEX', response.data)
+          console.log(data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
     get_opt_mainpage_from_api ({ commit }) {
       return Axios('/rest/front_opt', {
         method: 'POST',
