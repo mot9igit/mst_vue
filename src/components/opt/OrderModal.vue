@@ -58,8 +58,9 @@
                             </div>
                         </div>
                         <div class="k-order__final-button">
-                            
+                            <!--
                             <div class="a-dart-btn a-dart-btn-secondary">Скачать</div>
+                            -->
                             <div class="a-dart-btn a-dart-btn-primary k-order__oplata"><p>Отправить заказ</p> <p>{{ store?.cost?.toLocaleString('ru') }} ₽</p></div>
                         </div>
                     </div>
