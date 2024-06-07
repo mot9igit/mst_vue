@@ -145,7 +145,7 @@
 
             <div class="dart-form-group mb-4">
                 <span class="ktitle">Отсрочка</span>
-                <div class="postponement">Срок отсрочки платежа: 50 дней <div class="postponement__settings" @click="this.modals.delay = !this.modals.delay">Настроить</div></div>
+                <div class="postponement">Срок отсрочки платежа: {{this.postponement_period}} дней <div class="postponement__settings" @click="this.modals.delay = !this.modals.delay">Настроить</div></div>
                 <div class="postponement__graph">
                     <b>График платежей</b>
                     <p v-for="item in this.form.delay" :key="item.id">— {{item.percent}}% через {{item.day}} дней после отгрузки</p>
@@ -164,21 +164,42 @@
             </div>
 
             <div class="dart-form-group mb-4">
-                <span class="ktitle">Условие акции</span>
-                <div class="kenost-wiget">
-                    <Dropdown v-model="this.form.condition" :options="this.condition" optionLabel="name" placeholder="Оплата доставки" class="w-full md:w-14rem" />
-                </div>
-                <div class="two-colums mt-2">
-                    <div class="kenost-wiget">
-                        <p>Выберите условие оплаты доставки</p>
-                        <Dropdown v-model="this.form.conditionPaymentDelivery" :options="this.conditionPaymentDelivery" optionLabel="name" placeholder="Оплата доставки" class="w-full md:w-14rem" />
-                    </div>
-                    <div class="kenost-wiget">
-                        <p v-if="this.form.conditionPaymentDelivery.key == 0">Минимальная общая сумма заказа в ₽</p>
-                        <p v-if="this.form.conditionPaymentDelivery.key == 1">Минимальное количество товаров в шт</p>
-                        <input v-if="this.form.conditionPaymentDelivery.key != undefined" v-model="this.form.conditionPaymentDeliveryValue" type="text" name="description" class="dart-form-control">
-                    </div>
-                </div>
+              <span class="ktitle">Условие акции</span>
+              <div class="kenost-wiget">
+                  <Dropdown v-model="this.form.condition" :options="this.condition" optionLabel="name" placeholder="Оплата доставки" class="w-full md:w-14rem" />
+              </div>
+              <div class="kenost-wiget mt-2" v-if="this.form.condition.key == 4">
+                <p>Минимальная общая сумма</p>
+                <InputNumber
+                  v-model="this.form.conditionMinSum"
+                  inputId="horizontal-buttons"
+                  :step="0.1"
+                  min="0"
+                  incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                />
+              </div>
+              <div class="two-colums mt-2" v-if="this.form.condition.key == 3">
+                  <div class="kenost-wiget">
+                    <p>Минимальная общая сумма</p>
+                    <InputNumber
+                      v-model="this.form.conditionMinSum"
+                      inputId="horizontal-buttons"
+                      :step="0.1"
+                      min="0"
+                      incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                    />
+                  </div>
+                  <div class="kenost-wiget">
+                    <p>Минимальное общее кол-во SKU</p>
+                    <InputNumber
+                      v-model="this.form.conditionMinCount"
+                      inputId="horizontal-buttons"
+                      :step="0.1"
+                      min="0"
+                      incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                    />
+                  </div>
+              </div>
             </div>
 
               <div class="dart-form-group picker-wrap">
@@ -632,6 +653,7 @@ import DropZone from 'dropzone-vue'
 import Checkbox from 'primevue/checkbox'
 import Counter from '../../components/opt/Counter.vue'
 import MultiSelect from 'primevue/multiselect'
+import router from '@/router'
 
 export default {
   name: 'ProfileSalesAdd',
@@ -643,6 +665,7 @@ export default {
         name: '',
         category: {}
       },
+      postponement_period: 0,
       selected: {},
       kenost_table_all: [],
       kenost_table: [],
@@ -687,7 +710,9 @@ export default {
         ],
         delayPercentSum: 0,
         participantsType: '1',
-        access: []
+        access: [],
+        conditionMinCount: 0,
+        conditionMinSum: 0
       },
       modals: {
         delay: false,
@@ -716,10 +741,11 @@ export default {
         { name: 'При покупке Х товара получи отсрочку на него', key: 1 }
       ],
       condition: [
-        { name: 'Купи Х товаров по цене Y', key: 0 },
-        { name: 'Получи подарок при покупке Х товаров', key: 1 },
-        { name: 'Купи на Х рублей - получи Y скидку на выбранный товар', key: 2 },
-        { name: 'Купи на Х рублей - получи скидку на Y %', key: 3 }
+        { name: 'Скидка без условий', key: 0 },
+        { name: 'Купи Х товаров по цене Y', key: 1 },
+        { name: 'Получи подарок при покупке Х товаров', key: 2 },
+        { name: 'Купи на Х рублей - получи Y скидку на выбранный товар', key: 3 },
+        { name: 'Купи на Х рублей - получи скидку на Y %', key: 4 }
       ],
       typeFormul: [
         { name: '₽', key: 0 },
@@ -735,7 +761,8 @@ export default {
       'get_available_products_from_api',
       'get_catalog_from_api',
       'get_all_organizations_from_api',
-      'get_regions_from_api'
+      'get_regions_from_api',
+      'set_sales_to_api'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -756,13 +783,90 @@ export default {
     },
     delayUpdate () {
       this.delayPercentSum = 0
+      this.postponement_period = 0
       for (let i = 0; i < this.form.delay.length; i++) {
         this.delayPercentSum += this.form.delay[i].percent
+        this.postponement_period = this.postponement_period + (this.form.delay[i].day * (this.form.delay[i].percent / 100))
       }
     },
     setFilter () {
       const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
+    },
+    formSubmit (event) {
+      // if (!stop) {
+      // console.log({
+      //   action: 'set',
+      //   type: 'b2b',
+      //   id: router.currentRoute._value.params.id,
+      //   name: this.form.name,
+      //   files: this.files,
+      //   description: this.form.description,
+      //   award: this.form.award,
+      //   compatibilityDiscount: this.form.compatibilityDiscount,
+      //   compatibilityPost: this.form.compatibilityPost,
+      //   dates: this.form.dates,
+      //   shipment_type: this.form.typeShipment.key,
+      //   shipment_date: this.form.dateShipment,
+      //   payer: this.form.paymentDelivery.key,
+      //   delivery_payment_terms: this.form.conditionPaymentDelivery,
+      //   delivery_payment_value: this.form.conditionPaymentDeliveryValue,
+      //   delay: this.postponement_period,
+      //   delay_graph: this.form.delay,
+      //   delay_condition: this.form.postponementConditions.key,
+      //   delay_condition_value: this.form.postponementConditionsValue,
+      //   condition_type: this.form.condition.key,
+      //   condition_min_sum: this.form.conditionMinSum,
+      //   condition_SKU: this.form.conditionMinCount,
+      //   participants_type: this.form.participantsType,
+      //   products: this.selected,
+      //   regions_select: this.regions_select,
+      //   organizations: this.all_organizations_selected
+      //   // all_products: this.all_product_bool,
+      //   // all_products_info: this.kenostAllProduct
+      // })
+      this.$load(async () => {
+        await this.set_sales_to_api({
+          action: 'set',
+          type: 'b2b',
+          id: router.currentRoute._value.params.id,
+          name: this.form.name,
+          files: this.files,
+          description: this.form.description,
+          award: this.form.award,
+          compatibilityDiscount: this.form.compatibilityDiscount,
+          compatibilityPost: this.form.compatibilityPost,
+          dates: this.form.dates,
+          shipment_type: this.form.typeShipment,
+          shipment_date: this.form.dateShipment,
+          payer: this.form.paymentDelivery.key,
+          delivery_payment_terms: this.form.conditionPaymentDelivery.key,
+          delivery_payment_value: this.form.conditionPaymentDeliveryValue,
+          delay: this.postponement_period,
+          delay_graph: this.form.delay,
+          delay_condition: this.form.postponementConditions.key,
+          delay_condition_value: this.form.postponementConditionsValue,
+          condition_type: this.form.condition.key,
+          condition_min_sum: this.form.conditionMinSum,
+          condition_SKU: this.form.conditionMinCount,
+          participants_type: this.form.participantsType,
+          products: this.selected,
+          regions_select: this.regions_select,
+          organizations: this.all_organizations_selected
+          // organizations: this.all_organizations_selected,
+          // all_products: this.all_product_bool,
+          // all_products_info: this.kenostAllProduct
+        })
+          .then((result) => {
+            this.loading = false
+            // router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
+          })
+          .catch((result) => {
+            console.log(result)
+          })
+      })
+      this.loading = true
+      // }
     },
     select (id) {
       const product = this.products.find(r => r.id === id)
@@ -908,7 +1012,7 @@ export default {
       this.regions_all = this.regions.map(function (el) {
         return { name: el.label, code: el.key }
       })
-      console.log(this.regions_all)
+      // console.log(this.regions_all)
     })
   },
   components: {
