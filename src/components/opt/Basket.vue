@@ -33,8 +33,8 @@
                             <p>На складе <span>100 шт.</span></p>
                         </div> -->
                         <div class="basket-container__price">
-                            <Counter @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.quantity" :id="product.id" :store_id="product.store_id"/>
-                            <b>{{(product.quantity * product.price).toLocaleString('ru')}} ₽</b>
+                            <Counter @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.info.count" :id="product.id" :store_id="product.store_id"/>
+                            <b>{{(product.info.count * product.info.price).toLocaleString('ru')}} ₽</b>
                         </div>
                     </div>
                 </div>
