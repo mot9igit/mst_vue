@@ -840,7 +840,7 @@ export default {
           shipment_type: this.form.typeShipment,
           shipment_date: this.form.dateShipment,
           payer: this.form.paymentDelivery.key,
-          delivery_payment_terms: this.form.conditionPaymentDelivery,
+          delivery_payment_terms: this.form.conditionPaymentDelivery.key,
           delivery_payment_value: this.form.conditionPaymentDeliveryValue,
           delay: this.postponement_period,
           delay_graph: this.form.delay,
