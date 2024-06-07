@@ -41,7 +41,7 @@
             </div>
         </div>
 
-        <a class="a-dart-btn a-dart-btn-primary btn-arrange button-basket"
+        <a class="a-dart-btn a-dart-btn-primary btn-arrange button-basket" @click.prevent="toOrder"
             >Оформить заказ <span>{{ this.basket?.cost?.toLocaleString('ru') }} ₽</span></a
         >
     </div>
@@ -90,6 +90,9 @@ export default {
     clearBasketProduct (storeid, productid) {
       const data = { action: 'basket/clear', id: router.currentRoute._value.params.id, store_id: storeid, id_product: productid }
       this.busket_from_api(data).then()
+    },
+    toOrder () {
+      this.$emit('toOrder')
     }
   },
   mounted () {
