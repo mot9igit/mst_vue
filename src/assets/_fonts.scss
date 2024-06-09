@@ -24,6 +24,74 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+@font-face {
+	font-family: 'mstmenu';
+	src:  url('fonts/mstmenu.eot?d7hthn');
+	src:  url('fonts/mstmenu.eot?d7hthn#iefix') format('embedded-opentype'),
+	  url('fonts/mstmenu.ttf?d7hthn') format('truetype'),
+	  url('fonts/mstmenu.woff?d7hthn') format('woff'),
+	  url('fonts/mstmenu.svg?d7hthn#mstmenu') format('svg');
+	font-weight: normal;
+	font-style: normal;
+	font-display: block;
+  }
+  
+  [class^="mst-icon-"], [class*=" mst-icon-"] {
+	/* use !important to prevent issues with browser extensions that change fonts */
+	font-family: 'mstmenu' !important;
+	speak: never;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+  
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+  }
+
+
+.mst-icon-bonuses:before {
+	content: "\e900";
+}
+.mst-icon-reviews:before {
+	content: "\e901";
+}
+.mst-icon-settings:before {
+	content: "\e902";
+}
+.mst-icon-products:before {
+	content: "\e903";
+}
+.mst-icon-documents:before {
+	content: "\e904";
+}
+.mst-icon-b2b:before {
+	content: "\e905";
+}
+.mst-icon-b2c:before {
+	content: "\e906";
+}
+.mst-icon-opt:before {
+	content: "\e907";
+}
+.mst-icon-my_vendors:before {
+	content: "\e908";
+}
+.mst-icon-my_clients:before {
+	content: "\e909";
+}
+.mst-icon-statistics_down:before {
+	content: "\e90a";
+}
+.mst-icon-shipments:before {
+	content: "\e90b";
+}
+.mst-icon-orders:before {
+	content: "\e90c";
+}
+
 .d_icon-busket:before {
 	content: "\e910";
 }

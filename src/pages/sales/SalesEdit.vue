@@ -420,15 +420,15 @@
                     <p class="kenost-select-reginos__gray">Акция будет доступна в том числе для новых компаний из выбранного региона</p>
                     <div class="kenost-select-reginos__checkboxs">
                       <div class="flex align-items-center">
-                        <Checkbox v-model="this.form.access" inputId="access-1" name="access-1" value="1" />
+                        <Checkbox v-model="this.form.available_stores" inputId="access-1" name="access-1" value="true" />
                         <label for="access-1" class="ml-2"> Доступно для магазинов </label>
                       </div>
                       <div class="flex align-items-center">
-                        <Checkbox v-model="this.form.access" inputId="access-2" name="access-1" value="2" />
+                        <Checkbox v-model="this.form.available_opt" inputId="access-2" name="access-1" value="true" />
                         <label for="access-2" class="ml-2"> Доступно для оптовых компаний </label>
                       </div>
                       <div class="flex align-items-center">
-                        <Checkbox v-model="this.form.access" inputId="access-3" name="access-1" value="3" />
+                        <Checkbox v-model="this.form.available_vendors" inputId="access-3" name="access-1" value="true" />
                         <label for="access-3" class="ml-2"> Доступно для производителей </label>
                       </div>
                     </div>
@@ -710,7 +710,9 @@ export default {
         ],
         delayPercentSum: 0,
         participantsType: '1',
-        access: [],
+        available_stores: [],
+        available_vendors: [],
+        available_opt: [],
         conditionMinCount: 0,
         conditionMinSum: 0
       },
@@ -1059,6 +1061,34 @@ export default {
       this.form.paymentDelivery = this.paymentDelivery[newVal.payer]
       this.form.conditionPaymentDelivery = this.conditionPaymentDelivery[newVal.delivery_payment_terms]
       this.form.conditionPaymentDeliveryValue = newVal.delivery_payment_value
+      this.form.postponementConditions = this.postponementConditions[newVal.delay_condition]
+      this.form.postponementConditionsValue = newVal.delay_condition_value
+      this.postponement_period = newVal.delay
+      this.form.condition = this.condition[newVal.condition_type]
+      this.form.conditionMinSum = newVal.condition_min_sum
+      this.form.conditionMinCount = newVal.condition_SKU
+      this.form.addProductType = newVal.method_adding_products.toString()
+      if (newVal.available_stores) {
+        this.form.available_stores = ['true']
+      }
+      if (newVal.available_vendors) {
+        this.form.available_vendors = ['true']
+      }
+      if (newVal.available_opt) {
+        this.form.available_opt = ['true']
+      }
+
+      this.form.delay = newVal.delay_graph
+      this.regions_select = newVal.regions
+      this.all_organizations_selected = newVal.organization
+
+      const dataorg = { filter: this.filter_organizations, selected: this.all_organizations_selected }
+      this.get_all_organizations_from_api(dataorg).then(
+        this.all_organizations = this.allorganizations
+      )
+
+      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      this.get_available_products_from_api(data)
     }
   }
 }

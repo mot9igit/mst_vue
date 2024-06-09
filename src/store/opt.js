@@ -7,7 +7,8 @@ export default {
     optcatalog: [],
     optvendors: [],
     optproducts: [],
-    optbasket: []
+    optbasket: [],
+    optorder: []
   },
   actions: {
     set_vendors_to_api ({ commit }, data) {
@@ -30,7 +31,7 @@ export default {
         })
     },
     opt_order_api ({ commit }, data) {
-      return Axios('/rest/front_setobjects', {
+      return Axios('/rest/front_opt', {
         method: 'POST',
         data: data,
         headers: {
@@ -40,6 +41,26 @@ export default {
         .then((response) => {
           // commit('SET_MATRIX_TO_VUEX', response.data)
           console.log(response)
+          return response
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    get_opt_order_api ({ commit }, data) {
+      return Axios('/rest/front_opt', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('GET_OPT_ORDER_TO_VUEX', response.data)
+          // console.log(response)
           return response
         })
         .catch(error => {
@@ -180,6 +201,9 @@ export default {
     },
     SET_BUSKET_TO_VUEX: (state, data) => {
       state.optbasket = data.data
+    },
+    GET_OPT_ORDER_TO_VUEX: (state, data) => {
+      state.optorder = data.data
     }
   },
   getters: {
@@ -197,6 +221,9 @@ export default {
     },
     optbasket (state) {
       return state.optbasket
+    },
+    optorder (state) {
+      return state.optorder
     }
   }
 }

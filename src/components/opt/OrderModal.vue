@@ -1,7 +1,7 @@
 <template>
     <div class="k-order" :class="{ show: show }">
         <div class="overlay" @click.prevent="fromOrder"></div>
-        <div class="k-order__content" :class="{ loading: loading }">
+        <div class="k-order__content" :class="{ loading: loading, order: order }">
             <div class="k-order__title" v-if="order">
                 <span class="title">Заказ #{{order.id}} оформлен!</span>
                 <div class="k-order__close" @click.prevent="fromOrder">
@@ -16,6 +16,7 @@
             </div>
             <div class="k-order__orders" v-if="order">
                 <p>В ближайшее время с Вами свяжутся наши менеджеры.</p>
+                <img v-if="order" class="k-order-img" src="../../assets/img/order.png" alt="">
             </div>
             <div class="k-order__orders" v-else>
                 <div class="k-order__order" v-for="store in this.basket?.stores" v-bind:key="store.id">
@@ -37,7 +38,7 @@
                                     <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
                                     <div class="k-order__actions-el last">+3</div>
                                 </div>
-                                <Counter @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.info.count" :id="product.id" :store_id="product.store_id"/>
+                                <Counter :key="new Date().getMilliseconds() + product.id" @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.info.count" :id="product.id" :store_id="product.store_id"/>
                                 <b>{{(product.info.count * product.info.price).toLocaleString('ru')}} ₽</b>
                             </div>
                             <div class="k-order__product-data">
@@ -51,19 +52,20 @@
                         <div class="k-order__final-info">
                             <div class="k-order__colums">
                                 <p>Кол-во SKU с отсрочкой Х</p>
-                                <p>50</p>
+                                <p>0</p>
                             </div>
                             <div class="k-order__colums">
                                 <p>Вес заказа (кг)</p>
-                                <p>50</p>
+                                <p>{{ Number(store?.weight).toFixed(2) }}</p>
                             </div>
                             <div class="k-order__colums">
                                 <p>Кол-во SKU с отсрочкой Y</p>
-                                <p>50</p>
+                                <p>0</p>
                             </div>
                             <div class="k-order__colums">
-                                <p>Объем заказа (шт)</p>
-                                <p>50</p>
+                                <!-- (шт) -->
+                                <p>Объем заказа </p>
+                                <p>{{ store?.volume }}</p>
                             </div>
                         </div>
                         <div class="k-order__final-button">
@@ -76,25 +78,26 @@
                 </div>
             </div>
 
-            <div class="k-order__order">
+            <div class="k-order__order" v-if="!order">
                 <h3 class="k-order__line">Итого</h3>
                 <div class="k-order__final">
                     <div class="k-order__final-info">
                         <div class="k-order__colums bold">
                             <p>Кол-во SKU с отсрочкой Х</p>
-                            <p>50</p>
+                            <p>0</p>
                         </div>
                         <div class="k-order__colums bold">
                             <p>Вес заказа (кг)</p>
-                            <p>50</p>
+                            <p>{{ Number(this.basket?.weight).toFixed(2) }}</p>
                         </div>
                         <div class="k-order__colums bold">
                             <p>Кол-во SKU с отсрочкой Y</p>
-                            <p>50</p>
+                            <p>0</p>
                         </div>
+                        <!-- (шт) -->
                         <div class="k-order__colums bold">
-                            <p>Объем заказа (шт)</p>
-                            <p>50</p>
+                            <p>Объем заказа</p>
+                            <p>{{ this.basket?.volume }}</p>
                         </div>
                     </div>
                     <div class="k-order__final-button">
@@ -190,6 +193,7 @@ export default {
 }
 </script>
 <style lang="scss">
+
     .k-order{
         width: 100vw;
         height: 100vh;
@@ -268,6 +272,10 @@ export default {
             transform: translateX(100%);
             transition: all 0.5s;
             padding: 60px 32px;
+
+            &.order{
+                width: 480px;
+            }
         }
 
         &__oplata{

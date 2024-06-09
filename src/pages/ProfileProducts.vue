@@ -130,7 +130,7 @@
               </div>
               <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][1] }">
                 <div class="dart-helper-footer__text">
-                  <p>Укажите актикул в карточке</p>
+                  <p>Укажите бренд в карточке</p>
                 </div>
                 <div class="dart-helper-footer__icon">
                   <i class="d_icon d_icon-arrow" @click="helpers[0][1] = !helpers[0][1]"></i>
@@ -159,7 +159,7 @@
               </div>
               <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][2] }">
                 <div class="dart-helper-footer__text">
-                  <p>Укажите бренд в карточке</p>
+                  <p>Укажите артикул в карточке</p>
                 </div>
                 <div class="dart-helper-footer__icon">
                   <i class="d_icon d_icon-arrow" @click="helpers[0][2] = !helpers[0][2]"></i>

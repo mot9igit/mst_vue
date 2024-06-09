@@ -60,6 +60,7 @@ import SalesEdit from '../pages/sales/SalesEdit.vue'
 import ActionAdd from '../pages/marketing/ActionAdd.vue'
 import Actions from '../pages/marketing/Actions.vue'
 import ActionEdit from '../pages/marketing/ActionEdit.vue'
+import ProfileOrderOpt from '../pages/ProfileOrderOpt'
 
 const routes = [
   {
@@ -255,6 +256,11 @@ const routes = [
             path: ':order_id',
             name: 'org_order',
             component: ProfileOrder
+          },
+          {
+            path: 'opt/:order_id',
+            name: 'opt_order',
+            component: ProfileOrderOpt
           }]
         }, {
           path: 'shipping',

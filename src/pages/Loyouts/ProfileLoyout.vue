@@ -206,37 +206,37 @@ export default {
           return [{
             key: '0',
             label: 'Заказы',
-            icon: 'd_icon d_icon-list-bulleted',
+            icon: 'mst-icon mst-icon-orders',
             to: { name: 'org_orders', params: { id: this.$route.params.id } }
           },
           {
             key: '1',
             label: 'Товары',
-            icon: 'd_icon d_icon-products',
+            icon: 'mst-icon mst-icon-products',
             to: { name: 'org_products', params: { id: this.$route.params.id } }
           },
           {
             key: '2',
             label: 'Карточка компании',
-            icon: 'd_icon d_icon-cog',
+            icon: 'mst-icon mst-icon-settings',
             to: { name: 'org_profile', params: { id: this.$route.params.id } }
           },
           {
             key: '3',
             label: 'Возвраты',
-            icon: 'd_icon d_icon-vendors',
+            icon: 'mst-icon mst-icon-my_vendors',
             to: { name: 'returns_home', params: { id: this.$route.params.id } }
           },
           {
             key: '4',
             label: 'B2B-маркетинг',
-            icon: 'd_icon d_icon-star',
+            icon: 'mst-icon mst-icon-b2b',
             to: { name: 'org_sales', params: { id: this.$route.params.id } }
           },
           {
             key: '4',
             label: 'B2C-маркетинг',
-            icon: 'd_icon d_icon-star',
+            icon: 'mst-icon mst-icon-b2c',
             to: { name: 'org_actions', params: { id: this.$route.params.id } }
           },
           // {
@@ -254,13 +254,13 @@ export default {
           {
             key: '6',
             label: 'Документы',
-            icon: 'd_icon d_icon-file-document',
+            icon: 'mst-icon mst-icon-documents',
             to: { name: 'org_docs', params: { id: this.$route.params.id } }
           },
           {
             key: '7',
             label: 'Закупки',
-            icon: 'd_icon d_icon-file-document',
+            icon: 'mst-icon mst-icon-opt',
             to: { name: 'purchases_home', params: { id: this.$route.params.id } }
           }]
         }
@@ -268,19 +268,19 @@ export default {
           return [{
             key: '0',
             label: 'Заказы',
-            icon: 'd_icon d_icon-list-bulleted',
+            icon: 'mst-icon mst-icon-orders',
             to: { name: 'org_orders', params: { id: this.$route.params.id } }
           },
           {
             key: '1',
             label: 'Товары',
-            icon: 'd_icon d_icon-products',
+            icon: 'mst-icon mst-icon-products',
             to: { name: 'org_products', params: { id: this.$route.params.id } }
           },
           {
             key: '2',
             label: 'Карточка компании',
-            icon: 'd_icon d_icon-cog',
+            icon: 'mst-icon mst-icon-settings',
             to: { name: 'org_profile', params: { id: this.$route.params.id } }
           },
           // {
@@ -292,19 +292,19 @@ export default {
           {
             key: '4',
             label: 'Отгрузки',
-            icon: 'd_icon d_icon-truck',
+            icon: 'mst-icon mst-icon-shipments',
             to: { name: 'org_shipping', params: { id: this.$route.params.id } }
           },
           {
             key: '5',
             label: 'B2B-маркетинг',
-            icon: 'd_icon d_icon-star',
+            icon: 'mst-icon mst-icon-b2b',
             to: { name: 'org_sales', params: { id: this.$route.params.id } }
           },
           {
             key: '6',
             label: 'B2C-маркетинг',
-            icon: 'd_icon d_icon-star',
+            icon: 'mst-icon mst-icon-b2c',
             to: { name: 'org_actions', params: { id: this.$route.params.id } }
           },
           // {
@@ -328,13 +328,13 @@ export default {
           {
             key: '8',
             label: 'Документы',
-            icon: 'd_icon d_icon-file-document',
+            icon: 'mst-icon mst-icon-documents',
             to: { name: 'org_docs', params: { id: this.$route.params.id } }
           },
           {
             key: '9',
             label: 'Закупки',
-            icon: 'd_icon d_icon-file-document',
+            icon: 'mst-icon mst-icon-opt',
             to: { name: 'purchases_home', params: { id: this.$route.params.id } }
           }]
         }
@@ -342,7 +342,7 @@ export default {
           return [{
             key: '1',
             label: 'Карточка компании',
-            icon: 'd_icon d_icon-cog',
+            icon: 'mst-icon mst-icon-settings',
             to: { name: 'org_profile', params: { id: this.$route.params.id } }
           },
           // {
@@ -354,19 +354,19 @@ export default {
           {
             key: '3',
             label: 'Товары',
-            icon: 'd_icon d_icon-products',
+            icon: 'mst-icon mst-icon-products',
             to: { name: 'org_products', params: { id: this.$route.params.id } }
           },
           {
             key: '4',
             label: 'B2B-маркетинг',
-            icon: 'd_icon d_icon-star',
+            icon: 'mst-icon mst-icon-b2b',
             to: { name: 'org_sales', params: { id: this.$route.params.id } }
           },
           {
             key: '5',
             label: 'B2C-маркетинг',
-            icon: 'd_icon d_icon-star',
+            icon: 'mst-icon mst-icon-b2c',
             to: { name: 'org_actions', params: { id: this.$route.params.id } }
           },
           // {
@@ -420,13 +420,13 @@ export default {
           {
             key: '13',
             label: 'Документы',
-            icon: 'd_icon d_icon-file-document',
+            icon: 'mst-icon mst-icon-documents',
             to: { name: 'org_docs', params: { id: this.$route.params.id } }
           },
           {
             key: '14',
             label: 'Закупки',
-            icon: 'd_icon d_icon-file-document',
+            icon: 'mst-icon mst-icon-opt',
             to: { name: 'purchases_home', params: { id: this.$route.params.id } }
           }]
         }
@@ -489,6 +489,10 @@ export default {
 </script>
 
 <style lang="scss">
+
+.sidebars .mst-icon{
+  font-size: 24px;
+}
 
 .loading {
   position: relative;

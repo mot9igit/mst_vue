@@ -208,10 +208,10 @@
                     <RadioButton v-model="this.form.addProductType" inputId="addProductType-1" name="addProductType" value="1"/>
                     <label for="addProductType-1" class="ml-2 radioLabel">Добавить вручную</label>
                 </div>
-                <div class="flex align-items-center mt-3">
+                <!-- <div class="flex align-items-center mt-3">
                     <RadioButton v-model="this.form.addProductType" inputId="addProductType-2" name="addProductType" value="2"/>
                     <label for="addProductType-2" class="ml-2 radioLabel">Загрузить файлом</label>
-                </div>
+                </div> -->
               </div>
 
                 <div v-if="this.form.addProductType == '2'" class="dart-form-group mb-4">
@@ -324,7 +324,7 @@
                           <TreeSelect v-model="this.filter.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
                       </div>
                     </div>
-                    <button @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</button>
+                    <!-- <button @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</button> -->
                   </div>
                   <table class="table-kenost__table">
                     <thead>
@@ -420,15 +420,15 @@
                     <p class="kenost-select-reginos__gray">Акция будет доступна в том числе для новых компаний из выбранного региона</p>
                     <div class="kenost-select-reginos__checkboxs">
                       <div class="flex align-items-center">
-                        <Checkbox v-model="this.form.access" inputId="access-1" name="access-1" value="1" />
+                        <Checkbox v-model="this.form.available_stores" inputId="access-1" name="access-1" value="true" />
                         <label for="access-1" class="ml-2"> Доступно для магазинов </label>
                       </div>
                       <div class="flex align-items-center">
-                        <Checkbox v-model="this.form.access" inputId="access-2" name="access-1" value="2" />
+                        <Checkbox v-model="this.form.available_opt" inputId="access-2" name="access-1" value="true" />
                         <label for="access-2" class="ml-2"> Доступно для оптовых компаний </label>
                       </div>
                       <div class="flex align-items-center">
-                        <Checkbox v-model="this.form.access" inputId="access-3" name="access-1" value="3" />
+                        <Checkbox v-model="this.form.available_vendors" inputId="access-3" name="access-1" value="true" />
                         <label for="access-3" class="ml-2"> Доступно для производителей </label>
                       </div>
                     </div>
@@ -710,7 +710,9 @@ export default {
         ],
         delayPercentSum: 0,
         participantsType: '1',
-        access: [],
+        available_stores: [],
+        available_vendors: [],
+        available_opt: [],
         conditionMinCount: 0,
         conditionMinSum: 0
       },
@@ -852,10 +854,11 @@ export default {
           participants_type: this.form.participantsType,
           products: this.selected,
           regions_select: this.regions_select,
-          organizations: this.all_organizations_selected
-          // organizations: this.all_organizations_selected,
-          // all_products: this.all_product_bool,
-          // all_products_info: this.kenostAllProduct
+          organizations: this.all_organizations_selected,
+          method_adding_products: this.form.addProductType,
+          available_stores: this.form.available_stores[0] === 'true',
+          available_vendors: this.form.available_vendors[0] === 'true',
+          available_opt: this.form.available_opt[0] === 'true'
         })
           .then((result) => {
             this.loading = false
