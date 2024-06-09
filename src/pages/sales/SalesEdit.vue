@@ -834,14 +834,15 @@ export default {
           participants_type: this.form.participantsType,
           products: this.selected,
           regions_select: this.regions_select,
-          organizations: this.all_organizations_selected
-          // organizations: this.all_organizations_selected,
-          // all_products: this.all_product_bool,
-          // all_products_info: this.kenostAllProduct
+          organizations: this.all_organizations_selected,
+          method_adding_products: this.form.addProductType,
+          available_stores: this.form.available_stores[0] === 'true',
+          available_vendors: this.form.available_vendors[0] === 'true',
+          available_opt: this.form.available_opt[0] === 'true'
         })
           .then((result) => {
             this.loading = false
-            // router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
+            router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
           })
           .catch((result) => {
             console.log(result)

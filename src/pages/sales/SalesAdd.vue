@@ -862,7 +862,7 @@ export default {
         })
           .then((result) => {
             this.loading = false
-            // router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
+            router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
           })
           .catch((result) => {
             console.log(result)

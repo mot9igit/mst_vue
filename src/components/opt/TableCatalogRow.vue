@@ -21,7 +21,7 @@
     </tr>
     <tr v-for="item in items.stores" v-bind:key="item.id" :class="{'active' : this.active, 'no-active' : !this.active}">
         <td></td>
-        <td><span class="k-table__article">440107010</span></td>
+        <td><span class="k-table__article">{{items.article}}</span></td>
         <td><img class="k-table__image" :src="items.image" alt=""></td>
         <td class="k-table__title">{{item.name}}</td>
         <td class="k-table__busket">
@@ -32,7 +32,7 @@
         </td>
         <td>{{item.store_name}}</td>
         <td>{{Math.round(item.price).toLocaleString('ru')}} ₽</td>
-        <td>{{Math.round(item.price).toLocaleString('ru')}} ₽ + {{Math.round(item.old_price - item.price).toLocaleString('ru')}} ₽</td>
+        <td>{{Math.round(item.price).toLocaleString('ru')}} ₽ / {{Math.round(item.old_price - item.price).toLocaleString('ru')}} ₽</td>
         <td>{{item.action.delay ? Number(item.action.delay).toFixed(1) + ' дн' : 'Нет'}}</td>
         <td>{{ item.action.payer === '0' ? 'Покупатель' : 'Поставщик' }} </td>
         <td>от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</td>

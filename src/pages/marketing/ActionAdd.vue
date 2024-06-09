@@ -540,8 +540,8 @@ export default {
 
     .upload-icon__image{
       background: #D9D9D9;
-      width: 100px;
-      height: 100px;
+      width: 100px !important;
+      height: 100px !important;
       border-radius: 50%;
       margin-top: 16px;
       overflow: hidden;
@@ -572,8 +572,8 @@ export default {
       }
 
       &__image{
-        width: 287px;
-        height: 160px;
+        width: 287px !important;
+        height: 160px !important;
         background: #D9D9D9;
         margin-top: 16px;
         overflow: hidden;
