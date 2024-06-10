@@ -80,7 +80,7 @@
                   <i class="d-icon d-icon-search"></i>
                   <input type="text" class="dart-form-control" v-model="filter" placeholder="Адрес или наименование поставщика" @input="setFilter('filter')">
                 </div>
-                <div class="vendor_select__rows" v-if="items['available'].length">
+                <div class="vendor_select__rows" v-if="avLength">
                   <div class="vendor_select__row" v-for="(item) in items.available" :key="item.id">
                     <div class="vendor_select__row-check">
                       <Checkbox v-model="vendorForm.selected[item.id]" name="0" :binary="true"/>
@@ -98,7 +98,7 @@
                   <div class="dart-alert dart-alert-info">Ничего не найдено</div>
                 </div>
                 <div class="vendor_select__actions">
-                  <button class="dart-btn dart-btn-primary dart-btn-block" @click.prevent="checkVendors" v-if="items['available'].length">Выбрать</button>
+                  <button class="dart-btn dart-btn-primary dart-btn-block" @click.prevent="checkVendors" v-if="avLength">Выбрать</button>
                 </div>
               </div>
               <div class="dart-mt-2" v-else>
@@ -226,7 +226,10 @@ export default {
   computed: {
     ...mapGetters([
       'optvendors'
-    ])
+    ]),
+    avLength () {
+      return Object.keys(this.items.available).length
+    }
   },
   watch: {
     vendorModal: function () {

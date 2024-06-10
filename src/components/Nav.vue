@@ -6,12 +6,14 @@
                 <span>для бизнеса</span>
             </Link>
 
-            <!-- <div class="navmain__search a-dart-input a-dart-input-search">
-                <div class="navmain__search_btn">
-                    <input type="text" placeholder="Найти во всех магазинах" />
-                    <a href="/search.html" class="navmain__dart_btn a-dart-btn a-dart-btn-primary">Найти</a>
-                </div>
-            </div> -->
+            <div class="navmain__search a-dart-input a-dart-input-search">
+                <form action="#" method="post" @submit.prevent="toSearch()">
+                    <div class="navmain__search_btn">
+                        <input type="text" placeholder="Найти во всех магазинах" v-model="search"/>
+                        <button type="submit" class="navmain__dart_btn a-dart-btn a-dart-btn-primary">Найти</button>
+                    </div>
+                </form>
+            </div>
         </div>
 
         <!-- <a href="#" class="navmain__components_desctop a-dart-btn">
@@ -22,6 +24,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import router from '@/router'
 
 export default {
   name: 'Nav',
@@ -37,12 +40,16 @@ export default {
   },
   data () {
     return {
-      loading: true
+      loading: true,
+      search: ''
     }
   },
   methods: {
     ...mapActions([
-    ])
+    ]),
+    toSearch () {
+      router.push({ name: 'opt_search', params: { search: this.search } })
+    }
   },
   mounted () {
   },
@@ -137,7 +144,7 @@ export default {
         justify-content: center;
         gap: 8px;
         cursor: pointer;
-
+        border: none;
         .d_icon{
             font-size: 18px;
         }

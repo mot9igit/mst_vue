@@ -52,6 +52,7 @@ import ProductsAssortmentMain from '../pages/products/main'
 import notFound from '../pages/NotFound'
 import ProfilePurchases from '../pages/opt/ProfilePurchases.vue'
 import PurchasesCatalog from '../pages/opt/PurchasesCatalog.vue'
+import PurchasesSearch from '../pages/opt/Search.vue'
 import ProfileReturns from '../pages/ProfileReturns.vue'
 import ProfileReturnsProduct from '../pages/ProfileReturnsProduct.vue'
 import Sales from '../pages/sales/Sales.vue'
@@ -225,6 +226,10 @@ const routes = [
             path: ':category_id',
             name: 'purchases_catalog',
             component: PurchasesCatalog
+          }, {
+            path: 'search/:search',
+            name: 'opt_search',
+            component: PurchasesSearch
           }]
         },
         {

@@ -1,34 +1,33 @@
 <template>
-    <div class="dart-custom-grid" :class="{ loading: loading }">
-      <CatalogMenu :items="opt_catalog" />
-      <div class="d-col-content">
-        <div class="dart-home dart-window">
-            <!-- <Breadcrumbs/> -->
-            <div v-if="$route.params.category_id == 'all'">
-              <h1 class="h1-mini">Все товары</h1>
-              <div class="dart-alert dart-alert-info">В данном разделе перечислены все товары поставщиков, в том числе и не сопоставленные со справочником системы.</div>
-            </div>
-            <h1 class="h1-mini" v-else>{{opt_products?.page?.pagetitle}}</h1>
-            <TableCatalog @updateBasket="updateBasket" v-if="opt_products.total !== 0" :items="opt_products"/>
-            <paginate
-                :page-count="pageCount"
-                :click-handler="pagClickCallback"
-                :prev-text="'Пред'"
-                :next-text="'След'"
-                :container-class="'pagination justify-content-center'"
-                :initialPage="this.page"
-                :forcePage="this.page"
-              >
-            </paginate>
-        </div>
-      </div>
-      <div class="d-col-map">
-        <Vendors :items="this.opt_vendors"/>
-        <Basket ref="childComponent" @toOrder="toOrder"/>
+  <div class="dart-custom-grid" :class="{ loading: loading }">
+    <CatalogMenu :items="opt_catalog" />
+    <div class="d-col-content">
+      <div class="dart-home dart-window">
+          <!-- <Breadcrumbs/> -->
+          <div>
+            <h1 class="h1-mini">Поиск по товарам</h1>
+            <div class="dart-alert dart-alert-info">В данном разделе перечислены все товары поставщиков, в том числе и не сопоставленные со справочником системы.</div>
+          </div>
+          <TableCatalog @updateBasket="updateBasket" v-if="opt_products.total !== 0" :items="opt_products"/>
+          <paginate
+              :page-count="pageCount"
+              :click-handler="pagClickCallback"
+              :prev-text="'Пред'"
+              :next-text="'След'"
+              :container-class="'pagination justify-content-center'"
+              :initialPage="this.page"
+              :forcePage="this.page"
+            >
+          </paginate>
       </div>
     </div>
-    <OrderModal :show="show_order" @fromOrder="fromOrder"/>
-  </template>
+    <div class="d-col-map">
+      <Vendors :items="this.opt_vendors"/>
+      <Basket ref="childComponent" @toOrder="toOrder"/>
+    </div>
+  </div>
+  <OrderModal :show="show_order" @fromOrder="fromOrder"/>
+</template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import CatalogMenu from '../../components/opt/CatalogMenu.vue'
@@ -40,7 +39,7 @@ import TableCatalog from '../../components/opt/TableCatalog.vue'
 import OrderModal from '../../components/opt/OrderModal.vue'
 
 export default {
-  name: 'OptsCatalog',
+  name: 'OptsSearch',
   props: {
   },
   data () {
@@ -137,9 +136,6 @@ export default {
     }
   },
   watch: {
-    mainpage: function (newVal, oldVal) {
-      this.opt_mainpage = newVal
-    },
     optcatalog: function (newVal, oldVal) {
       this.opt_catalog = newVal
     },
