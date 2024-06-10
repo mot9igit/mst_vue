@@ -7,7 +7,7 @@
             <h1 class="h1-mini">{{opt_products?.page?.pagetitle}}</h1>
             <TableCatalog @updateBasket="updateBasket" v-if="opt_products.total !== 0" :items="opt_products"/>
             <paginate
-                :page-count="this.opt_products.total / this.perpage"
+                :page-count="pageCount"
                 :click-handler="pagClickCallback"
                 :prev-text="'Пред'"
                 :next-text="'След'"
@@ -127,7 +127,10 @@ export default {
       'optcatalog',
       'optvendors',
       'optproducts'
-    ])
+    ]),
+    pageCount () {
+      return Math.ceil(this.opt_products.total / this.perpage)
+    }
   },
   watch: {
     mainpage: function (newVal, oldVal) {

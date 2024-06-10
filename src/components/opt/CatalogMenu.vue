@@ -1,8 +1,13 @@
 <template>
     <div class="d-col-menu menuShow" :class="{'active' : this.isMenuActive}">
-        <div class="dart-catalog-menu">
+        <ul class="dart-catalog-menu">
+            <li class="dart-catalog-menu__category active">
+                <RouterLink :to="{ name: 'purchases_catalog', params: { category_id: 'all' }}" class="dart-catalog-menu__el">
+                    <span class="img_blank"></span><span>Весь каталог</span>
+                </RouterLink>
+            </li>
             <CatalogEl v-for="item in items" v-bind:key="item.id" :items="item"/>
-        </div>
+        </ul>
         <div @click="this.isMenuActive = !this.isMenuActive" class="closemenu">
             <i class="pi pi-angle-left"></i>
             <p>Скрыть</p>
@@ -221,6 +226,14 @@ export default {
                 }
             }
 
+            .img_blank{
+                display: inline-block;
+                width: 40px;
+                height: 40px;
+                border-radius: 5px;
+                background: #F8F7F5;
+            }
+
             img{
                 width: 40px;
                 height: 40px;
@@ -230,7 +243,8 @@ export default {
 
             &:hover{
                 color: #F00;
-                img{
+                img,
+                .img_blank{
                     transform: scale(1.1);
                 }
 
