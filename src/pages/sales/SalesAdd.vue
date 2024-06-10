@@ -89,11 +89,11 @@
                 <span class="ktitle">Совместимость отсрочек</span>
                 <div class="flex align-items-center mt-3">
                 <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-1" name="compatibilityPost" value="1"/>
-                <label for="compatibilityPost-1" class="ml-2 radioLabel">Совместим со всеми акциями</label>
+                <label for="compatibilityPost-1" class="ml-2 radioLabel">Совместим со всеми отсрочками</label>
                 </div>
                 <div class="flex align-items-center mt-3">
                 <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-2" name="compatibilityPost" value="2"/>
-                <label for="compatibilityPost-2" class="ml-2 radioLabel">Не совместим со всеми акциями</label>
+                <label for="compatibilityPost-2" class="ml-2 radioLabel">Не совместим со всеми отсрочками</label>
                 </div>
                 <div class="flex align-items-center mt-3">
                 <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-3" name="compatibilityPost" value="3"/>
@@ -136,9 +136,9 @@
                         <Dropdown v-model="this.form.conditionPaymentDelivery" :options="this.conditionPaymentDelivery" optionLabel="name" placeholder="Оплата доставки" class="w-full md:w-14rem" />
                     </div>
                     <div class="kenost-wiget">
-                        <p v-if="this.form.conditionPaymentDelivery.key == 0">Минимальная общая сумма заказа в ₽</p>
-                        <p v-if="this.form.conditionPaymentDelivery.key == 1">Минимальное количество товаров в шт</p>
-                        <input v-if="this.form.conditionPaymentDelivery.key != undefined" v-model="this.form.conditionPaymentDeliveryValue" type="text" name="description" class="dart-form-control">
+                        <p v-if="this.form.conditionPaymentDelivery.key == 1">Минимальная общая сумма заказа в ₽</p>
+                        <p v-if="this.form.conditionPaymentDelivery.key == 2">Минимальное количество товаров в шт</p>
+                        <input v-if="this.form.conditionPaymentDelivery.key == 1 || this.form.conditionPaymentDelivery.key == 2" v-model="this.form.conditionPaymentDeliveryValue" type="text" name="description" class="dart-form-control">
                     </div>
                 </div>
             </div>
@@ -156,9 +156,9 @@
                         <Dropdown v-model="this.form.postponementConditions" :options="this.postponementConditions" optionLabel="name" placeholder="Оплата доставки" class="w-full md:w-14rem" />
                     </div>
                     <div class="kenost-wiget">
-                        <p v-if="this.form.postponementConditions.key == 0">Минимальная общая сумма заказа в ₽</p>
-                        <p v-if="this.form.postponementConditions.key == 1">Минимальное количество товаров в шт</p>
-                        <input v-if="this.form.postponementConditions.key != undefined" v-model="this.form.postponementConditionsValue" type="text" name="description" class="dart-form-control">
+                        <p v-if="this.form.postponementConditions.key == 1">Минимальная общая сумма заказа в ₽</p>
+                        <p v-if="this.form.postponementConditions.key == 2">Минимальное количество товаров в шт</p>
+                        <input v-if="this.form.postponementConditions.key == 1 || this.form.postponementConditions.key == 2" v-model="this.form.postponementConditionsValue" type="text" name="description" class="dart-form-control">
                     </div>
                 </div>
             </div>
@@ -309,10 +309,10 @@
                       <div class="form_input_group input_pl input-parent required">
                           <input
                           type="text"
-                          id="filter_name"
+                          id="filter_table"
                           placeholder="Введите артикул или название"
                           class="dart-form-control"
-                          v-model="filter.name"
+                          v-model="filter_table.name"
                           @input="setFilter('filter')"
                           />
                           <label for="product_filter_name" class="s-complex-input__label">Введите артикул или название</label>
@@ -321,10 +321,10 @@
                           </div>
                       </div>
                       <div class="dart-form-group">
-                          <TreeSelect v-model="this.filter.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
+                          <TreeSelect v-model="this.filter_table.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
                       </div>
                     </div>
-                    <!-- <button @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</button> -->
+                    <div @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</div>
                   </div>
                   <table class="table-kenost__table">
                     <thead>
@@ -339,10 +339,10 @@
                         </tr>
                     </thead>
                     <!-- Вывод комплектов -->
-                    <tbody v-for="(complect) in this.complects" :key="complect.id">
+                    <tbody v-for="(complect, index) in this.complects" :key="complect.id">
                         <tr class="table-kenost__complect" v-for="(item) in complect" :key="item.id">
                           <td class="table-kenost__checkbox">
-                            <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
+                            <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="'set_' + item.id + '_' + index" />
                           </td>
                           <td class="table-kenost__product">
                             <img :src="'https://mst.tools' + item.image">
@@ -372,7 +372,7 @@
                     <tbody v-for="item in this.selected" :key="item.id">
                       <tr v-if="this.complects_ids.indexOf(item.id) === -1">
                         <td class="table-kenost__checkbox">
-                          <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
+                          <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="'select_' + item.id" />
                         </td>
                         <td class="table-kenost__product">
                           <img :src="'https://mst.tools' + item.image">
@@ -411,6 +411,10 @@
                   <div class="flex align-items-center mt-3">
                     <RadioButton v-model="this.form.participantsType" inputId="participantsType-2" name="participantsType" value="2"/>
                     <label for="participantsType-2" class="ml-2 radioLabel">Выбрать отдельные компании</label>
+                  </div>
+                  <div class="flex align-items-center mt-3">
+                    <RadioButton v-model="this.form.participantsType" inputId="participantsType-3" name="participantsType" value="3"/>
+                    <label for="participantsType-3" class="ml-2 radioLabel">Неограниченный круг участников</label>
                   </div>
                 </div>
 
@@ -665,6 +669,10 @@ export default {
         name: '',
         category: {}
       },
+      filter_table: {
+        name: '',
+        category: {}
+      },
       postponement_period: 0,
       selected: {},
       kenost_table_all: [],
@@ -695,12 +703,12 @@ export default {
         compatibilityPost: 0,
         typeShipment: 0,
         dateShipment: '',
-        paymentDelivery: 0,
-        conditionPaymentDelivery: 0,
+        paymentDelivery: { name: 'Покупатель', key: 0 },
+        conditionPaymentDelivery: { name: 'Без условий', key: 0 },
         conditionPaymentDeliveryValue: 0,
-        postponementConditions: 0,
+        postponementConditions: { name: 'Без условий', key: 0 },
         postponementConditionsValue: 0,
-        condition: 0,
+        condition: { name: 'Скидка без условий', key: 0 },
         addProductType: '1',
         delay: [
           {
@@ -709,7 +717,7 @@ export default {
           }
         ],
         delayPercentSum: 0,
-        participantsType: '1',
+        participantsType: '3',
         available_stores: [],
         available_vendors: [],
         available_opt: [],
@@ -735,12 +743,14 @@ export default {
         { name: 'Поставщик', key: 1 }
       ],
       conditionPaymentDelivery: [
-        { name: 'Купи на Х рублей', key: 0 },
-        { name: 'При покупке Х шт товара', key: 1 }
+        { name: 'Без условий', key: 0 },
+        { name: 'Купи на Х рублей', key: 1 },
+        { name: 'При покупке Х шт товара', key: 2 }
       ],
       postponementConditions: [
-        { name: 'При покупке на Х рублей получи отсрочку', key: 0 },
-        { name: 'При покупке Х товара получи отсрочку на него', key: 1 }
+        { name: 'Без условий', key: 0 },
+        { name: 'При покупке на Х рублей получи отсрочку', key: 1 },
+        { name: 'При покупке Х товара получи отсрочку на него', key: 2 }
       ],
       condition: [
         { name: 'Скидка без условий', key: 0 },
@@ -792,7 +802,7 @@ export default {
       }
     },
     setFilter () {
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
     },
     formSubmit (event) {
@@ -838,7 +848,7 @@ export default {
           award: this.form.award,
           compatibilityDiscount: this.form.compatibilityDiscount,
           compatibilityPost: this.form.compatibilityPost,
-          dates: this.form.dates,
+          dates: [this.form.dates],
           shipment_type: this.form.typeShipment,
           shipment_date: this.form.dateShipment,
           payer: this.form.paymentDelivery.key,
@@ -882,7 +892,7 @@ export default {
 
       this.selected[product.id] = product
       this.products = this.products.filter((r) => r.id !== id)
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
       this.total_selected++
     },
@@ -902,7 +912,7 @@ export default {
       this.selected = new_selected
 
       // this.selected = this.selected.filter((r) => r.id !== id)
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
       this.total_selected--
     },
@@ -933,7 +943,7 @@ export default {
     },
     pagClickCallback (pageNum) {
       this.page = pageNum
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
     },
     kenostTableCheckedAll () {
@@ -976,12 +986,19 @@ export default {
     },
     createSet () {
       // Создание комлпекта
-      const tempComplect = {}
-      for (let i = 0; i < this.kenost_table.length; i++) {
-        tempComplect[i] = this.selected[this.kenost_table[i]]
-        this.complects_ids.push(this.selected[this.kenost_table[i]].id)
+      if (this.kenost_table.length > 1) {
+        const tempComplect = {}
+        for (let i = 0; i < this.kenost_table.length; i++) {
+          // eslint-disable-next-line no-unused-vars
+          const selectedItem = this.kenost_table[i].split('_')
+          console.log(this.kenost_table[i])
+          console.log(selectedItem)
+          tempComplect[i] = this.selected[selectedItem[1]]
+          this.complects_ids.push(this.selected[selectedItem[1]].id)
+        }
+        this.complects.push(tempComplect)
+        this.kenost_table = []
       }
-      this.complects.push(tempComplect)
       // console.log(this.complects_ids)
     },
     setDiscountFormul (type, value) {

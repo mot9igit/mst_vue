@@ -745,7 +745,7 @@ export default {
       }
 
       &__products{
-        height: 550px;
+        height: 350px;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
