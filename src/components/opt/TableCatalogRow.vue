@@ -27,7 +27,7 @@
         <td class="k-table__busket">
           <form class="k-table__form" action="">
             <Counter @ElemCount="ElemCount" :min="1" :max="item.remains" :value="this.value"/>
-            <div @click="addBasket(item.product_id, this.value, item.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
+            <div @click="addBasket(item.remain_id, this.value, item.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
           </form>
         </td>
         <td>{{item.store_name}}</td>
@@ -113,7 +113,7 @@ export default {
       }
     },
     addBasket (id, value, storeid) {
-      const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_product: id, value, store_id: storeid }
+      const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_remain: id, value, store_id: storeid }
       this.busket_from_api(data).then()
       this.$emit('updateBasket')
     },

@@ -1,7 +1,7 @@
 <template>
     <div class="d-col-menu menuShow" :class="{'active' : this.isMenuActive}">
         <ul class="dart-catalog-menu">
-            <li class="dart-catalog-menu__category active">
+            <li class="dart-catalog-menu__category">
                 <RouterLink :to="{ name: 'purchases_catalog', params: { category_id: 'all' }}" class="dart-catalog-menu__el">
                     <span class="img_blank"></span><span>Весь каталог</span>
                 </RouterLink>
@@ -164,6 +164,7 @@ export default {
         margin-bottom: 10px;
         height: calc(100vh - 88px);
         overflow-y: auto;
+        overflow-x: hidden;
 
         &::-webkit-scrollbar {
             width: 4px;
@@ -183,7 +184,7 @@ export default {
         &__category{
             list-style: none;
             transition: all 1s;
-            padding: 7px 0;
+            padding: 7px;
 
             ul{
                 li{
