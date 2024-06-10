@@ -3,7 +3,7 @@
       <CatalogMenu :items="opt_catalog" />
       <div class="d-col-content">
         <div class="dart-home dart-window">
-            <Breadcrumbs/>
+            <!-- <Breadcrumbs/> -->
             <h1 class="h1-mini">{{opt_products?.page?.pagetitle}}</h1>
             <TableCatalog @updateBasket="updateBasket" v-if="opt_products.total !== 0" :items="opt_products"/>
             <paginate
@@ -30,7 +30,7 @@ import { mapActions, mapGetters } from 'vuex'
 import CatalogMenu from '../../components/opt/CatalogMenu.vue'
 import Basket from '../../components/opt/Basket.vue'
 import Vendors from '../../components/opt/Vendors.vue'
-import Breadcrumbs from '../../components/opt/Breadcrumbs.vue'
+// import Breadcrumbs from '../../components/opt/Breadcrumbs.vue'
 import Paginate from 'vuejs-paginate-next'
 import TableCatalog from '../../components/opt/TableCatalog.vue'
 import OrderModal from '../../components/opt/OrderModal.vue'
@@ -56,7 +56,7 @@ export default {
     CatalogMenu,
     Basket,
     Vendors,
-    Breadcrumbs,
+    // Breadcrumbs,
     TableCatalog,
     Paginate,
     OrderModal

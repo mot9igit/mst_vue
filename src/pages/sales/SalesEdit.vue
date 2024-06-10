@@ -4,7 +4,7 @@
             <span class="maintitle">Настройка программы</span>
             <div class="buttons_container">
             <RouterLink :to="{ name: 'org_sales', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary btn-padding">Отменить</RouterLink>
-            <button type="submit" class="dart-btn dart-btn-primary btn-padding" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Добавить</button>
+            <button type="submit" class="dart-btn dart-btn-primary btn-padding" :class="{ 'dart-btn-loading': loading }" :disabled="loading">Сохранить изменения</button>
             </div>
         </div>
         <div>
@@ -89,11 +89,11 @@
                 <span class="ktitle">Совместимость отсрочек</span>
                 <div class="flex align-items-center mt-3">
                 <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-1" name="compatibilityPost" value="1"/>
-                <label for="compatibilityPost-1" class="ml-2 radioLabel">Совместим со всеми акциями</label>
+                <label for="compatibilityPost-1" class="ml-2 radioLabel">Совместим со всеми отсрочками</label>
                 </div>
                 <div class="flex align-items-center mt-3">
                 <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-2" name="compatibilityPost" value="2"/>
-                <label for="compatibilityPost-2" class="ml-2 radioLabel">Не совместим со всеми акциями</label>
+                <label for="compatibilityPost-2" class="ml-2 radioLabel">Не совместим со всеми отсрочками</label>
                 </div>
                 <div class="flex align-items-center mt-3">
                 <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-3" name="compatibilityPost" value="3"/>
@@ -136,9 +136,9 @@
                         <Dropdown v-model="this.form.conditionPaymentDelivery" :options="this.conditionPaymentDelivery" optionLabel="name" placeholder="Оплата доставки" class="w-full md:w-14rem" />
                     </div>
                     <div class="kenost-wiget">
-                        <p v-if="this.form.conditionPaymentDelivery.key == 0">Минимальная общая сумма заказа в ₽</p>
-                        <p v-if="this.form.conditionPaymentDelivery.key == 1">Минимальное количество товаров в шт</p>
-                        <input v-if="this.form.conditionPaymentDelivery.key != undefined" v-model="this.form.conditionPaymentDeliveryValue" type="text" name="description" class="dart-form-control">
+                        <p v-if="this.form.conditionPaymentDelivery.key == 1">Минимальная общая сумма заказа в ₽</p>
+                        <p v-if="this.form.conditionPaymentDelivery.key == 2">Минимальное количество товаров в шт</p>
+                        <input v-if="this.form.conditionPaymentDelivery.key == 1 || this.form.conditionPaymentDelivery.key == 2" v-model="this.form.conditionPaymentDeliveryValue" type="text" name="description" class="dart-form-control">
                     </div>
                 </div>
             </div>
@@ -150,17 +150,17 @@
                     <b>График платежей</b>
                     <p v-for="item in this.form.delay" :key="item.id">— {{item.percent}}% через {{item.day}} дней после отгрузки</p>
                 </div>
-                <div class="two-colums mt-2">
+                  <div class="two-colums mt-2">
                     <div class="kenost-wiget">
                         <p>Выберите условие отсрочки</p>
                         <Dropdown v-model="this.form.postponementConditions" :options="this.postponementConditions" optionLabel="name" placeholder="Оплата доставки" class="w-full md:w-14rem" />
                     </div>
                     <div class="kenost-wiget">
-                        <p v-if="this.form.postponementConditions.key == 0">Минимальная общая сумма заказа в ₽</p>
-                        <p v-if="this.form.postponementConditions.key == 1">Минимальное количество товаров в шт</p>
-                        <input v-if="this.form.postponementConditions.key != undefined" v-model="this.form.postponementConditionsValue" type="text" name="description" class="dart-form-control">
+                        <p v-if="this.form.postponementConditions.key == 1">Минимальная общая сумма заказа в ₽</p>
+                        <p v-if="this.form.postponementConditions.key == 2">Минимальное количество товаров в шт</p>
+                        <input v-if="this.form.postponementConditions.key == 1 || this.form.postponementConditions.key == 2" v-model="this.form.postponementConditionsValue" type="text" name="description" class="dart-form-control">
                     </div>
-                </div>
+                  </div>
             </div>
 
             <div class="dart-form-group mb-4">
@@ -411,6 +411,10 @@
                   <div class="flex align-items-center mt-3">
                     <RadioButton v-model="this.form.participantsType" inputId="participantsType-2" name="participantsType" value="2"/>
                     <label for="participantsType-2" class="ml-2 radioLabel">Выбрать отдельные компании</label>
+                  </div>
+                  <div class="flex align-items-center mt-3">
+                    <RadioButton v-model="this.form.participantsType" inputId="participantsType-3" name="participantsType" value="3"/>
+                    <label for="participantsType-3" class="ml-2 radioLabel">Неограниченный круг участников</label>
                   </div>
                 </div>
 
@@ -745,12 +749,14 @@ export default {
         { name: 'Поставщик', key: 1 }
       ],
       conditionPaymentDelivery: [
-        { name: 'Купи на Х рублей', key: 0 },
-        { name: 'При покупке Х шт товара', key: 1 }
+        { name: 'Без условий', key: 0 },
+        { name: 'Купи на Х рублей', key: 1 },
+        { name: 'При покупке Х шт товара', key: 2 }
       ],
       postponementConditions: [
-        { name: 'При покупке на Х рублей получи отсрочку', key: 0 },
-        { name: 'При покупке Х товара получи отсрочку на него', key: 1 }
+        { name: 'Без условий', key: 0 },
+        { name: 'При покупке на Х рублей получи отсрочку', key: 1 },
+        { name: 'При покупке Х товара получи отсрочку на него', key: 2 }
       ],
       condition: [
         { name: 'Скидка без условий', key: 0 },
@@ -838,7 +844,8 @@ export default {
           method_adding_products: this.form.addProductType,
           available_stores: this.form.available_stores[0] === 'true',
           available_vendors: this.form.available_vendors[0] === 'true',
-          available_opt: this.form.available_opt[0] === 'true'
+          available_opt: this.form.available_opt[0] === 'true',
+          action_id: router.currentRoute._value.params.sales_id
         })
           .then((result) => {
             this.loading = false
