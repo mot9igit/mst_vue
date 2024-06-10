@@ -23,7 +23,7 @@
                             <p>
                                 {{product.name}}
                             </p>
-                            <div @click="clearBasketProduct(product.store_id, product.id)" class="btn-close link-no-style"
+                            <div @click="clearBasketProduct(product.store_id, product.id_remain)" class="btn-close link-no-style"
                                 ><i class="d_icon d_icon-close"></i
                             ></div>
                         </div>
@@ -33,7 +33,8 @@
                             <p>На складе <span>100 шт.</span></p>
                         </div> -->
                         <div class="basket-container__price">
-                            <Counter @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.info.count" :id="product.id" :store_id="product.store_id"/>
+                            {{ console.log(product) }}
+                            <Counter :key="new Date().getMilliseconds() + product.id_remain" @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.info.count" :id="product.id_remain" :store_id="product.store_id"/>
                             <b>{{(product.info.count * product.info.price).toLocaleString('ru')}} ₽</b>
                         </div>
                     </div>
@@ -80,7 +81,7 @@ export default {
     //   )
     },
     ElemCount (object) {
-      const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_product: object.id, value: object.value, store_id: object.store_id }
+      const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_remain: object.id, value: object.value, store_id: object.store_id }
       this.busket_from_api(data).then()
     },
     clearBasket () {
@@ -88,7 +89,7 @@ export default {
       this.busket_from_api(data).then()
     },
     clearBasketProduct (storeid, productid) {
-      const data = { action: 'basket/clear', id: router.currentRoute._value.params.id, store_id: storeid, id_product: productid }
+      const data = { action: 'basket/clear', id: router.currentRoute._value.params.id, store_id: storeid, id_remain: productid }
       this.busket_from_api(data).then()
     },
     toOrder () {

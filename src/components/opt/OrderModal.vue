@@ -38,7 +38,7 @@
                                     <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
                                     <div class="k-order__actions-el last">+3</div>
                                 </div>
-                                <Counter :key="new Date().getMilliseconds() + product.id" @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.info.count" :id="product.id" :store_id="product.store_id"/>
+                                <Counter :key="new Date().getMilliseconds() + product.id_remain" @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.info.count" :id="product.id_remain" :store_id="product.store_id"/>
                                 <b>{{(product.info.count * product.info.price).toLocaleString('ru')}} ₽</b>
                             </div>
                             <div class="k-order__product-data">
@@ -161,7 +161,7 @@ export default {
       })
     },
     ElemCount (object) {
-      const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_product: object.id, value: object.value, store_id: object.store_id }
+      const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_remain: object.id, value: object.value, store_id: object.store_id }
       this.busket_from_api(data).then()
     },
     clearBasket () {
@@ -169,7 +169,7 @@ export default {
       this.busket_from_api(data).then()
     },
     clearBasketProduct (storeid, productid) {
-      const data = { action: 'basket/clear', id: router.currentRoute._value.params.id, store_id: storeid, id_product: productid }
+      const data = { action: 'basket/clear', id: router.currentRoute._value.params.id, store_id: storeid, id_remain: productid }
       this.busket_from_api(data).then()
     }
   },
