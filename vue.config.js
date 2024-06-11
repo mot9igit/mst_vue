@@ -12,7 +12,7 @@ module.exports = defineConfig({
     port: 80,
     proxy: {
       'rest/': {
-        target: 'https://a.dev.mst.tools/rest/',
+        target: 'https://a.mst.tools/rest/',
         pathRewrite: { '^/rest': '' },
         changeOrigin: true,
         secure: true

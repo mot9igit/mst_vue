@@ -5,10 +5,13 @@
       <div class="dart-home dart-window">
           <!-- <Breadcrumbs/> -->
           <div>
-            <h1 class="h1-mini">Поиск по товарам</h1>
+            <h1 class="h1-mini">Поиск по запросу "{{ $route.params.search }}"</h1>
             <div class="dart-alert dart-alert-info">В данном разделе перечислены все товары поставщиков, в том числе и не сопоставленные со справочником системы.</div>
           </div>
           <TableCatalog @updateBasket="updateBasket" v-if="opt_products.total !== 0" :items="opt_products"/>
+          <div v-else>
+            <div class="dart-alert dart-alert-warning">Ничего не найдено</div>
+          </div>
           <paginate
               :page-count="pageCount"
               :click-handler="pagClickCallback"
@@ -17,6 +20,7 @@
               :container-class="'pagination justify-content-center'"
               :initialPage="this.page"
               :forcePage="this.page"
+              v-if="opt_products.total !== 0"
             >
           </paginate>
       </div>

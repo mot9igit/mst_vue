@@ -149,6 +149,7 @@ export default {
           id: router.currentRoute._value.params.id,
           type: router.currentRoute._value.params.type,
           category_id: router.currentRoute._value.params.category_id,
+          search: router.currentRoute._value.params.search,
           page: page,
           perpage: perpage,
           action: 'get/products'
