@@ -306,7 +306,7 @@
                   <p class="table-kenost__title">Таблица добавленных товаров</p>
                   <div class="table-kenost__filters">
                     <div class="table-kenost__filters-left">
-                      <div class="form_input_group input_pl input-parent required">
+                      <!-- <div class="form_input_group input_pl input-parent required">
                           <input
                           type="text"
                           id="filter_name"
@@ -322,7 +322,7 @@
                       </div>
                       <div class="dart-form-group">
                           <TreeSelect v-model="this.filter.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
-                      </div>
+                      </div> -->
                     </div>
                     <button @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</button>
                   </div>
@@ -824,7 +824,7 @@ export default {
           award: this.form.award,
           compatibilityDiscount: this.form.compatibilityDiscount,
           compatibilityPost: this.form.compatibilityPost,
-          dates: this.form.dates,
+          dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
           shipment_type: this.form.typeShipment,
           shipment_date: this.form.dateShipment,
           payer: this.form.paymentDelivery.key,

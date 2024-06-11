@@ -65,7 +65,7 @@
                             <div class="k-order__colums">
                                 <!-- (шт) -->
                                 <p>Объем заказа </p>
-                                <p>{{ store?.volume }}</p>
+                                <p>{{(store?.volume / 1000000).toFixed(2) }}</p>
                             </div>
                         </div>
                         <div class="k-order__final-button">
@@ -97,7 +97,7 @@
                         <!-- (шт) -->
                         <div class="k-order__colums bold">
                             <p>Объем заказа</p>
-                            <p>{{ this.basket?.volume }}</p>
+                            <p>{{ (this.basket?.volume / 1000000).toFixed(2) }}</p>
                         </div>
                     </div>
                     <div class="k-order__final-button">

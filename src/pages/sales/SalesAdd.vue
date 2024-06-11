@@ -306,7 +306,7 @@
                   <p class="table-kenost__title">Таблица добавленных товаров</p>
                   <div class="table-kenost__filters">
                     <div class="table-kenost__filters-left">
-                      <div class="form_input_group input_pl input-parent required">
+                      <!-- <div class="form_input_group input_pl input-parent required">
                           <input
                           type="text"
                           id="filter_table"
@@ -322,7 +322,7 @@
                       </div>
                       <div class="dart-form-group">
                           <TreeSelect v-model="this.filter_table.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
-                      </div>
+                      </div> -->
                     </div>
                     <div @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</div>
                   </div>
@@ -340,7 +340,7 @@
                     </thead>
                     <!-- Вывод комплектов -->
                     <tbody v-for="(complect, index) in this.complects" :key="complect.id">
-                        <tr class="table-kenost__complect" v-for="(item) in complect" :key="item.id">
+                        <tr class="table-kenost__complect" v-for="(item, indextwo) in complect" :key="item.id">
                           <td class="table-kenost__checkbox">
                             <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="'set_' + item.id + '_' + index" />
                           </td>
@@ -359,7 +359,7 @@
                           </td>
                           <td>
                             {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru')}} ₽
-                            <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_id = item.id" >Настроить</p>
+                            <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_id = item.id; this.modals.type_settings = '1'; this.modals.index_complect = index; this.modals.index_product_complect = indextwo" >Настроить</p>
                           </td>
                           <td>
                             <Counter class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="item.multiplicity"/>
@@ -389,7 +389,7 @@
                         </td>
                         <td>
                           {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru')}} ₽
-                          <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_id = item.id" >Настроить</p>
+                          <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_id = item.id; this.modals.type_settings = '2'" >Настроить</p>
                         </td>
                         <td>
                           <Counter class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="item.multiplicity"/>
@@ -579,47 +579,48 @@
             <div v-if="this.modals.price_step == 2" class="two-colums mt-3">
               <div class="kenost-wiget">
                   <p>Тип цены</p>
-                  <Dropdown v-model="this.selected[this.modals.product_id].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
-              </div>
+                  <Dropdown v-if="this.modals.type_settings == '2'" v-model="this.selected[this.modals.product_id].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown v-if="this.modals.type_settings == '1'" v-model="this.complects[this.modals.index_complect][this.modals.index_product_complect].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
+                </div>
             </div>
 
             <div v-if="this.modals.price_step == 3" class="two-colums mt-3">
               <div class="kenost-wiget">
                 <p>Скидка в %</p>
                 <InputNumber
-                    v-model="this.selected[this.modals.product_id].discountInterest"
+                    v-model="this.modals.percentage_discount"
                     inputId="horizontal-buttons"
                     :step="1"
                     min="0"
                     max="100"
                     suffix=" %"
-                    @update:modelValue="setPrices(this.modals.product_id, 'discountInterest', this.selected[this.modals.product_id].discountInterest)"
+                    @update:modelValue="setPrices(this.modals.product_id, 'discountInterest', this.modals.percentage_discount)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                 />
               </div>
               <div class="kenost-wiget">
                 <p>Скидка в ₽</p>
                 <InputNumber
-                    v-model="selected[this.modals.product_id].discountInRubles"
+                    v-model="this.modals.discount_rubles"
                     inputId="horizontal-buttons"
                     :step="1"
                     min="0"
                     :max="selected[this.modals.product_id].price"
                     mode="currency" currency="RUB"
-                    @update:modelValue="setPrices(this.modals.product_id, 'discountInRubles', this.selected[this.modals.product_id].discountInRubles)"
+                    @update:modelValue="setPrices(this.modals.product_id, 'discountInRubles', this.modals.discount_rubles)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                 />
               </div>
               <div class="kenost-wiget">
                 <p>Цена со скидкой</p>
                 <InputNumber
-                    v-model="selected[this.modals.product_id].finalPrice"
+                    v-model="this.modals.final_price"
                     inputId="horizontal-buttons"
                     :step="1"
                     :max="selected[this.modals.product_id].price"
                     mode="currency" currency="RUB"
                     min="0"
-                    @update:modelValue="setPrices(this.modals.product_id, 'finalPrice', this.selected[this.modals.product_id].finalPrice)"
+                    @update:modelValue="setPrices(this.modals.product_id, 'finalPrice', this.modals.final_price)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                 />
               </div>
@@ -730,6 +731,12 @@ export default {
         price_step: 0,
         type_price: '1',
         product_id: -1,
+        type_settings: '1',
+        index_complect: 0,
+        index_product_complect: 0,
+        percentage_discount: 0,
+        discount_rubles: 0,
+        final_price: 0,
         headers: [
           'Метод редактирования цены',
           'Скидка по формуле',
@@ -806,37 +813,13 @@ export default {
       this.get_available_products_from_api(data)
     },
     formSubmit (event) {
-      // if (!stop) {
-      // console.log({
-      //   action: 'set',
-      //   type: 'b2b',
-      //   id: router.currentRoute._value.params.id,
-      //   name: this.form.name,
-      //   files: this.files,
-      //   description: this.form.description,
-      //   award: this.form.award,
-      //   compatibilityDiscount: this.form.compatibilityDiscount,
-      //   compatibilityPost: this.form.compatibilityPost,
-      //   dates: this.form.dates,
-      //   shipment_type: this.form.typeShipment.key,
-      //   shipment_date: this.form.dateShipment,
-      //   payer: this.form.paymentDelivery.key,
-      //   delivery_payment_terms: this.form.conditionPaymentDelivery,
-      //   delivery_payment_value: this.form.conditionPaymentDeliveryValue,
-      //   delay: this.postponement_period,
-      //   delay_graph: this.form.delay,
-      //   delay_condition: this.form.postponementConditions.key,
-      //   delay_condition_value: this.form.postponementConditionsValue,
-      //   condition_type: this.form.condition.key,
-      //   condition_min_sum: this.form.conditionMinSum,
-      //   condition_SKU: this.form.conditionMinCount,
-      //   participants_type: this.form.participantsType,
-      //   products: this.selected,
-      //   regions_select: this.regions_select,
-      //   organizations: this.all_organizations_selected
-      //   // all_products: this.all_product_bool,
-      //   // all_products_info: this.kenostAllProduct
-      // })
+      const products = {}
+      for (let i = 0; i < Object.keys(this.selected).length; i++) {
+        if (this.complects_ids.indexOf(Object.keys(this.selected)[i]) === -1) {
+          products[Object.keys(this.selected)[i]] = this.selected[Object.keys(this.selected)[i]]
+        }
+      }
+
       this.$load(async () => {
         await this.set_sales_to_api({
           action: 'set',
@@ -848,7 +831,7 @@ export default {
           award: this.form.award,
           compatibilityDiscount: this.form.compatibilityDiscount,
           compatibilityPost: this.form.compatibilityPost,
-          dates: [this.form.dates],
+          dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
           shipment_type: this.form.typeShipment,
           shipment_date: this.form.dateShipment,
           payer: this.form.paymentDelivery.key,
@@ -862,13 +845,14 @@ export default {
           condition_min_sum: this.form.conditionMinSum,
           condition_SKU: this.form.conditionMinCount,
           participants_type: this.form.participantsType,
-          products: this.selected,
+          products: products,
           regions_select: this.regions_select,
           organizations: this.all_organizations_selected,
           method_adding_products: this.form.addProductType,
           available_stores: this.form.available_stores[0] === 'true',
           available_vendors: this.form.available_vendors[0] === 'true',
-          available_opt: this.form.available_opt[0] === 'true'
+          available_opt: this.form.available_opt[0] === 'true',
+          complects: this.complects
         })
           .then((result) => {
             this.loading = false
@@ -962,6 +946,17 @@ export default {
     },
     closeDialogPrice () {
       if (this.modals.price_step === 0) {
+        if (this.modals.type_price === '3') {
+          if (this.modals.type_settings === '2') {
+            this.modals.percentage_discount = this.selected[this.modals.product_id].discountInterest
+            this.modals.discount_rubles = this.selected[this.modals.product_id].discountInRubles
+            this.modals.final_price = this.selected[this.modals.product_id].finalPrice
+          } else if (this.modals.type_settings === '1') {
+            this.modals.percentage_discount = this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInterest
+            this.modals.discount_rubles = this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInRubles
+            this.modals.final_price = this.complects[this.modals.index_complect][this.modals.index_product_complect].finalPrice
+          }
+        }
         this.modals.price_step = Number(this.modals.type_price)
       } else {
         this.modals.price_step = 0
@@ -969,19 +964,54 @@ export default {
       }
     },
     setPrices (index, name, value) {
-      switch (name) {
-        case 'discountInterest':
-          this.selected[index].discountInRubles = (Number(this.selected[index].price) / 100) * value
-          this.selected[index].finalPrice = Number(this.selected[index].price) - this.selected[index].discountInRubles
-          break
-        case 'discountInRubles':
-          this.selected[index].discountInterest = value / (Number(this.selected[index].price) / 100)
-          this.selected[index].finalPrice = Number(this.selected[index].price) - this.selected[index].discountInRubles
-          break
-        case 'finalPrice':
-          this.selected[index].discountInRubles = Number(this.selected[index].price) - value
-          this.selected[index].discountInterest = this.selected[index].discountInRubles / (Number(this.selected[index].price) / 100)
-          break
+      if (this.modals.type_settings === '2') {
+        switch (name) {
+          case 'discountInterest':
+            this.selected[index].discountInterest = value
+            this.selected[index].discountInRubles = (Number(this.selected[index].price) / 100) * value
+            this.modals.discount_rubles = (Number(this.selected[index].price) / 100) * value
+            this.selected[index].finalPrice = Number(this.selected[index].price) - this.selected[index].discountInRubles
+            this.modals.final_price = Number(this.selected[index].price) - this.selected[index].discountInRubles
+            break
+          case 'discountInRubles':
+            this.selected[index].discountInRubles = value
+            this.selected[index].discountInterest = value / (Number(this.selected[index].price) / 100)
+            this.modals.percentage_discount = value / (Number(this.selected[index].price) / 100)
+            this.selected[index].finalPrice = Number(this.selected[index].price) - this.selected[index].discountInRubles
+            this.modals.final_price = Number(this.selected[index].price) - this.selected[index].discountInRubles
+            break
+          case 'finalPrice':
+            this.selected[index].finalPrice = value
+            this.selected[index].discountInRubles = Number(this.selected[index].price) - value
+            this.modals.discount_rubles = Number(this.selected[index].price) - value
+            this.selected[index].discountInterest = this.selected[index].discountInRubles / (Number(this.selected[index].price) / 100)
+            this.modals.percentage_discount = this.selected[index].discountInRubles / (Number(this.selected[index].price) / 100)
+            break
+        }
+      } else if (this.modals.type_settings === '1') {
+        switch (name) {
+          case 'discountInterest':
+            this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInterest = value
+            this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInRubles = (Number(this.complects[this.modals.index_complect][this.modals.index_product_complect].price) / 100) * value
+            this.modals.discount_rubles = (Number(this.complects[this.modals.index_complect][this.modals.index_product_complect].price) / 100) * value
+            this.complects[this.modals.index_complect][this.modals.index_product_complect].finalPrice = Number(this.complects[this.modals.index_complect][this.modals.index_product_complect].price) - this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInRubles
+            this.modals.final_price = Number(this.complects[this.modals.index_complect][this.modals.index_product_complect].price) - this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInRubles
+            break
+          case 'discountInRubles':
+            this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInRubles = value
+            this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInterest = value / (Number(this.complects[this.modals.index_complect][this.modals.index_product_complect].price) / 100)
+            this.modals.percentage_discount = value / (Number(this.complects[this.modals.index_complect][this.modals.index_product_complect].price) / 100)
+            this.complects[this.modals.index_complect][this.modals.index_product_complect].finalPrice = Number(this.complects[this.modals.index_complect][this.modals.index_product_complect].price) - this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInRubles
+            this.modals.final_price = Number(this.complects[this.modals.index_complect][this.modals.index_product_complect].price) - this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInRubles
+            break
+          case 'finalPrice':
+            this.complects[this.modals.index_complect][this.modals.index_product_complect].finalPrice = value
+            this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInRubles = Number(this.complects[this.modals.index_complect][this.modals.index_product_complect].price) - value
+            this.modals.discount_rubles = Number(this.complects[this.modals.index_complect][this.modals.index_product_complect].price) - value
+            this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInterest = this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInRubles / (Number(this.complects[this.modals.index_complect][this.modals.index_product_complect].price) / 100)
+            this.modals.percentage_discount = this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInRubles / (Number(this.complects[this.modals.index_complect][this.modals.index_product_complect].price) / 100)
+            break
+        }
       }
     },
     createSet () {
@@ -991,9 +1021,8 @@ export default {
         for (let i = 0; i < this.kenost_table.length; i++) {
           // eslint-disable-next-line no-unused-vars
           const selectedItem = this.kenost_table[i].split('_')
-          console.log(this.kenost_table[i])
-          console.log(selectedItem)
-          tempComplect[i] = this.selected[selectedItem[1]]
+          const selectedCopy = structuredClone(this.selected)
+          tempComplect[i] = selectedCopy[selectedItem[1]]
           this.complects_ids.push(this.selected[selectedItem[1]].id)
         }
         this.complects.push(tempComplect)
@@ -1002,16 +1031,29 @@ export default {
       // console.log(this.complects_ids)
     },
     setDiscountFormul (type, value) {
-      if (type && value !== 0) {
+      if (this.modals.type_settings === '2') {
+        if (type && value !== 0) {
+          if (type.key === 0) {
+            value = Number(value)
+            this.selected[this.modals.product_id].discountInRubles = value
+            this.selected[this.modals.product_id].discountInterest = value / (this.selected[this.modals.product_id].price / 100)
+            this.selected[this.modals.product_id].finalPrice = this.selected[this.modals.product_id].price - value
+          } else if (type.key === 1) {
+            this.selected[this.modals.product_id].discountInRubles = (this.selected[this.modals.product_id].price / 100) * value
+            this.selected[this.modals.product_id].discountInterest = value
+            this.selected[this.modals.product_id].finalPrice = this.selected[this.modals.product_id].price - (this.selected[this.modals.product_id].price / 100) * value
+          }
+        }
+      } else if (this.modals.type_settings === '1') {
         if (type.key === 0) {
           value = Number(value)
-          this.selected[this.modals.product_id].discountInRubles = value
-          this.selected[this.modals.product_id].discountInterest = value / (this.selected[this.modals.product_id].price / 100)
-          this.selected[this.modals.product_id].finalPrice = this.selected[this.modals.product_id].price - value
+          this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInRubles = value
+          this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInterest = value / (this.complects[this.modals.index_complect][this.modals.index_product_complect].price / 100)
+          this.complects[this.modals.index_complect][this.modals.index_product_complect].finalPrice = this.complects[this.modals.index_complect][this.modals.index_product_complect].price - value
         } else if (type.key === 1) {
-          this.selected[this.modals.product_id].discountInRubles = (this.selected[this.modals.product_id].price / 100) * value
-          this.selected[this.modals.product_id].discountInterest = value
-          this.selected[this.modals.product_id].finalPrice = this.selected[this.modals.product_id].price - (this.selected[this.modals.product_index].price / 100) * value
+          this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInRubles = (this.complects[this.modals.index_complect][this.modals.index_product_complect].price / 100) * value
+          this.complects[this.modals.index_complect][this.modals.index_product_complect].discountInterest = value
+          this.complects[this.modals.index_complect][this.modals.index_product_complect].finalPrice = this.complects[this.modals.index_complect][this.modals.index_product_complect].price - (this.complects[this.modals.index_complect][this.modals.index_product_complect].price / 100) * value
         }
       }
     }

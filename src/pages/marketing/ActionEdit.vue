@@ -430,7 +430,7 @@ export default {
             id: router.currentRoute._value.params.id,
             name: this.form.name,
             conditions: this.form.conditions,
-            dates: this.form.dates,
+            dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
             products: this.selected,
             files: this.files,
             regins: this.select_regions,
