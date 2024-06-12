@@ -62,6 +62,8 @@ import ActionAdd from '../pages/marketing/ActionAdd.vue'
 import Actions from '../pages/marketing/Actions.vue'
 import ActionEdit from '../pages/marketing/ActionEdit.vue'
 import ProfileOrderOpt from '../pages/ProfileOrderOpt'
+import ComplectAdd from '../pages/sales/complects/ComplectAdd.vue'
+import ComplectEdit from '../pages/sales/complects/ComplectEdit.vue'
 
 const routes = [
   {
@@ -456,6 +458,22 @@ const routes = [
             props: true,
             label: 'Редактирование акции',
             component: SalesEdit
+          }]
+        }, {
+          path: 'complects',
+          children: [{
+            path: 'add',
+            name: 'complect_add',
+            props: true,
+            label: 'Добавление комлекта',
+            component: ComplectAdd
+          },
+          {
+            path: ':complect_id',
+            name: 'complect_edit',
+            props: true,
+            label: 'Редактирование комлекта',
+            component: ComplectEdit
           }]
         }, {
           path: 'marketing',

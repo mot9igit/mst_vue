@@ -18,29 +18,32 @@
           @deleteElem="deleteElem"
         >
           <template v-slot:button>
-            <RouterLink :to="{ name: 'org_sales_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Создать подборку</RouterLink>
+            <RouterLink :to="{ name: 'org_sales_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Создать акцию</RouterLink>
           </template>
         </v-table>
       </TabPanel>
+      <TabPanel header="Комплекты">
+        <v-table
+          :items_data="optcomplects.items"
+          :total="optcomplects.total"
+          :pagination_items_per_page="this.pagination_items_per_page_complects"
+          :pagination_offset="this.pagination_offset_complects"
+          :page="this.page_complects"
+          :table_data="this.table_data_complects"
+          :filters="this.filters_complects"
+          :title="'Мои комплекты'"
+          @filter="filter"
+          @sort="filter"
+          @paginate="paginate"
+        >
+          <template v-slot:button>
+            <RouterLink :to="{ name: 'complect_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Создать комлект</RouterLink>
+          </template>
+        </v-table>
+      </TabPanel>
+      <TabPanel header="Отсрочки"></TabPanel>
+      <TabPanel header="Дилеры"></TabPanel>
   </TabView>
-
-  <!-- <v-table
-    :items_data="matrixs.items"
-    :total="matrixs.total"
-    :pagination_items_per_page="this.pagination_items_per_page"
-    :pagination_offset="this.pagination_offset"
-    :page="this.page"
-    :table_data="this.table_data"
-    :filters="this.filters"
-    title="Ключевые матрицы"
-    @filter="filter"
-    @sort="filter"
-    @paginate="paginate"
-  >
-    <template v-slot:button>
-      <RouterLink :to="{ name: 'org_matrix_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Добавить матрицу</RouterLink>
-    </template>
-  </v-table> -->
 </template>
 
 <script>
@@ -65,11 +68,30 @@ export default {
     page: {
       type: Number,
       default: 1
+    },
+    pagination_items_per_page_complects: {
+      type: Number,
+      default: 25
+    },
+    pagination_offset_complects: {
+      type: Number,
+      default: 0
+    },
+    page_complects: {
+      type: Number,
+      default: 1
     }
   },
   data () {
     return {
       filters: {
+        name: {
+          name: 'Название, бренд или артикул',
+          placeholder: 'Название, бренд или артикул',
+          type: 'text'
+        }
+      },
+      filters_complects: {
         name: {
           name: 'Название, бренд или артикул',
           placeholder: 'Название, бренд или артикул',
@@ -125,13 +147,59 @@ export default {
             }
           }
         }
+      },
+      table_data_complects: {
+        name: {
+          label: 'Наименование',
+          type: 'link',
+          link_to: 'complect_edit',
+          link_params: {
+            id: this.$route.params.id,
+            complect_id: 'id'
+          },
+          sort: true
+        },
+        date_from: {
+          label: 'Действует с',
+          type: 'text',
+          sort: true
+        },
+        date_to: {
+          label: 'Действует до',
+          type: 'text',
+          sort: true
+        },
+        active: {
+          label: 'Активно',
+          type: 'boolean'
+        }
+        // actions: {
+        //   label: 'Действия',
+        //   type: 'actions',
+        //   sort: false,
+        //   available: {
+        //     edit: {
+        //       icon: 'pi pi-pencil',
+        //       label: 'Редактировать'
+        //     },
+        //     approve: {
+        //       icon: 'pi pi-power-off',
+        //       label: 'Включить'
+        //     },
+        //     delete: {
+        //       icon: 'pi pi-trash',
+        //       label: 'Удалить'
+        //     }
+        //   }
+        // }
       }
     }
   },
   methods: {
     ...mapActions([
       'get_sales_to_api',
-      'set_sales_to_api'
+      'set_sales_to_api',
+      'opt_get_complects'
     ]),
     filter (data) {
       data.type = 'b2b'
@@ -189,11 +257,18 @@ export default {
       perpage: this.pagination_items_per_page,
       type: 'b2b'
     })
+    this.opt_get_complects({
+      action: 'complects/get',
+      page: this.page_complects,
+      perpage: this.pagination_items_per_page_complects,
+      store_id: router.currentRoute._value.params.id
+    })
   },
   components: { vTable, RouterLink, TabView, TabPanel },
   computed: {
     ...mapGetters([
-      'actions'
+      'actions',
+      'optcomplects'
     ])
   }
 }
