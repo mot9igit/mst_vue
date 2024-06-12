@@ -1,6 +1,8 @@
 <template>
     <div class="k-container">
-        <table class="k-table">
+        <div class="scrollLegt" @mouseenter="leftScroll('start')" @mouseleave="leftScroll('stop')"></div>
+        <div class="scrollRight" @mouseenter="rigthScroll('start')" @mouseleave="rigthScroll('stop')"></div>
+        <table class="k-table" :style="{ marginLeft: this.marginValue + 'px' }">
             <thead>
                 <tr>
                     <th class="k-table__name"></th>
@@ -46,7 +48,9 @@ export default {
   },
   data () {
     return {
-      loading: true
+      loading: true,
+      interval: null,
+      marginValue: 1
     }
   },
   methods: {
@@ -54,6 +58,29 @@ export default {
     ]),
     updateBasket () {
       this.$emit('updateBasket')
+    },
+    leftScroll (event) {
+      clearInterval(this.interval)
+      if (event === 'start') {
+        this.interval = window.setInterval(() => {
+          if (this.marginValue < 0) {
+            this.marginValue = this.marginValue + 50
+          }
+        }, 50)
+      }
+    },
+    rigthScroll (event) {
+      clearInterval(this.interval)
+      if (event === 'start') {
+        const widthTable = document.querySelector('.k-container').offsetWidth
+        this.interval = window.setInterval(() => {
+          if ((1500 - widthTable) * -1 < this.marginValue) {
+            this.marginValue = this.marginValue - 50
+          } else {
+            this.marginValue = (1500 - widthTable) * -1
+          }
+        }, 50)
+      }
     }
   },
   mounted () {
@@ -67,9 +94,27 @@ export default {
 </script>
 <style lang="scss">
 
+.scrollLegt{
+    height: 100%;
+    width: 70px;
+    background: transparent;
+    position: absolute;
+    pointer-events: visiblefill;
+}
+
+.scrollRight{
+    height: 100%;
+    width: 70px;
+    background: transparent;
+    position: absolute;
+    right: 0;
+    pointer-events: visiblefill;
+}
+
 .k-container{
     width: 100%;
     overflow-x: auto;
+    position: relative;
 
     &::-webkit-scrollbar {
       width: 8px;
@@ -90,6 +135,7 @@ export default {
 
 .k-table{
     width: 1500px;
+    transition: all 0.5s;
 
     td{
         text-align: center;
