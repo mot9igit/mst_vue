@@ -21,18 +21,59 @@
                 </tr>
             </thead>
             <tbody>
-                <TableCatalogRow @updateBasket="updateBasket" v-for="item in items.items" v-bind:key="item.id" :items="item"/>
+                <TableCatalogRow @ElemAction="ElemAction" @updateBasket="updateBasket" v-for="item in items.items" v-bind:key="item.id" :items="item"/>
             </tbody>
         </table>
     </div>
+    <Dialog v-if="this.actions_item !== null" v-model:visible="this.modal_actions" :header="'Акции товара ' + this.actions_item.name" class="kenost-actions-modal">
+        <table class="kenost-actions-modal__table">
+            <thead>
+                <tr>
+                    <th class="kenost-actions-modal__th-action">Акция</th>
+                    <th class="kenost-actions-modal__th-desc">Описание</th>
+                    <th class="kenost-actions-modal__th-info">Условие</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in this.actions_item.actions" v-bind:key="item.id" @click="this.active = !this.active" :class="{'active-el' : this.active, 'no-active-el' : !this.active}">
+                <td class="kenost-actions-modal__action">
+                  <img :src="item.image" alt="">
+                  <p>{{item.name}}</p>
+                </td>
+                <td class="kenost-actions-modal__center">{{item.description}}</td>
+                <td class="kenost-actions-modal__center">Скидка {{Number(item.new_price) / (Number(item.old_price) / 100)}}%, оплата {{item.payer === '1' ? 'поставщиком' : 'покупателем'}}
+                  <span v-if="item.delivery_payment_terms == '1'">при условии «Купи на {{ Number(item.delivery_payment_value).toLocaleString('ru') }} рублей»</span>
+                  <span v-if="item.delivery_payment_terms == '2'">при условии «Купи {{ Number(item.delivery_payment_value).toLocaleString('ru') }} шт. товара»</span>, отсрочка {{Number(item.delay).toLocaleString('ru')}} дней
+                  <span v-if="item.delay_condition == '1'">при покупке на {{ Number(item.delay_condition_value).toLocaleString('ru') }} рублей</span>
+                  <span v-if="item.delay_condition == '2'">при покупке {{ Number(item.delay_condition_value).toLocaleString('ru') }} шт. товара</span> (<span v-for="(delay, index) in item.delay_graph" v-bind:key="delay.id"><span v-if="index != 0">, </span>{{ Number(delay.day).toLocaleString('ru') }} дней – {{ delay.percent }}%</span>)</td>
+                <td>
+                  <div class="kenost-conflict">
+                    <div v-if="item.conflicts.items[item.action_id].length" class="kenost-conflict__container">
+                      <div class="kenost-conflict__icon">
+                        <i class="pi pi-info"></i>
+                      </div>
+                      <div class="kenost-conflict__message">
+                        <p>Конфликт с акцией <span>{{item.conflicts.items[item.action_id][0].name}}</span></p>
+                      </div>
+                    </div>
+                    <InputSwitch @update:modelValue="updateAction(item.remain_id, item.store_id, item.action_id, item.enabled)" class="kenost-input-switch" v-model="item.enabled" />
+                  </div>
+                </td>
+            </tr>
+            </tbody>
+          </table>
+    </Dialog>
 </template>
 <script>
-import { mapActions, mapGetters } from 'vuex'
+import { mapActions, mapGetters, mapMutations } from 'vuex'
 import TableCatalogRow from './TableCatalogRow.vue'
+import Dialog from 'primevue/dialog'
+import InputSwitch from 'primevue/inputswitch'
 
 export default {
   name: 'TableCatalog',
-  emits: ['updateBasket'],
+  emits: ['updateBasket', 'ElemAction', 'updateCatalog'],
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -50,11 +91,17 @@ export default {
     return {
       loading: true,
       interval: null,
-      marginValue: 1
+      marginValue: 1,
+      modal_actions: false,
+      actions_item: null
     }
   },
   methods: {
     ...mapActions([
+      'opt_api'
+    ]),
+    ...mapMutations([
+      'SET_OPT_PRODUCT_TO_VUEX'
     ]),
     updateBasket () {
       this.$emit('updateBasket')
@@ -81,11 +128,42 @@ export default {
           }
         }, 50)
       }
+    },
+    ElemAction (obj) {
+      this.actions_item = obj
+      console.log(obj)
+      this.modal_actions = true
+    },
+    updateAction (remainid, storeid, actionid, status) {
+      const data = {
+        action: 'action/user/off/on',
+        remain_id: remainid,
+        store_id: storeid,
+        action_id: actionid,
+        status: !status
+      }
+      this.opt_api(data).then()
+
+      const dataUpdate = {
+        action: 'action/get/conflicts',
+        store_id: storeid,
+        remain_id: remainid
+      }
+
+      this.opt_api(dataUpdate).then((response) => {
+        console.log(response.data.data)
+        const data = {
+          remain_id: remainid,
+          store_id: storeid,
+          conflicts: response.data.data
+        }
+        this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
+      })
     }
   },
   mounted () {
   },
-  components: { TableCatalogRow },
+  components: { TableCatalogRow, Dialog, InputSwitch },
   computed: {
     ...mapGetters([
     ])
@@ -94,12 +172,155 @@ export default {
 </script>
 <style lang="scss">
 
+.kenost-conflict{
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: flex-end;
+  position: relative;
+
+  &__icon{
+    width: 20px;
+    height: 20px;
+    background: #FB203A;
+    border-radius: 3px;
+    rotate: 45deg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    i{
+      color: #FFF;
+      font-size: 12px;
+      rotate: 135deg;
+      position: relative;
+
+      &::before{
+        position: relative;
+        top: 1px;
+      }
+    }
+
+    &.none{
+      visibility: hidden;
+    }
+  }
+
+  &__container{
+    &:hover{
+      .kenost-conflict__message{
+        opacity: 1;
+        pointer-events: all;
+      }
+    }
+  }
+
+  &__message{
+    transition: all 0.4s;
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    // rotate: -45deg;
+    white-space: nowrap;
+    top: 40px;
+    right: 0;
+    padding: 12px;
+    border-radius: 5px;
+    background: #282828;
+
+    &::before{
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      position: absolute;
+      content: "";
+      rotate: 45deg;
+      top: -7px;
+      right: 63px;
+      background: #282828;
+    }
+
+    p{
+      margin: 0;
+      font-size: 12px;
+      color: #FFF;
+
+      span{
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+.kenost-conflict{
+  .p-inputswitch.p-highlight .p-inputswitch-slider{
+    background: #FF0000 !important;
+
+    &::before{
+      left: 0.4rem !important;
+    }
+  }
+}
+
+.kenost-actions-modal{
+  width: 1400px;
+
+  &__actions{
+    display: flex;
+  }
+
+  &__th{
+    &-action{
+      width: 390px;
+    }
+    &-desc{
+      width: 350px;
+    }
+    &-info{
+      width: 400px;
+    }
+  }
+
+  &__center{
+    text-align: center;
+    padding: 16px 10px !important;
+  }
+
+  &__table{
+    width: 100%;
+
+    th{
+      text-align: center;
+      padding: 16px 0;
+    }
+
+    td{
+      padding: 16px 0;
+      border-top: 1px solid #E2E2E2
+    }
+  }
+
+  &__action{
+    display: flex;
+
+    img{
+      width: 110px !important;
+      height: 56px !important;
+      object-fit: contain;
+    }
+
+    p{
+      font-size: 14px;
+      color: #282828;
+    }
+  }
+}
+
 .scrollLegt{
     height: 100%;
     width: 70px;
     background: transparent;
     position: absolute;
-    pointer-events: visiblefill;
 }
 
 .scrollRight{
@@ -108,7 +329,6 @@ export default {
     background: transparent;
     position: absolute;
     right: 0;
-    pointer-events: visiblefill;
 }
 
 .k-container{
@@ -234,6 +454,8 @@ export default {
     }
 
     &__title{
+      padding: 16px 0 0 0 !important;
+      p{
         color: #282828;
         text-decoration: underline;
         font-size: 14px;
@@ -245,7 +467,7 @@ export default {
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         overflow: hidden;
-        padding: 16px 0 0 0 !important;
+      }
     }
 
     &__th{

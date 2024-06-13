@@ -3,7 +3,7 @@
         <td><i class="pi pi-angle-up"></i></td>
         <td><span class="k-table__article">{{items.article}}</span></td>
         <td><img class="k-table__image" :src="items.image" alt=""></td>
-        <td class="k-table__title">{{items.pagetitle}}</td>
+        <td class="k-table__title"><p>{{items.pagetitle}}</p></td>
         <td class="k-table__busket">
           <form class="k-table__form event-none" action="">
             <Counter :min="0" :max="100" :value="0"/>
@@ -23,7 +23,7 @@
         <td></td>
         <td><span class="k-table__article">{{items.article}}</span></td>
         <td><img class="k-table__image" :src="items.image" alt=""></td>
-        <td class="k-table__title">{{item.name}}</td>
+        <td class="k-table__title" @click="openActions(item)"><p>{{item.name}}</p></td>
         <td class="k-table__busket">
           <form class="k-table__form" action="">
             <Counter @ElemCount="ElemCount" :min="1" :max="item.remains" :value="this.value"/>
@@ -33,14 +33,19 @@
         <td>{{item.store_name}}</td>
         <td>{{Math.round(item.price).toLocaleString('ru')}} ₽</td>
         <td>{{Math.round(item.price).toLocaleString('ru')}} ₽ / {{Math.round(item.old_price - item.price).toLocaleString('ru')}} ₽</td>
-        <td>{{item.action.delay ? Number(item.action.delay).toFixed(1) + ' дн' : 'Нет'}}</td>
-        <td>{{ item.action.payer === '0' ? 'Покупатель' : 'Поставщик' }} </td>
+        <td>{{item.action?.delay ? Number(item.action?.delay).toFixed(1) + ' дн' : 'Нет'}}</td>
+        <td>{{item.action?.payer === '1' ? 'Поставщик' : 'Покупатель'}} </td>
         <td>от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</td>
         <td>
           <div class="k-order__actions center">
-            <img :style="index > 2 ? { display: 'none' } : false" v-for="(action, index) in item.actions" v-bind:key="action.id" class="k-order__actions-el" :src="site_url_prefix + action.icon">
+            <!-- :src="site_url_prefix + action.icon" -->
+            <div @click="openActions(item)" class="k-actions" v-for="(action, index) in item.actions" v-bind:key="action.id">
+              <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" src="../../../public/img/opt/not-products.png" >
+              <div v-if="action.conflicts.items[action.action_id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div>
+            </div>
             <div v-if="item.actions.length > 3" class="k-order__actions-el last">+{{ item.actions.length - 3 }}</div>
           </div>
+          <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span>
         </td>
         <td>{{item.remains}} шт</td>
     </tr>
@@ -52,7 +57,7 @@ import router from '@/router'
 
 export default {
   name: 'TableCatalogRow',
-  emits: ['updateBasket'],
+  emits: ['updateBasket', 'ElemAction'],
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -91,7 +96,9 @@ export default {
 
       return minPrice
     },
-
+    openActions (item) {
+      this.$emit('ElemAction', item)
+    },
     getMinDelivery (stores) {
       let minDelivery
       let minDeliveryDate
@@ -124,7 +131,9 @@ export default {
   mounted () {
 
   },
-  components: { Counter },
+  components: {
+    Counter
+  },
   computed: {
     ...mapGetters([
       'basket'
@@ -133,4 +142,41 @@ export default {
 }
 </script>
 <style lang="scss">
+
+.k-actions{
+  position: relative;
+  &:not(:first-child) {
+    margin-left: -10px;
+  }
+}
+
+.kenost-err-compatibility{
+  color: #FB203A;
+  font-size: 10px;
+}
+
+.k-err-icon{
+  width: 12px;
+  height: 12px;
+  background: #FB203A;
+  rotate: 45deg;
+  position: absolute;
+  top: 0;
+  right: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  i{
+    color: #FFF;
+    font-size: 8px;
+    rotate: 135deg;
+    position: relative;
+
+    &::before{
+      position: relative;
+      top: 1px;
+    }
+  }
+}
 </style>

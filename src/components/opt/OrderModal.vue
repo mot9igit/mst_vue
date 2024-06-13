@@ -359,9 +359,6 @@ export default {
                 }
             }
 
-            &-el:not(:first-child) {
-                margin-left: -10px;
-            }
         }
 
         &__title{

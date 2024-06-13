@@ -33,7 +33,6 @@
                             <p>На складе <span>100 шт.</span></p>
                         </div> -->
                         <div class="basket-container__price">
-                            {{ console.log(product) }}
                             <Counter :key="new Date().getMilliseconds() + product.id_remain" @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.info.count" :id="product.id_remain" :store_id="product.store_id"/>
                             <b>{{(product.info.count * product.info.price).toLocaleString('ru')}} ₽</b>
                         </div>
@@ -46,11 +45,20 @@
             >Оформить заказ <span>{{ this.basket?.cost?.toLocaleString('ru') }} ₽</span></a
         >
     </div>
+    <Dialog v-model:visible="this.modal_remain" header=" " :style="{ width: '340px' }">
+        <div class="kenost-not-produc">
+            <img src="../../../public/img/opt/not-products.png" alt="">
+            <b>У нас нет столько товаров :(</b>
+            <p>Извините, но количество данного товара ограничено</p>
+            <div class="a-dart-btn a-dart-btn-primary" @click="this.modal_remain = false">Понятно</div>
+        </div>
+    </Dialog>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
 import Counter from './Counter.vue'
+import Dialog from 'primevue/dialog'
 
 export default {
   name: 'Basket',
@@ -67,7 +75,8 @@ export default {
   data () {
     return {
       loading: true,
-      basket: {}
+      basket: {},
+      modal_remain: false
     }
   },
   methods: {
@@ -75,14 +84,17 @@ export default {
       'busket_from_api'
     ]),
     updateBasket () {
-    //   const data = { action: 'basket/get', id: router.currentRoute._value.params.id }
-    //   this.busket_from_api(data).then(
-    //     this.basket = this.optbasket
-    //   )
+
     },
     ElemCount (object) {
-      const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_remain: object.id, value: object.value, store_id: object.store_id }
-      this.busket_from_api(data).then()
+      console.log(object)
+      if (object.value === Number(object.max)) {
+        this.modal_remain = true
+        console.log(this.modal_remain)
+      } else {
+        const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_remain: object.id, value: object.value, store_id: object.store_id }
+        this.busket_from_api(data).then()
+      }
     },
     clearBasket () {
       const data = { action: 'basket/clear', id: router.currentRoute._value.params.id }
@@ -102,7 +114,10 @@ export default {
       this.basket = this.optbasket
     )
   },
-  components: { Counter },
+  components: {
+    Counter,
+    Dialog
+  },
   computed: {
     ...mapGetters([
       'optbasket'
@@ -116,6 +131,34 @@ export default {
 }
 </script>
 <style lang="scss">
+
+    .p-dialog-mask{
+        background: rgba(0, 0, 0, 0.3)
+    }
+
+    .kenost-not-produc{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        .a-dart-btn{
+            width: 100%;
+        }
+
+        b{
+            margin: 24px 0 8px 0;
+            font-size: 20px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: 24px;
+        }
+
+        p{
+            text-align: center;
+            max-width: 280px;
+            margin-bottom: 24px;
+        }
+    }
 
     .basketClear{
         color: #ACABAB;

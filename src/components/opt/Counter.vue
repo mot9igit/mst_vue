@@ -25,7 +25,7 @@ export default {
     },
     max: {
       type: Number,
-      default: 1000
+      default: 999999999
     },
     value: {
       type: Number,
@@ -58,7 +58,8 @@ export default {
       const data = {
         value: this.d_value,
         id: this.id,
-        store_id: this.store_id
+        store_id: this.store_id,
+        max: this.d_max
       }
       this.$emit('ElemCount', data)
     },
@@ -69,7 +70,8 @@ export default {
       const data = {
         value: this.d_value,
         id: this.id,
-        store_id: this.store_id
+        store_id: this.store_id,
+        max: this.d_max
       }
       this.$emit('ElemCount', data)
     }

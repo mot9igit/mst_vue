@@ -896,6 +896,7 @@ export default {
       }
     },
     ElemCount (obj) {
+      console.log(obj)
       this.selected[obj.id].multiplicity = obj.value
     },
     closeDialogPrice () {
