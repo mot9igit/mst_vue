@@ -353,6 +353,7 @@ export default {
     width: 70px;
     background: transparent;
     position: absolute;
+    z-index: 1;
 }
 
 .scrollRight{
@@ -361,6 +362,7 @@ export default {
     background: transparent;
     position: absolute;
     right: 0;
+    z-index: 1;
 }
 
 .k-container{
