@@ -152,7 +152,7 @@ export default {
     orderSubmit ($storeId) {
       const data = { action: 'order/opt/submit', id: router.currentRoute._value.params.id, store_id: $storeId }
       this.opt_order_api(data).then((response) => {
-        console.log(response)
+        // console.log(response)
         this.order = response.data.data.data[0]
         const data = { action: 'basket/get', id: router.currentRoute._value.params.id }
         this.busket_from_api(data).then(

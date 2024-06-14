@@ -22,7 +22,7 @@ export default {
       })
         .then((response) => {
           // commit('SET_MATRIX_TO_VUEX', response.data)
-          console.log(data)
+          // console.log(data)
         })
         .catch(error => {
           if (error.response.status === 403) {
@@ -41,7 +41,7 @@ export default {
       })
         .then((response) => {
           // commit('SET_MATRIX_TO_VUEX', response.data)
-          console.log(response)
+          // console.log(response)
           return response
         })
         .catch(error => {
@@ -61,7 +61,7 @@ export default {
       })
         .then((response) => {
           // commit('SET_MATRIX_TO_VUEX', response.data)
-          console.log(response)
+          // console.log(response)
           return response
         })
         .catch(error => {

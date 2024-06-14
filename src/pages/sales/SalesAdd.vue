@@ -205,13 +205,17 @@
               <div class="dart-form-group picker-wrap">
                 <span class="ktitle">Добавление товаров</span>
                 <div class="flex align-items-center mt-2">
-                    <RadioButton v-model="this.form.addProductType" inputId="addProductType-1" name="addProductType" value="1"/>
-                    <label for="addProductType-1" class="ml-2 radioLabel">Добавить вручную</label>
+                  <RadioButton v-model="this.form.addProductType" inputId="addProductType-1" name="addProductType" value="1"/>
+                  <label for="addProductType-1" class="ml-2 radioLabel">Добавить товары</label>
                 </div>
                 <!-- <div class="flex align-items-center mt-3">
                     <RadioButton v-model="this.form.addProductType" inputId="addProductType-2" name="addProductType" value="2"/>
                     <label for="addProductType-2" class="ml-2 radioLabel">Загрузить файлом</label>
                 </div> -->
+                <div class="flex align-items-center mt-2">
+                    <RadioButton v-model="this.form.addProductType" inputId="addProductType-3" name="addProductType" value="3"/>
+                    <label for="addProductType-3" class="ml-2 radioLabel">Добавить комплекты</label>
+                </div>
               </div>
 
                 <div v-if="this.form.addProductType == '2'" class="dart-form-group mb-4">
@@ -302,7 +306,69 @@
                     </div>
                 </div>
 
-                <div class="table-kenost mt-4">
+                <div v-if="this.form.addProductType == '3'" class="PickList mt-3">
+                    <div class="PickList__product" :style="{ width: '40%' }">
+                        <b class="PickList__title">Ваши комплекты</b>
+                        <div class="PickList__filters">
+                        <div class="form_input_group input_pl input-parent required">
+                            <input
+                            type="text"
+                            id="filter_name"
+                            placeholder="Введите артикул или название"
+                            class="dart-form-control"
+                            v-model="this.filter_complects"
+                            @input="setFilterComplects()"
+                            />
+                            <label for="product_filter_name" class="s-complex-input__label">Введите название</label>
+                            <div class="form_input_group__icon">
+                                <i class="d_icon d_icon-search"></i>
+                            </div>
+                        </div>
+                        </div>
+                        <div class="PickList__products">
+                          <div class="PickList__el" v-for="item in this.complects" :key="item.id">
+                            <img :src="item.image" alt="">
+                            <div class="PickList__product-info">
+                              <div class="PickList__name">{{item.name}}</div>
+                              <div class="PickList__article">{{item.articles}}</div>
+                              <div class="PickList__price">{{Number(item.cost).toFixed(0)}} ₽</div>
+                            </div>
+                          <div @click="selectComplect(item.id)" class="PickList__select"><i class="pi pi-angle-right"></i></div>
+                        </div>
+                        <paginate
+                            :page-count="pagesCount"
+                            :click-handler="pagClickCallback"
+                            :prev-text="'Пред'"
+                            :next-text="'След'"
+                            :container-class="'pagination justify-content-center'"
+                            :initialPage="this.page"
+                            :forcePage="this.page"
+                        >
+                        </paginate>
+                        </div>
+                    </div>
+
+                    <div class="PickList__selected" :style="{ width: '40%' }">
+                      <div class="PickList__title mb-4">
+                      <b>Добавленные комплекты</b>
+                      </div>
+                      <div class="PickList__products">
+                      <div class="PickList__el" v-for="(item) in this.selected_complects" :key="item.id">
+                        <img :src="item.image" alt="">
+                          <div class="PickList__info">
+                          <div class="PickList__product-info off">
+                            <div class="PickList__name">{{item.name}}</div>
+                              <div class="PickList__article">{{item.articles}}</div>
+                              <div class="PickList__price">{{Number(item.cost).toFixed(0)}} ₽</div>
+                          </div>
+                          </div>
+                          <div @click="deleteSelectComplect(item.id)" class="PickList__select"><i class="pi pi-times"></i></div>
+                      </div>
+                      </div>
+                    </div>
+                </div>
+
+                <div v-if="this.form.addProductType != '3'" class="table-kenost mt-4">
                   <p class="table-kenost__title">Таблица добавленных товаров</p>
                   <!-- <div class="table-kenost__filters">
                     <div class="table-kenost__filters-left">
@@ -634,10 +700,13 @@ export default {
   data () {
     return {
       page: 1,
+      page_complects: 1,
+      per_complects: 25,
       filter: {
         name: '',
         category: {}
       },
+      filter_complects: '',
       filter_table: {
         name: '',
         category: {}
@@ -647,8 +716,11 @@ export default {
       kenost_table_all: [],
       kenost_table: [],
       products: [],
+      complects: [],
+      selected_complects: {},
       get_catalog: [],
       total_products: 0,
+      total_complects: 0,
       saleValue: 0,
       per_page: 25,
       filter_organizations: {
@@ -661,8 +733,6 @@ export default {
       regions: [],
       regions_all: [],
       regions_select: [],
-      complects: [],
-      complects_ids: [],
       form: {
         name: '',
         description: '',
@@ -743,7 +813,8 @@ export default {
       'get_catalog_from_api',
       'get_all_organizations_from_api',
       'get_regions_from_api',
-      'set_sales_to_api'
+      'set_sales_to_api',
+      'opt_get_complects'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -773,6 +844,17 @@ export default {
     setFilter () {
       const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
+    },
+    setFilterComplects () {
+      const data = {
+        action: 'complects/get',
+        filter: this.filter_complects,
+        page: this.page_complects,
+        perpage: this.pagination_items_per_page_complects,
+        store_id: router.currentRoute._value.params.id,
+        selected: this.selected_complects
+      }
+      this.opt_get_complects(data)
     },
     formSubmit (event) {
       this.$load(async () => {
@@ -804,6 +886,7 @@ export default {
           regions_select: this.regions_select,
           organizations: this.all_organizations_selected,
           method_adding_products: this.form.addProductType,
+          complects: this.selected_complects,
           available_stores: this.form.available_stores[0] === 'true',
           available_vendors: this.form.available_vendors[0] === 'true',
           available_opt: this.form.available_opt[0] === 'true'
@@ -833,6 +916,46 @@ export default {
       const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
       this.total_selected++
+    },
+    selectComplect (id) {
+      const complect = this.complects.find(r => r.id === id)
+      this.selected_complects[complect.id] = complect
+      this.complects = this.complects.filter((r) => r.id !== id)
+      const data = {
+        action: 'complects/get',
+        filter: this.filter_complects,
+        page: this.page_complects,
+        perpage: this.pagination_items_per_page_complects,
+        store_id: router.currentRoute._value.params.id,
+        selected: this.selected_complects
+      }
+      this.opt_get_complects(data)
+      // this.total_selected++
+    },
+    deleteSelectComplect (id) {
+      this.complects.push(this.selected_complects[id])
+
+      // eslint-disable-next-line camelcase
+      const new_selected = {}
+
+      for (let i = 0; i < Object.keys(this.selected_complects).length; i++) {
+        if (this.selected_complects[Object.keys(this.selected_complects)[i]].id !== id) {
+          new_selected[Object.keys(this.selected_complects)[i]] = this.selected_complects[Object.keys(this.selected_complects)[i]]
+        }
+      }
+
+      // eslint-disable-next-line camelcase
+      this.selected_complects = new_selected
+
+      const data = {
+        action: 'complects/get',
+        filter: this.filter_complects,
+        page: this.page_complects,
+        perpage: this.pagination_items_per_page_complects,
+        store_id: router.currentRoute._value.params.id,
+        selected: this.selected_complects
+      }
+      this.opt_get_complects(data)
     },
     deleteSelect (id) {
       this.products.push(this.selected[id])
@@ -956,6 +1079,12 @@ export default {
       })
       // console.log(this.regions_all)
     })
+    this.opt_get_complects({
+      action: 'complects/get',
+      page: this.page_complects,
+      perpage: this.pagination_items_per_page_complects,
+      store_id: router.currentRoute._value.params.id
+    })
   },
   components: {
     FileUpload,
@@ -975,7 +1104,8 @@ export default {
       'available_products',
       'getcatalog',
       'allorganizations',
-      'getregions'
+      'getregions',
+      'optcomplects'
     ])
   },
   watch: {
@@ -991,6 +1121,10 @@ export default {
     },
     getregions: function (newVal, oldVal) {
       this.regions = this.getregions
+    },
+    optcomplects: function (newVal, oldVal) {
+      this.complects = newVal.complects
+      this.total_complects = newVal.total
     }
   }
 }

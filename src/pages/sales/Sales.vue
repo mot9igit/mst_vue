@@ -24,7 +24,7 @@
       </TabPanel>
       <TabPanel header="Комплекты">
         <v-table
-          :items_data="optcomplects.items"
+          :items_data="optcomplects.complects"
           :total="optcomplects.total"
           :pagination_items_per_page="this.pagination_items_per_page_complects"
           :pagination_offset="this.pagination_offset_complects"
@@ -41,8 +41,6 @@
           </template>
         </v-table>
       </TabPanel>
-      <TabPanel header="Отсрочки"></TabPanel>
-      <TabPanel header="Дилеры"></TabPanel>
   </TabView>
 </template>
 

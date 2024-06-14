@@ -20,9 +20,9 @@
                     <th class="k-table__name">Остатки на складе</th>
                 </tr>
             </thead>
-            <tbody>
+            <!-- <tbody> -->
                 <TableCatalogRow @ElemAction="ElemAction" @updateBasket="updateBasket" v-for="item in items.items" v-bind:key="item.id" :items="item"/>
-            </tbody>
+            <!-- </tbody> -->
         </table>
     </div>
     <Dialog v-if="this.actions_item !== null" v-model:visible="this.modal_actions" :header="'Акции товара ' + this.actions_item.name" class="kenost-actions-modal">
@@ -131,10 +131,43 @@ export default {
     },
     ElemAction (obj) {
       this.actions_item = obj
-      console.log(obj)
+      // console.log(obj)
       this.modal_actions = true
     },
     updateAction (remainid, storeid, actionid, status) {
+      // Выключаем конфликтные акции
+      const conflicts = this.actions_item.actions.find((action) => action.action_id === actionid)
+      for (let i = 0; i < conflicts.conflicts.items[conflicts.action_id].length; i++) {
+        for (let j = 0; j < Object.keys(this.actions_item.actions).length; j++) {
+          if (conflicts.conflicts.items[conflicts.action_id][i].id === this.actions_item.actions[j].action_id) {
+            this.actions_item.actions[j].enabled = false
+            const data = {
+              action: 'action/user/off/on',
+              remain_id: this.actions_item.actions[j].remain_id,
+              store_id: this.actions_item.actions[j].store_id,
+              action_id: this.actions_item.actions[j].action_id,
+              status: false
+            }
+
+            this.opt_api(data).then(() => {
+              const dataUpdate = {
+                action: 'action/get/conflicts',
+                store_id: storeid,
+                remain_id: remainid
+              }
+
+              this.opt_api(dataUpdate).then((response) => {
+                const data = {
+                  remain_id: remainid,
+                  store_id: storeid,
+                  conflicts: response.data.data
+                }
+                this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
+              })
+            })
+          }
+        }
+      }
       const data = {
         action: 'action/user/off/on',
         remain_id: remainid,
@@ -142,22 +175,21 @@ export default {
         action_id: actionid,
         status: !status
       }
-      this.opt_api(data).then()
-
-      const dataUpdate = {
-        action: 'action/get/conflicts',
-        store_id: storeid,
-        remain_id: remainid
-      }
-
-      this.opt_api(dataUpdate).then((response) => {
-        console.log(response.data.data)
-        const data = {
-          remain_id: remainid,
+      this.opt_api(data).then(() => {
+        const dataUpdate = {
+          action: 'action/get/conflicts',
           store_id: storeid,
-          conflicts: response.data.data
+          remain_id: remainid
         }
-        this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
+
+        this.opt_api(dataUpdate).then((response) => {
+          const data = {
+            remain_id: remainid,
+            store_id: storeid,
+            conflicts: response.data.data
+          }
+          this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
+        })
       })
     }
   },
@@ -382,10 +414,6 @@ export default {
         border-bottom: 1px solid #FF000073
     }
 
-    tbody .active:nth-child(2n){
-        background: #F4F4F4 !important;
-    }
-
     tr.no-active{
         display: none;
     }
@@ -395,6 +423,14 @@ export default {
             transform: rotate(180deg);
             transition: all 0.4s;
         }
+    }
+
+    .no-active-el, .active-el{
+      border-bottom: 1px solid #0000001F;
+    }
+
+    .active-el{
+      box-shadow: 0px 4px 12.5px 0px #0000001F;
     }
 
     tr.active-el{

@@ -19,7 +19,7 @@
         <td></td>
         <td></td>
     </tr>
-    <tr v-for="item in items.stores" v-bind:key="item.id" :class="{'active' : this.active, 'no-active' : !this.active}">
+    <!-- <tr v-for="item in items.stores" v-bind:key="item.id" :class="{'active' : this.active, 'no-active' : !this.active}">
         <td></td>
         <td><span class="k-table__article">{{items.article}}</span></td>
         <td><img class="k-table__image" :src="items.image" alt=""></td>
@@ -38,9 +38,37 @@
         <td>от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</td>
         <td>
           <div class="k-order__actions center">
-            <!-- :src="site_url_prefix + action.icon" -->
             <div @click="openActions(item)" class="k-actions" v-for="(action, index) in item.actions" v-bind:key="action.id">
-              <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" src="../../../public/img/opt/not-products.png" >
+              <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" :src="site_url_prefix + action.icon" >
+              <div v-if="action.conflicts.items[action.action_id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div>
+            </div>
+            <div v-if="item.actions.length > 3" class="k-order__actions-el last">+{{ item.actions.length - 3 }}</div>
+          </div>
+          <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span>
+        </td>
+        <td>{{item.remains}} шт</td>
+    </tr> -->
+    <tr class="kenost-table-background" v-for="item in items.stores" v-bind:key="item.id" :class="{'active' : this.active, 'no-active' : !this.active}">
+        <td></td>
+        <td><span class="k-table__article">{{items.article}}</span></td>
+        <td><img class="k-table__image" :src="items.image" alt=""></td>
+        <td class="k-table__title" @click="openActions(item)"><p>{{item.name}}</p></td>
+        <td class="k-table__busket">
+          <form class="k-table__form" action="">
+            <Counter @ElemCount="ElemCount" :min="1" :max="item.remains" :value="this.value"/>
+            <div @click="addBasket(item.remain_id, this.value, item.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
+          </form>
+        </td>
+        <td>{{item.store_name}}</td>
+        <td>{{Math.round(item.price).toLocaleString('ru')}} ₽</td>
+        <td>{{Math.round(item.price).toLocaleString('ru')}} ₽ / {{Math.round(item.old_price - item.price).toLocaleString('ru')}} ₽</td>
+        <td>{{item.action?.delay ? Number(item.action?.delay).toFixed(1) + ' дн' : 'Нет'}}</td>
+        <td>{{item.action?.payer === '1' ? 'Поставщик' : 'Покупатель'}} </td>
+        <td>от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</td>
+        <td>
+          <div class="k-order__actions center">
+            <div @click="openActions(item)" class="k-actions" v-for="(action, index) in item.actions" v-bind:key="action.id">
+              <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" :src="site_url_prefix + action.icon" >
               <div v-if="action.conflicts.items[action.action_id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div>
             </div>
             <div v-if="item.actions.length > 3" class="k-order__actions-el last">+{{ item.actions.length - 3 }}</div>
@@ -49,6 +77,37 @@
         </td>
         <td>{{item.remains}} шт</td>
     </tr>
+    <tbody class="complect-button kenost-table-background" v-for="complect in items.complects" v-bind:key="complect.id" :class="{'active' : this.active, 'no-active' : !this.active}">
+      <tr v-for="(item, index) in complect" v-bind:key="item.id" :class="{'active' : this.active, 'no-active' : !this.active}">
+        <td></td>
+        <td><span class="k-table__article">{{item.article}}</span></td>
+        <td><img class="k-table__image" :src="item.image" alt=""></td>
+        <td class="k-table__title" @click="openActions(item)"><p>{{item.pagetitle}}</p></td>
+        <td class="k-table__busket complect-button__td">
+          <form class="k-table__form complect-button__form" action="" v-if="index === 0">
+            <Counter @ElemCount="ElemCount" :min="1" :max="item.remains" :value="this.value"/>
+            <div @click="addBasket(item.remain_id, this.value, item.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
+          </form>
+        </td>
+        <td><span v-if="index === 0">{{item.store_name}}</span></td>
+        <td>{{Math.round(Number(item.new_price)).toLocaleString('ru')}}₽ x {{ item.multiplicity }} шт.</td>
+        <td>{{Math.round(Number(item.price) * Number(item.multiplicity)).toLocaleString('ru')}} ₽ / {{Math.round(Number(item.price) * Number(item.multiplicity) - Number(item.new_price) * Number(item.multiplicity)).toLocaleString('ru')}} ₽</td>
+        <td><span v-if="index === 0">{{item.action?.delay ? Number(item.action?.delay).toFixed(1) + ' дн' : 'Нет'}}</span></td>
+        <td><span v-if="index === 0">{{item.action?.payer === '1' ? 'Поставщик' : 'Покупатель'}}</span></td>
+        <td><span v-if="index === 0">от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</span></td>
+        <td>
+          <!-- <div class="k-order__actions center">
+            <div @click="openActions(item)" class="k-actions" v-for="(action, index) in item.actions" v-bind:key="action.id">
+              <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" :src="site_url_prefix + action.icon" >
+              <div v-if="action.conflicts.items[action.action_id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div>
+            </div>
+            <div v-if="item.actions.length > 3" class="k-order__actions-el last">+{{ item.actions.length - 3 }}</div>
+          </div>
+          <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span> -->
+        </td>
+        <td>{{item.remains}} шт</td>
+      </tr>
+    </tbody>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
@@ -142,6 +201,29 @@ export default {
 }
 </script>
 <style lang="scss">
+
+.complect-button{
+  &:hover{
+    .complect-button__form{
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
+
+  &__td{
+    position: relative;
+  }
+
+  &__form{
+    position: absolute;
+    top: 100%;
+    transform: translate(0, -50%);
+  }
+}
+
+.kenost-table-background:nth-child(2n){
+  background: #F4F4F4 !important;
+}
 
 .k-actions{
   position: relative;

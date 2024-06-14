@@ -14,10 +14,10 @@
               <input v-model="this.form.name" type="text" name="name" placeholder="Укажите название комплекта" class="dart-form-control mt-2">
           </div>
 
-          <div class="dart-form-group mb-4">
+          <!-- <div class="dart-form-group mb-4">
               <span class="ktitle">Даты проведения</span>
               <Calendar v-model="this.form.dates" selectionMode="range" placeholder="Выберите даты" :manualInput="false" showIcon/>
-          </div>
+          </div> -->
 
           <div class="PickList mt-3">
               <div class="PickList__product" :style="{ width: '40%' }">
@@ -339,7 +339,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
-import Calendar from 'primevue/calendar'
+// import Calendar from 'primevue/calendar'
 import Dialog from 'primevue/dialog'
 import InputNumber from 'primevue/inputnumber'
 import TreeSelect from 'primevue/treeselect'
@@ -478,7 +478,7 @@ export default {
           action: 'complect/set',
           store_id: router.currentRoute._value.params.id,
           products: this.selected,
-          dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
+          // dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
           name: this.form.name,
           complect_id: router.currentRoute._value.params.complect_id
         })
@@ -558,7 +558,7 @@ export default {
     })
   },
   components: {
-    Calendar,
+    // Calendar,
     Dialog,
     InputNumber,
     TreeSelect,
@@ -593,9 +593,9 @@ export default {
     },
     optcomplects: function (newVal, oldVal) {
       this.form.name = newVal.name
-      const dateto = new Date(newVal.date_to)
-      const datefrom = new Date(newVal.date_from)
-      this.form.dates = [datefrom, dateto]
+      // const dateto = new Date(newVal.date_to)
+      // const datefrom = new Date(newVal.date_from)
+      // this.form.dates = [datefrom, dateto]
       this.selected = newVal.products
     }
   }
