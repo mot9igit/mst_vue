@@ -208,11 +208,11 @@
                   <RadioButton v-model="this.form.addProductType" inputId="addProductType-1" name="addProductType" value="1"/>
                   <label for="addProductType-1" class="ml-2 radioLabel">Добавить товары</label>
                 </div>
-                <!-- <div class="flex align-items-center mt-3">
+                <div class="flex align-items-center mt-3">
                     <RadioButton v-model="this.form.addProductType" inputId="addProductType-2" name="addProductType" value="2"/>
-                    <label for="addProductType-2" class="ml-2 radioLabel">Загрузить файлом</label>
-                </div> -->
-                <div class="flex align-items-center mt-2">
+                    <label for="addProductType-2" class="ml-2 radioLabel">Загрузить товары файлом</label>
+                </div>
+                <div class="flex align-items-center mt-3">
                     <RadioButton v-model="this.form.addProductType" inputId="addProductType-3" name="addProductType" value="3"/>
                     <label for="addProductType-3" class="ml-2 radioLabel">Добавить комплекты</label>
                 </div>
@@ -221,12 +221,13 @@
                 <div v-if="this.form.addProductType == '2'" class="dart-form-group mb-4">
                   <DropZone
                     class="kenost-dropzone"
-                    :maxFiles="Number(10000000000)"
-                    url="http://localhost:5000/item"
+                    :maxFiles="Number(1)"
+                    url="/rest/file_upload.php?upload_products=xlsx"
                     :uploadOnDrop="true"
                     :multipleUpload="true"
-                    :acceptedFiles="['xlsx']"
+                    :acceptedFiles="['xlsx', 'xlsx']"
                     :parallelUpload="1"
+                    @sending="parseFile"
                     v-bind="args"
                     >
                     <template v-slot:message>
@@ -776,7 +777,9 @@ export default {
           'Скидка вручную'
         ]
       },
-      files: {},
+      files: {
+        xlsx: null
+      },
       paymentDelivery: [
         { name: 'Покупатель', key: 0 },
         { name: 'Поставщик', key: 1 }
@@ -814,7 +817,8 @@ export default {
       'get_all_organizations_from_api',
       'get_regions_from_api',
       'set_sales_to_api',
-      'opt_get_complects'
+      'opt_get_complects',
+      'opt_upload_products_file'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -839,6 +843,25 @@ export default {
       for (let i = 0; i < this.form.delay.length; i++) {
         this.delayPercentSum += this.form.delay[i].percent
         this.postponement_period = this.postponement_period + (this.form.delay[i].day * (this.form.delay[i].percent / 100))
+      }
+    },
+    parseFile (files, xhr, formData) {
+      function callback (e) {
+        const res = JSON.parse(e).data.files[0]
+        console.log(res)
+
+        // const data = {
+        //   action: 'upload/products/file',
+        //   store_id: router.currentRoute._value.params.id,
+        //   file: res.original
+        // }
+        // this.opt_upload_products_file(data)
+      }
+
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          callback(xhr.response)
+        }
       }
     },
     setFilter () {
@@ -1105,7 +1128,8 @@ export default {
       'getcatalog',
       'allorganizations',
       'getregions',
-      'optcomplects'
+      'optcomplects',
+      'optproductsfile'
     ])
   },
   watch: {
