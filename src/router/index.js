@@ -64,6 +64,7 @@ import ActionEdit from '../pages/marketing/ActionEdit.vue'
 import ProfileOrderOpt from '../pages/ProfileOrderOpt'
 import ComplectAdd from '../pages/sales/complects/ComplectAdd.vue'
 import ComplectEdit from '../pages/sales/complects/ComplectEdit.vue'
+import Promotion from '../pages/opt/Promotion/Promotion.vue'
 
 const routes = [
   {
@@ -228,6 +229,10 @@ const routes = [
             path: ':category_id',
             name: 'purchases_catalog',
             component: PurchasesCatalog
+          }, {
+            path: 'promotion',
+            name: 'promotion',
+            component: Promotion
           }, {
             path: 'search/:search',
             name: 'opt_search',
