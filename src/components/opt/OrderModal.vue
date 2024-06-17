@@ -48,6 +48,31 @@
                             </div>
                         </div>
                     </div>
+                    <div v-for="complect in store.complects" v-bind:key="complect.id">
+                        <div class="k-order__product" v-for="product in complect.products" v-bind:key="product.id">
+                            <img class="k-order__product-img" :src="product.image" :alt="product.name">
+                            <div class="k-order__product-info">
+                                <div class="k-order__main-info">
+                                    <p>{{product.name}}</p>
+                                    <div class="k-order__actions">
+                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                        <div class="k-order__actions-el last">+3</div>
+                                    </div>
+                                    <Counter :key="new Date().getMilliseconds() + product.id_remain" @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.info.count" :id="product.id_remain" :store_id="product.store_id"/>
+                                    <b>{{(product.info.count * product.info.price).toLocaleString('ru')}} ₽</b>
+                                </div>
+                                <div class="k-order__product-data">
+                                    <span class="k-order__article">{{product.article}}</span>
+                                    <p class="k-order__info">Отсрочка: <span>50 дн.</span></p>
+                                    <p class="k-order__info">Оплата доставки: <span>Покупатель</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="k-order__final">
                         <div class="k-order__final-info">
                             <div class="k-order__colums">
@@ -195,6 +220,7 @@ export default {
 <style lang="scss">
 
     .k-order{
+        z-index: 10;
         width: 100vw;
         height: 100vh;
         position: fixed;

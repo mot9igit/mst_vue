@@ -151,7 +151,7 @@ export default {
 
             this.opt_api(data).then(() => {
               const dataUpdate = {
-                action: 'action/get/conflicts',
+                action: 'get/info/product',
                 store_id: storeid,
                 remain_id: remainid
               }
@@ -160,7 +160,7 @@ export default {
                 const data = {
                   remain_id: remainid,
                   store_id: storeid,
-                  conflicts: response.data.data
+                  data: response.data.data
                 }
                 this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
               })
@@ -177,7 +177,7 @@ export default {
       }
       this.opt_api(data).then(() => {
         const dataUpdate = {
-          action: 'action/get/conflicts',
+          action: 'get/info/product',
           store_id: storeid,
           remain_id: remainid
         }
@@ -186,7 +186,7 @@ export default {
           const data = {
             remain_id: remainid,
             store_id: storeid,
-            conflicts: response.data.data
+            data: response.data.data
           }
           this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
         })
@@ -353,7 +353,7 @@ export default {
     width: 70px;
     background: transparent;
     position: absolute;
-    z-index: 1;
+    z-index: 2;
 }
 
 .scrollRight{
@@ -362,7 +362,7 @@ export default {
     background: transparent;
     position: absolute;
     right: 0;
-    z-index: 1;
+    z-index: 2;
 }
 
 .k-container{
@@ -460,6 +460,7 @@ export default {
         transition: all 0.4s;
         width: 100%;
         justify-content: center;
+        z-index: 1;
     }
 
     &__header{

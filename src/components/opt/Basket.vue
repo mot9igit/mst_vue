@@ -38,6 +38,34 @@
                         </div>
                     </div>
                 </div>
+                <div v-for="complect in store.complects" v-bind:key="complect.id">
+                    <div v-for="product in complect.products" v-bind:key="product.id" class="basket-container__card">
+                        <img
+                            class="basket-container__img"
+                            :src="product.image"
+                            :alt="product.name"
+                        />
+                        <div class="basket-container__info">
+                            <div class="basket-container__title">
+                                <p>
+                                    {{product.name}}
+                                </p>
+                                <div @click="clearBasketProduct(product.store_id, product.id_remain)" class="btn-close link-no-style"
+                                    ><i class="d_icon d_icon-close"></i
+                                ></div>
+                            </div>
+                            <p class="basket-container__article">{{product.article}}</p>
+                            <!-- <div class="basket-container__count">
+                                <p>В наличии <span>50 шт.</span></p>
+                                <p>На складе <span>100 шт.</span></p>
+                            </div> -->
+                            <div class="basket-container__price">
+                                <Counter :key="new Date().getMilliseconds() + product.id_remain" @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.info.count" :id="product.id_remain" :store_id="product.store_id"/>
+                                <b>{{(product.info.count / Number(product.multiplicity) * product.info.price).toLocaleString('ru')}} ₽</b>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

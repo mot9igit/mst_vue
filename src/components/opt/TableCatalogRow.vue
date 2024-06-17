@@ -77,6 +77,7 @@
         </td>
         <td>{{item.remains}} шт</td>
     </tr>
+    <!-- Вывод комплектов -->
     <tbody class="complect-button kenost-table-background" v-for="complect in items.complects" v-bind:key="complect.id" :class="{'active' : this.active, 'no-active' : !this.active}">
       <tr v-for="(item, index) in complect" v-bind:key="item.id" :class="{'active' : this.active, 'no-active' : !this.active}">
         <td></td>
@@ -85,16 +86,17 @@
         <td class="k-table__title" @click="openActions(item)"><p>{{item.pagetitle}}</p></td>
         <td class="k-table__busket complect-button__td">
           <form class="k-table__form complect-button__form" action="" v-if="index === 0">
-            <Counter @ElemCount="ElemCount" :min="1" :max="item.remains" :value="this.value"/>
-            <div @click="addBasket(item.remain_id, this.value, item.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
+            <Counter @ElemCount="ElemCount" :min="1" :max="item.remain_complect" :value="this.value"/>
+            {{console.log(item)}}
+            <div @click="addBasketComplect(item.complect_id, this.value, item.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
           </form>
         </td>
-        <td><span v-if="index === 0">{{item.store_name}}</span></td>
+        <td class="td-center"><span v-if="index === 0">{{item.store_name}}</span></td>
         <td>{{Math.round(Number(item.new_price)).toLocaleString('ru')}}₽ x {{ item.multiplicity }} шт.</td>
         <td>{{Math.round(Number(item.price) * Number(item.multiplicity)).toLocaleString('ru')}} ₽ / {{Math.round(Number(item.price) * Number(item.multiplicity) - Number(item.new_price) * Number(item.multiplicity)).toLocaleString('ru')}} ₽</td>
-        <td><span v-if="index === 0">{{item.action?.delay ? Number(item.action?.delay).toFixed(1) + ' дн' : 'Нет'}}</span></td>
-        <td><span v-if="index === 0">{{item.action?.payer === '1' ? 'Поставщик' : 'Покупатель'}}</span></td>
-        <td><span v-if="index === 0">от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</span></td>
+        <td class="td-center"><span v-if="index === 0">{{item.action?.delay ? Number(item.action?.delay).toFixed(1) + ' дн' : 'Нет'}}</span></td>
+        <td class="td-center"><span v-if="index === 0">{{item.action?.payer === '1' ? 'Поставщик' : 'Покупатель'}}</span></td>
+        <td class="td-center"><span v-if="index === 0">от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</span></td>
         <td>
           <!-- <div class="k-order__actions center">
             <div @click="openActions(item)" class="k-actions" v-for="(action, index) in item.actions" v-bind:key="action.id">
@@ -105,7 +107,7 @@
           </div>
           <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span> -->
         </td>
-        <td>{{item.remains}} шт</td>
+        <td class="td-center"><span v-if="index === 0">{{item.remain_complect}} шт</span></td>
       </tr>
     </tbody>
 </template>
@@ -183,6 +185,11 @@ export default {
       this.busket_from_api(data).then()
       this.$emit('updateBasket')
     },
+    addBasketComplect (complectid, value, storeid) {
+      const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_complect: complectid, value, store_id: storeid }
+      this.busket_from_api(data).then()
+      this.$emit('updateBasket')
+    },
     ElemCount (object) {
       this.value = object.value
     }
@@ -201,6 +208,19 @@ export default {
 }
 </script>
 <style lang="scss">
+
+.td-center{
+  position: relative;
+
+  span{
+    position: absolute;
+    top: 100%;
+    transform: translate(0, -50%);
+    width: 100%;
+    left: 0;
+    text-align: center;
+  }
+}
 
 .complect-button{
   &:hover{
