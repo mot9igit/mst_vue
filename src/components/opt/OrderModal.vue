@@ -48,29 +48,48 @@
                             </div>
                         </div>
                     </div>
-                    <div v-for="complect in store.complects" v-bind:key="complect.id">
-                        <div class="k-order__product" v-for="product in complect.products" v-bind:key="product.id">
-                            <img class="k-order__product-img" :src="product.image" :alt="product.name">
-                            <div class="k-order__product-info">
-                                <div class="k-order__main-info">
-                                    <p>{{product.name}}</p>
-                                    <div class="k-order__actions">
-                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
-                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
-                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
-                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
-                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
-                                        <div class="k-order__actions-el last">+3</div>
+                    <div v-for="complect in store.complects" v-bind:key="complect.id" class="k-order__complect">
+                        <div class="k-order__complect-title">
+                            <p>Комплект</p>
+                        </div>
+                        <div class="k-order__complect-rows dart-row dart-align-items-center">
+                            <div class="k-order__complect-products d-col-md-9">
+                                <div class="k-order__product" v-for="product in complect.products" v-bind:key="product.id">
+                                    <div class="dart-row">
+                                        <div class="d-col-md-1">
+                                            <img class="k-order__product-img " :src="product.image" :alt="product.name">
+                                        </div>
+                                        <div class="d-col-md-9">
+                                            <div class="k-order__product-info">
+                                                <div class="k-order__main-info">
+                                                    <p>{{product.name}} </p>
+                                                    <div class="k-order__actions">
+                                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                                        <img class="k-order__actions-el" src="https://mst.tools/assets/cache_image/products/7021/51158554_450x450_71b.jpg">
+                                                        <div class="k-order__actions-el last">+3</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="k-order__product-data">
+                                                <span class="k-order__article">{{product.article}} x {{product.multiplicity * complect.info.count}} шт</span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <Counter :key="new Date().getMilliseconds() + product.id_remain" @ElemCount="ElemCount" :min="1" :max="product.remains" :value="product.info.count" :id="product.id_remain" :store_id="product.store_id"/>
-                                    <b>{{(product.info.count * product.info.price).toLocaleString('ru')}} ₽</b>
-                                </div>
-                                <div class="k-order__product-data">
-                                    <span class="k-order__article">{{product.article}}</span>
-                                    <p class="k-order__info">Отсрочка: <span>50 дн.</span></p>
-                                    <p class="k-order__info">Оплата доставки: <span>Покупатель</span></p>
                                 </div>
                             </div>
+                            <div class="k-order__complect-data d-col-md-3">
+                                <div class="k-order__complect-data-items">
+                                    <Counter :key="new Date().getMilliseconds() + complect.info.id" @ElemCount="ElemComplectCount" :min="1" :max="complect.info.complect_data.min_count" :value="complect.info.count" :id="complect.info.id" :store_id="store.id"/>
+                                    <b>{{(Number(complect.info.count) * complect.info.price).toLocaleString('ru')}} ₽</b>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="k-order__product-data">
+                            <p class="k-order__info">Отсрочка: <span>50 дн.</span></p>
+                            <p class="k-order__info">Оплата доставки: <span>Покупатель</span></p>
                         </div>
                     </div>
                     <div class="k-order__final">
@@ -189,6 +208,16 @@ export default {
       const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_remain: object.id, value: object.value, store_id: object.store_id }
       this.busket_from_api(data).then()
     },
+    ElemComplectCount (object) {
+      // console.log(object)
+      if (object.value > Number(object.max)) {
+        this.modal_remain = true
+        console.log(this.modal_remain)
+      } else {
+        const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_complect: object.id, value: object.value, store_id: object.store_id }
+        this.busket_from_api(data).then()
+      }
+    },
     clearBasket () {
       const data = { action: 'basket/clear', id: router.currentRoute._value.params.id }
       this.busket_from_api(data).then()
@@ -218,7 +247,6 @@ export default {
 }
 </script>
 <style lang="scss">
-
     .k-order{
         z-index: 10;
         width: 100vw;
@@ -227,6 +255,31 @@ export default {
         top: 0;
         left: 0;
         pointer-events: none;
+
+        &__complect {
+            padding: 16px 0;
+            border-bottom: 1px solid #E2E2E2;
+            .k-order__main-info p{
+                max-width: 290px;
+                width: auto;
+            }
+            &-title p{
+                font-size: 14px;
+                font-weight: 500;
+            }
+            &-rows{
+                display: flex;
+                .k-order__product {
+                    border: none;
+                    display: block;
+                }
+            }
+            &-data-items {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+            }
+        }
 
         &__final-info{
             display: grid;

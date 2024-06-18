@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="d-col-map">
-        <Vendors :items="this.opt_vendors"/>
+        <Vendors :items="this.opt_vendors" @vendorCheck="vendorCheck"/>
         <Basket ref="childComponent" @toOrder="toOrder"/>
       </div>
     </div>
@@ -114,6 +114,9 @@ export default {
         this.loading = false
       }
       )
+    },
+    vendorCheck () {
+      this.updatePage(this.$route.params.category_id)
     },
     updateBasket () {
       this.$refs.childComponent.updateBasket()
