@@ -230,7 +230,7 @@ const routes = [
             name: 'purchases_catalog',
             component: PurchasesCatalog
           }, {
-            path: 'promotion',
+            path: 'action/:action',
             name: 'promotion',
             component: Promotion
           }, {

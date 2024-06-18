@@ -208,25 +208,27 @@
                   <RadioButton v-model="this.form.addProductType" inputId="addProductType-1" name="addProductType" value="1"/>
                   <label for="addProductType-1" class="ml-2 radioLabel">Добавить товары</label>
                 </div>
-                <!-- <div class="flex align-items-center mt-3">
+                <div class="flex align-items-center mt-3">
                     <RadioButton v-model="this.form.addProductType" inputId="addProductType-2" name="addProductType" value="2"/>
-                    <label for="addProductType-2" class="ml-2 radioLabel">Загрузить файлом</label>
-                </div> -->
-                <div class="flex align-items-center mt-2">
+                    <label for="addProductType-2" class="ml-2 radioLabel">Загрузить товары файлом</label>
+                </div>
+                <div class="flex align-items-center mt-3">
                     <RadioButton v-model="this.form.addProductType" inputId="addProductType-3" name="addProductType" value="3"/>
                     <label for="addProductType-3" class="ml-2 radioLabel">Добавить комплекты</label>
                 </div>
               </div>
 
-                <div v-if="this.form.addProductType == '2'" class="dart-form-group mb-4">
+              <div v-if="this.form.addProductType == '2'" class="dart-form-group mb-4">
                   <DropZone
+                    v-if="!this.upload_product"
                     class="kenost-dropzone"
-                    :maxFiles="Number(10000000000)"
-                    url="http://localhost:5000/item"
+                    :maxFiles="Number(1)"
+                    url="/rest/file_upload.php?upload_products=xlsx"
                     :uploadOnDrop="true"
                     :multipleUpload="true"
-                    :acceptedFiles="['xlsx']"
+                    :acceptedFiles="['xlsx', 'xlsx']"
                     :parallelUpload="1"
+                    @sending="parseFile"
                     v-bind="args"
                     >
                     <template v-slot:message>
@@ -237,6 +239,18 @@
                       </div>
                     </template>
                   </DropZone>
+
+                  <div class="kenost-upload-xlsx" v-if="this.upload_product">
+                    <div class="kenost-upload-xlsx__file">
+                      <img src="../../../public/img/files/xls.png" alt="">
+                      <a targer="_blank" :href="files?.xlsx?.original_href">{{ files?.xlsx?.name }}</a>
+                    </div>
+                    <div class="kenost-upload-xlsx__info">
+                      <p>Загружено товаров: {{Object.keys(this.selected).length}} шт</p>
+                      <p>Всего товаров: {{Object.keys(this.selected).length + error_product.length}} шт</p>
+                      <div class="kenost-link-blue" @click="this.modals.error_product = true">Список незагруженных товаров</div>
+                    </div>
+                  </div>
 
                   <div class="kenost-link-blue mt-2">Скачать шаблон файла</div>
                 </div>
@@ -594,6 +608,21 @@
         </div>
     </Dialog>
 
+    <Dialog v-model:visible="this.modals.error_product" header="Список незагруженных товаров" :style="{ width: '640px' }">
+        <div class="kenost-list-error">
+          <table>
+            <tr>
+              <th>№</th>
+              <th>Артикул</th>
+            </tr>
+            <tr v-for="item, index in this.error_product" :key="item.id">
+              <td>{{index + 1}}</td>
+              <td>{{item}}</td>
+            </tr>
+          </table>
+        </div>
+    </Dialog>
+
     <Dialog v-model:visible="this.modals.price" :header="this.modals.headers[this.modals.price_step]" :style="{ width: '600px' }">
         <div class="kenost-modal-price">
             <div class="product-kenost-card">
@@ -735,6 +764,8 @@ export default {
         name: '',
         category: {}
       },
+      error_product: [],
+      upload_product: false,
       page_complects: 1,
       per_complects: 25,
       filter_complects: '',
@@ -793,6 +824,7 @@ export default {
       modals: {
         delay: false,
         price: false,
+        error_product: false,
         price_step: 0,
         type_price: '1',
         product_id: -1,
@@ -852,7 +884,8 @@ export default {
       'get_regions_from_api',
       'set_sales_to_api',
       'get_sales_to_api',
-      'opt_get_complects'
+      'opt_get_complects',
+      'opt_upload_products_file'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -877,6 +910,53 @@ export default {
       for (let i = 0; i < this.form.delay.length; i++) {
         this.delayPercentSum += this.form.delay[i].percent
         this.postponement_period = this.postponement_period + (this.form.delay[i].day * (this.form.delay[i].percent / 100))
+      }
+    },
+
+    parseFile (files, xhr, formData) {
+      const callback = (e) => {
+        const res = JSON.parse(e)
+
+        this.files.xlsx = res.data.files[0]
+
+        const data = {
+          action: 'upload/products/file',
+          store_id: router.currentRoute._value.params.id,
+          file: res.data.files[0].original
+        }
+        this.opt_upload_products_file(data).then((response) => {
+          const productsList = response.data.data.data
+          // Бежим по всем элементам и добавляем их в select
+          this.selected = {}
+          for (let i = 1; i < Object.keys(productsList).length; i++) {
+            const tempProduct = productsList[Object.keys(productsList)[i]]
+            if (!tempProduct.error) {
+              const product = {}
+              product.article = tempProduct.A
+              product.discountInRubles = tempProduct.E - tempProduct.D
+              product.discountInterest = (tempProduct.E - tempProduct.D) / (tempProduct.E / 100)
+              product.finalPrice = tempProduct.D
+              product.price = tempProduct.E
+              product.id = tempProduct.remain.id
+              product.multiplicity = tempProduct.F
+              product.image = tempProduct.remain.image
+              product.name = tempProduct.remain.name
+              product.typeFormul = {}
+              product.typePrice = ''
+              this.selected[tempProduct.remain.id] = product
+              this.total_selected++
+            } else {
+              this.error_product.push(tempProduct.A)
+            }
+          }
+          this.upload_product = true
+        })
+      }
+
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          callback(xhr.response)
+        }
       }
     },
     setFilter () {
@@ -1155,7 +1235,8 @@ export default {
       'allorganizations',
       'getregions',
       'actions',
-      'optcomplects'
+      'optcomplects',
+      'optproductsfile'
     ])
   },
   watch: {

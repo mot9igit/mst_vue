@@ -13,18 +13,15 @@
                     src="../../../assets/img/icons/arrow.svg"
                     class="header__arrow"
                   />
-                  <h2 class="header__title">Название акции</h2>
+                  <h2 class="header__title">{{actions.name}}</h2>
                 </div>
                 <p class="header__description">
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed
-                  do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                  laboris nisi ut aliquip ex ea commodo consequat.
+                  {{actions.description}}
                 </p>
               </div>
               <div>
                 <img
-                  src="../../../assets/img/slider/1.jpg"
+                  :src="site_url_prefix + actions.image"
                   class="header__img"
                 />
               </div>
@@ -33,35 +30,72 @@
               <div class="main__card-container">
                 <PromotionCard
                   title="Даты проведения"
-                  text="15.02.2024 - 28.02.2024"
+                  :text="(new Date(actions.date_from).toLocaleString('ru', this.options)) + ' - ' + (new Date(actions.date_to).toLocaleString('ru', this.options))"
                 />
                 <PromotionCard
                   title="Вознаграждение"
-                  text="Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit"
+                  :text="actions.award"
                 />
                 <PromotionCard
                   title="Совместимость скидок"
-                  text="Применяется большая скидка"
-                  :images="[
-                    '../../../assets/img/gallery/1.jpg',
-                    '../../../assets/img/gallery/1.jpg',
-                    '../../../assets/img/gallery/1.jpg',
-                    '../../../assets/img/gallery/1.jpg',
-                    '../../../assets/img/gallery/1.jpg',
-                  ]"
+                  :text="actions.compatibility_discount === 1? 'Совместим со всеми акциями' : actions.compatibility_discount === 2? 'Не совместим со всеми акциями' : actions.compatibility_discount === 3? 'Применяется большая скидка' : 'Складывается с выбранными акциями'"
                 />
                 <PromotionCard
                   title="Совместимость отсрочек"
-                  text="Применяется большая отсрочка"
+                  :text="actions.compatibility_postponement === 1? 'Совместим со всеми отсрочками' : actions.compatibility_postponement === 2? 'Не совместим со всеми отсрочками' : 'Применяется большая отсрочка'"
                 />
               </div>
 
-              <div>
+              <!-- <div>
                 <p>Доступно для всех товаров</p>
                 <button class="a-dart-btn a-dart-btn-primary">
                   Перейти в каталог
                 </button>
-              </div>
+              </div> -->
+
+              <table class="table-kenost__table">
+                    <thead>
+                        <tr>
+                            <th class="table-kenost__name table-kenost__name-checkbox"><Checkbox @update:modelValue="kenostTableCheckedAll" v-model="this.kenost_table_all" inputId="kenost_table_all" value="1" /></th>
+                            <th class="table-kenost__name table-kenost__name-product">Товар</th>
+                            <th class="table-kenost__name">РРЦ (₽)</th>
+                            <th class="table-kenost__name">Скидка %</th>
+                            <th class="table-kenost__name">Цена со скидкой за шт.</th>
+                            <th class="table-kenost__name">Кратность</th>
+                            <th class="table-kenost__name">Сумма</th>
+                        </tr>
+                    </thead>
+                    <tbody v-for="item in this.selected" :key="item.id">
+                      <tr>
+                        <td class="table-kenost__checkbox">
+                          <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
+                        </td>
+                        <td class="table-kenost__product">
+                          <img :src="'https://mst.tools' + item.image">
+                          <div class="table-kenost__product-text">
+                            <p>{{ item.name }}</p>
+                            <span>{{item.article}}</span>
+                          </div>
+                        </td>
+                        <td>
+                          {{(Number(item.price).toFixed(0)).toLocaleString('ru')}} ₽
+                        </td>
+                        <td>
+                          {{(Number(item.discountInterest).toFixed(2)).toLocaleString('ru')}}
+                        </td>
+                        <td>
+                          {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru')}} ₽
+                          <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_id = item.id;">Настроить</p>
+                        </td>
+                        <td>
+                          <Counter class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="item.multiplicity"/>
+                        </td>
+                        <td>
+                          {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru') * item.multiplicity}} ₽
+                        </td>
+                      </tr>
+                    </tbody>
+              </table>
             </main>
           </section>
         </div>
@@ -81,6 +115,7 @@ import Basket from '../../../components/opt/Basket.vue'
 import Vendors from '../../../components/opt/Vendors.vue'
 import OrderModal from '../../../components/opt/OrderModal.vue'
 import PromotionCard from './PromotionCard.vue'
+import router from '@/router'
 
 export default {
   name: 'Promotion',
@@ -95,7 +130,12 @@ export default {
       opt_vendors: {},
       opt_products: {},
       page: 1,
-      perpage: 25
+      perpage: 25,
+      options: {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }
     }
   },
   components: {
@@ -112,6 +152,10 @@ export default {
       page: this.page,
       perpage: this.perpage
     }).then((this.opt_products = this.optproducts))
+    this.get_sales_to_api({
+      id: router.currentRoute._value.params.sales_id,
+      actionid: router.currentRoute._value.params.action
+    })
   },
   updated () {},
   unmounted () {},
@@ -120,7 +164,8 @@ export default {
       'get_opt_mainpage_from_api',
       'get_opt_catalog_from_api',
       'get_opt_vendors_from_api',
-      'get_opt_products_from_api'
+      'get_opt_products_from_api',
+      'get_sales_to_api'
     ]),
     pagClickCallback (pageNum) {
       this.page = pageNum
@@ -156,7 +201,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['mainpage', 'optcatalog', 'optvendors', 'optproducts']),
+    ...mapGetters(['mainpage', 'optcatalog', 'optvendors', 'optproducts', 'actions']),
     pageCount () {
       return Math.ceil(this.opt_products.total / this.perpage)
     }
