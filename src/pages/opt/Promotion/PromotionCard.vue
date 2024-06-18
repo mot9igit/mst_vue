@@ -101,6 +101,7 @@ export default {
         display: flex;
         justify-content: center;
         align-items: center;
+        flex-shrink: 0;
 
         border: 1px solid #525252;
         background-color: #282828;
