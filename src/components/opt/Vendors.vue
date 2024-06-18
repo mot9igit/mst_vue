@@ -173,6 +173,7 @@ export default {
       this.toggle_opts(data).then(() => {
         this.get_opt_vendors_from_api().then((result) => {
           this.loading = false
+          this.$emit('vendorCheck')
         })
       })
     },
@@ -210,6 +211,7 @@ export default {
               this.loading = false
               this.get_opt_vendors_from_api()
               this.vendorForm.selected = []
+              this.$emit('vendorCheck')
             })
             .catch((result) => {
               console.log(result)
