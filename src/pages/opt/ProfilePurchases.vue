@@ -17,9 +17,10 @@
     </div>
     <div class="d-col-map">
       <Vendors :items="this.opt_vendors" />
-      <Basket />
+      <Basket ref="childComponent" @toOrder="toOrder"/>
     </div>
   </div>
+  <OrderModal :show="show_order" @fromOrder="fromOrder"/>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
@@ -31,6 +32,7 @@ import NewSwiper from '../../components/swipers/NewSwiper.vue'
 import Basket from '../../components/opt/Basket.vue'
 import Vendors from '../../components/opt/Vendors.vue'
 import ChangeVendorsModal from '../../components/opt/ChangeVendorsModal.vue'
+import OrderModal from '../../components/opt/OrderModal.vue'
 
 export default {
   name: 'OptsMain',
@@ -38,6 +40,7 @@ export default {
   },
   data () {
     return {
+      show_order: false,
       loading: false,
       reloading: false,
       opt_mainpage: {},
@@ -53,7 +56,8 @@ export default {
     NewSwiper,
     Basket,
     Vendors,
-    ChangeVendorsModal
+    ChangeVendorsModal,
+    OrderModal
   },
   mounted () {
     this.get_opt_mainpage_from_api().then(
@@ -73,7 +77,13 @@ export default {
       'get_opt_mainpage_from_api',
       'get_opt_catalog_from_api',
       'get_opt_vendors_from_api'
-    ])
+    ]),
+    toOrder () {
+      this.show_order = true
+    },
+    fromOrder () {
+      this.show_order = false
+    }
   },
   computed: {
     ...mapGetters([

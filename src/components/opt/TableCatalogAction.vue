@@ -5,27 +5,52 @@
         <table class="k-table" :style="{ marginLeft: this.marginValue + 'px' }">
             <thead>
                 <tr>
-                    <th class="k-table__name"></th>
                     <th class="k-table__name">Артикул</th>
                     <th class="k-table__name k-table__photo">Фото</th>
                     <th class="k-table__name k-table__th-title">Название</th>
                     <th class="k-table__name"></th>
-                    <th class="k-table__name">Поставщик</th>
-                    <th class="k-table__name">Цена</th>
-                    <th class="k-table__name">РРЦ / Наценка</th>
-                    <th class="k-table__name">Отсрочка</th>
-                    <th class="k-table__name">Оплата доставки</th>
-                    <th class="k-table__name">Срок доставки</th>
+                    <!-- <th class="k-table__name">Поставщик</th> -->
+                    <th class="k-table__name">РРЦ </th>
+                    <th class="k-table__name">Скидка %</th>
+                    <th class="k-table__name">Цена со скидкой за шт. (₽)</th>
+                    <th class="k-table__name">Кратность</th>
+                    <th class="k-table__name">Сумма (₽)</th>
                     <th class="k-table__name k-table__th-actions">Акции</th>
-                    <th class="k-table__name">Остатки на складе</th>
                 </tr>
             </thead>
             <!-- <tbody> -->
-                <TableCatalogRow @ElemAction="ElemAction" @updateBasket="updateBasket" v-for="item in items.items" v-bind:key="item.id" :items="item"/>
+                <!-- <TableCatalogActionRow @ElemAction="ElemAction" @updateBasket="updateBasket" v-for="item in items.products" v-bind:key="item.id" :items="item"/> -->
+                <tr class="kenost-table-background" v-for="item in items.products" v-bind:key="item.id">
+                    <td><span class="k-table__article">{{item.article}}</span></td>
+                    <td class="k-table__photo"><img class="k-table__image" :src="items.image" alt=""></td>
+                    <td class="k-table__title" @click="openActions(item)"><p>{{item.name}}</p></td>
+                    <td class="k-table__busket">
+                      <form class="k-table__form" action="">
+                        <Counter @ElemCount="ElemCount" :min="1" :max="item.remains" :value="this.value"/>
+                        <div @click="addBasket(item.remain_id, this.value, item.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
+                      </form>
+                    </td>
+                    <!-- <td>{{item.store_name}}</td> -->
+                    <td>{{Math.round(item.price).toLocaleString('ru')}} ₽</td>
+                    <td>{{((item.old_price - item.new_price) / (item.new_price / 100)).toFixed(2)}}</td>
+                    <td>{{Math.round(item.new_price).toLocaleString('ru')}} ₽</td>
+                    <td>{{item.multiplicity}} </td>
+                    <td>{{(item.new_price * item.multiplicity).toLocaleString('ru')}} ₽</td>
+                    <td>
+                      <div class="k-order__actions center">
+                        <div @click="openActions(item)" class="k-actions" v-for="(action, index) in item.actions" v-bind:key="action.id">
+                          <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" :src="site_url_prefix + action.icon" >
+                          <div v-if="action.conflicts.items[action.action_id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div>
+                        </div>
+                        <div v-if="item.actions.length > 3" class="k-order__actions-el last">+{{ item.actions.length - 3 }}</div>
+                      </div>
+                      <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span>
+                    </td>
+                </tr>
             <!-- </tbody> -->
         </table>
     </div>
-    <Dialog v-if="this.actions_item !== null" v-model:visible="this.modal_actions" :header="'Акции товара ' + this.actions_item.name" class="kenost-actions-modal">
+    <!-- <Dialog v-if="this.actions_item !== null" v-model:visible="this.modal_actions" :header="'Акции товара ' + this.actions_item.name" class="kenost-actions-modal">
         <table class="kenost-actions-modal__table">
             <thead>
                 <tr>
@@ -63,16 +88,17 @@
             </tr>
             </tbody>
           </table>
-    </Dialog>
+    </Dialog> -->
 </template>
 <script>
 import { mapActions, mapGetters, mapMutations } from 'vuex'
-import TableCatalogRow from './TableCatalogRow.vue'
-import Dialog from 'primevue/dialog'
-import InputSwitch from 'primevue/inputswitch'
+// import TableCatalogActionRow from './TableCatalogActionRow.vue'
+// import Dialog from 'primevue/dialog'
+// import InputSwitch from 'primevue/inputswitch'
+import Counter from './Counter.vue'
 
 export default {
-  name: 'TableCatalog',
+  name: 'TableCatalogAction',
   emits: ['updateBasket', 'ElemAction', 'updateCatalog'],
   props: {
     pagination_items_per_page: {
@@ -197,7 +223,7 @@ export default {
   },
   mounted () {
   },
-  components: { TableCatalogRow, Dialog, InputSwitch },
+  components: { Counter },
   computed: {
     ...mapGetters([
     ])

@@ -51,6 +51,9 @@
 	-moz-osx-font-smoothing: grayscale;
   }
 
+.mst-icon-link:before {
+content: "\e90d";
+}
 
 .mst-icon-bonuses:before {
 	content: "\e900";

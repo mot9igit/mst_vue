@@ -358,7 +358,6 @@ export default {
             &__card{
                 display: flex;
                 gap: 8px;
-                margin-bottom: 20px;
             }
 
             &__img{
@@ -385,7 +384,7 @@ export default {
             }
 
             &__price{
-                margin-top: 8px;
+                margin: 8px 0;
                 display: flex;
                 align-items: center;
                 justify-content: space-between

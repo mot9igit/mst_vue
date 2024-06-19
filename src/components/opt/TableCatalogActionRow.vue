@@ -1,5 +1,5 @@
 <template>
-    <tr @click="this.active = !this.active" :class="{'active-el' : this.active, 'no-active-el' : !this.active}">
+    <!-- <tr @click="this.active = !this.active" :class="{'active-el' : this.active, 'no-active-el' : !this.active}">
         <td><i class="pi pi-angle-up"></i></td>
         <td><span class="k-table__article">{{items.article}}</span></td>
         <td class="k-table__photo"><img class="k-table__image" :src="items.image" alt=""></td>
@@ -18,7 +18,7 @@
         <td>от {{getMinDelivery(items.stores).delivery}} дн ({{new Date(getMinDelivery(items.stores).delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</td>
         <td></td>
         <td></td>
-    </tr>
+    </tr> -->
     <tr class="kenost-table-background" v-for="item in items.stores" v-bind:key="item.id" :class="{'active' : this.active, 'no-active' : !this.active}">
         <td></td>
         <td><span class="k-table__article">{{items.article}}</span></td>
@@ -31,8 +31,8 @@
           </form>
         </td>
         <td>{{item.store_name}}</td>
-        <td>{{Math.round(item.price).toLocaleString('ru')}} ₽</td>
-        <td>{{Math.round(item.price).toLocaleString('ru')}} ₽ / {{item.actions.length == 0 ? 0 : item.old_price - item.price}} ₽</td>
+        <td>{{Math.round(item.new_price).toLocaleString('ru')}} ₽</td>
+        <td>{{Math.round(item.new_price).toLocaleString('ru')}} ₽ / {{item.actions.length == 0 ? 0 : item.old_price - item.new_price}} ₽</td>
         <td>{{item.action?.delay ? Number(item.action?.delay).toFixed(1) + ' дн' : 'Нет'}}</td>
         <td>{{item.action?.payer === '1' ? 'Поставщик' : 'Покупатель'}} </td>
         <td>от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</td>
@@ -49,7 +49,7 @@
         <td>{{item.remains}} шт</td>
     </tr>
     <!-- Вывод комплектов -->
-    <tbody class="complect-button kenost-table-background kenost-table-background-complect" v-for="complect in items.complects" v-bind:key="complect.id" :class="{'active' : this.active, 'no-active' : !this.active}">
+    <!-- <tbody class="complect-button kenost-table-background kenost-table-background-complect" v-for="complect in items.complects" v-bind:key="complect.id" :class="{'active' : this.active, 'no-active' : !this.active}">
       <tr v-for="(item, index) in complect" v-bind:key="item.id" :class="{'active' : this.active, 'no-active' : !this.active}">
         <td></td>
         <td><span class="k-table__article">{{item.article}}</span></td>
@@ -74,18 +74,10 @@
         <td class="td-center"><span v-if="index === 0">{{item.action?.payer === '1' ? 'Поставщик' : 'Покупатель'}}</span></td>
         <td class="td-center"><span v-if="index === 0">от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</span></td>
         <td>
-          <!-- <div class="k-order__actions center">
-            <div @click="openActions(item)" class="k-actions" v-for="(action, index) in item.actions" v-bind:key="action.id">
-              <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" :src="site_url_prefix + action.icon" >
-              <div v-if="action.conflicts.items[action.action_id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div>
-            </div>
-            <div v-if="item.actions.length > 3" class="k-order__actions-el last">+{{ item.actions.length - 3 }}</div>
-          </div>
-          <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span> -->
         </td>
         <td class="td-center"><span v-if="index === 0">{{item.remain_complect}} шт</span></td>
       </tr>
-    </tbody>
+    </tbody> -->
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
@@ -93,7 +85,7 @@ import Counter from './Counter.vue'
 import router from '@/router'
 
 export default {
-  name: 'TableCatalogRow',
+  name: 'TableCatalogActionRow',
   emits: ['updateBasket', 'ElemAction'],
   props: {
     pagination_items_per_page: {

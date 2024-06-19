@@ -46,56 +46,7 @@
                 />
               </div>
 
-              <!-- <div>
-                <p>Доступно для всех товаров</p>
-                <button class="a-dart-btn a-dart-btn-primary">
-                  Перейти в каталог
-                </button>
-              </div> -->
-
-              <table class="table-kenost__table">
-                    <thead>
-                        <tr>
-                            <th class="table-kenost__name table-kenost__name-checkbox"><Checkbox @update:modelValue="kenostTableCheckedAll" v-model="this.kenost_table_all" inputId="kenost_table_all" value="1" /></th>
-                            <th class="table-kenost__name table-kenost__name-product">Товар</th>
-                            <th class="table-kenost__name">РРЦ (₽)</th>
-                            <th class="table-kenost__name">Скидка %</th>
-                            <th class="table-kenost__name">Цена со скидкой за шт.</th>
-                            <th class="table-kenost__name">Кратность</th>
-                            <th class="table-kenost__name">Сумма</th>
-                        </tr>
-                    </thead>
-                    <tbody v-for="item in this.selected" :key="item.id">
-                      <tr>
-                        <td class="table-kenost__checkbox">
-                          <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
-                        </td>
-                        <td class="table-kenost__product">
-                          <img :src="'https://mst.tools' + item.image">
-                          <div class="table-kenost__product-text">
-                            <p>{{ item.name }}</p>
-                            <span>{{item.article}}</span>
-                          </div>
-                        </td>
-                        <td>
-                          {{(Number(item.price).toFixed(0)).toLocaleString('ru')}} ₽
-                        </td>
-                        <td>
-                          {{(Number(item.discountInterest).toFixed(2)).toLocaleString('ru')}}
-                        </td>
-                        <td>
-                          {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru')}} ₽
-                          <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_id = item.id;">Настроить</p>
-                        </td>
-                        <td>
-                          <Counter class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="item.multiplicity"/>
-                        </td>
-                        <td>
-                          {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru') * item.multiplicity}} ₽
-                        </td>
-                      </tr>
-                    </tbody>
-              </table>
+              <TableCatalogAction @updateBasket="updateBasket" v-if="actions" :items="actions"/>
             </main>
           </section>
         </div>
@@ -116,6 +67,7 @@ import Vendors from '../../../components/opt/Vendors.vue'
 import OrderModal from '../../../components/opt/OrderModal.vue'
 import PromotionCard from './PromotionCard.vue'
 import router from '@/router'
+import TableCatalogAction from '../../../components/opt/TableCatalogAction.vue'
 
 export default {
   name: 'Promotion',
@@ -143,15 +95,12 @@ export default {
     Basket,
     Vendors,
     OrderModal,
-    PromotionCard
+    PromotionCard,
+    TableCatalogAction
   },
   mounted () {
     this.get_opt_catalog_from_api().then((this.opt_catalog = this.optcatalog))
     this.get_opt_vendors_from_api().then((this.opt_vendors = this.optvendors))
-    this.get_opt_products_from_api({
-      page: this.page,
-      perpage: this.perpage
-    }).then((this.opt_products = this.optproducts))
     this.get_sales_to_api({
       id: router.currentRoute._value.params.sales_id,
       actionid: router.currentRoute._value.params.action
@@ -164,16 +113,8 @@ export default {
       'get_opt_mainpage_from_api',
       'get_opt_catalog_from_api',
       'get_opt_vendors_from_api',
-      'get_opt_products_from_api',
       'get_sales_to_api'
     ]),
-    pagClickCallback (pageNum) {
-      this.page = pageNum
-      this.get_opt_products_from_api({
-        page: this.page,
-        perpage: this.perpage
-      }).then((this.opt_products = this.optproducts))
-    },
     updatePage (categoryId) {
       this.loading = true
       this.get_opt_catalog_from_api().then(
@@ -182,13 +123,6 @@ export default {
       this.get_opt_vendors_from_api().then(
         (this.opt_vendors = this.optvendors)
       )
-      this.get_opt_products_from_api({
-        page: this.page,
-        perpage: this.perpage
-      }).then(() => {
-        this.opt_products = this.optproducts
-        this.loading = false
-      })
     },
     updateBasket () {
       this.$refs.childComponent.updateBasket()
@@ -201,7 +135,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['mainpage', 'optcatalog', 'optvendors', 'optproducts', 'actions']),
+    ...mapGetters(['mainpage', 'optcatalog', 'optvendors', 'actions']),
     pageCount () {
       return Math.ceil(this.opt_products.total / this.perpage)
     }
@@ -212,9 +146,6 @@ export default {
     },
     optvendors: function (newVal, oldVal) {
       this.opt_vendors = newVal
-    },
-    optproducts: function (newVal, oldVal) {
-      this.opt_products = newVal
     },
     $route () {
       this.updatePage(this.$route.params.category_id)

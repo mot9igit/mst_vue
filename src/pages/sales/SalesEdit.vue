@@ -252,7 +252,7 @@
                     </div>
                   </div>
 
-                  <div class="kenost-link-blue mt-2">Скачать шаблон файла</div>
+                  <a :href="site_url_prefix + '/assets/files/files/examples/ExampleLoadingProducts.xlsx'" class="kenost-link-blue mt-2">Скачать шаблон файла</a>
                 </div>
 
                 <div v-if="this.form.addProductType == '1'" class="PickList mt-3">
@@ -1184,7 +1184,7 @@ export default {
         } else if (type.key === 1) {
           this.selected[this.modals.product_id].discountInRubles = (this.selected[this.modals.product_id].price / 100) * value
           this.selected[this.modals.product_id].discountInterest = value
-          this.selected[this.modals.product_id].finalPrice = this.selected[this.modals.product_id].price - (this.selected[this.modals.product_index].price / 100) * value
+          this.selected[this.modals.product_id].finalPrice = this.selected[this.modals.product_id].price - (this.selected[this.modals.product_id].price / 100) * value
         }
       }
     }
