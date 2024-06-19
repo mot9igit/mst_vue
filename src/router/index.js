@@ -65,6 +65,7 @@ import ProfileOrderOpt from '../pages/ProfileOrderOpt'
 import ComplectAdd from '../pages/sales/complects/ComplectAdd.vue'
 import ComplectEdit from '../pages/sales/complects/ComplectEdit.vue'
 import Promotion from '../pages/opt/Promotion/Promotion.vue'
+import BonusProgram from '@/pages/opt/BonusProgram/BonusProgram.vue'
 
 const routes = [
   {
@@ -217,6 +218,14 @@ const routes = [
           path: 'docs',
           name: 'org_docs',
           component: ProfileDocs
+        },
+        {
+          path: 'bonus_program',
+          children: [{
+            path: '',
+            name: 'bonus_program',
+            component: BonusProgram
+          }]
         },
         {
           path: 'purchases',
