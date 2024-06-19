@@ -226,7 +226,7 @@
                     url="/rest/file_upload.php?upload_products=xlsx"
                     :uploadOnDrop="true"
                     :multipleUpload="true"
-                    :acceptedFiles="['xlsx', 'xlsx']"
+                    :acceptedFiles="['xls', 'xlsx']"
                     :parallelUpload="1"
                     @sending="parseFile"
                     v-bind="args"
@@ -382,7 +382,7 @@
                     </div>
                 </div>
 
-                <div v-if="this.form.addProductType != '3'" class="table-kenost mt-4">
+                <div v-if="this.form.addProductType != '3'" class="table-kenost mt-4" :class="{ loading: table_products_loading }">
                   <p class="table-kenost__title">Таблица добавленных товаров</p>
                   <!-- <div class="table-kenost__filters">
                     <div class="table-kenost__filters-left">
@@ -728,6 +728,7 @@ export default {
   props: { },
   data () {
     return {
+      table_products_loading: false,
       page: 1,
       page_complects: 1,
       per_complects: 25,
@@ -888,12 +889,10 @@ export default {
       //   // }
       //   // this.opt_upload_products_file(data)
       // }
-
+      this.table_products_loading = true
       const callback = (e) => {
         const res = JSON.parse(e)
-
         this.files.xlsx = res.data.files[0]
-
         const data = {
           action: 'upload/products/file',
           store_id: router.currentRoute._value.params.id,
@@ -908,8 +907,13 @@ export default {
             if (!tempProduct.error) {
               const product = {}
               product.article = tempProduct.A
-              product.discountInRubles = tempProduct.E - tempProduct.D
-              product.discountInterest = (tempProduct.E - tempProduct.D) / (tempProduct.E / 100)
+              if (tempProduct.E === 0 || tempProduct.E === null) {
+                product.discountInterest = 100
+                product.discountInRubles = '-'
+              } else {
+                product.discountInRubles = tempProduct.E - tempProduct.D
+                product.discountInterest = (tempProduct.E - tempProduct.D) / (tempProduct.E / 100)
+              }
               product.finalPrice = tempProduct.D
               product.price = tempProduct.E
               product.id = tempProduct.remain.id
@@ -925,6 +929,7 @@ export default {
             }
           }
           this.upload_product = true
+          this.table_products_loading = false
         })
       }
 

@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="formSubmit">
+    <form @submit.prevent="formSubmit" :class="{ loading: loading }">
         <div class="profile-content__title">
             <span class="maintitle">Настройка программы</span>
             <div class="buttons_container">
@@ -760,6 +760,7 @@ export default {
   data () {
     return {
       page: 1,
+      loading: true,
       filter: {
         name: '',
         category: {}
@@ -1213,7 +1214,9 @@ export default {
       perpage: this.pagination_items_per_page_complects,
       store_id: router.currentRoute._value.params.id
     })
-    this.get_sales_to_api({ id: router.currentRoute._value.params.sales_id, actionid: router.currentRoute._value.params.sales_id })
+    this.get_sales_to_api({ id: router.currentRoute._value.params.sales_id, actionid: router.currentRoute._value.params.sales_id }).then(() => {
+      this.loading = false
+    })
   },
   components: {
     FileUpload,
@@ -1269,6 +1272,7 @@ export default {
       if (newVal.icon) {
         this.files.icon.original_href = this.site_url_prefix + newVal.icon
       }
+      console.log(newVal)
       this.selected_complects = newVal.complects
       this.form.description = newVal.description
       this.form.compatibilityDiscount = newVal.compatibility_discount.toString()
