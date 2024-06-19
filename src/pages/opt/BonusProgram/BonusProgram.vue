@@ -300,7 +300,7 @@ export default {
     padding: 24px;
 
     &__title {
-      font-size: 14px;
+      font-size: 20px;
       font-weight: 500;
     }
 
