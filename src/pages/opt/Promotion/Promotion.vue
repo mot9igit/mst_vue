@@ -106,7 +106,14 @@ export default {
       actionid: router.currentRoute._value.params.action
     })
   },
-  updated () {},
+  updated () {
+    this.get_opt_catalog_from_api().then((this.opt_catalog = this.optcatalog))
+    this.get_opt_vendors_from_api().then((this.opt_vendors = this.optvendors))
+    this.get_sales_to_api({
+      id: router.currentRoute._value.params.sales_id,
+      actionid: router.currentRoute._value.params.action
+    })
+  },
   unmounted () {},
   methods: {
     ...mapActions([

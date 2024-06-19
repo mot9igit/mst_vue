@@ -51,6 +51,10 @@
 	-moz-osx-font-smoothing: grayscale;
   }
 
+.mst-icon-open:before {
+content: "\e90e";
+}
+
 .mst-icon-link:before {
 content: "\e90d";
 }

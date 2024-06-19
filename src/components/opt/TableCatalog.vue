@@ -38,15 +38,16 @@
             <tbody>
               <tr v-for="item in this.actions_item.actions" v-bind:key="item.id" @click="this.active = !this.active" :class="{'active-el' : this.active, 'no-active-el' : !this.active}">
                 <td class="kenost-actions-modal__action">
-                  <img :src="item.image" alt="">
-                  <p>{{item.name}}</p>
+                  <img :src="item.icon" alt="">
+                  <RouterLink :to="{ name: 'promotion', params: { action: item.action_id }}" class="dart-catalog-menu__el"><p>{{item.name}}</p> <i class="mst-icon mst-icon-open"></i></RouterLink>
                 </td>
                 <td class="kenost-actions-modal__center">{{item.description}}</td>
-                <td class="kenost-actions-modal__center">Скидка {{Number(item.new_price) / (Number(item.old_price) / 100)}}%, оплата {{item.payer === '1' ? 'поставщиком' : 'покупателем'}}
+                <td class="kenost-actions-modal__center">Скидка {{(Number(item.new_price) / (Number(item.old_price) / 100)).toFixed(2)}}%, оплата {{item.payer === '1' ? 'поставщиком' : 'покупателем'}}
                   <span v-if="item.delivery_payment_terms == '1'">при условии «Купи на {{ Number(item.delivery_payment_value).toLocaleString('ru') }} рублей»</span>
-                  <span v-if="item.delivery_payment_terms == '2'">при условии «Купи {{ Number(item.delivery_payment_value).toLocaleString('ru') }} шт. товара»</span>, отсрочка {{Number(item.delay).toLocaleString('ru')}} дней
+                  <span v-if="item.delivery_payment_terms == '2'">при условии «Купи {{ Number(item.delivery_payment_value).toLocaleString('ru') }} шт. товара»</span><span v-if="item.delay != 0">, отсрочка {{Number(item.delay).toLocaleString('ru')}} дней</span>
                   <span v-if="item.delay_condition == '1'">при покупке на {{ Number(item.delay_condition_value).toLocaleString('ru') }} рублей</span>
-                  <span v-if="item.delay_condition == '2'">при покупке {{ Number(item.delay_condition_value).toLocaleString('ru') }} шт. товара</span> (<span v-for="(delay, index) in item.delay_graph" v-bind:key="delay.id"><span v-if="index != 0">, </span>{{ Number(delay.day).toLocaleString('ru') }} дней – {{ delay.percent }}%</span>)</td>
+                  <span v-if="item.delay_condition == '2'">при покупке {{ Number(item.delay_condition_value).toLocaleString('ru') }} шт. товара</span>
+                  <span v-if="item.delay != 0">(<span v-for="(delay, index) in item.delay_graph" v-bind:key="delay.id"><span v-if="index != 0">, </span>{{ Number(delay.day).toLocaleString('ru') }} дней – {{ delay.percent }}%</span>)</span></td>
                 <td>
                   <div class="kenost-conflict">
                     <div v-if="item.conflicts.items[item.action_id].length" class="kenost-conflict__container">
@@ -346,6 +347,14 @@ export default {
     p{
       font-size: 14px;
       color: #282828;
+      margin: 0;
+    }
+
+    i{
+      color: #282828;
+      &:hover{
+        color: #282828;
+      }
     }
   }
 }

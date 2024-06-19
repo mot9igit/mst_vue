@@ -419,36 +419,6 @@
                         </tr>
                     </thead>
                     <!-- Вывод комплектов -->
-                    <tbody v-for="(complect) in this.complects" :key="complect.id">
-                        <tr class="table-kenost__complect" v-for="(item) in complect" :key="item.id">
-                          <td class="table-kenost__checkbox">
-                            <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
-                          </td>
-                          <td class="table-kenost__product">
-                            <img :src="'https://mst.tools' + item.image">
-                            <div class="table-kenost__product-text">
-                              <p>{{ item.name }}</p>
-                              <span>{{item.article}}</span>
-                            </div>
-                          </td>
-                          <td>
-                            {{(Number(item.price).toFixed(0)).toLocaleString('ru')}} ₽
-                          </td>
-                          <td>
-                            {{(Number(item.discountInterest).toFixed(2)).toLocaleString('ru')}}
-                          </td>
-                          <td>
-                            {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru')}} ₽
-                            <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_id = item.id" >Настроить</p>
-                          </td>
-                          <td>
-                            <Counter class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="item.multiplicity"/>
-                          </td>
-                          <td>
-                            {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru') * item.multiplicity}} ₽
-                          </td>
-                        </tr>
-                    </tbody>
                     <tbody v-for="item in this.selected" :key="item.id">
                       <tr v-if="this.complects_ids.indexOf(item.id) === -1">
                         <td class="table-kenost__checkbox">
