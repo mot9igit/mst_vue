@@ -32,9 +32,12 @@
           :table_data="this.table_data_complects"
           :filters="this.filters_complects"
           :title="'Мои комплекты'"
-          @filter="filter"
-          @sort="filter"
-          @paginate="paginate"
+          @filter="filterComplects"
+          @sort="filterComplects"
+          @paginate="paginateComplects"
+          @editElem="editComplects"
+          @approveElem="approveComplects"
+          @deleteElem="deleteComplects"
         >
           <template v-slot:button>
             <RouterLink :to="{ name: 'complect_add', params: { id: $route.params.id }}" class="dart-btn dart-btn-primary">Создать комлект</RouterLink>
@@ -63,10 +66,6 @@ export default {
       type: Number,
       default: 0
     },
-    page: {
-      type: Number,
-      default: 1
-    },
     pagination_items_per_page_complects: {
       type: Number,
       default: 25
@@ -74,14 +73,12 @@ export default {
     pagination_offset_complects: {
       type: Number,
       default: 0
-    },
-    page_complects: {
-      type: Number,
-      default: 1
     }
   },
   data () {
     return {
+      page: 1,
+      page_complects: 1,
       filters: {
         name: {
           name: 'Название, бренд или артикул',
@@ -157,39 +154,29 @@ export default {
           },
           sort: true
         },
-        date_from: {
-          label: 'Действует с',
-          type: 'text',
-          sort: true
-        },
-        date_to: {
-          label: 'Действует до',
-          type: 'text',
-          sort: true
-        },
         active: {
           label: 'Активно',
           type: 'boolean'
+        },
+        actions: {
+          label: 'Действия',
+          type: 'actions',
+          sort: false,
+          available: {
+            edit: {
+              icon: 'pi pi-pencil',
+              label: 'Редактировать'
+            },
+            approve: {
+              icon: 'pi pi-power-off',
+              label: 'Включить'
+            },
+            delete: {
+              icon: 'pi pi-trash',
+              label: 'Удалить'
+            }
+          }
         }
-        // actions: {
-        //   label: 'Действия',
-        //   type: 'actions',
-        //   sort: false,
-        //   available: {
-        //     edit: {
-        //       icon: 'pi pi-pencil',
-        //       label: 'Редактировать'
-        //     },
-        //     approve: {
-        //       icon: 'pi pi-power-off',
-        //       label: 'Включить'
-        //     },
-        //     delete: {
-        //       icon: 'pi pi-trash',
-        //       label: 'Удалить'
-        //     }
-        //   }
-        // }
       }
     }
   },
@@ -197,18 +184,34 @@ export default {
     ...mapActions([
       'get_sales_to_api',
       'set_sales_to_api',
-      'opt_get_complects'
+      'opt_get_complects',
+      'opt_api'
     ]),
     filter (data) {
       data.type = 'b2b'
       this.get_sales_to_api(data)
     },
+    filterComplects (data) {
+      data.action = 'complects/get'
+      data.store_id = router.currentRoute._value.params.id
+      this.opt_get_complects(data)
+    },
     paginate (data) {
+      this.page = data.page
       data.type = 'b2b'
       this.get_sales_to_api(data)
     },
+    paginateComplects (data) {
+      this.page_complects = data.page
+      data.action = 'complects/get'
+      data.store_id = router.currentRoute._value.params.id
+      this.opt_get_complects(data)
+    },
     editElem (value) {
       router.push({ name: 'org_sales_edit', params: { id: this.$route.params.id, sales_id: value.id } })
+    },
+    editComplects (value) {
+      router.push({ name: 'complect_edit', params: { id: this.$route.params.id, complect_id: value.id } })
     },
     approveElem (value) {
       this.$load(async () => {
@@ -241,6 +244,27 @@ export default {
               page: this.page,
               perpage: this.pagination_items_per_page,
               type: 'b2b'
+            })
+          })
+          .catch((result) => {
+            console.log(result)
+          })
+      })
+    },
+    deleteComplects (value) {
+      this.$load(async () => {
+        await this.opt_api({
+          action: 'complect/delete',
+          store_id: router.currentRoute._value.params.id,
+          complect_id: value.id
+        })
+          .then((result) => {
+            this.page_complects = 1
+            this.opt_get_complects({
+              action: 'complects/get',
+              page: this.page_complects,
+              perpage: this.pagination_items_per_page_complects,
+              store_id: router.currentRoute._value.params.id
             })
           })
           .catch((result) => {
