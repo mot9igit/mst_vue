@@ -96,7 +96,7 @@
                             </div>
                             <div class="k-order__complect-data d-col-md-3">
                                 <div class="k-order__complect-data-items">
-                                    <Counter :key="new Date().getMilliseconds() + complect.info.id" @ElemCount="ElemComplectCount" :min="1" :max="complect.info.complect_data.min_count" :value="complect.info.count" :id="complect.info.id" :store_id="store.id"/>
+                                    <Counter :key="new Date().getMilliseconds() + complect.info.id" @ElemCount="ElemComplectCount" :min="1" :max="complect.info.complect_data?.min_count" :value="complect.info.count" :id="complect.info.id" :store_id="store.id"/>
                                     <b>{{(Number(complect.info.count) * complect.info.price).toLocaleString('ru')}} ₽</b>
                                 </div>
                             </div>

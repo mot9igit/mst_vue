@@ -373,8 +373,8 @@ export default {
           border-radius: 50%;
           border: 1px solid #e8e8e8;
           img{
-            max-width: 40px;
-            max-height: 40px;
+            width: 40px !important;
+            height: 40px !important;
             border-radius: 50%;
           }
         }
@@ -447,8 +447,8 @@ export default {
           border-radius: 50%;
           border: 1px solid #e8e8e8;
           img{
-            max-width: 40px;
-            max-height: 40px;
+            width: 40px !important;
+            height: 40px !important;
             border-radius: 50%;
           }
         }

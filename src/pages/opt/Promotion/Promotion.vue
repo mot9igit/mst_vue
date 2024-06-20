@@ -21,7 +21,7 @@
               </div>
               <div>
                 <img
-                  :src="site_url_prefix + actions.image"
+                  :src="site_url_prefix + actions.image_inner"
                   class="header__img"
                 />
               </div>
@@ -33,6 +33,7 @@
                   :text="(new Date(actions.date_from).toLocaleString('ru', this.options)) + ' - ' + (new Date(actions.date_to).toLocaleString('ru', this.options))"
                 />
                 <PromotionCard
+                  v-if="actions.award != ''"
                   title="Вознаграждение"
                   :text="actions.award"
                 />
@@ -107,12 +108,12 @@ export default {
     })
   },
   updated () {
-    this.get_opt_catalog_from_api().then((this.opt_catalog = this.optcatalog))
-    this.get_opt_vendors_from_api().then((this.opt_vendors = this.optvendors))
-    this.get_sales_to_api({
-      id: router.currentRoute._value.params.sales_id,
-      actionid: router.currentRoute._value.params.action
-    })
+    // this.get_opt_catalog_from_api().then((this.opt_catalog = this.optcatalog))
+    // this.get_opt_vendors_from_api().then((this.opt_vendors = this.optvendors))
+    // this.get_sales_to_api({
+    //   id: router.currentRoute._value.params.sales_id,
+    //   actionid: router.currentRoute._value.params.action
+    // })
   },
   unmounted () {},
   methods: {

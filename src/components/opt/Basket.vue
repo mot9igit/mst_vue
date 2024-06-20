@@ -60,10 +60,10 @@
                         </div>
                     </div>
                     <div class="basket-container__count">
-                        <p>В наличии <span>{{ complect.info.complect_data.min_count }} шт.</span></p>
+                        <p>В наличии <span>{{ complect.info.complect_data?.min_count }} шт.</span></p>
                     </div>
                     <div class="basket-container__price">
-                        <Counter :key="new Date().getMilliseconds() + complect.info.id" @ElemCount="ElemComplectCount" :min="1" :max="complect.info.complect_data.min_count" :value="complect.info.count" :id="complect.info.id" :store_id="store.id"/>
+                        <Counter :key="new Date().getMilliseconds() + complect.info.id" @ElemCount="ElemComplectCount" :min="1" :max="complect.info.complect_data?.min_count" :value="complect.info.count" :id="complect.info.id" :store_id="store.id"/>
                         <b>{{(Number(complect.info.count) * complect.info.price).toLocaleString('ru')}} ₽</b>
                     </div>
                 </div>

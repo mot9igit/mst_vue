@@ -9,7 +9,7 @@
                     <th class="k-table__name">Артикул</th>
                     <th class="k-table__name k-table__photo">Фото</th>
                     <th class="k-table__name k-table__th-title">Название</th>
-                    <th class="k-table__name"></th>
+                    <th class="k-table__name k-table__th-buttons"></th>
                     <th class="k-table__name">Поставщик</th>
                     <th class="k-table__name">Цена</th>
                     <th class="k-table__name">РРЦ / Наценка</th>
@@ -538,8 +538,11 @@ export default {
         }
 
         &-actions{
-            width: 150px;
+          width: 150px;
+        }
 
+        &-buttons{
+          width: 224px;
         }
     }
 }

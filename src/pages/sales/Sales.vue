@@ -102,10 +102,10 @@ export default {
         name: {
           label: 'Наименование',
           type: 'link',
-          link_to: 'org_sales_edit',
+          link_to: 'promotion',
           link_params: {
             id: this.$route.params.id,
-            sales_id: 'id'
+            action: 'id'
           },
           sort: true
         },
