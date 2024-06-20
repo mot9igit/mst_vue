@@ -785,7 +785,7 @@ export default {
           }
         ],
         delayPercentSum: 0,
-        participantsType: '1',
+        participantsType: 1,
         available_stores: [],
         available_vendors: [],
         available_opt: [],
@@ -1265,6 +1265,7 @@ export default {
       this.form.conditionMinSum = newVal.condition_min_sum
       this.form.conditionMinCount = newVal.condition_SKU
       this.form.addProductType = newVal.method_adding_products.toString()
+      this.form.participantsType = newVal.participants_type.toString()
       if (newVal.available_stores) {
         this.form.available_stores = ['true']
       }

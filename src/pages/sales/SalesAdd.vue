@@ -168,6 +168,7 @@
               <div class="kenost-wiget">
                   <Dropdown v-model="this.form.condition" :options="this.condition" optionLabel="name" placeholder="Оплата доставки" class="w-full md:w-14rem" />
               </div>
+              <!--
               <div class="kenost-wiget mt-2" v-if="this.form.condition.key == 4">
                 <p>Минимальная общая сумма</p>
                 <InputNumber
@@ -178,7 +179,8 @@
                   incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                 />
               </div>
-              <div class="two-colums mt-2" v-if="this.form.condition.key == 3">
+              -->
+              <div class="two-colums mt-2" v-if="this.form.condition.key == 3 || this.form.condition.key == 4">
                   <div class="kenost-wiget">
                     <p>Минимальная общая сумма</p>
                     <InputNumber
