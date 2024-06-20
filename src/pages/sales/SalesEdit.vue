@@ -306,7 +306,7 @@
                       </div>
                       <div class="PickList__products">
                       <div class="PickList__el" v-for="(item) in this.selected" :key="item.id">
-                          <img :src="'https://mst.tools' + item.image" alt="">
+                          <img :src="item.image" alt="">
                           <div class="PickList__info">
                           <div class="PickList__product-info off">
                               <div class="PickList__name">{{item.name}}</div>
@@ -425,7 +425,7 @@
                           <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
                         </td>
                         <td class="table-kenost__product">
-                          <img :src="'https://mst.tools' + item.image">
+                          <img :src="item.image">
                           <div class="table-kenost__product-text">
                             <p>{{ item.name }}</p>
                             <span>{{item.article}}</span>
