@@ -39,7 +39,7 @@
               <tr v-for="item in this.actions_item.actions" v-bind:key="item.id" @click="this.active = !this.active" :class="{'active-el' : this.active, 'no-active-el' : !this.active}">
                 <td class="kenost-actions-modal__action">
                   <img :src="item.icon" alt="">
-                  <RouterLink :to="{ name: 'promotion', params: { action: item.action_id }}" class="dart-catalog-menu__el"><p>{{item.name}}</p> <i class="mst-icon mst-icon-open"></i></RouterLink>
+                  <RouterLink :to="{ name: 'promotion', params: { action: item.action_id }}" class="kenost-actions-modal__link"><p>{{item.name}}</p> <i class="mst-icon mst-icon-open"></i></RouterLink>
                 </td>
                 <td class="kenost-actions-modal__center">{{item.description}}</td>
                 <td class="kenost-actions-modal__center">Скидка {{(Number(item.new_price) / (Number(item.old_price) / 100)).toFixed(2)}}%, оплата {{item.payer === '1' ? 'поставщиком' : 'покупателем'}}
@@ -300,6 +300,12 @@ export default {
 .kenost-actions-modal{
   width: 1400px;
 
+  &__link{
+    display: flex;
+    gap: 12px;
+    text-decoration: none;
+  }
+
   &__actions{
     display: flex;
   }
@@ -339,7 +345,8 @@ export default {
     display: flex;
 
     img{
-      width: 110px !important;
+      width: 56px !important;
+      margin-right: 10px;
       height: 56px !important;
       object-fit: contain;
     }
