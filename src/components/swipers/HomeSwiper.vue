@@ -8,16 +8,11 @@
         :pagination="{ clickable: true }"
         :scrollbar="{ draggable: true }"
     >
-        <swiper-slide class="promoSwiper__slide">
-            <router-link to="/">
-                <img src="https://mst.tools/assets/cache_image/assets/content/images/sales/interskol/professionalnaya-besshhetochnaya-drel-shurupovert-s-4-nasadkami_1480x443_c26.jpg" alt="">
-            </router-link>
-        </swiper-slide>
-        <swiper-slide class="promoSwiper__slide">
-            <router-link to="/">
-                <img src="https://dev.mst.tools/assets/content/images/sales/interskol/260ccb21-4208-4ce9-ab88-b9d993c74c53.jpg" alt="">
-            </router-link>
-        </swiper-slide>
+      <swiper-slide v-for="item in items" v-bind:key="item.id" class="promoSwiper__slide">
+        <router-link :to="{ name: 'promotion', params: { action: item.id } }">
+          <img :src="'https://mst.tools/assets/content/' + item.image">
+        </router-link>
+      </swiper-slide>
     </swiper>
 </template>
 <script>
@@ -36,6 +31,9 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
+    },
+    items: {
+      type: Array
     }
   },
   data () {

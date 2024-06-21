@@ -5,14 +5,14 @@
     <div class="d-col-content">
       <div class="dart-home dart-window">
         <span class="h2">Акции</span>
-        <HomeSwiper/>
-        <HomeMinSwiper />
-
+        <HomeSwiper :items="this.mainpage.main_slider_big"/>
+        <HomeMinSwiper :items="this.mainpage.main_slider_small"/>
+        <!--
         <span class="h2 mb-3 mt-5">Готовимся к сезону</span>
         <SeasonSwiper :items="this.mainpage.season_slider"/>
-
         <span class="h2 mb-3 mt-5">Новинки</span>
         <NewSwiper :items="this.mainpage.new_slider"/>
+        -->
       </div>
     </div>
     <div class="d-col-map">
@@ -27,8 +27,8 @@ import { mapActions, mapGetters } from 'vuex'
 import HomeSwiper from '../../components/swipers/HomeSwiper.vue'
 import CatalogMenu from '../../components/opt/CatalogMenu.vue'
 import HomeMinSwiper from '../../components/swipers/HomeMinSwiper.vue'
-import SeasonSwiper from '../../components/swipers/SeasonSwiper.vue'
-import NewSwiper from '../../components/swipers/NewSwiper.vue'
+// import SeasonSwiper from '../../components/swipers/SeasonSwiper.vue'
+// import NewSwiper from '../../components/swipers/NewSwiper.vue'
 import Basket from '../../components/opt/Basket.vue'
 import Vendors from '../../components/opt/Vendors.vue'
 import ChangeVendorsModal from '../../components/opt/ChangeVendorsModal.vue'
@@ -52,8 +52,8 @@ export default {
     HomeSwiper,
     CatalogMenu,
     HomeMinSwiper,
-    SeasonSwiper,
-    NewSwiper,
+    // SeasonSwiper,
+    // NewSwiper,
     Basket,
     Vendors,
     ChangeVendorsModal,

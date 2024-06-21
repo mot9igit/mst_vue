@@ -8,26 +8,11 @@
         :pagination="{ clickable: true }"
         :scrollbar="{ draggable: true }"
     >
-        <swiper-slide class="promoSwiper__slide">
-            <router-link to="/">
-                <img src="https://mst.tools/assets/cache_image/assets/content/images/sales/interskol/czepnaya-akkumulyatornaya-pila-favourite-vsego-za-3-777-rublej_364x181_7e2.jpg" alt="">
-            </router-link>
-        </swiper-slide>
-        <swiper-slide class="promoSwiper__slide">
-            <router-link to="/">
-                <img src="https://mst.tools/assets/cache_image/assets/content/images/sales/interskol/drel-shurupovert-akkumulyatornaya-favourite-vsego-za-2-299-rublej_364x181_7e2.jpg" alt="">
-            </router-link>
-        </swiper-slide>
-        <swiper-slide class="promoSwiper__slide">
-            <router-link to="/">
-                <img src="https://mst.tools/assets/cache_image/assets/content/images/sales/interskol/shlifmashina-uglovaya-interskol-vsego-za-2-299-rublej_364x181_7e2.jpg" alt="">
-            </router-link>
-        </swiper-slide>
-        <swiper-slide class="promoSwiper__slide">
-            <router-link to="/">
-                <img src="https://mst.tools/assets/cache_image/assets/content/images/sales/interskol/luchshaya-czena-na-svarochnyie-apparatyi-interskol-ms_364x181_7e2.jpg" alt="">
-            </router-link>
-        </swiper-slide>
+      <swiper-slide v-for="item in items" v-bind:key="item.id" class="promoSwiper__slide">
+        <router-link :to="{ name: 'promotion', params: { action: item.id } }">
+          <img :src="'https://mst.tools/assets/content/' + item.image">
+        </router-link>
+      </swiper-slide>
     </swiper>
 </template>
 <script>
@@ -46,6 +31,9 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
+    },
+    items: {
+      type: Array
     }
   },
   data () {

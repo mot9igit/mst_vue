@@ -32,7 +32,7 @@
         </td>
         <td>{{item.store_name}}</td>
         <td>{{Math.round(item.price).toLocaleString('ru')}} ₽</td>
-        <td>{{Math.round(item.price).toLocaleString('ru')}} ₽ / {{item.actions.length == 0 ? 0 : item.old_price - item.price}} ₽</td>
+        <td>{{item.old_price ? Math.round(item.old_price).toLocaleString('ru') : Math.round(item.price).toLocaleString('ru')}} ₽ / {{item.actions.length == 0 ? 0 : item.old_price - item.price}} ₽</td>
         <td>{{item.action?.delay ? Number(item.action?.delay).toFixed(1) + ' дн' : 'Нет'}}</td>
         <td>{{item.action?.payer === '1' ? 'Поставщик' : 'Покупатель'}} </td>
         <td>от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</td>
