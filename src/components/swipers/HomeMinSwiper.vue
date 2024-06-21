@@ -8,7 +8,7 @@
         :pagination="{ clickable: true }"
         :scrollbar="{ draggable: true }"
     >
-      <swiper-slide v-for="item in items" v-bind:key="item.id" class="promoSwiper__slide">
+      <swiper-slide v-for="item, index in items" v-bind:key="index" class="promoSwiper__slide">
         <router-link :to="{ name: 'promotion', params: { action: item.id } }">
           <img :src="'https://mst.tools/assets/content/' + item.image">
         </router-link>

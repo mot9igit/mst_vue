@@ -3,16 +3,16 @@
     <CatalogMenu :items="opt_catalog" />
     <div class="d-col-content">
       <div class="dart-home dart-window">
-        <!-- <Breadcrumbs/> -->
         <div>
           <section class="promotion">
             <header class="promotion__header header">
               <div class="header__content">
                 <div class="header__title-container">
-                  <img
-                    src="../../../assets/img/icons/arrow.svg"
-                    class="header__arrow"
-                  />
+                    <img
+                      @click="$router.go(-1)"
+                      src="../../../assets/img/icons/arrow.svg"
+                      class="header__arrow"
+                    />
                   <h2 class="header__title">{{actions.name}}</h2>
                 </div>
                 <p class="header__description">
@@ -131,6 +131,7 @@ export default {
       this.get_opt_vendors_from_api().then(
         (this.opt_vendors = this.optvendors)
       )
+      this.loading = false
     },
     updateBasket () {
       this.$refs.childComponent.updateBasket()

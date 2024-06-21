@@ -3,7 +3,7 @@
       <CatalogMenu :items="opt_catalog" />
       <div class="d-col-content">
         <div class="dart-home dart-window">
-            <!-- <Breadcrumbs/> -->
+            <Breadcrumbs :items="this.$breadcrumbs"/>
             <div v-if="$route.params.category_id == 'all'">
               <h1 class="h1-mini">Все товары</h1>
               <div class="dart-alert dart-alert-info">В данном разделе перечислены все товары поставщиков, в том числе и не сопоставленные со справочником системы.</div>
@@ -43,10 +43,11 @@ import { mapActions, mapGetters } from 'vuex'
 import CatalogMenu from '../../components/opt/CatalogMenu.vue'
 import Basket from '../../components/opt/Basket.vue'
 import Vendors from '../../components/opt/Vendors.vue'
-// import Breadcrumbs from '../../components/opt/Breadcrumbs.vue'
+import Breadcrumbs from '../../components/opt/Breadcrumbs.vue'
 import Paginate from 'vuejs-paginate-next'
 import TableCatalog from '../../components/opt/TableCatalog.vue'
 import OrderModal from '../../components/opt/OrderModal.vue'
+// import AmBreadcrumbs from 'vue-3-breadcrumbs'
 
 export default {
   name: 'OptsCatalog',
@@ -72,7 +73,8 @@ export default {
     // Breadcrumbs,
     TableCatalog,
     Paginate,
-    OrderModal
+    OrderModal,
+    Breadcrumbs
   },
   mounted () {
     this.get_opt_catalog_from_api().then(

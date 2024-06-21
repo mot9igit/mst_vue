@@ -14,6 +14,7 @@
                     <th class="k-table__name">Цена со скидкой за шт. (₽)</th>
                     <th class="k-table__name">Кратность</th>
                     <th class="k-table__name">Сумма (₽)</th>
+                    <th class="k-table__name">Остатки на складе</th>
                 </tr>
             </thead>
             <tbody class="complect-button kenost-table-background kenost-table-background-complect" v-for="complect in items.complects" v-bind:key="complect.id">
@@ -40,17 +41,7 @@
                 <td>{{Math.round(item.new_price).toLocaleString('ru')}} ₽</td>
                 <td>{{item.multiplicity}} </td>
                 <td>{{(item.new_price * item.multiplicity).toLocaleString('ru')}} ₽</td>
-                <td></td>
-                <!-- <td>
-                  <div class="k-order__actions center">
-                    <div @click="openActions(item)" class="k-actions" v-for="(action, index) in item.actions" v-bind:key="action.id">
-                      <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" :src="site_url_prefix + action.icon" >
-                      <div v-if="action.conflicts.items[action.action_id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div>
-                    </div>
-                    <div v-if="item.actions.length > 3" class="k-order__actions-el last">+{{ item.actions.length - 3 }}</div>
-                  </div>
-                  <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span>
-                </td> -->
+                <td class="td-center"><span v-if="index === 0">{{complect.remain.min_count}} шт</span></td>
               </tr>
             </tbody>
             <!-- <tbody> -->
@@ -71,6 +62,7 @@
                     <td>{{Math.round(item.new_price).toLocaleString('ru')}} ₽</td>
                     <td>{{item.multiplicity}} </td>
                     <td>{{(item.new_price * item.multiplicity).toLocaleString('ru')}} ₽</td>
+                    <td>{{item.remain.remains}} шт</td>
                   </tr>
             <!-- </tbody> -->
         </table>

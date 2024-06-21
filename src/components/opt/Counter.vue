@@ -5,7 +5,8 @@
             <div class="k-quantity__btn" @click="onMinus">
                 <i class="pi pi-minus"></i>
             </div>
-            <input class="k-quantity__counter" :min="this.d_min" :max="this.d_max" name="count" :value="this.d_value">
+            <!-- <InputNumber class="k-quantity__counter" :step="1" :min="this.d_min" :max="this.d_max" v-model="this.d_value"/> -->
+            <input @change="this.d_value = value" class="k-quantity__counter" :min="this.d_min" :max="this.d_max" name="count" :value="this.d_value">
             <div class="k-quantity__btn pls" @click="onPlus">
                 <i class="pi pi-plus"></i>
             </div>
@@ -14,6 +15,7 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
+// import InputNumber from 'primevue/inputnumber'
 
 export default {
   name: 'Counter',
@@ -78,7 +80,9 @@ export default {
   },
   mounted () {
   },
-  components: { },
+  components: {
+    // InputNumber
+  },
   computed: {
     ...mapGetters([
     ])

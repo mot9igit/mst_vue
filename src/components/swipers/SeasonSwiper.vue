@@ -9,7 +9,7 @@
         :scrollbar="{ draggable: true }"
     >
 
-      <swiper-slide v-for="item in items" v-bind:key="item.id" class="promoSwiper__slide">
+      <swiper-slide v-for="item, index in items" v-bind:key="index" class="promoSwiper__slide">
         <router-link to="/">
           <img :src="item.image">
         </router-link>

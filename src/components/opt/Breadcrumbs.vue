@@ -1,40 +1,24 @@
 <template>
-    <nav aria-label="breadcrumb">
+    <nav aria-label="breadcrumb" v-if="items.value && items.value.length">
         <ol
             class="breadcrumb"
             itemscope=""
             itemtype="http://schema.org/BreadcrumbList"
         >
             <li
+                v-for="crumb in items.value" :key="crumb.label"
                 class="breadcrumb-item"
                 itemprop="itemListElement"
                 itemscope=""
                 itemtype="http://schema.org/ListItem"
             >
-                <a itemprop="item" href="/"><span itemprop="name">Главная</span></a
-                ><meta itemprop="position" content="1" />
+                <span v-if="crumb.current" class="am-breadcrumbs__link am-breadcrumbs__link_current">
+                    {{ crumb.link != "store_id" ? crumb.label : organization.name_short }}
+                </span>
+                <router-link v-else class="am-breadcrumbs__link" :to="crumb._path">
+                    {{ crumb.link != "store_id" ? crumb.label : organization.name_short }}
+                </router-link>
             </li>
-            <li
-                class="breadcrumb-item"
-                itemprop="itemListElement"
-                itemscope=""
-                itemtype="http://schema.org/ListItem"
-            >
-                <a itemprop="item" href="catalog/"
-                    ><span itemprop="name">Каталог товаров</span></a
-                ><meta itemprop="position" content="2" />
-            </li>
-            <li
-                class="breadcrumb-item"
-                itemprop="itemListElement"
-                itemscope=""
-                itemtype="http://schema.org/ListItem"
-            >
-                <a itemprop="item" href="catalog/benzotexnika/"
-                    ><span itemprop="name">Бензотехника</span></a
-                ><meta itemprop="position" content="3" />
-            </li>
-            <li class="breadcrumb-item active">Триммеры \ бензокосы</li>
         </ol>
     </nav>
 </template>
@@ -51,6 +35,9 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
+    },
+    items: {
+      type: Array
     }
   },
   data () {
@@ -60,13 +47,16 @@ export default {
   },
   methods: {
     ...mapActions([
+      'get_organization_from_api'
     ])
   },
   mounted () {
+    this.get_organization_from_api()
   },
   components: { },
   computed: {
     ...mapGetters([
+      'organization'
     ])
   }
 }

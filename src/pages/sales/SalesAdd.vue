@@ -453,6 +453,33 @@
                   </table>
                 </div>
 
+                <div class="kenost-all-table-activity">
+                  <div class="kenost-wiget">
+                    <p>Массовое действие</p>
+                    <Dropdown v-model="this.kenostActivityAll.type" :options="this.massAction" optionLabel="name" placeholder="Массовое действие" class="w-full md:w-14rem" />
+                  </div>
+                  <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0 || this.kenostActivityAll.type.key == 1">
+                    <p>Тип цен</p>
+                    <Dropdown v-model="this.kenostActivityAll.type_price" :options="this.typePrice" optionLabel="name" placeholder="Тип цен" class="w-full md:w-14rem" />
+                  </div>
+                  <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0">
+                    <p>Значение</p>
+                    <InputNumber
+                      v-model="this.kenostActivityAll.value"
+                      inputId="horizontal-buttons"
+                      :step="1"
+                      min="0"
+                      incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                    />
+                  </div>
+                  <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0">
+                    <p>&nbsp;</p>
+                    <Dropdown v-model="kenostActivityAll.typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
+                  </div>
+
+                  <div v-if="this.kenostActivityAll.type.key == 0 || this.kenostActivityAll.type.key == 1 || this.kenostActivityAll.type.key == 2 || this.kenostActivityAll.type.key == 3" @click="massActionTable" class="dart-btn dart-btn-primary mt-3"><i class="pi pi-check"></i></div>
+                </div>
+
                 <div class="dart-form-group mt-4">
                   <span class="ktitle">Участники</span>
                   <div class="flex align-items-center mt-2">
@@ -797,6 +824,13 @@ export default {
         conditionMinCount: 0,
         conditionMinSum: 0
       },
+      kenostActivityAll: {
+        type: {},
+        typePrice: {},
+        value: 0,
+        typeFormul: {},
+        discountInterest: 0
+      },
       modals: {
         delay: false,
         price: false,
@@ -841,6 +875,11 @@ export default {
       ],
       typePrice: [
         { name: 'Заданная', key: 0 }
+      ],
+      massAction: [
+        { name: 'Скидка по формуле', key: 0 },
+        { name: 'Тип цен', key: 1 },
+        { name: 'Кратность', key: 3 }
       ]
     }
   },
@@ -870,6 +909,11 @@ export default {
         }
       }
       this.$toast.add({ severity: 'info', summary: 'Файлы загружены', detail: 'Файл был успешно загружен', life: 3000 })
+    },
+    massActionTable () {
+      for (let i = 0; i < this.kenost_table.length; i++) {
+        console.log(this.kenost_table[i])
+      }
     },
     delayUpdate () {
       this.delayPercentSum = 0
@@ -1231,6 +1275,12 @@ export default {
 }
 </script>
 <style lang="scss">
+
+  .kenost-all-table-activity{
+    display: flex;
+    gap: 8px;
+    margin-top: 10px
+  }
 
   .kenost-list-error{
     table{

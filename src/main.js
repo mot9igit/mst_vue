@@ -12,6 +12,7 @@ import AutoComplete from 'primevue/autocomplete'
 import ConfirmationService from 'primevue/confirmationservice'
 import ToastService from 'primevue/toastservice'
 import VueCookies from 'vue-cookies'
+import breadcrumbs from 'vue-3-breadcrumbs'
 
 import { setupCalendar } from 'v-calendar'
 
@@ -167,6 +168,9 @@ app
   .use(createYmaps({
     apikey: '7270e707-f1a7-4397-a1d7-0c545cf0b735'
   }))
+  .use(breadcrumbs, {
+    includeComponent: false // {boolean} [includeComponent=false] - Include global breadcrumbs component or not
+  })
   .component('AutoComplete', AutoComplete)
   .mount('#app')
 

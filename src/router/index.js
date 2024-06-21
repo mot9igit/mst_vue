@@ -90,13 +90,13 @@ const routes = [
       children: [{
         path: '',
         name: 'organizations',
+        props: true,
+        label: 'Организации',
         meta: {
           breadcrumb: {
             label: 'Организации'
           }
         },
-        props: true,
-        label: 'Организации',
         component: ProfileOrganizations
       }, {
         path: ':id',
@@ -105,7 +105,13 @@ const routes = [
           name: 'organization',
           props: true,
           label: 'Организация',
-          component: ProfileOrganization
+          component: ProfileOrganization,
+          meta: {
+            breadcrumb: {
+              label: 'Название огранизации',
+              link: 'store_id'
+            }
+          }
         }, {
           path: 'products',
           component: OrganizationsLoyout,
@@ -233,11 +239,21 @@ const routes = [
           children: [{
             path: '',
             name: 'purchases_home',
-            component: ProfilePurchases
+            component: ProfilePurchases,
+            meta: {
+              breadcrumb: {
+                label: 'Закупки'
+              }
+            }
           }, {
             path: ':category_id',
             name: 'purchases_catalog',
-            component: PurchasesCatalog
+            component: PurchasesCatalog,
+            meta: {
+              breadcrumb: {
+                label: 'Каталог'
+              }
+            }
           }, {
             path: 'action/:action',
             name: 'promotion',
