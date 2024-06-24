@@ -542,7 +542,7 @@ export default {
         }
 
         &-buttons{
-          width: 224px;
+          width: 100px;
         }
     }
 }

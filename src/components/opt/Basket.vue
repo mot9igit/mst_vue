@@ -12,7 +12,7 @@
                 <div class="basket-container__adres" :style="{'background': store.color}">
                     {{store.name}}
                 </div>
-                <div v-for="product in store.products" v-bind:key="product.id" class="basket-container__card">
+                <div v-for="product in store.products" v-bind:key="product.id" class="basket-container__card basket-item">
                     <img
                         class="basket-container__img"
                         :src="product.image"
@@ -37,34 +37,39 @@
                         </div>
                     </div>
                 </div>
-                <div v-for="complect in store.complects" v-bind:key="complect.id" class="basket-container__complect">
-                    <div class="basket-container__info">
-                        <p>Комплект</p>
-                    </div>
-                    <div @click="clearBasketComplect(store.id, complect.info.id)" class="btn-close link-no-style"
-                        ><i class="d_icon d_icon-close"></i
-                    ></div>
-                    <div v-for="product in complect.products" v-bind:key="product.id" class="basket-container__card">
-                        <img
-                            class="basket-container__img"
-                            :src="product.image"
-                            :alt="product.name"
-                        />
-                        <div class="basket-container__info">
-                            <div class="basket-container__title">
-                                <p>
-                                    {{product.name}}
-                                </p>
+                <div v-for="complect in store.complects" v-bind:key="complect.id" class="basket-item">
+                    <div class="basket-container__complect">
+                        <div @click="clearBasketComplect(store.id, complect.info.id)" class="btn-close link-no-style"
+                            ><i class="d_icon d_icon-close"></i
+                        ></div>
+                        <div v-for="(product, index) in complect.products" v-bind:key="product.id">
+                            <div class="basket-container__card">
+                                <img
+                                    class="basket-container__img"
+                                    :src="product.image"
+                                    :alt="product.name"
+                                />
+                                <div class="basket-container__info">
+                                    <div class="basket-container__title">
+                                        <p>
+                                            {{product.name}}
+                                        </p>
+                                    </div>
+                                    <div class="basket-container__article-container">
+                                        <p class="basket-container__article">{{product.article}} x {{product.multiplicity * complect.info.count}} шт</p>
+                                        <b v-if="index != 0">{{(Number(complect.info.count) * product.multiplicity * product.new_price).toLocaleString('ru')}} ₽</b>
+                                    </div>
+                                    <div v-if="index === 0" class="basket-container__price">
+                                        <Counter :key="new Date().getMilliseconds() + complect.info.id" @ElemCount="ElemComplectCount" :min="1" :max="complect.info.complect_data?.min_count" :value="complect.info.count" :id="complect.info.id" :store_id="store.id"/>
+                                        <b>{{(Number(complect.info.count) * product.multiplicity * product.new_price).toLocaleString('ru')}} ₽</b>
+                                    </div>
+                                    <div v-if="index === 0" class="basket-container__count">
+                                        <p>В наличии <span>{{ complect.info.complect_data?.min_count }} шт.</span></p>
+                                    </div>
+                                </div>
                             </div>
-                            <p class="basket-container__article">{{product.article}} x {{product.multiplicity * complect.info.count}} шт</p>
+                            <i v-if="index === 0" class="mst-icon mst-icon-link basket-container__link-complect"></i>
                         </div>
-                    </div>
-                    <div class="basket-container__count">
-                        <p>В наличии <span>{{ complect.info.complect_data?.min_count }} шт.</span></p>
-                    </div>
-                    <div class="basket-container__price">
-                        <Counter :key="new Date().getMilliseconds() + complect.info.id" @ElemCount="ElemComplectCount" :min="1" :max="complect.info.complect_data?.min_count" :value="complect.info.count" :id="complect.info.id" :store_id="store.id"/>
-                        <b>{{(Number(complect.info.count) * complect.info.price).toLocaleString('ru')}} ₽</b>
                     </div>
                 </div>
             </div>
@@ -195,6 +200,15 @@ export default {
 </script>
 <style lang="scss">
 
+    .basket-item + .basket-item{
+        border-top: 1px solid #E2E2E2;
+        padding-top: 16px;
+    }
+
+    .basket-item{
+        padding-bottom: 16px;
+    }
+
     .p-dialog-mask{
         background: rgba(0, 0, 0, 0.3)
     }
@@ -307,8 +321,26 @@ export default {
                 background-color: #f9f9fd;
             }
 
+            &__article-container{
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                margin: 8px 0 12px 0;
+            }
+
+            &__link-complect{
+                color: #ADADAD;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 16px 0;
+            }
+
             &__complect{
-                border-top: 1px solid #d5d5d5;
+                background: #F8F7F5;
+                padding: 12px 8px;
+                border-radius: 5px;
+                // border-top: 1px solid #d5d5d5;
                 padding-top: 15px;
                 position: relative;
                 & > .basket-container__info{
@@ -319,7 +351,7 @@ export default {
                 }
                 .btn-close{
                     position: absolute;
-                    right: 0;
+                    right: 8px;
                     top: 10px;
                 }
                 .basket-container__title{
@@ -362,6 +394,10 @@ export default {
                     font-weight: 400;
                     line-height: 18px;
                     margin: 0;
+                    display: -webkit-box;
+                    -webkit-line-clamp: 2;
+                    -webkit-box-orient: vertical;
+                    overflow: hidden;
                 }
             }
 
@@ -370,7 +406,7 @@ export default {
                 font-style: normal;
                 font-weight: 400;
                 line-height: 18px;
-                margin: 8px 0 12px 0;
+                margin: 0;
                 color: var(--text-color-dop);
             }
 
@@ -394,6 +430,7 @@ export default {
                     font-style: normal;
                     font-weight: 400;
                     line-height: 16px;
+                    margin: 0;
                     color: var(--text-color-dop);
 
                     span{
