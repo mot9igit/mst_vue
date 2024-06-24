@@ -19,15 +19,16 @@
         <td></td>
         <td></td>
     </tr>
-    <tr class="kenost-table-background" v-for="item in items.stores" v-bind:key="item.id" :class="{'active' : this.active, 'no-active' : !this.active}">
+    <tr class="kenost-table-background" v-for="(item, index) in items.stores" v-bind:key="item.id" :class="{'active' : this.active, 'no-active' : !this.active}">
         <td></td>
         <td><span class="k-table__article">{{items.article}}</span></td>
         <td class="k-table__photo"><img class="k-table__image" :src="items.image" alt=""></td>
         <td class="k-table__title" @click="openActions(item)"><p>{{item.name}}</p></td>
         <td class="k-table__busket">
-          <form class="k-table__form" action="">
-            <Counter @ElemCount="ElemCount" :min="1" :max="item.remains" :value="this.value"/>
-            <div @click="addBasket(item.remain_id, this.value, item.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
+          <!-- :class="{'basket-true' : item.basket.availability}" -->
+          <form class="k-table__form" action="" :class="{'basket-true' : item.basket.availability}">
+            <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCount" :min="1" :max="item.remains" :id="item.remain_id" :store_id="item.store_id" :index="index" :value="item.basket.count"/>
+            <div @click="addBasket(item.remain_id, item.basket.count, item.store_id, index)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
           </form>
         </td>
         <td>{{item.store_name}}</td>
@@ -61,10 +62,9 @@
         </td>
         <td class="k-table__title" @click="openActions(item)"><p>{{item.pagetitle}}</p></td>
         <td class="k-table__busket complect-button__td">
-          <form class="k-table__form complect-button__form" action="" v-if="index === 0">
-            <Counter @ElemCount="ElemCount" :min="1" :max="item.remain_complect" :value="this.value"/>
-            {{console.log(item)}}
-            <div @click="addBasketComplect(item.complect_id, this.value, item.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
+          <form class="k-table__form complect-button__form" :class="{'basket-true' : item.basket.availability}" action="" v-if="index === 0">
+            <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCountComplect" :min="1" :max="item.remain_complect" :id="item.complect_id" :store_id="item.store_id" :index="index" :value="item.basket.count"/>
+            <div @click="addBasketComplect(item.complect_id, this.value, item.store_id, index)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
           </form>
         </td>
         <td class="td-center"><span v-if="index === 0">{{item.store_name}}</span></td>
@@ -86,11 +86,20 @@
         <td class="td-center"><span v-if="index === 0">{{item.remain_complect}} шт</span></td>
       </tr>
     </tbody>
+    <Dialog v-model:visible="this.modal_remain" header=" " :style="{ width: '340px' }">
+        <div class="kenost-not-produc">
+            <img src="../../../public/img/opt/not-products.png" alt="">
+            <b>У нас нет столько товаров :(</b>
+            <p>Извините, но количество данного товара ограничено</p>
+            <div class="a-dart-btn a-dart-btn-primary" @click="this.modal_remain = false">Понятно</div>
+        </div>
+    </Dialog>
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import Counter from './Counter.vue'
 import router from '@/router'
+import Dialog from 'primevue/dialog'
 
 export default {
   name: 'TableCatalogRow',
@@ -112,7 +121,8 @@ export default {
     return {
       loading: true,
       active: false,
-      value: 1
+      value: 1,
+      modal_remain: false
     }
   },
   methods: {
@@ -156,25 +166,51 @@ export default {
         delivery_day: minDeliveryDate
       }
     },
-    addBasket (id, value, storeid) {
+    addBasket (id, value, storeid, index) {
       const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_remain: id, value, store_id: storeid }
       this.busket_from_api(data).then()
+      // eslint-disable-next-line vue/no-mutating-props
+      this.items.stores[index].basket.availability = true
       this.$emit('updateBasket')
     },
-    addBasketComplect (complectid, value, storeid) {
+    addBasketComplect (complectid, value, storeid, index) {
       const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_complect: complectid, value, store_id: storeid }
       this.busket_from_api(data).then()
+      // eslint-disable-next-line vue/no-mutating-props
+      this.items.complects[index][0].basket.availability = true
       this.$emit('updateBasket')
     },
     ElemCount (object) {
-      this.value = object.value
+      if (object.value >= Number(object.max)) {
+        this.modal_remain = true
+        console.log(this.modal_remain)
+      } else {
+        // eslint-disable-next-line vue/no-mutating-props
+        this.items.stores[object.index].basket.count = object.value
+        const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_remain: object.id, value: object.value, store_id: object.store_id }
+        this.busket_from_api(data).then()
+        this.$emit('updateBasket')
+      }
+    },
+    ElemCountComplect (object) {
+      if (object.value >= Number(object.max)) {
+        this.modal_remain = true
+        console.log(this.modal_remain)
+      } else {
+        // eslint-disable-next-line vue/no-mutating-props
+        this.items.stores[object.index].basket.count = object.value
+        const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_complect: object.id, value: object.value, store_id: object.store_id }
+        this.busket_from_api(data).then()
+        this.$emit('updateBasket')
+      }
     }
   },
   mounted () {
 
   },
   components: {
-    Counter
+    Counter,
+    Dialog
   },
   computed: {
     ...mapGetters([
@@ -184,6 +220,24 @@ export default {
 }
 </script>
 <style lang="scss">
+
+.k-table{
+  &__form{
+    .k-quantity{
+      display: none;
+    }
+
+    &.basket-true{
+      .k-quantity{
+        display: block;
+      }
+
+      .dart-btn-primary{
+        display: none;
+      }
+    }
+  }
+}
 
 .kenost-complect-icon{
   position: relative;

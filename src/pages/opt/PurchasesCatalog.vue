@@ -33,7 +33,7 @@
       </div>
       <div class="d-col-map">
         <Vendors :items="this.opt_vendors" @vendorCheck="vendorCheck"/>
-        <Basket ref="childComponent" @toOrder="toOrder"/>
+        <Basket @catalogUpdate="catalogUpdate" ref="childComponent" @toOrder="toOrder"/>
       </div>
     </div>
     <OrderModal :show="show_order" @fromOrder="fromOrder"/>
@@ -117,6 +117,16 @@ export default {
       this.get_opt_vendors_from_api().then(
         this.opt_vendors = this.optvendors
       )
+      this.get_opt_products_from_api({
+        page: this.page,
+        perpage: this.perpage
+      }).then(() => {
+        this.opt_products = this.optproducts
+        this.loading = false
+      }
+      )
+    },
+    catalogUpdate () {
       this.get_opt_products_from_api({
         page: this.page,
         perpage: this.perpage

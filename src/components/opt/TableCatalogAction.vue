@@ -468,6 +468,12 @@ export default {
       box-shadow: 0px 4px 12.5px 0px #0000001F;
     }
 
+    .active-el .k-table__form,
+    .no-active-el .k-table__form{
+      opacity: 0;
+      pointer-events: none;
+    }
+
     tr.active-el{
         .pi-angle-up{
             transform: rotate(0deg);
@@ -489,7 +495,6 @@ export default {
         align-items: center;
         display: flex;
         gap: 12px;
-        opacity: 0;
         transition: all 0.4s;
         width: 100%;
         justify-content: center;

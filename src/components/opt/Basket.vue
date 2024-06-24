@@ -91,6 +91,7 @@ import Dialog from 'primevue/dialog'
 
 export default {
   name: 'Basket',
+  emits: ['catalogUpdate'],
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -113,40 +114,58 @@ export default {
       'busket_from_api'
     ]),
     updateBasket () {
-
     },
     ElemComplectCount (object) {
       console.log(object)
-      if (object.value > Number(object.max)) {
+      if (object.value >= Number(object.max)) {
         this.modal_remain = true
         console.log(this.modal_remain)
       } else {
         const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_complect: object.id, value: object.value, store_id: object.store_id }
-        this.busket_from_api(data).then()
+        this.busket_from_api(data).then((response) => {
+          const datainfo = {
+            complect_id: object.id,
+            store_id: object.store_id,
+            count: object.value
+          }
+          this.$store.commit('SET_OPT_COMPLECT_MUTATION_TO_VUEX', datainfo)
+        })
       }
     },
     ElemCount (object) {
       console.log(object)
-      if (object.value > Number(object.max)) {
+      if (object.value >= Number(object.max)) {
         this.modal_remain = true
         console.log(this.modal_remain)
       } else {
         const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_remain: object.id, value: object.value, store_id: object.store_id }
-        this.busket_from_api(data).then()
+        this.busket_from_api(data).then((response) => {
+          const datainfo = {
+            remain_id: object.id,
+            store_id: object.store_id,
+            count: object.value
+          }
+          this.$store.commit('SET_OPT_PRODUCTS_MUTATION_TO_VUEX', datainfo)
+        })
       }
     },
     clearBasket () {
       const data = { action: 'basket/clear', id: router.currentRoute._value.params.id }
-      this.busket_from_api(data).then()
+      this.busket_from_api(data).then((response) => {
+        this.$emit('catalogUpdate')
+      })
     },
     clearBasketProduct (storeid, productid) {
       const data = { action: 'basket/clear', id: router.currentRoute._value.params.id, store_id: storeid, id_remain: productid }
-      this.busket_from_api(data).then()
+      this.busket_from_api(data).then((response) => {
+        this.$emit('catalogUpdate')
+      })
     },
     clearBasketComplect (storeid, complectid) {
       const data = { action: 'basket/clear', id: router.currentRoute._value.params.id, store_id: storeid, id_complect: complectid }
-      console.log(data)
-      this.busket_from_api(data).then()
+      this.busket_from_api(data).then((response) => {
+        this.$emit('catalogUpdate')
+      })
     },
     toOrder () {
       this.$emit('toOrder')

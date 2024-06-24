@@ -40,6 +40,10 @@ export default {
     store_id: {
       type: Number,
       default: 0
+    },
+    index: {
+      type: Number,
+      default: 0
     }
   },
   data () {
@@ -61,7 +65,8 @@ export default {
         value: this.d_value,
         id: this.id,
         store_id: this.store_id,
-        max: this.d_max
+        max: this.d_max,
+        index: this.index
       }
       this.$emit('ElemCount', data)
     },
@@ -73,7 +78,8 @@ export default {
         value: this.d_value,
         id: this.id,
         store_id: this.store_id,
-        max: this.d_max
+        max: this.d_max,
+        index: this.index
       }
       this.$emit('ElemCount', data)
     },
@@ -82,7 +88,8 @@ export default {
         value: this.d_value,
         id: this.id,
         store_id: this.store_id,
-        max: this.d_max
+        max: this.d_max,
+        index: this.index
       }
       this.$emit('ElemCount', data)
     }

@@ -465,20 +465,20 @@ export default {
     // }
 
     tr.active:hover{
-        .k-table__form{
-            opacity: 1;
-        }
+      .k-table__form{
+          opacity: 1;
+      }
     }
 
     &__form{
-        align-items: center;
-        display: flex;
-        gap: 12px;
-        opacity: 0;
-        transition: all 0.4s;
-        width: 100%;
-        justify-content: center;
-        z-index: 1;
+      align-items: center;
+      display: flex;
+      gap: 12px;
+      transition: all 0.4s;
+      width: 100%;
+      justify-content: center;
+      z-index: 1;
+      opacity: 1;
     }
 
     &__header{
