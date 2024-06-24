@@ -386,28 +386,6 @@
 
                 <div v-if="this.form.addProductType != '3'" class="table-kenost mt-4">
                   <p class="table-kenost__title">Таблица добавленных товаров</p>
-                  <!--<div class="table-kenost__filters">
-                    <div class="table-kenost__filters-left">
-                      <div class="form_input_group input_pl input-parent required">
-                          <input
-                          type="text"
-                          id="filter_name"
-                          placeholder="Введите артикул или название"
-                          class="dart-form-control"
-                          v-model="filter.name"
-                          @input="setFilter('filter')"
-                          />
-                          <label for="product_filter_name" class="s-complex-input__label">Введите артикул или название</label>
-                          <div class="form_input_group__icon">
-                              <i class="d_icon d_icon-search"></i>
-                          </div>
-                      </div>
-                      <div class="dart-form-group">
-                          <TreeSelect v-model="this.filter.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
-                      </div>
-                    </div>
-                    <button @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</button>
-                  </div> -->
                   <table class="table-kenost__table">
                     <thead>
                         <tr>
@@ -452,6 +430,44 @@
                       </tr>
                     </tbody>
                   </table>
+                </div>
+
+                <div class="kenost-all-table-activity" v-if="this.form.addProductType == '1' || this.form.addProductType == '2'">
+                  <div class="kenost-wiget">
+                    <p>Массовое действие</p>
+                    <Dropdown v-model="this.kenostActivityAll.type" :options="this.massAction" optionLabel="name" placeholder="Массовое действие" class="w-full md:w-14rem" />
+                  </div>
+                  <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0 || this.kenostActivityAll.type.key == 1">
+                    <p>Тип цен</p>
+                    <Dropdown v-model="this.kenostActivityAll.typePrice" :options="this.typePrice" optionLabel="name" placeholder="Тип цен" class="w-full md:w-14rem" />
+                  </div>
+                  <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0">
+                    <p>Значение</p>
+                    <InputNumber
+                      v-model="this.kenostActivityAll.value"
+                      inputId="horizontal-buttons"
+                      :step="1"
+                      min="0"
+                      incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                    />
+                  </div>
+                  <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0">
+                    <p>&nbsp;</p>
+                    <Dropdown v-model="kenostActivityAll.typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
+                  </div>
+
+                  <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 3">
+                    <p>Значение</p>
+                    <InputNumber
+                      v-model="this.kenostActivityAll.multiplicity"
+                      inputId="horizontal-buttons"
+                      :step="1"
+                      min="1"
+                      incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                    />
+                  </div>
+
+                  <div v-if="this.kenostActivityAll.type.key == 0 || this.kenostActivityAll.type.key == 1 || this.kenostActivityAll.type.key == 2 || this.kenostActivityAll.type.key == 3" @click="massActionTable" class="dart-btn dart-btn-primary mt-3"><i class="pi pi-check"></i></div>
                 </div>
 
                 <div class="dart-form-group mt-4">
@@ -794,6 +810,14 @@ export default {
         conditionMinCount: 0,
         conditionMinSum: 0
       },
+      kenostActivityAll: {
+        type: {},
+        typePrice: {},
+        value: 0,
+        typeFormul: {},
+        discountInterest: 0,
+        multiplicity: 1
+      },
       modals: {
         delay: false,
         price: false,
@@ -846,6 +870,11 @@ export default {
       ],
       typePrice: [
         { name: 'Заданная', key: 0 }
+      ],
+      massAction: [
+        { name: 'Скидка по формуле', key: 0 },
+        { name: 'Тип цен', key: 1 },
+        { name: 'Кратность', key: 3 }
       ]
     }
   },
@@ -930,6 +959,32 @@ export default {
         if (xhr.readyState === 4) {
           callback(xhr.response)
         }
+      }
+    },
+    massActionTable () {
+      for (let i = 0; i < this.kenost_table.length; i++) {
+        console.log(this.kenostActivityAll.type.key)
+        switch (this.kenostActivityAll.type.key) {
+          case 0:
+            this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
+            if (this.kenostActivityAll.typeFormul.key === 0) {
+              this.selected[this.kenost_table[i]].finalPrice = Number(this.selected[this.kenost_table[i]].price) - this.kenostActivityAll.value
+              this.selected[this.kenost_table[i]].discountInRubles = this.kenostActivityAll.value
+              this.selected[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value / (Number(this.selected[this.kenost_table[i]].price) / 100)
+            } else {
+              this.selected[this.kenost_table[i]].finalPrice = Number(this.selected[this.kenost_table[i]].price) - ((Number(this.selected[this.kenost_table[i]].price) / 100) * this.kenostActivityAll.value)
+              this.selected[this.kenost_table[i]].discountInRubles = this.selected[this.kenost_table[i]].finalPrice - Number(this.selected[this.kenost_table[i]].price)
+              this.selected[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value
+            }
+            break
+          case 1:
+            this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
+            break
+          case 3:
+            this.selected[this.kenost_table[i]].multiplicity = this.kenostActivityAll.multiplicity
+            break
+        }
+        console.log(this.selected[this.kenost_table[i]])
       }
     },
     setFilter () {

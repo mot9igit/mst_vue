@@ -6,7 +6,7 @@
                 <i class="pi pi-minus"></i>
             </div>
             <!-- <InputNumber class="k-quantity__counter" :step="1" :min="this.d_min" :max="this.d_max" v-model="this.d_value"/> -->
-            <input @change="this.d_value = value" class="k-quantity__counter" :min="this.d_min" :max="this.d_max" name="count" :value="this.d_value">
+            <input @input="onEmit" type="number" v-model="this.d_value" class="k-quantity__counter" :min="this.d_min" :max="this.d_max" name="count" :value="this.d_value">
             <div class="k-quantity__btn pls" @click="onPlus">
                 <i class="pi pi-plus"></i>
             </div>
@@ -67,8 +67,17 @@ export default {
     },
     onPlus () {
       if (this.d_value < this.d_max) {
-        this.d_value = this.d_value + 1
+        this.d_value = Number(this.d_value) + 1
       }
+      const data = {
+        value: this.d_value,
+        id: this.id,
+        store_id: this.store_id,
+        max: this.d_max
+      }
+      this.$emit('ElemCount', data)
+    },
+    onEmit () {
       const data = {
         value: this.d_value,
         id: this.id,
@@ -111,12 +120,17 @@ export default {
         }
 
         &__counter{
-            height: 100%;
-            width: 34%;
-            text-align: center;
-            background: #F8F7F5;
-            border: none;
-            outline: none;
+          height: 100%;
+          width: 34%;
+          text-align: center;
+          background: #F8F7F5;
+          border: none;
+          outline: none;
+        }
+
+        &__counter::-webkit-outer-spin-button,
+        &__counter::-webkit-inner-spin-button {
+          -webkit-appearance: none;
         }
     }
 </style>

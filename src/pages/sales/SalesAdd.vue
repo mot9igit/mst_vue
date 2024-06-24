@@ -443,7 +443,7 @@
                           <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_id = item.id;">Настроить</p>
                         </td>
                         <td>
-                          <Counter class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="item.multiplicity"/>
+                          <Counter :key="new Date().getMilliseconds() + item.id" class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="item.multiplicity"/>
                         </td>
                         <td>
                           {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru') * item.multiplicity}} ₽
@@ -453,14 +453,14 @@
                   </table>
                 </div>
 
-                <div class="kenost-all-table-activity">
+                <div class="kenost-all-table-activity" v-if="this.form.addProductType == '1' || this.form.addProductType == '2'">
                   <div class="kenost-wiget">
                     <p>Массовое действие</p>
                     <Dropdown v-model="this.kenostActivityAll.type" :options="this.massAction" optionLabel="name" placeholder="Массовое действие" class="w-full md:w-14rem" />
                   </div>
                   <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0 || this.kenostActivityAll.type.key == 1">
                     <p>Тип цен</p>
-                    <Dropdown v-model="this.kenostActivityAll.type_price" :options="this.typePrice" optionLabel="name" placeholder="Тип цен" class="w-full md:w-14rem" />
+                    <Dropdown v-model="this.kenostActivityAll.typePrice" :options="this.typePrice" optionLabel="name" placeholder="Тип цен" class="w-full md:w-14rem" />
                   </div>
                   <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0">
                     <p>Значение</p>
@@ -475,6 +475,17 @@
                   <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0">
                     <p>&nbsp;</p>
                     <Dropdown v-model="kenostActivityAll.typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
+                  </div>
+
+                  <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 3">
+                    <p>Значение</p>
+                    <InputNumber
+                      v-model="this.kenostActivityAll.multiplicity"
+                      inputId="horizontal-buttons"
+                      :step="1"
+                      min="1"
+                      incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                    />
                   </div>
 
                   <div v-if="this.kenostActivityAll.type.key == 0 || this.kenostActivityAll.type.key == 1 || this.kenostActivityAll.type.key == 2 || this.kenostActivityAll.type.key == 3" @click="massActionTable" class="dart-btn dart-btn-primary mt-3"><i class="pi pi-check"></i></div>
@@ -829,7 +840,8 @@ export default {
         typePrice: {},
         value: 0,
         typeFormul: {},
-        discountInterest: 0
+        discountInterest: 0,
+        multiplicity: 1
       },
       modals: {
         delay: false,
@@ -912,7 +924,28 @@ export default {
     },
     massActionTable () {
       for (let i = 0; i < this.kenost_table.length; i++) {
-        console.log(this.kenost_table[i])
+        console.log(this.kenostActivityAll.type.key)
+        switch (this.kenostActivityAll.type.key) {
+          case 0:
+            this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
+            if (this.kenostActivityAll.typeFormul.key === 0) {
+              this.selected[this.kenost_table[i]].finalPrice = Number(this.selected[this.kenost_table[i]].price) - this.kenostActivityAll.value
+              this.selected[this.kenost_table[i]].discountInRubles = this.kenostActivityAll.value
+              this.selected[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value / (Number(this.selected[this.kenost_table[i]].price) / 100)
+            } else {
+              this.selected[this.kenost_table[i]].finalPrice = Number(this.selected[this.kenost_table[i]].price) - ((Number(this.selected[this.kenost_table[i]].price) / 100) * this.kenostActivityAll.value)
+              this.selected[this.kenost_table[i]].discountInRubles = this.selected[this.kenost_table[i]].finalPrice - Number(this.selected[this.kenost_table[i]].price)
+              this.selected[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value
+            }
+            break
+          case 1:
+            this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
+            break
+          case 3:
+            this.selected[this.kenost_table[i]].multiplicity = this.kenostActivityAll.multiplicity
+            break
+        }
+        console.log(this.selected[this.kenost_table[i]])
       }
     },
     delayUpdate () {
@@ -924,17 +957,6 @@ export default {
       }
     },
     parseFile (files, xhr, formData) {
-      // function callback (e) {
-      //   const res = JSON.parse(e).data.files[0]
-      //   // console.log(res)
-
-      //   // const data = {
-      //   //   action: 'upload/products/file',
-      //   //   store_id: router.currentRoute._value.params.id,
-      //   //   file: res.original
-      //   // }
-      //   // this.opt_upload_products_file(data)
-      // }
       this.table_products_loading = true
       const callback = (e) => {
         const res = JSON.parse(e)
