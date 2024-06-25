@@ -65,7 +65,7 @@
                 <input v-model="this.form.award" type="text" name="award" placeholder="Укажите вознаграждение" class="dart-form-control">
             </div>
 
-            <div class="dart-form-group mb-4">
+            <div class="dart-form-group mb-2">
                 <span class="ktitle">Совместимость скидок</span>
                 <div class="flex align-items-center mt-3">
                   <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-1" name="compatibilityDiscount" value="1"/>
@@ -83,6 +83,10 @@
                 <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-4" name="compatibilityDiscount" value="4"/>
                 <label for="compatibilityDiscount-4" class="ml-2 radioLabel">Складывается с выбранными акциями</label>
                 </div>
+            </div>
+
+            <div class="dart-form-group mb-4" v-if="this.form.compatibilityDiscount == 3 || this.form.compatibilityDiscount == 4">
+              <MultiSelect filter v-model="this.form.bigDiscount" display="chip" :options="this.allAction" optionLabel="name" placeholder="Выберите из списка" class="w-full md:w-20rem kenost-multiselect" />
             </div>
 
             <div class="dart-form-group mb-4">
@@ -833,7 +837,8 @@ export default {
         available_vendors: [],
         available_opt: [],
         conditionMinCount: 0,
-        conditionMinSum: 0
+        conditionMinSum: 0,
+        bigDiscount: []
       },
       kenostActivityAll: {
         type: {},
@@ -857,6 +862,7 @@ export default {
           'Скидка вручную'
         ]
       },
+      listAction: {},
       files: {
         xlsx: null
       },
@@ -903,7 +909,8 @@ export default {
       'get_regions_from_api',
       'set_sales_to_api',
       'opt_get_complects',
-      'opt_upload_products_file'
+      'opt_upload_products_file',
+      'get_all_sales_to_api'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -1050,6 +1057,7 @@ export default {
           participants_type: this.form.participantsType,
           products: this.selected,
           regions_select: this.regions_select,
+          big_sale_actions: this.form.bigDiscount,
           organizations: this.all_organizations_selected,
           method_adding_products: this.form.addProductType,
           complects: this.selected_complects,
@@ -1245,6 +1253,10 @@ export default {
       })
       // console.log(this.regions_all)
     })
+    this.get_all_sales_to_api({
+      id: router.currentRoute._value.params.id,
+      action: 'get/all'
+    })
     this.opt_get_complects({
       action: 'complects/get',
       page: this.page_complects,
@@ -1272,7 +1284,8 @@ export default {
       'allorganizations',
       'getregions',
       'optcomplects',
-      'optproductsfile'
+      'optproductsfile',
+      'allactions'
     ])
   },
   watch: {
@@ -1292,6 +1305,11 @@ export default {
     optcomplects: function (newVal, oldVal) {
       this.complects = newVal.complects
       this.total_complects = newVal.total
+    },
+    allactions: function (newVal, oldVal) {
+      this.allAction = this.allactions.items.map(function (el) {
+        return { name: el.name, code: el.id }
+      })
     }
   }
 }

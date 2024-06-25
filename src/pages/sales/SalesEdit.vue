@@ -85,6 +85,10 @@
                 </div>
             </div>
 
+            <div class="dart-form-group mb-4" v-if="this.form.compatibilityDiscount == 3 || this.form.compatibilityDiscount == 4">
+              <MultiSelect filter v-model="this.form.bigDiscount" display="chip" :options="this.allAction" optionLabel="name" placeholder="Выберите из списка" class="w-full md:w-20rem kenost-multiselect" />
+            </div>
+
             <div class="dart-form-group mb-4">
                 <span class="ktitle">Совместимость отсрочек</span>
                 <div class="flex align-items-center mt-3">
@@ -808,8 +812,10 @@ export default {
         available_vendors: [],
         available_opt: [],
         conditionMinCount: 0,
-        conditionMinSum: 0
+        conditionMinSum: 0,
+        bigDiscount: []
       },
+      listAction: {},
       kenostActivityAll: {
         type: {},
         typePrice: {},
@@ -887,7 +893,8 @@ export default {
       'set_sales_to_api',
       'get_sales_to_api',
       'opt_get_complects',
-      'opt_upload_products_file'
+      'opt_upload_products_file',
+      'get_all_sales_to_api'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -1036,7 +1043,8 @@ export default {
           available_vendors: this.form.available_vendors[0] === 'true',
           available_opt: this.form.available_opt[0] === 'true',
           complects: this.selected_complects,
-          action_id: router.currentRoute._value.params.sales_id
+          action_id: router.currentRoute._value.params.sales_id,
+          big_sale_actions: this.form.bigDiscount
         })
           .then((result) => {
             this.loading = false
@@ -1235,6 +1243,10 @@ export default {
       })
       // console.log(this.regions_all)
     })
+    this.get_all_sales_to_api({
+      id: router.currentRoute._value.params.id,
+      action: 'get/all'
+    })
     this.opt_get_complects({
       action: 'complects/get',
       page: this.page_complects,
@@ -1266,7 +1278,8 @@ export default {
       'getregions',
       'actions',
       'optcomplects',
-      'optproductsfile'
+      'optproductsfile',
+      'allactions'
     ])
   },
   watch: {
@@ -1287,6 +1300,11 @@ export default {
       this.complects = newVal.complects
       this.total_complects = newVal.total
     },
+    allactions: function (newVal, oldVal) {
+      this.allAction = this.allactions.items.map(function (el) {
+        return { name: el.name, code: el.id }
+      })
+    },
     actions: function (newVal, oldVal) {
       this.form.name = newVal.name
       if (newVal.image) {
@@ -1299,7 +1317,6 @@ export default {
       if (newVal.icon) {
         this.files.icon.original_href = this.site_url_prefix + newVal.icon
       }
-      console.log(newVal)
       this.selected_complects = newVal.complects
       this.form.description = newVal.description
       this.form.compatibilityDiscount = newVal.compatibility_discount.toString()
@@ -1336,6 +1353,7 @@ export default {
       this.form.delay = newVal.delay_graph
       this.regions_select = newVal.regions
       this.all_organizations_selected = newVal.organization
+      this.form.bigDiscount = newVal.big_sale_actions
 
       const dataorg = { filter: this.filter_organizations, selected: this.all_organizations_selected }
       this.get_all_organizations_from_api(dataorg).then(
