@@ -5,8 +5,9 @@
     <div class="d-col-content">
       <div class="dart-home dart-window">
         <span class="h2">Акции</span>
-        <HomeSwiper :items="this.mainpage.main_slider_big"/>
-        <HomeMinSwiper :items="this.mainpage.main_slider_small"/>
+        <Banners />
+        <!-- <HomeSwiper :items="this.mainpage.main_slider_big"/>
+        <HomeMinSwiper :items="this.mainpage.main_slider_small"/> -->
         <!--
         <span class="h2 mb-3 mt-5">Готовимся к сезону</span>
         <SeasonSwiper :items="this.mainpage.season_slider"/>
@@ -16,7 +17,7 @@
       </div>
     </div>
     <div class="d-col-map">
-      <Vendors :items="this.opt_vendors" />
+      <Vendors @vendorCheck="vendorCheck" :items="this.opt_vendors" />
       <Basket ref="childComponent" @toOrder="toOrder"/>
     </div>
   </div>
@@ -24,15 +25,16 @@
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
-import HomeSwiper from '../../components/swipers/HomeSwiper.vue'
+// import HomeSwiper from '../../components/swipers/HomeSwiper.vue'
 import CatalogMenu from '../../components/opt/CatalogMenu.vue'
-import HomeMinSwiper from '../../components/swipers/HomeMinSwiper.vue'
+// import HomeMinSwiper from '../../components/swipers/HomeMinSwiper.vue'
 // import SeasonSwiper from '../../components/swipers/SeasonSwiper.vue'
-// import NewSwiper from '../../components/swipers/NewSwiper.vue'
+import Banners from '../../components/opt/Banners.vue'
 import Basket from '../../components/opt/Basket.vue'
 import Vendors from '../../components/opt/Vendors.vue'
 import ChangeVendorsModal from '../../components/opt/ChangeVendorsModal.vue'
 import OrderModal from '../../components/opt/OrderModal.vue'
+import router from '@/router'
 
 export default {
   name: 'OptsMain',
@@ -49,12 +51,13 @@ export default {
     }
   },
   components: {
-    HomeSwiper,
+    // HomeSwiper,
     CatalogMenu,
-    HomeMinSwiper,
+    // HomeMinSwiper,
     // SeasonSwiper,
     // NewSwiper,
     Basket,
+    Banners,
     Vendors,
     ChangeVendorsModal,
     OrderModal
@@ -69,6 +72,11 @@ export default {
     this.get_opt_vendors_from_api().then(
       this.opt_vendors = this.optvendors
     )
+    const data = {
+      action: 'get/banners',
+      store_id: router.currentRoute._value.params.id
+    }
+    this.get_salses_banners_to_api(data)
   },
   unmounted () {
   },
@@ -76,20 +84,29 @@ export default {
     ...mapActions([
       'get_opt_mainpage_from_api',
       'get_opt_catalog_from_api',
-      'get_opt_vendors_from_api'
+      'get_opt_vendors_from_api',
+      'get_salses_banners_to_api'
     ]),
     toOrder () {
       this.show_order = true
     },
     fromOrder () {
       this.show_order = false
+    },
+    vendorCheck () {
+      const data = {
+        action: 'get/banners',
+        store_id: router.currentRoute._value.params.id
+      }
+      this.get_salses_banners_to_api(data)
     }
   },
   computed: {
     ...mapGetters([
       'mainpage',
       'optcatalog',
-      'optvendors'
+      'optvendors',
+      'salesbanners'
     ])
   },
   watch: {

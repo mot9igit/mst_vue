@@ -172,18 +172,6 @@
               <div class="kenost-wiget">
                   <Dropdown v-model="this.form.condition" :options="this.condition" optionLabel="name" placeholder="Оплата доставки" class="w-full md:w-14rem" />
               </div>
-              <!--
-              <div class="kenost-wiget mt-2" v-if="this.form.condition.key == 4">
-                <p>Минимальная общая сумма</p>
-                <InputNumber
-                  v-model="this.form.conditionMinSum"
-                  inputId="horizontal-buttons"
-                  :step="0.1"
-                  min="0"
-                  incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-                />
-              </div>
-              -->
               <div class="two-colums mt-2" v-if="this.form.condition.key == 3 || this.form.condition.key == 4">
                   <div class="kenost-wiget">
                     <p>Минимальная общая сумма</p>
@@ -205,6 +193,13 @@
                       incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                     />
                   </div>
+              </div>
+            </div>
+
+            <div class="dart-form-group mb-4">
+              <div class="flex align-items-center">
+                <Checkbox v-model="this.form.not_sale_client" inputId="not_sale_client-1" name="not_sale_client-1" value="true" />
+                <label for="not_sale_client-1" class="ml-2 mb-0">Не действует скидка клиента</label>
               </div>
             </div>
 
@@ -618,7 +613,7 @@
     <Dialog v-model:visible="this.modals.price" :header="this.modals.headers[this.modals.price_step]" :style="{ width: '600px' }">
         <div class="kenost-modal-price">
             <div class="product-kenost-card">
-              <img :src="'https://mst.tools' + this.selected[this.modals.product_id]?.image">
+              <img :src="this.selected[this.modals.product_id]?.image">
               <div class="product-kenost-card__text">
                 <p>{{ this.selected[this.modals.product_id]?.name }}</p>
                 <span>{{this.selected[this.modals.product_id]?.article}}</span>
@@ -813,7 +808,8 @@ export default {
         available_opt: [],
         conditionMinCount: 0,
         conditionMinSum: 0,
-        bigDiscount: []
+        bigDiscount: [],
+        not_sale_client: []
       },
       listAction: {},
       kenostActivityAll: {
@@ -874,9 +870,7 @@ export default {
         { name: '₽', key: 0 },
         { name: '%', key: 1 }
       ],
-      typePrice: [
-        { name: 'Заданная', key: 0 }
-      ],
+      typePrice: [],
       massAction: [
         { name: 'Скидка по формуле', key: 0 },
         { name: 'Тип цен', key: 1 },
@@ -894,7 +888,8 @@ export default {
       'get_sales_to_api',
       'opt_get_complects',
       'opt_upload_products_file',
-      'get_all_sales_to_api'
+      'get_all_sales_to_api',
+      'opt_get_prices'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -1044,7 +1039,8 @@ export default {
           available_opt: this.form.available_opt[0] === 'true',
           complects: this.selected_complects,
           action_id: router.currentRoute._value.params.sales_id,
-          big_sale_actions: this.form.bigDiscount
+          big_sale_actions: this.form.bigDiscount,
+          not_sale_client: this.form.not_sale_client[0] === 'true'
         })
           .then((result) => {
             this.loading = false
@@ -1256,6 +1252,10 @@ export default {
     this.get_sales_to_api({ id: router.currentRoute._value.params.sales_id, actionid: router.currentRoute._value.params.sales_id }).then(() => {
       this.loading = false
     })
+    this.opt_get_prices({
+      action: 'get/type/prices',
+      store_id: router.currentRoute._value.params.id
+    })
   },
   components: {
     FileUpload,
@@ -1279,7 +1279,8 @@ export default {
       'actions',
       'optcomplects',
       'optproductsfile',
-      'allactions'
+      'allactions',
+      'oprprices'
     ])
   },
   watch: {
@@ -1304,6 +1305,13 @@ export default {
       this.allAction = this.allactions.items.map(function (el) {
         return { name: el.name, code: el.id }
       })
+    },
+    oprprices: function (newVal, oldVal) {
+      this.typePrice = []
+      for (let i = 0; i < newVal.length; i++) {
+        this.typePrice.push({ key: newVal[i].guid, name: newVal[i].name })
+      }
+      console.log(this.typePrice)
     },
     actions: function (newVal, oldVal) {
       this.form.name = newVal.name
@@ -1348,6 +1356,10 @@ export default {
       }
       if (newVal.available_opt) {
         this.form.available_opt = ['true']
+      }
+
+      if (newVal.not_sale_client) {
+        this.form.not_sale_client = ['true']
       }
 
       this.form.delay = newVal.delay_graph

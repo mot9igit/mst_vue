@@ -4,7 +4,8 @@ import router from '@/router'
 export default {
   state: {
     actions: [],
-    allactions: []
+    allactions: [],
+    salesbanners: []
   },
   actions: {
     set_sales_to_api ({ commit }, data) {
@@ -66,6 +67,24 @@ export default {
             router.push({ name: 'home' })
           }
         })
+    },
+    get_salses_banners_to_api ({ commit }, data) {
+      return Axios('/rest/front_sales', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('GET_BANNERS_SALES_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
     }
   },
   mutations: {
@@ -74,6 +93,9 @@ export default {
     },
     GET_ALL_ACTION_TO_VUEX: (state, data) => {
       state.allactions = data.data
+    },
+    GET_BANNERS_SALES_TO_VUEX: (state, data) => {
+      state.salesbanners = data.data
     }
   },
   getters: {
@@ -82,6 +104,9 @@ export default {
     },
     allactions (state) {
       return state.allactions
+    },
+    salesbanners (state) {
+      return state.salesbanners
     }
   }
 }
