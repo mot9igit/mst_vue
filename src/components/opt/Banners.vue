@@ -1,51 +1,53 @@
 <template>
     <div class="kenost-banner">
-        <div class="kenost-banner__container">
-            <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
-                <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57edb29a2.jpg" alt="">
-            </router-link>
-        </div>
+        <div class="kenost-banner__section" v-for="n in 10" :key="n">
+            <div class="kenost-banner__container">
+                <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
+                    <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57edb29a2.jpg" alt="">
+                </router-link>
+            </div>
 
-        <div class="kenost-banner__container">
-            <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
-                <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
-            </router-link>
+            <div class="kenost-banner__container">
+                <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
+                    <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
+                </router-link>
 
-            <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
-                <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
-            </router-link>
+                <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
+                    <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
+                </router-link>
 
-            <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
-                <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
-            </router-link>
-        </div>
+                <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
+                    <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
+                </router-link>
+            </div>
 
-        <div class="kenost-banner__container">
-            <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
-                <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
-            </router-link>
+            <div class="kenost-banner__container">
+                <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
+                    <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
+                </router-link>
 
-            <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
-                <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
-            </router-link>
-        </div>
+                <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
+                    <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
+                </router-link>
+            </div>
 
-        <div class="kenost-banner__container">
-            <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
-                <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
-            </router-link>
+            <div class="kenost-banner__container">
+                <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
+                    <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
+                </router-link>
 
-            <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
-                <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
-            </router-link>
+                <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
+                    <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
+                </router-link>
 
-            <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
-                <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
-            </router-link>
+                <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
+                    <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
+                </router-link>
 
-            <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
-                <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
-            </router-link>
+                <router-link :to="{ name: 'promotion', params: { action: '111' } }" class="kenost-banner__image">
+                    <img class="kenost-banner__image-big" src="https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg" alt="">
+                </router-link>
+            </div>
         </div>
     </div>
 
@@ -59,6 +61,9 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'Banners',
   props: {
+    items: {
+      type: Array
+    }
   },
   data () {
     return {
@@ -85,6 +90,12 @@ export default {
         display: flex;
         flex-direction: column;
         gap: 8px;
+
+        &__section{
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
 
         &__container{
             width: 100%;
