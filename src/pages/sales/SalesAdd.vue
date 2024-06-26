@@ -1234,8 +1234,6 @@ export default {
       }
     },
     setDiscountFormul (type, value, typePrice) {
-      console.log(type, value)
-      console.log(this.selected[this.modals.product_id])
       if (type && value >= 0 && typePrice) {
         this.setTypePrice()
         value = Number(value)
