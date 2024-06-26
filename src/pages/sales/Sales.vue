@@ -48,8 +48,8 @@
       </TabPanel>
       <TabPanel header="Мои клиенты">
         <v-table
-          :items_data="dilers.dilers"
-          :total="dilers.total"
+          :items_data="stores.items"
+          :total="stores.total"
           :pagination_items_per_page="this.pagination_items_per_page_dilers"
           :pagination_offset="this.pagination_offset_dilers"
           :page="this.page_dilers"
@@ -170,6 +170,10 @@ export default {
           base_sale: 0,
           id: 0
         }
+      },
+      stores: {
+        items: [],
+        total: -1
       },
       diler_loading: false,
       page: 1,
@@ -496,6 +500,19 @@ export default {
       type: 1,
       page: this.page_dilers,
       perpage: this.pagination_items_per_page_dilers
+    }).then(() => {
+      if (this.dilers) {
+        if (Object.prototype.hasOwnProperty.call(this.dilers, 'dilers')) {
+          this.stores.items = this.dilers.dilers
+        } else {
+          this.stores.items = []
+        }
+        if (Object.prototype.hasOwnProperty.call(this.dilers, 'total')) {
+          this.stores.total = this.dilers.total
+        } else {
+          this.stores.total = 0
+        }
+      }
     })
   },
   components: { vTable, vOpts, Toast, ConfirmDialog, RouterLink, TabView, TabPanel, Dialog, InputNumber },
@@ -512,6 +529,18 @@ export default {
   watch: {
     getregions: function (newVal, oldVal) {
       this.optfilters.region.values = newVal
+    },
+    dilers: function (newVal, oldVal) {
+      if (Object.prototype.hasOwnProperty.call(newVal, 'dilers')) {
+        this.stores.items = newVal.dilers
+      } else {
+        this.stores.items = []
+      }
+      if (Object.prototype.hasOwnProperty.call(newVal, 'total')) {
+        this.stores.total = newVal.total
+      } else {
+        this.stores.total = 0
+      }
     }
   }
 }
