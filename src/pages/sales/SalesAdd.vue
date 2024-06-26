@@ -658,7 +658,7 @@
             <div v-if="this.modals.price_step == 1" class="two-colums mt-3">
               <div class="kenost-wiget">
                   <p>Тип цены</p>
-                  <Dropdown v-model="this.selected[this.modals.product_id].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown @change="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue, this.selected[this.modals.product_id].typePrice)" v-model="this.selected[this.modals.product_id].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
               </div>
               <div class="kenost-wiget-two">
                 <div class="kenost-wiget">
@@ -668,13 +668,13 @@
                     inputId="horizontal-buttons"
                     :step="0.1"
                     min="0"
-                    @update:modelValue="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue)"
+                    @update:modelValue="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue, this.selected[this.modals.product_id].typePrice)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                   />
                 </div>
                 <div class="kenost-wiget">
                   <p>&nbsp;</p>
-                  <Dropdown @change="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue)" v-model="this.selected[this.modals.product_id].typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown @change="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue, this.selected[this.modals.product_id].typePrice)" v-model="this.selected[this.modals.product_id].typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
                 </div>
               </div>
             </div>
@@ -682,7 +682,7 @@
             <div v-if="this.modals.price_step == 2" class="two-colums mt-3">
               <div class="kenost-wiget">
                   <p>Тип цены</p>
-                  <Dropdown v-model="this.selected[this.modals.product_id].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown @change="setTypePrice()" v-model="this.selected[this.modals.product_id].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
               </div>
             </div>
 
@@ -906,7 +906,8 @@ export default {
       'opt_get_complects',
       'opt_upload_products_file',
       'get_all_sales_to_api',
-      'opt_get_prices'
+      'opt_get_prices',
+      'opt_get_remain_prices'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -1082,6 +1083,15 @@ export default {
       product.typeFormul = {}
       product.typePrice = ''
 
+      const dataProduct = {
+        action: 'get/product/prices',
+        remain_id: product.id
+      }
+
+      this.opt_get_remain_prices(dataProduct).then((res) => {
+        product.prices = res.data.data
+      })
+
       this.selected[product.id] = product
       this.products = this.products.filter((r) => r.id !== id)
       const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
@@ -1147,6 +1157,12 @@ export default {
       const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
       this.total_selected--
+    },
+    setTypePrice () {
+      const getPrice = this.selected[this.modals.product_id].prices.find(r => r.guid === this.selected[this.modals.product_id].typePrice.key).price
+      this.selected[this.modals.product_id].finalPrice = Number(getPrice)
+      this.selected[this.modals.product_id].discountInRubles = Number(this.selected[this.modals.product_id].price) - Number(getPrice)
+      this.selected[this.modals.product_id].discountInterest = (Number(this.selected[this.modals.product_id].price) - Number(getPrice)) / (Number(this.selected[this.modals.product_id].price) / 100)
     },
     selectOrganization (id) {
       const organization = this.all_organizations.find(r => r.id === id)
@@ -1217,17 +1233,26 @@ export default {
           break
       }
     },
-    setDiscountFormul (type, value) {
-      if (type && value !== 0) {
+    setDiscountFormul (type, value, typePrice) {
+      console.log(type, value)
+      console.log(this.selected[this.modals.product_id])
+      if (type && value >= 0 && typePrice) {
+        this.setTypePrice()
+        value = Number(value)
+        let getPrice = Number(this.selected[this.modals.product_id].price)
+
+        if (this.selected[this.modals.product_id].typePrice) {
+          // eslint-disable-next-line no-unused-vars
+          getPrice = Number(this.selected[this.modals.product_id].prices.find(r => r.guid === this.selected[this.modals.product_id].typePrice.key).price)
+        }
         if (type.key === 0) {
-          value = Number(value)
-          this.selected[this.modals.product_id].discountInRubles = value
-          this.selected[this.modals.product_id].discountInterest = value / (this.selected[this.modals.product_id].price / 100)
-          this.selected[this.modals.product_id].finalPrice = this.selected[this.modals.product_id].price - value
+          this.selected[this.modals.product_id].discountInRubles = Number(this.selected[this.modals.product_id].price) - (getPrice - value)
+          this.selected[this.modals.product_id].discountInterest = (Number(this.selected[this.modals.product_id].price) - (getPrice - value)) / (Number(this.selected[this.modals.product_id].price) / 100)
+          this.selected[this.modals.product_id].finalPrice = getPrice - value
         } else if (type.key === 1) {
-          this.selected[this.modals.product_id].discountInRubles = (this.selected[this.modals.product_id].price / 100) * value
-          this.selected[this.modals.product_id].discountInterest = value
-          this.selected[this.modals.product_id].finalPrice = this.selected[this.modals.product_id].price - (Number(this.selected[this.modals.product_id].price) / 100) * value
+          this.selected[this.modals.product_id].discountInRubles = Number(this.selected[this.modals.product_id].price) - (getPrice - (value * (getPrice / 100)))
+          this.selected[this.modals.product_id].discountInterest = (Number(this.selected[this.modals.product_id].price) - (value * (getPrice / 100))) / (Number(this.selected[this.modals.product_id].price) / 100)
+          this.selected[this.modals.product_id].finalPrice = getPrice - (value * (getPrice / 100))
         }
       }
     }
@@ -1287,7 +1312,8 @@ export default {
       'optcomplects',
       'optproductsfile',
       'allactions',
-      'oprprices'
+      'oprprices',
+      'oprpricesremain'
     ])
   },
   watch: {

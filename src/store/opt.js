@@ -13,7 +13,9 @@ export default {
     optproductsfile: [],
     optwarehouse: {
       name_short: ''
-    }
+    },
+    oprprices: [],
+    oprpricesremain: []
   },
   actions: {
     set_vendors_to_api ({ commit }, data) {
@@ -310,6 +312,25 @@ export default {
             router.push({ name: 'home' })
           }
         })
+    },
+    opt_get_remain_prices ({ commit }, data) {
+      return Axios('/rest/front_opt', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_OPT_REMAIN_PRICES', response.data.data)
+          return response
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
     }
   },
   mutations: {
@@ -333,6 +354,9 @@ export default {
     },
     SET_OPT_PRICES: (state, data) => {
       state.oprprices = data
+    },
+    SET_OPT_REMAIN_PRICES: (state, data) => {
+      state.oprpricesremain = data
     },
     SET_OPT_PRODUCT_TO_VUEX: (state, data) => {
       for (let i = 0; i < Object.keys(state.optproducts.items).length; i++) {
@@ -412,6 +436,9 @@ export default {
     },
     oprprices (state) {
       return state.oprprices
+    },
+    oprpricesremain (state) {
+      return state.oprpricesremain
     }
   }
 }
