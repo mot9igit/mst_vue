@@ -13,10 +13,14 @@
                 itemtype="http://schema.org/ListItem"
             >
                 <span v-if="crumb.current" class="am-breadcrumbs__link am-breadcrumbs__link_current">
-                    {{ crumb.link != "store_id" ? crumb.label : organization.name_short }}
+                  <span v-if="crumb.link == 'store_id'"> {{ organization.name_short }} </span>
+                  <span v-else-if="crumb.link == 'warehouse_id'"> {{ optwarehouse.name_short }} </span>
+                  <span v-else>{{ crumb.label }}</span>
                 </span>
                 <router-link v-else class="am-breadcrumbs__link" :to="crumb._path">
-                    {{ crumb.link != "store_id" ? crumb.label : organization.name_short }}
+                  <span v-if="crumb.link == 'store_id'"> {{ organization.name_short }} </span>
+                  <span v-else-if="crumb.link == 'warehouse_id'"> {{ optwarehouse.name_short }} </span>
+                  <span v-else>{{ crumb.label }}</span>
                 </router-link>
             </li>
         </ol>
@@ -47,16 +51,23 @@ export default {
   },
   methods: {
     ...mapActions([
-      'get_organization_from_api'
+      'get_organization_from_api',
+      'get_opt_warehouse'
     ])
   },
   mounted () {
     this.get_organization_from_api()
+    if (this.$route.params.warehouse_id) {
+      this.get_opt_warehouse().then(
+        this.opt_warehouse = this.optwarehouse
+      )
+    }
   },
   components: { },
   computed: {
     ...mapGetters([
-      'organization'
+      'organization',
+      'optwarehouse'
     ])
   }
 }

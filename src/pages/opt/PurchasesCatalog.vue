@@ -89,12 +89,18 @@ export default {
     }).then(
       this.opt_products = this.optproducts
     )
+    if (this.$route.params.warehouse_id) {
+      this.get_opt_warehouse().then(
+        this.opt_warehouse = this.optwarehouse
+      )
+    }
   },
   updated () { },
   unmounted () {
   },
   methods: {
     ...mapActions([
+      'get_opt_warehouse',
       'get_opt_mainpage_from_api',
       'get_opt_catalog_from_api',
       'get_opt_vendors_from_api',
@@ -123,8 +129,12 @@ export default {
       }).then(() => {
         this.opt_products = this.optproducts
         this.loading = false
+      })
+      if (this.$route.params.warehouse_id) {
+        this.get_opt_warehouse().then(
+          this.opt_warehouse = this.optwarehouse
+        )
       }
-      )
     },
     catalogUpdate () {
       this.get_opt_products_from_api({
@@ -154,7 +164,8 @@ export default {
       'mainpage',
       'optcatalog',
       'optvendors',
-      'optproducts'
+      'optproducts',
+      'optwarehouse'
     ]),
     pageCount () {
       return Math.ceil(this.opt_products.total / this.perpage)
@@ -175,6 +186,11 @@ export default {
     },
     $route () {
       this.updatePage(this.$route.params.category_id)
+      if (this.$route.params.warehouse_id) {
+        this.get_opt_warehouse().then(
+          this.opt_warehouse = this.optwarehouse
+        )
+      }
     }
   }
 }

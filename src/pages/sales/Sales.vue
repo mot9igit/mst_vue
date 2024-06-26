@@ -44,7 +44,46 @@
           </template>
         </v-table>
       </TabPanel>
+      <TabPanel header="Мои клиенты">
+        <v-table
+          :items_data="dilers.dilers"
+          :total="dilers.total"
+          :pagination_items_per_page="this.pagination_items_per_page_dilers"
+          :pagination_offset="this.pagination_offset_dilers"
+          :page="this.page_dilers"
+          :table_data="this.table_data_dilers"
+          title="Мои клиенты"
+          @filter="filterDilers"
+          @paginate="paginateDilers"
+          @editElem="editDiler"
+        />
+      </TabPanel>
   </TabView>
+  <Dialog v-model:visible="this.modals.diler" header="Редактирование дилера" :style="{ width: '400px' }">
+    <div class="kenost-modal-price">
+        <span class="title">{{ form.diler.name }}</span>
+        <div class="mt-2">
+            <div class="kenost-wiget">
+                <p>Базовая скидка на товар, %</p>
+                <InputNumber
+                    v-model="this.form.diler.base_sale"
+                    inputId="horizontal-buttons"
+                    :step="0.1"
+                    min="0"
+                    max="100"
+                    suffix=" %"
+                    @update:modelValue="delayUpdate"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                />
+            </div>
+        </div>
+        <div class="kenost-modal-price__button kenost-modal-price__flex">
+            <div class="dart-btn dart-btn-primary" @click.prevent="setSale" :class="{'dart-btn-loading': diler_loading}">
+                Подтвердить
+            </div>
+        </div>
+    </div>
+  </Dialog>
 </template>
 
 <script>
@@ -53,6 +92,8 @@ import vTable from '../../components/table/v-table'
 import { RouterLink } from 'vue-router'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import Dialog from 'primevue/dialog'
+import InputNumber from 'primevue/inputnumber'
 import router from '@/router'
 
 export default {
@@ -73,12 +114,62 @@ export default {
     pagination_offset_complects: {
       type: Number,
       default: 0
+    },
+    pagination_items_per_page_dilers: {
+      type: Number,
+      default: 25
+    },
+    pagination_offset_dilers: {
+      type: Number,
+      default: 0
     }
   },
   data () {
     return {
+      modals: {
+        diler: false
+      },
+      form: {
+        diler: {
+          name: '',
+          address: '',
+          base_sale: 0,
+          id: 0
+        }
+      },
+      diler_loading: false,
       page: 1,
       page_complects: 1,
+      page_dilers: 1,
+      table_data_dilers: {
+        name: {
+          label: 'Наименование',
+          type: 'link',
+          link_to: 'org_diler',
+          link_params: {
+            diler_id: 'id'
+          }
+        },
+        address: {
+          label: 'Адрес',
+          type: 'text'
+        },
+        base_sale: {
+          label: 'Базовая скидка, %',
+          type: 'text'
+        },
+        actions: {
+          label: 'Действия',
+          type: 'actions',
+          sort: false,
+          available: {
+            edit: {
+              icon: 'pi pi-pencil',
+              label: 'Редактировать'
+            }
+          }
+        }
+      },
       filters: {
         name: {
           name: 'Название, бренд или артикул',
@@ -185,7 +276,9 @@ export default {
       'get_sales_to_api',
       'set_sales_to_api',
       'opt_get_complects',
-      'opt_api'
+      'opt_api',
+      'get_dilers_from_api',
+      'set_diler_to_api'
     ]),
     filter (data) {
       data.type = 'b2b'
@@ -195,6 +288,12 @@ export default {
       data.action = 'complects/get'
       data.store_id = router.currentRoute._value.params.id
       this.opt_get_complects(data)
+    },
+    filterDilers (data) {
+      this.get_dilers_from_api(data)
+    },
+    paginateDilers (data) {
+      this.get_dilers_from_api(data)
     },
     paginate (data) {
       this.page = data.page
@@ -209,6 +308,33 @@ export default {
     },
     editElem (value) {
       router.push({ name: 'org_sales_edit', params: { id: this.$route.params.id, sales_id: value.id } })
+    },
+    editDiler (value) {
+      this.form.diler.name = value.name
+      this.form.diler.id = value.id
+      this.form.diler.base_sale = value.base_sale
+      this.modals.diler = !this.modals.diler
+    },
+    setSale () {
+      this.diler_loading = true
+      const data = this.form.diler
+      data.action = 'diler/set'
+      data.warehouse_id = this.$route.params.id
+      this.$load(async () => {
+        await this.set_diler_to_api(data)
+          .then((result) => {
+            this.diler_loading = false
+            this.modals.diler = false
+            this.get_dilers_from_api({
+              type: 1,
+              page: this.page_dilers,
+              perpage: this.pagination_items_per_page_dilers
+            })
+          })
+          .catch((result) => {
+            console.log(result)
+          })
+      })
     },
     editComplects (value) {
       router.push({ name: 'complect_edit', params: { id: this.$route.params.id, complect_id: value.id } })
@@ -285,12 +411,18 @@ export default {
       perpage: this.pagination_items_per_page_complects,
       store_id: router.currentRoute._value.params.id
     })
+    this.get_dilers_from_api({
+      type: 1,
+      page: this.page_dilers,
+      perpage: this.pagination_items_per_page_dilers
+    })
   },
-  components: { vTable, RouterLink, TabView, TabPanel },
+  components: { vTable, RouterLink, TabView, TabPanel, Dialog, InputNumber },
   computed: {
     ...mapGetters([
       'actions',
-      'optcomplects'
+      'optcomplects',
+      'dilers'
     ])
   }
 }

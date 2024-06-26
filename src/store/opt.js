@@ -10,10 +10,33 @@ export default {
     optbasket: [],
     optorder: [],
     optcomplects: [],
-    optproductsfile: []
+    optproductsfile: [],
+    optwarehouse: {
+      name_short: ''
+    }
   },
   actions: {
     set_vendors_to_api ({ commit }, data) {
+      return Axios('/rest/front_setobjects', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          // commit('SET_MATRIX_TO_VUEX', response.data)
+          // console.log(data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    toggle_opts_visible ({ commit }, data) {
+      data.type = 'toggleOptsVisible'
       return Axios('/rest/front_setobjects', {
         method: 'POST',
         data: data,
@@ -119,7 +142,7 @@ export default {
         method: 'POST',
         data: {
           id: router.currentRoute._value.params.id,
-          type: router.currentRoute._value.params.type,
+          warehouse_id: router.currentRoute._value.params.warehouse_id,
           action: 'get/catalog'
         },
         headers: {
@@ -128,6 +151,29 @@ export default {
       })
         .then((response) => {
           commit('SET_OPT_CATALOG_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    get_opt_warehouse ({ commit }) {
+      const data = {
+        id: router.currentRoute._value.params.id,
+        warehouse_id: router.currentRoute._value.params.warehouse_id,
+        action: 'get/warehouse'
+      }
+      return Axios('/rest/front_opt', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_OPT_WAREHOUSE_TO_VUEX', response.data)
         })
         .catch(error => {
           if (error.response.status === 403) {
@@ -257,6 +303,9 @@ export default {
     SET_OPT_VENDORS_TO_VUEX: (state, data) => {
       state.optvendors = data.data
     },
+    SET_OPT_WAREHOUSE_TO_VUEX: (state, data) => {
+      state.optwarehouse = data.data
+    },
     SET_OPT_PRODUCTS_TO_VUEX: (state, data) => {
       state.optproducts = data.data
     },
@@ -320,6 +369,9 @@ export default {
     },
     optvendors (state) {
       return state.optvendors
+    },
+    optwarehouse (state) {
+      return state.optwarehouse
     },
     optproducts (state) {
       return state.optproducts

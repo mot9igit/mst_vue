@@ -1,10 +1,28 @@
 <template>
     <div class="d-col-menu menuShow" :class="{'active' : this.isMenuActive}">
-        <ul class="dart-catalog-menu">
+        <ul class="dart-catalog-menu" v-if="$route.params.warehouse_id">
             <li class="dart-catalog-menu__category">
-                <RouterLink :to="{ name: 'purchases_catalog', params: { category_id: 'all' }}" class="dart-catalog-menu__el">
-                    <span class="img_blank"></span><span>Весь каталог</span>
-                </RouterLink>
+                <div @click="$router.push({ name: 'purchases_home', params: { id: $route.params.id }})" class="dart-catalog-menu__el">
+                    <img src="@/assets/img/icons/arrow.svg" style="padding: 15px 15px;" alt="">
+                    <span><b>Поставщик «{{ optwarehouse.name_short }}»</b></span>
+                </div>
+            </li>
+            <CatalogEl v-for="item in items" v-bind:key="item.id" :items="item"/>
+        </ul>
+        <ul class="dart-catalog-menu" v-else>
+            <li class="dart-catalog-menu__category">
+                <div @click="setActive($event)" class="dart-catalog-menu__el">
+                    <img src="@/assets/img/icons/catalog.svg" style="padding: 5px 5px;" alt="">
+                    <span>Каталоги поставщиков</span>
+                </div>
+                <ul class="dart-catalog-menu__list">
+                    <li v-for="(item) in this.optvendors.selected" :key="item.id">
+                        <span></span>
+                        <RouterLink :to="{ name: 'purchases_catalog_warehouse', params: { warehouse_id: item.id }}" class="dart-catalog-menu__el">
+                            {{ item.name_short }}
+                        </RouterLink>
+                    </li>
+                </ul>
             </li>
             <CatalogEl v-for="item in items" v-bind:key="item.id" :items="item"/>
         </ul>
@@ -41,19 +59,65 @@ export default {
   },
   methods: {
     ...mapActions([
-    ])
+      'get_opt_warehouse'
+    ]),
+    setActive (e) {
+      this.active = !this.active
+      // console.log(e.target.parentNode.querySelector('.dart-catalog-menu__list'))
+      if (e.target.parentNode.parentNode.querySelector('.dart-catalog-menu__list')) {
+        if (e.target.parentNode.parentNode.querySelector('.dart-catalog-menu__list').style.maxHeight) {
+          e.target.parentNode.parentNode.querySelector('.dart-catalog-menu__list').style.maxHeight = null
+        } else {
+          e.target.parentNode.parentNode.querySelector('.dart-catalog-menu__list').style.maxHeight = e.target.parentNode.parentNode.querySelector('.dart-catalog-menu__list').scrollHeight + 'px'
+        }
+      }
+    }
   },
   mounted () {
+    if (this.$route.params.warehouse_id) {
+      this.get_opt_warehouse().then(
+        this.opt_warehouse = this.optwarehouse
+      )
+    }
   },
   components: { CatalogEl },
   computed: {
     ...mapGetters([
+      'optvendors',
+      'optwarehouse'
     ])
   }
 }
 </script>
 <style lang="scss">
-
+    .dart-catalog-menu__prev{
+        a{
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            transition: all 1s;
+            padding: 7px;
+            background: #fff;
+            span.icon{
+                width: 40px;
+                height: 40px;
+                border-radius: 5px;
+                background: #F8F7F5;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                i{
+                    padding-right: 3px;
+                    font-size: 20px;
+                }
+                & + span{
+                    font-size: 16px;
+                    font-weight: 500;
+                    padding-left: 10px;
+                }
+            }
+        }
+    }
     .d-col-menu.active + .d-col-content{
         max-width: calc(100% - calc(64px + 350px));
         min-width: calc(100% - calc(64px + 350px));
@@ -232,7 +296,7 @@ export default {
                 width: 40px;
                 height: 40px;
                 border-radius: 5px;
-                background: #F8F7F5;
+                background: transparent;
             }
 
             img{

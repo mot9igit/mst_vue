@@ -9,7 +9,7 @@
             <div class="navmain__search a-dart-input a-dart-input-search">
                 <form action="#" method="post" @submit.prevent="toSearch()">
                     <div class="navmain__search_btn">
-                        <input type="text" placeholder="Найти во всех магазинах" v-model="search"/>
+                        <input type="text" placeholder="Найти у выбранных поставщиков" v-model="search"/>
                         <button type="submit" class="navmain__dart_btn a-dart-btn a-dart-btn-primary">Найти</button>
                     </div>
                 </form>

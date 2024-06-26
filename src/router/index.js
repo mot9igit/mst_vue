@@ -246,6 +246,16 @@ const routes = [
               }
             }
           }, {
+            path: ':warehouse_id',
+            name: 'purchases_catalog_warehouse',
+            component: PurchasesCatalog,
+            meta: {
+              breadcrumb: {
+                label: 'Каталог оптовика',
+                link: 'warehouse_id'
+              }
+            }
+          }, {
             path: ':category_id',
             name: 'purchases_catalog',
             component: PurchasesCatalog,

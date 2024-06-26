@@ -155,7 +155,7 @@ export default {
     ...mapActions([
       'set_vendors_to_api',
       'get_opt_vendors_from_api',
-      'toggle_opts'
+      'toggle_opts_visible'
     ]),
     toggleVendorModal () {
       this.vendorModal = !this.vendorModal
@@ -170,7 +170,7 @@ export default {
         action: action,
         store: router.currentRoute._value.params.id
       }
-      this.toggle_opts(data).then(() => {
+      this.toggle_opts_visible(data).then(() => {
         this.get_opt_vendors_from_api().then((result) => {
           this.loading = false
           this.$emit('vendorCheck')

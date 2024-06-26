@@ -1,7 +1,8 @@
 <template>
     <li class="dart-catalog-menu__category" :class="{'active' : this.active}">
         <div @click="setActive($event)" class="dart-catalog-menu__el">
-            <img :src="items.menu_image" :alt="items.pagetitle"/>
+            <img :src="items.menu_image" :alt="items.pagetitle" v-if="items.menu_image"/>
+            <span class="img_blank" v-else></span>
             <span>{{ items.pagetitle }}</span>
         </div>
         <ul class="dart-catalog-menu__list">

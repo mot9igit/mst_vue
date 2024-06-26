@@ -6,6 +6,24 @@ export default {
     dilers: []
   },
   actions: {
+    set_diler_to_api ({ commit }, data) {
+      return Axios('/rest/front_setobjects', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          // commit('SET_MATRIX_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
     get_dilers_from_api ({ commit }, { type, filter, page, perpage }) {
       console.log(filter)
       return Axios('/rest/front_getdilers', {
