@@ -5,7 +5,7 @@
     <div class="d-col-content">
       <div class="dart-home dart-window">
         <span class="h2">Акции</span>
-        <Banners />
+        <Banners :items="salesbanners"/>
         <!-- <HomeSwiper :items="this.mainpage.main_slider_big"/>
         <HomeMinSwiper :items="this.mainpage.main_slider_small"/> -->
         <!--
@@ -47,7 +47,8 @@ export default {
       reloading: false,
       opt_mainpage: {},
       opt_catalog: {},
-      opt_vendors: {}
+      opt_vendors: {},
+      sales_banners: {}
     }
   },
   components: {
@@ -118,6 +119,9 @@ export default {
     },
     optvendors: function (newVal, oldVal) {
       this.opt_vendors = newVal
+    },
+    salesbanners: function (newVal, oldVal) {
+      this.sales_banners = newVal
     }
   }
 }
