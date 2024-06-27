@@ -202,6 +202,7 @@ export default {
       value: 1
     }
   },
+  emits: ['fromOrder', 'orderSubmit'],
   methods: {
     ...mapActions([
       'busket_from_api',
@@ -216,6 +217,7 @@ export default {
       this.opt_order_api(data).then((response) => {
         // console.log(response)
         this.order = response.data.data.data[0]
+        this.$emit('orderSubmit')
         const data = { action: 'basket/get', id: router.currentRoute._value.params.id }
         this.busket_from_api(data).then(
           this.basket = this.optbasket

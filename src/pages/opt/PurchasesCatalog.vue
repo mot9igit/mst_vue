@@ -4,9 +4,9 @@
       <div class="d-col-content">
         <div class="dart-home dart-window">
             <Breadcrumbs :items="this.$breadcrumbs"/>
-            <div v-if="$route.params.category_id == 'all'">
+            <div v-if="$route.params.warehouse_id && !$route.params.warehouse_cat_id">
               <h1 class="h1-mini">Все товары</h1>
-              <div class="dart-alert dart-alert-info">В данном разделе перечислены все товары поставщиков, в том числе и не сопоставленные со справочником системы.</div>
+              <div class="dart-alert dart-alert-info">В данном разделе перечислены все товары поставщика, в том числе и не сопоставленные со справочником системы.</div>
             </div>
             <h1 class="h1-mini" v-else>{{opt_products?.page?.pagetitle}}</h1>
             <div v-if="opt_products.total == 0 && opt_products.categories" class="categories">
@@ -36,7 +36,7 @@
         <Basket @catalogUpdate="catalogUpdate" ref="childComponent" @toOrder="toOrder"/>
       </div>
     </div>
-    <OrderModal :show="show_order" @fromOrder="fromOrder"/>
+    <OrderModal :show="show_order" @fromOrder="fromOrder" @orderSubmit="updatePage($route.params.category_id)"/>
   </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
