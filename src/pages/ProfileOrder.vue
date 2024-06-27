@@ -47,7 +47,7 @@
           <!--<a href="#" class="dart-btn dart-btn-primary-outline">Отменить заказ</a>-->
           <a href="#" class="dart-btn dart-btn-primary" :disabled="isLoading == true" :class="{ 'dart-btn-loading': isLoading }" @click="order.stage_check_code? check_code() : change_ststatus()" >{{ order.transition_anchor }}</a>
         </div>
-        <div class="block-header__buttons" v-if="order.warehouses_available != 0 && (organization.warehouse && organization.vendor)">
+        <div class="block-header__buttons" v-if="order.warehouses_available != 0 && (organization.warehouse || organization.vendor)">
           <!--<a href="#" class="dart-btn dart-btn-primary-outline">Отменить заказ</a>-->
           <a href="#" class="dart-btn dart-btn-primary" :disabled="isLoading == true" :class="{ 'dart-btn-loading': isLoading }" @click="order.stage_check_code? check_code() : change_ststatus()">{{ order.transition_anchor }}</a>
         </div>
