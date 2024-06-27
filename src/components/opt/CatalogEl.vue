@@ -5,7 +5,11 @@
             <span class="img_blank" v-else></span>
             <span>{{ items.pagetitle }}</span>
         </div>
-        <ul class="dart-catalog-menu__list">
+        <ul class="dart-catalog-menu__list" v-if="$route.params.warehouse_id">
+          <!-- <a v-for="item in items.children" v-bind:key="item.id" :href="'purchases/'+item.id" class="dart-catalog-menu__el"><li>{{item.pagetitle}}</li></a> -->
+          <RouterLink :to="{ name: 'org_opt_waregouse_category', params: { warehouse_cat_id: item.id }}" v-for="item in items.children" v-bind:key="item.id" class="dart-catalog-menu__el"><li>{{item.pagetitle}}</li></RouterLink>
+        </ul>
+        <ul class="dart-catalog-menu__list" v-else>
           <!-- <a v-for="item in items.children" v-bind:key="item.id" :href="'purchases/'+item.id" class="dart-catalog-menu__el"><li>{{item.pagetitle}}</li></a> -->
           <RouterLink :to="{ name: 'purchases_catalog', params: { category_id: item.id }}" v-for="item in items.children" v-bind:key="item.id" class="dart-catalog-menu__el"><li>{{item.pagetitle}}</li></RouterLink>
         </ul>

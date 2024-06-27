@@ -260,14 +260,26 @@ const routes = [
             component: Promotion
           }, {
             path: 'warehouses/:warehouse_id',
-            name: 'purchases_catalog_warehouse',
-            component: PurchasesCatalog,
-            meta: {
-              breadcrumb: {
-                label: 'Каталог оптовика',
-                link: 'warehouse_id'
+            children: [{
+              path: '',
+              name: 'purchases_catalog_warehouse',
+              component: PurchasesCatalog,
+              meta: {
+                breadcrumb: {
+                  label: 'Каталог оптовика',
+                  link: 'warehouse_id'
+                }
               }
-            }
+            },
+            {
+              path: ':warehouse_cat_id',
+              children: [{
+                path: '',
+                name: 'org_opt_waregouse_category',
+                label: 'Мой оптовик',
+                component: PurchasesCatalog
+              }]
+            }]
           }, {
             path: 'search/:search',
             name: 'opt_search',

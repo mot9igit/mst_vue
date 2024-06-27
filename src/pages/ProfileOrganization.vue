@@ -914,19 +914,7 @@ export default {
       this.get_data_from_api({
         page: this.page,
         perpage: this.pagination_items_per_page
-      }).then(() => {
-        this.avg_info.remains = this.products.avg_info?.remains
-        if (Object.prototype.hasOwnProperty.call(this.products.avg_info, 'no_money')) {
-          this.avg_info.no_money = this.products.avg_info.no_money
-        } else {
-          this.avg_info.no_money = 0
-        }
-        if (Object.prototype.hasOwnProperty.call(this.products.avg_info, 'sales_speed')) {
-          this.avg_info.sales_speed = this.products.avg_info.sales_speed
-        } else {
-          this.avg_info.sales_speed = 0
-        }
-      })
+      }).then(() => { })
     })
   },
   components: { Chart, vTable, Calendar, customModal, Checkbox, primeCalendar, Toast, RadioButton, DatePicker },
@@ -955,6 +943,25 @@ export default {
     }
   },
   watch: {
+    products (newVal, oldVal) {
+      if (typeof newVal === 'object') {
+        this.avg_info.remains = newVal.avg_info?.remains
+        if (Object.prototype.hasOwnProperty.call(newVal.avg_info, 'no_money')) {
+          this.avg_info.no_money = newVal.avg_info.no_money
+        } else {
+          this.avg_info.no_money = 0
+        }
+        if (Object.prototype.hasOwnProperty.call(newVal.avg_info, 'sales_speed')) {
+          this.avg_info.sales_speed = newVal.avg_info.sales_speed
+        } else {
+          this.avg_info.sales_speed = 0
+        }
+      } else {
+        this.avg_info.remains = 0
+        this.avg_info.no_money = 0
+        this.avg_info.sales_speed = 0
+      }
+    },
     work_date (newVal, oldVal) {
       // console.log(newVal)
       // console.log(oldVal)

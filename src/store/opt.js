@@ -213,12 +213,21 @@ export default {
         })
     },
     get_opt_products_from_api ({ commit }, { page, perpage }) {
+      let cat = 0
+      if (router.currentRoute._value.params.warehouse_id && !router.currentRoute._value.params.warehouse_cat_id) {
+        cat = 'all'
+      }
+      if (!router.currentRoute._value.params.warehouse_id && !router.currentRoute._value.params.warehouse_cat_id) {
+        cat = router.currentRoute._value.params.category_id
+      }
       return Axios('/rest/front_opt', {
         method: 'POST',
         data: {
           id: router.currentRoute._value.params.id,
           type: router.currentRoute._value.params.type,
-          category_id: router.currentRoute._value.params.category_id,
+          category_id: cat,
+          warehouse_id: router.currentRoute._value.params.warehouse_id,
+          warehouse_cat_id: router.currentRoute._value.params.warehouse_cat_id,
           search: router.currentRoute._value.params.search,
           page: page,
           perpage: perpage,
