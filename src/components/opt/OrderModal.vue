@@ -130,9 +130,7 @@
                             -->
                         </div>
                         <div class="k-order__final-button">
-                            <!--
-                            <div class="a-dart-btn a-dart-btn-secondary">Скачать</div>
-                            -->
+                            <div class="a-dart-btn a-dart-btn-secondary" @click="generateXSLX">Скачать</div>
                             <div class="a-dart-btn a-dart-btn-primary k-order__oplata" @click.prevent="orderSubmit(store.id)"><p>Отправить заказ</p> <p>{{ store?.cost?.toLocaleString('ru') }} ₽</p></div>
                         </div>
                     </div>
@@ -206,7 +204,8 @@ export default {
   methods: {
     ...mapActions([
       'busket_from_api',
-      'opt_order_api'
+      'opt_order_api',
+      'opt_api'
     ]),
     fromOrder () {
       this.order = false
@@ -245,6 +244,12 @@ export default {
     clearBasketProduct (storeid, productid) {
       const data = { action: 'basket/clear', id: router.currentRoute._value.params.id, store_id: storeid, id_remain: productid }
       this.busket_from_api(data).then()
+    },
+    generateXSLX () {
+      const data = { action: 'generate/xslx', id: router.currentRoute._value.params.id }
+      this.opt_api(data).then((res) => {
+        console.log(res)
+      })
     }
   },
   mounted () {
