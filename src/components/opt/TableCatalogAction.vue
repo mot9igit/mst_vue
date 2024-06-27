@@ -31,8 +31,8 @@
                 <td class="k-table__title" @click="openActions(item)"><p>{{item.name}}</p></td>
                 <td class="k-table__busket complect-button__td">
                   <form class="k-table__form complect-button__form" action="" v-if="index === 0" :class="{'basket-true' : item.basket.availability}">
-                    <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCountComplect" :min="1" :id="item.complect_id" :store_id="items.store_id" :index="item.complect_id" :max="item.remain_complect" :value="item.basket.count"/>
-                    <div @click="addBasketComplect(item.complect_id, item.basket.count, items.store_id, index)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
+                    <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCountComplect" :min="1" :id="item.complect_id" :store_id="items.store_id" :index="item.complect_id" :max="item.remain.min_count" :value="item.basket.count"/>
+                    <div @click="addBasketComplect(item.complect_id, item.basket.count, items.store_id, index, item.remain.min_count)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
                   </form>
                 </td>
                 <!-- <td>{{item.store_name}}</td> -->
@@ -116,17 +116,18 @@ export default {
     addBasket (id, value, storeid, index) {
       const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_remain: id, value, store_id: storeid }
       this.busket_from_api(data).then()
-      console.log(this.items.products[id])
       // eslint-disable-next-line vue/no-mutating-props
       this.items.products[id].basket.availability = true
       this.$emit('updateBasket')
     },
-    addBasketComplect (complectid, value, storeid, index) {
-      const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_complect: complectid, value, store_id: storeid }
-      this.busket_from_api(data).then()
-      // eslint-disable-next-line vue/no-mutating-props
-      this.items.complects[complectid].products[0].basket.availability = true
-      this.$emit('updateBasket')
+    addBasketComplect (complectid, value, storeid, index, remain) {
+      if (remain !== 0) {
+        const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_complect: complectid, value, store_id: storeid }
+        this.busket_from_api(data).then()
+        // eslint-disable-next-line vue/no-mutating-props
+        this.items.complects[complectid].products[0].basket.availability = true
+        this.$emit('updateBasket')
+      }
     },
     ElemCount (object) {
       if (object.value >= Number(object.max)) {
