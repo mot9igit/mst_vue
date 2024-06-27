@@ -531,14 +531,19 @@ export default {
       this.optfilters.region.values = newVal
     },
     dilers: function (newVal, oldVal) {
-      if (Object.prototype.hasOwnProperty.call(newVal, 'dilers')) {
-        this.stores.items = newVal.dilers
+      if (typeof newVal === 'object') {
+        if (Object.prototype.hasOwnProperty.call(newVal, 'dilers')) {
+          this.stores.items = newVal.dilers
+        } else {
+          this.stores.items = []
+        }
+        if (Object.prototype.hasOwnProperty.call(newVal, 'total')) {
+          this.stores.total = newVal.total
+        } else {
+          this.stores.total = 0
+        }
       } else {
         this.stores.items = []
-      }
-      if (Object.prototype.hasOwnProperty.call(newVal, 'total')) {
-        this.stores.total = newVal.total
-      } else {
         this.stores.total = 0
       }
     }

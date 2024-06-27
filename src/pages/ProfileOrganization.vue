@@ -916,8 +916,16 @@ export default {
         perpage: this.pagination_items_per_page
       }).then(() => {
         this.avg_info.remains = this.products.avg_info?.remains
-        this.avg_info.no_money = this.products.avg_info.no_money
-        this.avg_info.sales_speed = this.products.avg_info.sales_speed
+        if (Object.prototype.hasOwnProperty.call(this.products.avg_info, 'no_money')) {
+          this.avg_info.no_money = this.products.avg_info.no_money
+        } else {
+          this.avg_info.no_money = 0
+        }
+        if (Object.prototype.hasOwnProperty.call(this.products.avg_info, 'sales_speed')) {
+          this.avg_info.sales_speed = this.products.avg_info.sales_speed
+        } else {
+          this.avg_info.sales_speed = 0
+        }
       })
     })
   },

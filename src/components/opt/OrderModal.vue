@@ -102,12 +102,15 @@
                             </div>
                         </div>
                         <div class="k-order__product-data">
-                            <p class="k-order__info">Отсрочка: <span>50 дн.</span></p>
-                            <p class="k-order__info">Оплата доставки: <span>Покупатель</span></p>
+                            <!--
+                                <p class="k-order__info">Отсрочка: <span>50 дн.</span></p>
+                                <p class="k-order__info">Оплата доставки: <span>Покупатель</span></p>
+                            -->
                         </div>
                     </div>
                     <div class="k-order__final">
                         <div class="k-order__final-info">
+                            <!--
                             <div class="k-order__colums">
                                 <p>Кол-во SKU с отсрочкой Х</p>
                                 <p>0</p>
@@ -121,10 +124,10 @@
                                 <p>0</p>
                             </div>
                             <div class="k-order__colums">
-                                <!-- (шт) -->
                                 <p>Объем заказа </p>
                                 <p>{{(store?.volume / 1000000).toFixed(2) }}</p>
                             </div>
+                            -->
                         </div>
                         <div class="k-order__final-button">
                             <!--
@@ -140,6 +143,7 @@
                 <h3 class="k-order__line">Итого</h3>
                 <div class="k-order__final">
                     <div class="k-order__final-info">
+                        <!--
                         <div class="k-order__colums bold">
                             <p>Кол-во SKU с отсрочкой Х</p>
                             <p>0</p>
@@ -152,11 +156,11 @@
                             <p>Кол-во SKU с отсрочкой Y</p>
                             <p>0</p>
                         </div>
-                        <!-- (шт) -->
                         <div class="k-order__colums bold">
                             <p>Объем заказа</p>
                             <p>{{ (this.basket?.volume / 1000000).toFixed(2) }}</p>
                         </div>
+                        -->
                     </div>
                     <div class="k-order__final-button">
                         <!--
