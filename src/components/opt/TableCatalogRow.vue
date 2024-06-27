@@ -61,18 +61,18 @@
         </div>
       </td>
       <td class="k-table__title" @click="openActions(item)"><p>{{item.pagetitle}}</p></td>
-      <td class="k-table__busket complect-button__td">
+      <td class="k-table__busket complect-button__td" :class="{'pointer-none' : index !== 0}">
         <form class="k-table__form complect-button__form" :class="{'basket-true' : item.basket.availability}" action="" v-if="index === 0">
           <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCountComplect" :min="1" :max="item.remain_complect" :id="item.complect_id" :store_id="item.store_id" :index="index" :value="item.basket.count"/>
           <div @click="addBasketComplect(item.complect_id, item.basket.count, item.store_id, index)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
         </form>
       </td>
-      <td class="td-center"><span v-if="index === 0">{{item.store_name}}</span></td>
+      <td class="td-center" :class="{'pointer-none' : index !== 0}"><span :style="'top:' +  (complect.length * 70) / 2 + 'px'" v-if="index === 0">{{item.store_name}}</span></td>
       <td>{{Math.round(Number(item.new_price)).toLocaleString('ru')}}₽ x {{ item.multiplicity }} шт.</td>
       <td>{{Math.round(Number(item.price) * Number(item.multiplicity)).toLocaleString('ru')}} ₽ / {{Math.round(Number(item.price) * Number(item.multiplicity) - Number(item.new_price) * Number(item.multiplicity)).toLocaleString('ru')}} ₽</td>
-      <td class="td-center"><span v-if="index === 0">{{item.action?.delay ? Number(item.action?.delay).toFixed(1) + ' дн' : 'Нет'}}</span></td>
-      <td class="td-center"><span v-if="index === 0">{{item.action?.payer === '1' ? 'Поставщик' : 'Покупатель'}}</span></td>
-      <td class="td-center"><span v-if="index === 0">от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</span></td>
+      <td class="td-center" :class="{'pointer-none' : index !== 0}"><span :style="'top:' +  (complect.length * 70) / 2 + 'px'" v-if="index === 0">{{item.action?.delay ? Number(item.action?.delay).toFixed(1) + ' дн' : 'Нет'}}</span></td>
+      <td class="td-center" :class="{'pointer-none' : index !== 0}"><span :style="'top:' +  (complect.length * 70) / 2 + 'px'" v-if="index === 0">{{item.action?.payer === '1' ? 'Поставщик' : 'Покупатель'}}</span></td>
+      <td class="td-center" :class="{'pointer-none' : index !== 0}"><span :style="'top:' +  (complect.length * 70) / 2 + 'px'" v-if="index === 0">от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</span></td>
       <td>
         <!-- <div class="k-order__actions center">
           <div @click="openActions(item)" class="k-actions" v-for="(action, index) in item.actions" v-bind:key="action.id">
@@ -83,7 +83,7 @@
         </div>
         <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span> -->
       </td>
-      <td class="td-center"><span v-if="index === 0">{{item.remain_complect}} шт</span></td>
+      <td class="td-center" :class="{'pointer-none' : index !== 0}"><span :style="'top:' +  (complect.length * 70) / 2 + 'px'" v-if="index === 0">{{item.remain_complect}} шт</span></td>
     </tr>
   </tbody>
   <Dialog v-model:visible="this.modal_remain" header=" " :style="{ width: '340px' }">
@@ -266,22 +266,26 @@ span{
 }
 
 .complect-button{
-&:hover{
-  .complect-button__form{
-    opacity: 1;
-    pointer-events: all;
-  }
-}
-
-&__td{
   position: relative;
-}
+  &:hover{
+    .complect-button__form{
+      opacity: 1;
+      pointer-events: all;
+    }
+  }
 
-&__form{
-  position: absolute;
-  top: 100%;
-  transform: translate(0, -50%);
-}
+  &__td{
+    position: absolute;
+    width: 100px;
+    top: 50%;
+    transform: translate(0, -50%);
+  }
+
+  &__form{
+    // position: absolute;
+    // top: 100%;
+    // transform: translate(0, -50%);
+  }
 }
 
 .kenost-table-background:nth-child(2n){

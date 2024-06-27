@@ -18,18 +18,18 @@
               </tr>
           </thead>
           <tbody class="complect-button kenost-table-background kenost-table-background-complect" v-for="complect in items.complects" v-bind:key="complect.id">
-            <tr v-for="(item, index) in complect.products" v-bind:key="item.id" :class="{'no-line' : index != 1}">
+            <tr v-for="(item, index) in complect.products" v-bind:key="item.id" class="no-line">
               <td>
                 <span class="k-table__article">{{item.article}}</span>
               </td>
               <td class="k-table__photo">
                 <img class="k-table__image" :src="item.image" alt="">
-                <div v-if="index === 0" class="kenost-complect-icon">
+                <div v-if="index < complect.products.length - 1" class="kenost-complect-icon">
                   <i class="mst-icon mst-icon-link"></i>
                 </div>
               </td>
               <td class="k-table__title" @click="openActions(item)"><p>{{item.name}}</p></td>
-              <td class="k-table__busket complect-button__td">
+              <td class="k-table__busket complect-button__td" :class="{'pointer-none' : index !== 0}">
                 <form class="k-table__form complect-button__form" action="" v-if="index === 0" :class="{'basket-true' : item.basket.availability}">
                   <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCountComplect" :min="1" :id="item.complect_id" :store_id="items.store_id" :index="item.complect_id" :max="item.remain_complect" :value="item.basket.count"/>
                   <div @click="addBasketComplect(item.complect_id, item.basket.count, items.store_id, index)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
@@ -41,7 +41,7 @@
               <td>{{Math.round(item.new_price).toLocaleString('ru')}} ₽</td>
               <td>{{item.multiplicity}} </td>
               <td>{{(item.new_price * item.multiplicity).toLocaleString('ru')}} ₽</td>
-              <td class="td-center"><span v-if="index === 0">{{complect.remain.min_count}} шт</span></td>
+              <td class="td-center"><span v-if="index === 0" :style="'top:' +  (complect.products.length * 70) / 2 + 'px'">{{complect.remain.min_count}} шт</span></td>
             </tr>
           </tbody>
           <!-- <tbody> -->
@@ -350,6 +350,10 @@ position: relative;
     left: 0.4rem !important;
   }
 }
+}
+
+.pointer-none{
+  pointer-events: none;
 }
 
 .kenost-actions-modal{
