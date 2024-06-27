@@ -58,12 +58,12 @@
             </div>
 
             <div class="kenost-banner__container" v-if="getRemainCount == 2">
-                <router-link :to="{ name: 'promotion', params: { action: items.items[getCount * 10 + 1].action_id } }" class="kenost-banner__image">
-                    <img class="kenost-banner__image-big" :src="items.items[getCount * 10 + 1].image_inner" alt="">
+                <router-link :to="{ name: 'promotion', params: { action: items.items[getCount * 10].action_id } }" class="kenost-banner__image">
+                    <img class="kenost-banner__image-big" :src="items.items[getCount * 10].image_inner" alt="">
                 </router-link>
 
-                <router-link :to="{ name: 'promotion', params: { action: items.items[getCount * 10 + 2].action_id } }" class="kenost-banner__image">
-                    <img class="kenost-banner__image-big" :src="items.items[getCount * 10 + 2].image_inner" alt="">
+                <router-link :to="{ name: 'promotion', params: { action: items.items[getCount * 10 + 1].action_id } }" class="kenost-banner__image">
+                    <img class="kenost-banner__image-big" :src="items.items[getCount * 10 + 1].image_inner" alt="">
                 </router-link>
             </div>
 
@@ -194,29 +194,8 @@
                     <img class="kenost-banner__image-big" :src="items.items[getCount * 10 + 7].image_inner" alt="">
                 </router-link>
             </div>
-
-            <!-- <div class="kenost-banner__container">
-                <router-link :to="{ name: 'promotion', params: { action: items.items[n * 7].action_id } }" class="kenost-banner__image">
-                    <img class="kenost-banner__image-big" :src="items.items[n * 7].image_inner" alt="">
-                </router-link>
-
-                <router-link :to="{ name: 'promotion', params: { action: items.items[n * 8].action_id } }" class="kenost-banner__image">
-                    <img class="kenost-banner__image-big" :src="items.items[n * 8].image_inner" alt="">
-                </router-link>
-
-                <router-link :to="{ name: 'promotion', params: { action: items.items[n * 9].action_id } }" class="kenost-banner__image">
-                    <img class="kenost-banner__image-big" :src="items.items[n * 9].image_inner" alt="">
-                </router-link>
-
-                <router-link :to="{ name: 'promotion', params: { action: items.items[n * 10].action_id } }" class="kenost-banner__image">
-                    <img class="kenost-banner__image-big" :src="items.items[n * 10].image_inner" alt="">
-                </router-link>
-            </div> -->
         </div>
     </div>
-
-     <!-- https://mst.tools/assets/content/banners/666c57edb29a2.jpg -->
-    <!-- https://mst.tools/assets/content/banners/666c57f1dc2ea.jpg -->
 </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
