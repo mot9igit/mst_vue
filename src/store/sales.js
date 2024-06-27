@@ -98,7 +98,8 @@ export default {
       state.salesbanners = data.data
     },
     SET_SALES_PRODUCTS_MUTATION_TO_VUEX: (state, data) => {
-      if (state.actions.length) {
+      if (Object.keys(state.actions).length) {
+        console.log('mut 1')
         for (let i = 0; i < Object.keys(state.actions.products).length; i++) {
           if (state.actions.products[Object.keys(state.actions.products)[i]].remain_id === data.remain_id) {
             state.actions.products[Object.keys(state.actions.products)[i]].basket.availability = true
@@ -108,7 +109,7 @@ export default {
       }
     },
     SET_SALES_COMPLECT_MUTATION_TO_VUEX: (state, data) => {
-      if (state.actions.length) {
+      if (Object.keys(state.actions).length) {
         for (let i = 0; i < Object.keys(state.actions.complects).length; i++) {
           if (data.complect_id === state.actions.complects[Object.keys(state.actions.complects)[i]].id) {
             for (let j = 0; j < state.actions.complects[Object.keys(state.actions.complects)[i]].products.length; j++) {
