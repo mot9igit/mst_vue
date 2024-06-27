@@ -55,7 +55,7 @@
     </div>
     <div class="d-col-map">
       <Vendors :items="this.opt_vendors" />
-      <Basket ref="childComponent" @toOrder="toOrder" />
+      <Basket @actionUpdate="actionUpdate" ref="childComponent" @toOrder="toOrder" />
     </div>
   </div>
   <OrderModal :show="show_order" @fromOrder="fromOrder" />
@@ -141,6 +141,12 @@ export default {
     },
     fromOrder () {
       this.show_order = false
+    },
+    actionUpdate () {
+      this.get_sales_to_api({
+        id: router.currentRoute._value.params.sales_id,
+        actionid: router.currentRoute._value.params.action
+      })
     }
   },
   computed: {

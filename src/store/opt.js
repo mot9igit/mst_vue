@@ -368,13 +368,15 @@ export default {
       state.oprpricesremain = data
     },
     SET_OPT_PRODUCT_TO_VUEX: (state, data) => {
-      for (let i = 0; i < Object.keys(state.optproducts.items).length; i++) {
-        if (state.optproducts.items[i].remain_id === data.remain_id) {
-          for (let j = 0; j < Object.keys(state.optproducts.items[i].stores).length; j++) {
-            if (state.optproducts.items[i].stores[j].store_id === data.store_id) {
-              for (let h = 0; h < Object.keys(state.optproducts.items[i].stores[j].actions).length; h++) {
-                state.optproducts.items[i].stores[j].actions[h].conflicts = data.data.conflicts
-                state.optproducts.items[i].stores[j].action = data.data.action
+      if (state.optproducts.length) {
+        for (let i = 0; i < Object.keys(state.optproducts.items).length; i++) {
+          if (state.optproducts.items[i].remain_id === data.remain_id) {
+            for (let j = 0; j < Object.keys(state.optproducts.items[i].stores).length; j++) {
+              if (state.optproducts.items[i].stores[j].store_id === data.store_id) {
+                for (let h = 0; h < Object.keys(state.optproducts.items[i].stores[j].actions).length; h++) {
+                  state.optproducts.items[i].stores[j].actions[h].conflicts = data.data.conflicts
+                  state.optproducts.items[i].stores[j].action = data.data.action
+                }
               }
             }
           }
@@ -382,24 +384,28 @@ export default {
       }
     },
     SET_OPT_PRODUCTS_MUTATION_TO_VUEX: (state, data) => {
-      for (let i = 0; i < Object.keys(state.optproducts.items).length; i++) {
-        if (state.optproducts.items[i].remain_id === data.remain_id) {
-          for (let j = 0; j < Object.keys(state.optproducts.items[i].stores).length; j++) {
-            if (state.optproducts.items[i].stores[j].store_id === data.store_id) {
-              state.optproducts.items[i].stores[j].basket.availability = true
-              state.optproducts.items[i].stores[j].basket.count = data.count
+      if (state.optproducts.length) {
+        for (let i = 0; i < Object.keys(state.optproducts.items).length; i++) {
+          if (state.optproducts.items[i].remain_id === data.remain_id) {
+            for (let j = 0; j < Object.keys(state.optproducts.items[i].stores).length; j++) {
+              if (state.optproducts.items[i].stores[j].store_id === data.store_id) {
+                state.optproducts.items[i].stores[j].basket.availability = true
+                state.optproducts.items[i].stores[j].basket.count = data.count
+              }
             }
           }
         }
       }
     },
     SET_OPT_COMPLECT_MUTATION_TO_VUEX: (state, data) => {
-      for (let i = 0; i < Object.keys(state.optproducts.items).length; i++) {
-        for (let j = 0; j < Object.keys(state.optproducts.items[i].complects).length; j++) {
-          for (let h = 0; h < Object.keys(state.optproducts.items[i].complects[j]).length; h++) {
-            if (state.optproducts.items[i].complects[j][h].complect_id === data.complect_id) {
-              state.optproducts.items[i].complects[j][h].basket.availability = true
-              state.optproducts.items[i].complects[j][h].basket.count = data.count
+      if (state.optproducts.length) {
+        for (let i = 0; i < Object.keys(state.optproducts.items).length; i++) {
+          for (let j = 0; j < Object.keys(state.optproducts.items[i].complects).length; j++) {
+            for (let h = 0; h < Object.keys(state.optproducts.items[i].complects[j]).length; h++) {
+              if (state.optproducts.items[i].complects[j][h].complect_id === data.complect_id) {
+                state.optproducts.items[i].complects[j][h].basket.availability = true
+                state.optproducts.items[i].complects[j][h].basket.count = data.count
+              }
             }
           }
         }
