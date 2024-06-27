@@ -18,19 +18,20 @@
                 </tr>
             </thead>
             <tbody class="complect-button kenost-table-background kenost-table-background-complect" v-for="complect in items.complects" v-bind:key="complect.id">
-              <tr v-for="(item, index) in complect.products" v-bind:key="item.id" :class="{'no-line' : index != 1}">
+              <tr class="no-line" v-for="(item, index) in complect.products" v-bind:key="item.id">
                 <td>
                   <span class="k-table__article">{{item.article}}</span>
                 </td>
                 <td class="k-table__photo">
                   <img class="k-table__image" :src="item.image" alt="">
-                  <div v-if="index === 0" class="kenost-complect-icon">
+                  <div v-if="index < complect.products.length - 1" class="kenost-complect-icon">
                     <i class="mst-icon mst-icon-link"></i>
                   </div>
                 </td>
                 <td class="k-table__title" @click="openActions(item)"><p>{{item.name}}</p></td>
-                <td class="k-table__busket complect-button__td">
-                  <form class="k-table__form complect-button__form" action="" v-if="index === 0" :class="{'basket-true' : item.basket.availability}">
+                <td class="k-table__busket complect-button__td" :class="{'pointer-none' : index != 0}">
+                  {{item.basket.availability}}
+                  <form class="k-table__form complect-button__form" action="" v-if="index != 0" :class="{'basket-true' : item.basket.availability}">
                     <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCountComplect" :min="1" :id="item.complect_id" :store_id="items.store_id" :index="item.complect_id" :max="item.remain.min_count" :value="item.basket.count"/>
                     <div @click="addBasketComplect(item.complect_id, item.basket.count, items.store_id, index, item.remain.min_count)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
                   </form>
@@ -126,6 +127,7 @@ export default {
         this.busket_from_api(data).then()
         // eslint-disable-next-line vue/no-mutating-props
         this.items.complects[complectid].products[0].basket.availability = true
+        console.log(this.items.complects[complectid].products[0])
         this.$emit('updateBasket')
       }
     },
@@ -257,6 +259,10 @@ export default {
   .k-table__form{
       opacity: 1;
   }
+}
+
+.pointer-none{
+  pointer-events: none;
 }
 
 .no-line{

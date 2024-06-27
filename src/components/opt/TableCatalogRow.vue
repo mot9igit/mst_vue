@@ -61,7 +61,7 @@
           </div>
         </td>
         <td class="k-table__title" @click="openActions(item)"><p>{{item.pagetitle}}</p></td>
-        <td class="k-table__busket complect-button__td">
+        <td class="k-table__busket complect-button__td" :class="{'pointer-none' : index != 0}">
           <form class="k-table__form complect-button__form" :class="{'basket-true' : item.basket.availability}" action="" v-if="index === 0">
             <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCountComplect" :min="1" :max="item.remain_complect" :id="item.complect_id" :store_id="item.store_id" :index="index" :value="item.basket.count"/>
             <div @click="addBasketComplect(item.complect_id, item.basket.count, item.store_id, index)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
@@ -266,6 +266,7 @@ export default {
 }
 
 .complect-button{
+  position: relative;
   &:hover{
     .complect-button__form{
       opacity: 1;
@@ -274,13 +275,16 @@ export default {
   }
 
   &__td{
-    position: relative;
+    position: absolute;
+    width: 100px;
+    top: 50%;
+    transform: translate(0, -50%);
   }
 
   &__form{
-    position: absolute;
-    top: 100%;
-    transform: translate(0, -50%);
+    // position: absolute;
+    // top: 100%;
+    // transform: translate(0, -50%);
   }
 }
 
