@@ -96,6 +96,31 @@ export default {
     },
     GET_BANNERS_SALES_TO_VUEX: (state, data) => {
       state.salesbanners = data.data
+    },
+    SET_SALES_PRODUCTS_MUTATION_TO_VUEX: (state, data) => {
+      if (state.actions.length) {
+        for (let i = 0; i < Object.keys(state.actions.products).length; i++) {
+          if (state.actions.products[Object.keys(state.actions.products)[i]].remain_id === data.remain_id) {
+            state.actions.products[Object.keys(state.actions.products)[i]].basket.availability = true
+            state.actions.products[Object.keys(state.actions.products)[i]].basket.count = data.count
+          }
+        }
+      }
+    },
+    SET_SALES_COMPLECT_MUTATION_TO_VUEX: (state, data) => {
+      if (state.actions.length) {
+        console.log('data', data)
+        for (let i = 0; i < Object.keys(state.actions.complects).length; i++) {
+          if (data.complect_id === state.actions.complects[Object.keys(state.actions.complects)[i]].id) {
+            console.log(state.actions.complects[Object.keys(state.actions.complects)[i]])
+            for (let j = 0; j < state.actions.complects[Object.keys(state.actions.complects)[i]].products.length; j++) {
+              console.log('el', state.actions.complects[Object.keys(state.actions.complects)[i]].products[i])
+              state.actions.complects[Object.keys(state.actions.complects)[i]].products[i].basket.availability = true
+              state.actions.complects[Object.keys(state.actions.complects)[i]].products[i].basket.count = data.count
+            }
+          }
+        }
+      }
     }
   },
   getters: {

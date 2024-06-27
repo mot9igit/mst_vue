@@ -30,14 +30,14 @@
                 </td>
                 <td class="k-table__title" @click="openActions(item)"><p>{{item.name}}</p></td>
                 <td class="k-table__busket complect-button__td">
-                  <form class="k-table__form complect-button__form" action="" v-if="index === 0">
-                    <Counter @ElemCount="ElemCount" :min="1" :max="item.remain_complect" :value="this.value"/>
-                    <div @click="addBasketComplect(item.complect_id, this.value, items.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
+                  <form class="k-table__form complect-button__form" action="" v-if="index === 0" :class="{'basket-true' : item.basket.availability}">
+                    <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCountComplect" :min="1" :id="item.complect_id" :store_id="items.store_id" :index="item.complect_id" :max="item.remain_complect" :value="item.basket.count"/>
+                    <div @click="addBasketComplect(item.complect_id, item.basket.count, items.store_id, index)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
                   </form>
                 </td>
                 <!-- <td>{{item.store_name}}</td> -->
                 <td>{{Math.round(item.old_price).toLocaleString('ru')}} ₽</td>
-                <td>{{(item.new_price / 100 == 0) ? '100.00' : ((item.old_price - item.new_price) / (item.new_price / 100)).toFixed(2)}}</td>
+                <td>{{(item.new_price / 100 == 0) ? '100.00' : ((item.old_price - item.new_price) / (item.old_price / 100)).toFixed(2)}}</td>
                 <td>{{Math.round(item.new_price).toLocaleString('ru')}} ₽</td>
                 <td>{{item.multiplicity}} </td>
                 <td>{{(item.new_price * item.multiplicity).toLocaleString('ru')}} ₽</td>
@@ -51,9 +51,9 @@
                     <td class="k-table__photo"><img class="k-table__image" :src="item.image" alt=""></td>
                     <td class="k-table__title" @click="openActions(item)"><p>{{item.name}}</p></td>
                     <td class="k-table__busket">
-                      <form class="k-table__form" action="">
-                        <Counter @ElemCount="ElemCount" :min="1" :max="item.remains" :value="this.value"/>
-                        <div @click="addBasket(item.remain_id, this.value, items.store_id)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
+                      <form class="k-table__form" action="" :class="{'basket-true' : item.basket.availability}">
+                        <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCount" :min="1" :max="item.remains" :id="item.remain_id" :store_id="items.store_id" :index="index" :value="item.basket.count"/>
+                        <div @click="addBasket(item.remain_id, item.basket.count, items.store_id, index)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
                       </form>
                     </td>
                     <!-- <td>{{item.store_name}}</td> -->
@@ -113,18 +113,43 @@ export default {
     updateBasket () {
       this.$emit('updateBasket')
     },
-    addBasket (id, value, storeid) {
+    addBasket (id, value, storeid, index) {
       const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_remain: id, value, store_id: storeid }
       this.busket_from_api(data).then()
+      console.log(this.items.products[id])
+      // eslint-disable-next-line vue/no-mutating-props
+      this.items.products[id].basket.availability = true
       this.$emit('updateBasket')
     },
-    addBasketComplect (complectid, value, storeid) {
+    addBasketComplect (complectid, value, storeid, index) {
       const data = { action: 'basket/add', id: router.currentRoute._value.params.id, id_complect: complectid, value, store_id: storeid }
       this.busket_from_api(data).then()
+      // eslint-disable-next-line vue/no-mutating-props
+      this.items.complects[complectid].products[0].basket.availability = true
       this.$emit('updateBasket')
     },
     ElemCount (object) {
-      this.value = object.value
+      if (object.value >= Number(object.max)) {
+        this.modal_remain = true
+      } else {
+        // eslint-disable-next-line vue/no-mutating-props
+        this.items.products[object.id].basket.count = object.value
+        const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_remain: object.id, value: object.value, store_id: object.store_id }
+        this.busket_from_api(data).then()
+        this.$emit('updateBasket')
+      }
+    },
+    ElemCountComplect (object) {
+      if (object.value >= Number(object.max)) {
+        this.modal_remain = true
+        console.log(this.modal_remain)
+      } else {
+        // eslint-disable-next-line vue/no-mutating-props
+        this.items.complects[object.id].products[0].basket.count = object.value
+        const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_complect: object.id, value: object.value, store_id: object.store_id }
+        this.busket_from_api(data).then()
+        this.$emit('updateBasket')
+      }
     },
     leftScroll (event) {
       clearInterval(this.interval)

@@ -59,6 +59,12 @@
                     <div class="vendors_selected__row-text">
                       <span class="name">{{ item.name_short }}</span>
                       <span class="desc">{{ item.address }}</span>
+                      <span class="changevendor__description">{{ item.description }}</span>
+                      <div class="changevendor__info">
+                        <a :href="'tel:' + item.phone" target="_blank">{{ item.phone }}</a>
+                        <a :href="'mailto:' + item.email" target="_blank">{{ item.email }}</a>
+                        <a :href="item.website" target="_blank">{{ item.website }}</a>
+                      </div>
                     </div>
                     <div class="image">
                       <img :src="item.image" :alt="item.name">
@@ -88,6 +94,12 @@
                     <div class="vendor_select__row-text">
                       <span class="name">{{ item.name_short }}</span>
                       <span class="desc">{{ item.address }}</span>
+                      <span class="changevendor__description">{{ item.description }}</span>
+                      <div class="changevendor__info">
+                        <a :href="'tel:' + item.phone" target="_blank">{{ item.phone }}</a>
+                        <a :href="'mailto:' + item.email" target="_blank">{{ item.email }}</a>
+                        <a :href="item.website" target="_blank">{{ item.website }}</a>
+                      </div>
                     </div>
                     <div class="image">
                       <img :src="item.image" :alt="item.name">
@@ -241,6 +253,31 @@ export default {
 }
 </script>
 <style lang="scss">
+
+  .changevendor__description{
+    color: #979797;
+    font-size: 12px;
+    line-height: 16px;
+    margin: 0;
+  }
+
+  .vendor_select__row-text span.desc{
+    margin-bottom: 6px;
+  }
+
+  .changevendor__info{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    line-height: 16px;
+    margin-top: 8px;
+
+    a{
+      color: #979797;
+      text-decoration: none;
+    }
+  }
     .marker {
       cursor: pointer;
       position: relative;

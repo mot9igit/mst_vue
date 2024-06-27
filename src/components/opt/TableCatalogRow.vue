@@ -64,7 +64,7 @@
         <td class="k-table__busket complect-button__td">
           <form class="k-table__form complect-button__form" :class="{'basket-true' : item.basket.availability}" action="" v-if="index === 0">
             <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCountComplect" :min="1" :max="item.remain_complect" :id="item.complect_id" :store_id="item.store_id" :index="index" :value="item.basket.count"/>
-            <div @click="addBasketComplect(item.complect_id, this.value, item.store_id, index)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
+            <div @click="addBasketComplect(item.complect_id, item.basket.count, item.store_id, index)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
           </form>
         </td>
         <td class="td-center"><span v-if="index === 0">{{item.store_name}}</span></td>
