@@ -79,22 +79,28 @@
               <a :href="'tel:' + order.customer_phone" class="value">{{ order.customer_phone }}</a>
             </div>
           </div>
+          <div class="d-col-md-6">
+            <div class="item">
+              <span class="label">Дата заказа</span>
+              <span class="value">{{ order.createdon }}</span>
+            </div>
+          </div>
           <div class="d-col-md-6" v-if="order.address">
             <div class="item">
               <span class="label">Адрес покупателя</span>
               <span class="value">{{ order.address }}</span>
             </div>
           </div>
+          <div class="d-col-md-6" v-if="order.room">
+            <div class="item">
+              <span class="label">Квартира / Офис</span>
+              <span class="value">{{ order.room }}</span>
+            </div>
+          </div>
           <div class="d-col-md-6" v-if="delivery_id == 3 && order.address_pvz">
             <div class="item">
               <span class="label">Адрес ПВЗ</span>
               <span class="value">{{ order.address_pvz }}</span>
-            </div>
-          </div>
-          <div class="d-col-md-6">
-            <div class="item">
-              <span class="label">Дата заказа</span>
-              <span class="value">{{ order.createdon }}</span>
             </div>
           </div>
           <div class="d-col-md-6">
