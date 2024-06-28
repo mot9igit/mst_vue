@@ -26,6 +26,12 @@
             <input type="text" v-model="organization[field.name]" class="dart-form-control" :name="field.name" :placeholder="field.placeholder" :readonly="field.readonly"/>
           </div>
         </div>
+        <div class="d-col-md-6">
+          <div class="form_input_group">
+            <label for="">Описание организации</label>
+            <textarea v-model="organization.description" class="dart-form-control" :name="description" placeholder="Опишите ваш ассортимент и конкурентные преимущества"></textarea>
+          </div>
+        </div>
       </div>
       <div class="buttons_container">
         <button class="dart-btn dart-btn-primary-outline" type="submit">
@@ -174,6 +180,7 @@ export default {
           contact: this.organization.contact,
           phone: this.organization.phone,
           email: this.organization.email,
+          description: this.organization.description,
           files: this.organization.files
         })
           .then((result) => {
