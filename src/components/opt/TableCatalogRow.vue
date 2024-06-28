@@ -56,9 +56,9 @@
       <td><span class="k-table__article">{{item.article}}</span></td>
       <td class="k-table__photo">
         <img class="k-table__image" :src="item.image" alt="">
-        <div v-if="index === 0" class="kenost-complect-icon">
-          <i class="mst-icon mst-icon-link"></i>
-        </div>
+        <div v-if="index < complect.length - 1" class="kenost-complect-icon">
+                  <i class="mst-icon mst-icon-link"></i>
+                </div>
       </td>
       <td class="k-table__title" @click="openActions(item)"><p>{{item.pagetitle}}</p></td>
       <td class="k-table__busket complect-button__td" :class="{'pointer-none' : index !== 0}">
