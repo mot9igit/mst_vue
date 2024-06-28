@@ -58,7 +58,7 @@ import ProfileReturnsProduct from '../pages/ProfileReturnsProduct.vue'
 import Sales from '../pages/sales/Sales.vue'
 import SalesAdd from '../pages/sales/SalesAdd.vue'
 import SalesEdit from '../pages/sales/SalesEdit.vue'
-import ActionAdd from '../pages/marketing/ActionAdd.vue'
+// import ActionAdd from '../pages/marketing/ActionAdd.vue'
 import Actions from '../pages/marketing/Actions.vue'
 import ActionEdit from '../pages/marketing/ActionEdit.vue'
 import ProfileOrderOpt from '../pages/ProfileOrderOpt'
@@ -540,7 +540,7 @@ const routes = [
             name: 'org_action_add',
             props: true,
             label: 'Добавление акции',
-            component: ActionAdd
+            component: ActionEdit
           }, {
             path: ':action_id',
             name: 'org_action_edit',

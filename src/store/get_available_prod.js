@@ -26,6 +26,7 @@ export default {
       })
         .then((response) => {
           commit('SET_AV_PR_TO_VUEX', response.data)
+          return response
         })
         .catch(error => {
           if (error.response.status === 403) {

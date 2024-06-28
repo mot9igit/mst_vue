@@ -48,6 +48,7 @@ export default {
       })
         .then((response) => {
           commit('GET_ACTIONS_TO_VUEX', response.data)
+          return response
         })
     },
     get_all_sales_to_api ({ commit }, data) {

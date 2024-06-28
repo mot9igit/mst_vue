@@ -280,7 +280,7 @@
                         </div>
                         <div class="PickList__products">
                         <div class="PickList__el" v-for="item in this.products" :key="item.id">
-                            <img :src="'https://mst.tools' + item.image" alt="">
+                            <img :src="item.image" alt="">
                             <div class="PickList__product-info">
                             <div class="PickList__name">{{item.name}}</div>
                             <div class="PickList__article">{{item.article}}</div>
@@ -927,7 +927,8 @@ export default {
         const data = {
           action: 'upload/products/file',
           store_id: router.currentRoute._value.params.id,
-          file: res.data.files[0].original
+          file: res.data.files[0].original,
+          type: 'b2b'
         }
         this.opt_upload_products_file(data).then((response) => {
           const productsList = response.data.data.data

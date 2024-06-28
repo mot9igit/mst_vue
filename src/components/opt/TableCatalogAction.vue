@@ -31,7 +31,7 @@
               <td class="k-table__title" @click="openActions(item)"><p>{{item.name}}</p></td>
               <td class="k-table__busket complect-button__td" :class="{'pointer-none' : index !== 0}">
                 <form class="k-table__form complect-button__form" action="" v-if="index === 0" :class="{'basket-true' : item.basket.availability}">
-                  <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCountComplect" :min="1" :id="item.complect_id" :store_id="items.store_id" :index="item.complect_id" :max="item.remain_complect" :value="item.basket.count"/>
+                  <Counter :key="new Date().getMilliseconds() + item.id" @ElemCount="ElemCountComplect" :min="1" :id="item.complect_id" :store_id="items.store_id" :index="item.complect_id" :max="item.remain.min_count" :value="item.basket.count"/>
                   <div @click="addBasketComplect(item.complect_id, item.basket.count, items.store_id, index)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
                 </form>
               </td>
@@ -40,7 +40,7 @@
               <td>{{(item.new_price / 100 == 0) ? '100.00' : ((item.old_price - item.new_price) / (item.old_price / 100)).toFixed(2)}}</td>
               <td>{{Math.round(item.new_price).toLocaleString('ru')}} ₽</td>
               <td>{{item.multiplicity}} </td>
-              <td>{{(item.new_price * item.multiplicity).toLocaleString('ru')}} ₽</td>
+              <td>{{(Math.round(item.new_price) * item.multiplicity * item.basket.count).toLocaleString('ru')}} ₽</td>
               <td class="td-center"><span v-if="index === 0" :style="'top:' +  (complect.products.length * 70) / 2 + 'px'">{{complect.remain.min_count}} шт</span></td>
             </tr>
           </tbody>
@@ -129,7 +129,7 @@ export default {
       this.$emit('updateBasket')
     },
     ElemCount (object) {
-      if (object.value >= Number(object.max)) {
+      if (object.value > Number(object.max)) {
         this.modal_remain = true
       } else {
       // eslint-disable-next-line vue/no-mutating-props
@@ -140,7 +140,7 @@ export default {
       }
     },
     ElemCountComplect (object) {
-      if (object.value >= Number(object.max)) {
+      if (object.value > Number(object.max)) {
         this.modal_remain = true
         console.log(this.modal_remain)
       } else {

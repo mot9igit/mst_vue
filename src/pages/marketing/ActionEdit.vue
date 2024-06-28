@@ -11,8 +11,8 @@
       <div>
 
         <div>
-            <p class="kgraytext m-0">Статус: <span>{{this.status}}</span></p>
-            <p class="kgraytext" v-if="this.moderator_comment != ''">Комментарий от модератора: {{ this.moderator_comment }}</p>
+          <p class="kgraytext m-0" v-if="this.status">Статус: <span>{{this.status}}</span></p>
+          <p class="kgraytext" v-if="this.moderator_comment != '' && this.moderator_comment">Комментарий от модератора: {{ this.moderator_comment }}</p>
         </div>
 
         <div class="dart-form-group mt-2 mb-4">
@@ -100,6 +100,55 @@
 
         <div class="dart-form-group picker-wrap">
           <span class="ktitle">Добавление товаров</span>
+          <div class="flex align-items-center mt-2">
+            <RadioButton v-model="this.form.addProductType" inputId="addProductType-1" name="addProductType" value="1"/>
+            <label for="addProductType-1" class="ml-2 radioLabel">Добавить товары</label>
+          </div>
+          <div class="flex align-items-center mt-3">
+              <RadioButton v-model="this.form.addProductType" inputId="addProductType-2" name="addProductType" value="2"/>
+              <label for="addProductType-2" class="ml-2 radioLabel">Загрузить товары файлом</label>
+          </div>
+        </div>
+
+        <div v-if="this.form.addProductType == '2'" class="dart-form-group mb-4">
+          <DropZone
+            v-if="!this.upload_product"
+            class="kenost-dropzone"
+            :maxFiles="Number(1)"
+            url="/rest/file_upload.php?upload_products=xlsx"
+            :uploadOnDrop="true"
+            :multipleUpload="true"
+            :acceptedFiles="['xls', 'xlsx']"
+            :parallelUpload="1"
+            @sending="parseFile"
+            v-bind="args"
+            >
+            <template v-slot:message>
+              <div class="kenost-dropzone__custom">
+                <i class="pi pi-cloud-upload"></i>
+                <b>Перетащите файл в эту область</b>
+                <p>Вы также можете загрузить файл, <span>нажав сюда</span></p>
+              </div>
+            </template>
+          </DropZone>
+
+          <div class="kenost-upload-xlsx" v-if="this.upload_product">
+            <div class="kenost-upload-xlsx__file">
+              <img src="../../../public/img/files/xls.png" alt="">
+              <a targer="_blank" :href="files?.xlsx?.original_href">{{ files?.xlsx?.name }}</a>
+            </div>
+            <div class="kenost-upload-xlsx__info">
+              <p>Загружено товаров: {{Object.keys(this.selected).length}} шт</p>
+              <p>Всего товаров: {{Object.keys(this.selected).length + this.error_product.length}} шт</p>
+              <div class="kenost-link-blue" @click="this.modals.error_product = true">Список незагруженных товаров</div>
+            </div>
+          </div>
+
+          <a :href="site_url_prefix + '/assets/files/files/examples/ExampleLoadingProductsB2C.xlsx'" class="kenost-link-blue mt-2">Скачать шаблон файла</a>
+        </div>
+
+        <div class="dart-form-group picker-wrap">
+          <!-- <span class="ktitle">Добавление товаров</span> -->
           <span v-if="this.validation.selected.error" class="kenost-error-text">{{ this.validation.selected.text }}</span>
           <div class="PickList">
             <div class="PickList__product" :class="{'kenost-error':this.validation.selected.error}">
@@ -125,7 +174,7 @@
               </div>
               <div class="PickList__products">
                 <div class="PickList__el" v-for="item in this.products" :key="item.id">
-                  <img :src="'https://mst.tools' + item.image" alt="">
+                  <img :src="item.image" alt="">
                   <div class="PickList__product-info">
                     <div class="PickList__name">{{item.name}}</div>
                     <div class="PickList__article">{{item.article}}</div>
@@ -157,7 +206,7 @@
               </div>
               <div class="PickList__products">
                 <div class="PickList__el" v-for="(item, index) in this.selected" :key="item.id">
-                  <img :src="'https://mst.tools' + item.image" alt="">
+                  <img :src="item.image" alt="">
                     <div class="PickList__info">
                     <div class="PickList__product-info off">
                       <div class="PickList__name">{{item.name}}</div>
@@ -210,6 +259,21 @@
         </div>
       </div>
     </form>
+
+    <Dialog v-model:visible="this.modals.error_product" header="Список незагруженных товаров" :style="{ width: '640px' }">
+        <div class="kenost-list-error">
+          <table>
+            <tr>
+              <th>№</th>
+              <th>Артикул</th>
+            </tr>
+            <tr v-for="item, index in this.error_product" :key="item.id">
+              <td>{{index + 1}}</td>
+              <td>{{item}}</td>
+            </tr>
+          </table>
+        </div>
+    </Dialog>
   </template>
 
 <script>
@@ -222,6 +286,9 @@ import FileUpload from 'primevue/fileupload'
 import Toast from 'primevue/toast'
 import InputNumber from 'primevue/inputnumber'
 import Checkbox from 'primevue/checkbox'
+import RadioButton from 'primevue/radiobutton'
+import DropZone from 'dropzone-vue'
+import Dialog from 'primevue/dialog'
 
 export default {
   name: 'ProfileSalesAdd',
@@ -261,6 +328,7 @@ export default {
           text: 'Пожалуйста, укажите регион!'
         }
       },
+      upload_product: false,
       region_all: [],
       files: {
         max: {
@@ -276,6 +344,10 @@ export default {
           original_href: ''
         }
       },
+      modals: {
+        error_product: false
+      },
+      error_product: [],
       filter: {
         name: '',
         category: {}
@@ -284,11 +356,13 @@ export default {
         name: '',
         type: [1, 2]
       },
-      selected: [],
+      selected: {},
       products: [],
       total_products: 0,
       per_page: 25,
       form: {
+        date: null,
+        addProductType: '1'
       },
       editMode: true,
       get_catalog: []
@@ -300,7 +374,8 @@ export default {
       'set_sales_to_api',
       'get_catalog_from_api',
       'get_regions_from_api',
-      'get_sales_to_api'
+      'get_sales_to_api',
+      'opt_upload_products_file'
     ]),
     paginate (obj) {
       this.page_selected = obj.page
@@ -342,25 +417,89 @@ export default {
           break
       }
     },
+    parseFile (files, xhr, formData) {
+      this.table_products_loading = true
+      const callback = (e) => {
+        const res = JSON.parse(e)
+        this.files.xlsx = res.data.files[0]
+        const data = {
+          action: 'upload/products/file',
+          store_id: router.currentRoute._value.params.id,
+          file: res.data.files[0].original,
+          type: 'b2c'
+        }
+        this.opt_upload_products_file(data).then((response) => {
+          const productsList = response.data.data.data
+          this.selected = {}
+          // Бежим по всем элементам и добавляем их в select
+          for (let i = 1; i < Object.keys(productsList).length; i++) {
+            const tempProduct = productsList[Object.keys(productsList)[i]]
+            if (!tempProduct.error) {
+              const product = {}
+              product.article = tempProduct.A
+              if (tempProduct.E === 0 || tempProduct.E === null) {
+                product.discountInterest = 100
+                product.discountInRubles = '-'
+              } else {
+                product.discountInRubles = tempProduct.E - tempProduct.D
+                product.discountInterest = (tempProduct.E - tempProduct.D) / (tempProduct.E / 100)
+              }
+              product.finalPrice = tempProduct.D
+              product.price = tempProduct.E
+              product.id = tempProduct.remain.id
+              product.multiplicity = tempProduct.F
+              product.image = tempProduct.remain.image
+              product.name = tempProduct.remain.name
+              product.typeFormul = {}
+              product.typePrice = ''
+              this.selected[tempProduct.remain.id] = product
+              this.total_selected++
+            } else {
+              this.error_product.push(tempProduct.A)
+            }
+          }
+          this.upload_product = true
+          this.table_products_loading = false
+        })
+      }
+
+      xhr.onreadystatechange = () => {
+        if (xhr.readyState === 4) {
+          callback(xhr.response)
+        }
+      }
+    },
     select (id) {
       const product = this.products.find(r => r.id === id)
       product.discountInterest = 0
       product.discountInRubles = 0
       product.finalPrice = Number(product.price)
       console.log(product)
-      this.selected.push(product)
+      // console.log(this.selected)
+      this.selected[product.id] = product
+      console.log(this.selected)
       this.products = this.products.filter((r) => r.id !== id)
       const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
       this.total_selected++
     },
     deleteSelect (id) {
-      const product = this.selected.find(r => r.id === id)
-      this.products.push(product)
-      this.selected = this.selected.filter((r) => r.id !== id)
+      this.products.push(this.selected[id])
+
+      // eslint-disable-next-line camelcase
+      const new_selected = {}
+
+      for (let i = 0; i < Object.keys(this.selected).length; i++) {
+        if (this.selected[Object.keys(this.selected)[i]].id !== id) {
+          new_selected[Object.keys(this.selected)[i]] = this.selected[Object.keys(this.selected)[i]]
+        }
+      }
+
+      // eslint-disable-next-line camelcase
+      this.selected = new_selected
 
       // this.selected = this.selected.filter((r) => r.id !== id)
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
       this.total_selected--
     },
@@ -424,50 +563,77 @@ export default {
             // eslint-disable-next-line no-unused-vars
             reginsall = true
           }
-          await this.set_sales_to_api({
-            action: 'set',
-            type: 'b2c',
-            id: router.currentRoute._value.params.id,
-            name: this.form.name,
-            conditions: this.form.conditions,
-            dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
-            products: this.selected,
-            files: this.files,
-            regins: this.select_regions,
-            region_all: reginsall,
-            action_id: router.currentRoute._value.params.action_id
-          })
-            .then((result) => {
-              this.loading = false
-              router.push({ name: 'org_actions', params: { id: router.currentRoute._value.params.id } })
+
+          if (router.currentRoute._value.params.action_id) {
+            await this.set_sales_to_api({
+              action: 'set',
+              type: 'b2c',
+              id: router.currentRoute._value.params.id,
+              name: this.form.name,
+              conditions: this.form.conditions,
+              dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
+              products: this.selected,
+              files: this.files,
+              regins: this.select_regions,
+              region_all: reginsall,
+              action_id: router.currentRoute._value.params.action_id
             })
-            .catch((result) => {
-              console.log(result)
+              .then((result) => {
+                this.loading = false
+                router.push({ name: 'org_actions', params: { id: router.currentRoute._value.params.id } })
+              })
+              .catch((result) => {
+                console.log(result)
+              })
+          } else {
+            await this.set_sales_to_api({
+              action: 'set',
+              type: 'b2c',
+              id: router.currentRoute._value.params.id,
+              name: this.form.name,
+              conditions: this.form.conditions,
+              dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
+              products: this.selected,
+              files: this.files,
+              regins: this.select_regions,
+              region_all: reginsall
             })
+              .then((result) => {
+                this.loading = false
+                router.push({ name: 'org_actions', params: { id: router.currentRoute._value.params.id } })
+              })
+              .catch((result) => {
+                console.log(result)
+              })
+          }
         })
         this.loading = true
       }
     }
   },
   mounted () {
-    this.get_available_products_from_api({ filter: '', selected: [], page: this.page }).then(
+    this.get_available_products_from_api({ filter: '', selected: [], page: this.page }).then((res) => {
       this.products = this.available_products.products
-    )
+      // this.selected = this.available_products.selected
+    })
     this.get_catalog_from_api().then(
       this.get_catalog = this.getcatalog
     )
     this.get_regions_from_api().then(
       this.regions = this.getregions
     )
-    this.get_sales_to_api({ id: router.currentRoute._value.params.sales_id, actionid: router.currentRoute._value.params.action_id })
+    if (router.currentRoute._value.params.action_id) {
+      this.get_sales_to_api({ id: router.currentRoute._value.params.sales_id, actionid: router.currentRoute._value.params.action_id })
+    }
   },
-  components: { Calendar, TreeSelect, Paginate, FileUpload, Toast, InputNumber, Checkbox },
+  components: { Calendar, TreeSelect, Paginate, FileUpload, Toast, InputNumber, Checkbox, RadioButton, DropZone, Dialog },
   computed: {
     ...mapGetters([
       'available_products',
       'getcatalog',
       'getregions',
-      'actions'
+      'actions',
+      'optproductsfile'
     ]),
     pagesCount () {
       let pages = Math.round(this.total_products / this.per_page)
@@ -629,8 +795,8 @@ export default {
       }
 
       &__image{
-        width: 287px;
-        height: 160px;
+        width: 287px !important;
+        height: 160px !important;
         background: #D9D9D9;
         margin-top: 16px;
         overflow: hidden;

@@ -1,4 +1,5 @@
 <template>
+  <Toast />
   <div class="dart-custom-grid" :class="{ loading: loading }">
     <CatalogMenu :items="opt_catalog" />
     <div class="d-col-content">
@@ -69,6 +70,7 @@ import OrderModal from '../../../components/opt/OrderModal.vue'
 import PromotionCard from './PromotionCard.vue'
 import router from '@/router'
 import TableCatalogAction from '../../../components/opt/TableCatalogAction.vue'
+import Toast from 'primevue/toast'
 
 export default {
   name: 'Promotion',
@@ -97,7 +99,8 @@ export default {
     Vendors,
     OrderModal,
     PromotionCard,
-    TableCatalogAction
+    TableCatalogAction,
+    Toast
   },
   mounted () {
     this.get_opt_catalog_from_api().then((this.opt_catalog = this.optcatalog))
@@ -105,6 +108,13 @@ export default {
     this.get_sales_to_api({
       id: router.currentRoute._value.params.sales_id,
       actionid: router.currentRoute._value.params.action
+    }).then((res) => {
+      if (!res.data.data.access) {
+        this.$toast.add({ severity: 'info', summary: 'Ошибка', detail: res.data.data.message, life: 3000 })
+        setTimeout(() => {
+          this.$router.go(-1)
+        }, 1000)
+      }
     })
   },
   updated () {

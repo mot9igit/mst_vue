@@ -280,7 +280,7 @@
                         </div>
                         <div class="PickList__products">
                         <div class="PickList__el" v-for="item in this.products" :key="item.id">
-                            <img :src="'https://mst.tools' + item.image" alt="">
+                            <img :src="item.image" alt="">
                             <div class="PickList__product-info">
                             <div class="PickList__name">{{item.name}}</div>
                             <div class="PickList__article">{{item.article}}</div>
@@ -307,7 +307,7 @@
                       </div>
                       <div class="PickList__products">
                       <div class="PickList__el" v-for="(item) in this.selected" :key="item.id">
-                          <img :src="'https://mst.tools' + item.image" alt="">
+                          <img :src="item.image" alt="">
                           <div class="PickList__info">
                           <div class="PickList__product-info off">
                               <div class="PickList__name">{{item.name}}</div>
@@ -425,7 +425,7 @@
                           <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
                         </td>
                         <td class="table-kenost__product">
-                          <img :src="'https://mst.tools' + item.image">
+                          <img :src="item.image">
                           <div class="table-kenost__product-text">
                             <p>{{ item.name }}</p>
                             <span>{{item.article}}</span>
@@ -634,7 +634,7 @@
     <Dialog v-model:visible="this.modals.price" :header="this.modals.headers[this.modals.price_step]" :style="{ width: '600px' }">
         <div class="kenost-modal-price">
             <div class="product-kenost-card">
-              <img :src="'https://mst.tools' + this.selected[this.modals.product_id]?.image">
+              <img :src="this.selected[this.modals.product_id]?.image">
               <div class="product-kenost-card__text">
                 <p>{{ this.selected[this.modals.product_id]?.name }}</p>
                 <span>{{this.selected[this.modals.product_id]?.article}}</span>
@@ -968,7 +968,8 @@ export default {
         const data = {
           action: 'upload/products/file',
           store_id: router.currentRoute._value.params.id,
-          file: res.data.files[0].original
+          file: res.data.files[0].original,
+          type: 'b2b'
         }
         this.opt_upload_products_file(data).then((response) => {
           const productsList = response.data.data.data
@@ -1347,6 +1348,15 @@ export default {
 }
 </script>
 <style lang="scss">
+
+  .upload-icon__image{
+    background: #D9D9D9;
+    width: 100px !important;
+    height: 100px !important;
+    border-radius: 50%;
+    margin-top: 16px;
+    overflow: hidden;
+  }
 
   .kenost-all-table-activity{
     display: flex;

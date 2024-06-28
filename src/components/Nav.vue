@@ -16,10 +16,36 @@
             </div>
         </div>
 
-        <a href="#" class="navmain__components_desctop a-dart-btn">
+        <div class="a-dart-btn a-dart-btn-secondary kenost-vendors">
+            <i class="mst-icon mst-icon-my_vendors kenost-vendors__icon"></i>
+            <span>6 из 45</span>
+            <i class="pi pi-angle-down"></i>
+            <div class="kenost-vendors__list">
+                <span>Выбранные поставщики</span>
+                <div class="kenost-vendors__images">
+                    <div class="k-order__actions">
+                        <div class="k-actions" v-for="(action) in opt_vendors.selected" v-bind:key="action.id">
+                            <img class="k-order__actions-el" :src="action.image" >
+                        </div>
+                    </div>
+                    <div class="k-order__actions">
+                        <div class="k-actions" v-for="(action, index) in opt_vendors.selected" v-bind:key="action.id">
+                            <img v-if="index > 6 && index < 12" class="k-order__actions-el" :src="action.image" >
+                        </div>
+                    </div>
+                    <div class="k-order__actions">
+                        <div class="k-actions" v-for="(action, index) in opt_vendors.selected" v-bind:key="action.id">
+                            <img v-if="index > 12 && index < 18" class="k-order__actions-el" :src="action.image" >
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- <a href="#" class="navmain__components_desctop a-dart-btn">
             <i class="pi pi-sliders-h"></i>
             <b>Сравнение</b>
-        </a>
+        </a> -->
     </div>
 </template>
 <script>
@@ -41,26 +67,65 @@ export default {
   data () {
     return {
       loading: true,
-      search: ''
+      search: '',
+      opt_vendors: []
     }
   },
   methods: {
     ...mapActions([
+      'get_opt_vendors_from_api'
     ]),
     toSearch () {
       router.push({ name: 'opt_search', params: { search: this.search } })
     }
   },
   mounted () {
+    this.get_opt_vendors_from_api().then(
+      this.opt_vendors = this.optvendors
+    )
   },
   components: { },
   computed: {
     ...mapGetters([
+      'optvendors'
     ])
   }
 }
 </script>
 <style lang="scss">
+    .kenost-vendors{
+        position: relative;
+        &__icon{
+            font-size: 24px;
+        }
+
+        &__list{
+            position: absolute;
+            width: 204px;
+            padding: 12px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 12px 0px rgba(51, 51, 51, 0.1490196078);
+            top: 60px;
+            z-index: 2;
+            right: 0;
+            background: #FFF;
+
+            span{
+                color: #ACABAB;
+                font-size: 12px;
+                font-weight: 400;
+                width: 100%;
+                display: block;
+                text-align: left;
+            }
+        }
+
+        &__images{
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+    }
     .navmain{
         width: 100%;
         height: 80px;

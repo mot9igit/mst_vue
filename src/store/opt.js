@@ -368,7 +368,7 @@ export default {
       state.oprpricesremain = data
     },
     SET_OPT_PRODUCT_TO_VUEX: (state, data) => {
-      if (state.optproducts.length) {
+      if (Object.keys(state.optproducts).length) {
         for (let i = 0; i < Object.keys(state.optproducts.items).length; i++) {
           if (state.optproducts.items[i].remain_id === data.remain_id) {
             for (let j = 0; j < Object.keys(state.optproducts.items[i].stores).length; j++) {
