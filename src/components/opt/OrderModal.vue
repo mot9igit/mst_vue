@@ -130,7 +130,7 @@
                             -->
                         </div>
                         <div class="k-order__final-button">
-                            <div class="a-dart-btn a-dart-btn-secondary" @click="generateXSLX">Скачать</div>
+                            <div class="a-dart-btn a-dart-btn-secondary" @click="generateXSLX(store.id)">Скачать</div>
                             <div class="a-dart-btn a-dart-btn-primary k-order__oplata" @click.prevent="orderSubmit(store.id)"><p>Отправить заказ</p> <p>{{ store?.cost?.toLocaleString('ru') }} ₽</p></div>
                         </div>
                     </div>
@@ -161,9 +161,7 @@
                         -->
                     </div>
                     <div class="k-order__final-button">
-                        <!--
-                        <div class="a-dart-btn a-dart-btn-secondary"><i class="pi pi-download"></i></div>
-                        -->
+                        <div @click="generateXSLXAll" class="a-dart-btn a-dart-btn-secondary"><i class="pi pi-download"></i></div>
                         <div class="a-dart-btn a-dart-btn-primary k-order__oplata" @click.prevent="orderSubmit('all')"><p>Отправить заказ</p> <p>{{ this.basket?.cost?.toLocaleString('ru') }} ₽</p></div>
                     </div>
                 </div>
@@ -245,10 +243,18 @@ export default {
       const data = { action: 'basket/clear', id: router.currentRoute._value.params.id, store_id: storeid, id_remain: productid }
       this.busket_from_api(data).then()
     },
-    generateXSLX () {
+    generateXSLX (storeId) {
+      const data = { action: 'generate/xslx', id: router.currentRoute._value.params.id, store_id: storeId }
+      this.opt_api(data).then((res) => {
+        console.log(res)
+        window.location.href = res.data.data
+      })
+    },
+    generateXSLXAll () {
       const data = { action: 'generate/xslx', id: router.currentRoute._value.params.id }
       this.opt_api(data).then((res) => {
         console.log(res)
+        window.location.href = res.data.data
       })
     }
   },
