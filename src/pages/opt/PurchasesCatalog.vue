@@ -9,11 +9,15 @@
               <div class="dart-alert dart-alert-info">В данном разделе перечислены все товары поставщика, в том числе и не сопоставленные со справочником системы.</div>
             </div>
             <h1 class="h1-mini" v-else>{{opt_products?.page?.pagetitle}}</h1>
-            <div v-if="opt_products.total == 0 && opt_products.categories" class="categories">
+            <div v-if="opt_products.categories" class="categories">
               <div class="category" :key="cat.id" v-for="(cat) in opt_products.categories">
-                <RouterLink :to="{ name: 'purchases_catalog', params: { category_id: cat.id}}">
+                <RouterLink :to="{ name: 'org_opt_waregouse_category', params: { warehouse_cat_id: cat.id}}" v-if="$route.params.warehouse_id">
                   <span class="title">{{ cat.pagetitle }}</span>
-                  <img :src="cat.image" :alt="cat.pagetitle">
+                  <img :src="cat.image" :alt="cat.pagetitle" v-if="cat.image">
+                </RouterLink>
+                <RouterLink :to="{ name: 'purchases_catalog', params: { category_id: cat.id}}" v-else>
+                  <span class="title">{{ cat.pagetitle }}</span>
+                  <img :src="cat.image" :alt="cat.pagetitle" v-if="cat.image">
                 </RouterLink>
               </div>
             </div>
