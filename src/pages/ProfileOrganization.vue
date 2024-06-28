@@ -655,6 +655,11 @@ export default {
           type: 'text',
           sort: true
         },
+        remains_history: {
+          label: 'Изменение остатков',
+          type: 'gist',
+          sort: false
+        },
         no_money: {
           label: 'Упущенная выручка',
           type: 'text',
@@ -888,6 +893,7 @@ export default {
       }
     },
     filter (data) {
+      this.page = 1
       this.get_data_from_api(data).then(() => {
         this.avg_info.remains = this.products.avg_info?.remains
         this.avg_info.no_money = this.products.avg_info.no_money

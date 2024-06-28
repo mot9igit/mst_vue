@@ -23,6 +23,9 @@
         </span>
       </div>
     </div>
+    <div class="cell_value" v-else-if="cell_data.type == 'gist'">
+      <Chart type="line" :data="value[cell_key]" :options="chart_options" class="w-full md:w-5rem" />
+    </div>
     <div class="cell_value" v-else-if="cell_data.type == 'boolean'">
       <div v-if="value[cell_key] == 0">
         <span class="cell__error" v-if="cell_data.calc == 'positive'">Нет</span>
@@ -91,6 +94,7 @@
 import Button from 'primevue/button'
 import Checkbox from 'primevue/checkbox'
 import InputNumber from 'primevue/inputnumber'
+import Chart from 'primevue/chart'
 
 export default ({
   name: 'v-table-cell',
@@ -127,7 +131,20 @@ export default ({
     return {
       check: false,
       blank: {},
-      numbers: {}
+      numbers: {},
+      chart_options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'top',
+            display: false
+          },
+          title: {
+            display: false,
+            text: 'График'
+          }
+        }
+      }
     }
   },
   methods: {
@@ -212,7 +229,8 @@ export default ({
   components: {
     Button,
     InputNumber,
-    Checkbox
+    Checkbox,
+    Chart
   },
   watch: {
     cell_data: function (newVal, oldVal) {
