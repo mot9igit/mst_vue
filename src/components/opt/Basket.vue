@@ -253,6 +253,10 @@ export default {
 </script>
 <style lang="scss">
 
+    .basket-container{
+        overflow-x: hidden;
+    }
+
     .kenost-basket-gift{
         background: #F8F7F5;
         border-radius: 5px;

@@ -165,7 +165,6 @@ export default {
                   store_id: storeid,
                   data: response.data.data
                 }
-                console.log('SET_OPT_PRODUCT_TO_VUEX')
                 this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
               })
             })

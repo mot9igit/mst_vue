@@ -177,6 +177,202 @@
       </div>
     </custom-modal>
   </teleport>
+
+  <!-- <Dialog v-model:visible="this.showShip" header="Создание отгрузки" :style="{ width: '800px' }">
+    <div class="shopping-kenost">
+      <p class="shopping-kenost__b">Дата и время</p>
+      <div class="shopping-kenost__dates">
+        <div class="shopping-kenost__row">
+          <p class="k-mini-text">Дата и время отгрузки</p>
+          <CalendarVue showIcon id="calendar-24h" v-model="this.shipModa.dateStart" showTime hourFormat="24" />
+        </div>
+        <div class="shopping-kenost__row">
+          <p class="k-mini-text">Дата и время окончания приема заказов</p>
+          <CalendarVue showIcon id="calendar-24h" v-model="this.shipModa.dateEnd" showTime hourFormat="24" />
+        </div>
+      </div>
+      <div class="dart-form-group mt-2 mb-2">
+        <input v-model="this.shipModa.city" type="text" name="description" placeholder="Укажите город или магазины" class="dart-form-control">
+      </div>
+      <div class="shopping-kenost__city">
+        <div class="shopping-kenost__row">
+          <p class="k-mini-text">Радиус отклонения от точек маршрута (км)</p>
+          <input v-model="this.form.description" type="text" name="description" placeholder="Укажите радиус отклонения от точек маршрута (км)" class="dart-form-control">
+        </div>
+        <div class="shopping-kenost__row shopping-kenost__checkbox">
+          <Checkbox v-model="this.form.not_sale_client" inputId="not_sale_client-1" name="not_sale_client-1" value="true" />
+          <label for="not_sale_client-1" class="ml-2 mb-0">Заезжать в попутные города</label>
+        </div>
+      </div>
+      <div class="shopping-kenost__citys">
+        <div class="shopping-kenost__cityone">
+          <div class="shopping-kenost__cityone-name">
+            <p>Москва</p>
+            <div class="btn btn-close"><i class="d_icon d_icon-close"></i></div>
+          </div>
+          <div class="shopping-kenost__cityone-checkbox mb-2">
+            <Checkbox v-model="this.form.not_sale_client" inputId="not_sale_client-1" name="not_sale_client-1" value="true" />
+            <label for="not_sale_client-1" class="ml-2 mb-0">Дата рассчитывается автоматически</label>
+          </div>
+          <div class="shopping-kenost__cityone-date">
+            <p class="k-mini-text">Дата и время окончания приема заказов</p>
+            <CalendarVue showIcon id="calendar-24h" v-model="this.shipModa.dateEnd" showTime hourFormat="24" />
+          </div>
+          <swiper
+              class="shopping-kenost-swiper"
+              :slides-per-view="2.5"
+              :space-between="8"
+              :slides-per-group="1"
+              loop
+              navigation
+              :pagination="{ clickable: true }"
+              :scrollbar="{ draggable: true }"
+          >
+
+            <swiper-slide v-for="item, index in this.shipModa.shops" v-bind:key="index" class="shopping-kenost__slider">
+              <div class="shopping-kenost__slide">
+                <img :src="item.image">
+                <div class="shopping-kenost__slide-info">
+                  <p>{{item.name}}</p>
+                  <span>{{ item.addres }}</span>
+                </div>
+              </div>
+            </swiper-slide>
+          </swiper>
+        </div>
+        <div class="shopping-kenost__cityone">
+          <div class="shopping-kenost__cityone-name">
+            <p>Перь</p>
+            <div class="btn btn-close"><i class="d_icon d_icon-close"></i></div>
+          </div>
+          <div class="shopping-kenost__cityone-checkbox mb-2">
+            <Checkbox v-model="this.form.not_sale_client" inputId="not_sale_client-1" name="not_sale_client-1" value="true" />
+            <label for="not_sale_client-1" class="ml-2 mb-0">Дата рассчитывается автоматически</label>
+          </div>
+          <div class="shopping-kenost__cityone-date">
+            <p class="k-mini-text">Дата и время окончания приема заказов</p>
+            <CalendarVue showIcon id="calendar-24h" v-model="this.shipModa.dateEnd" showTime hourFormat="24" />
+          </div>
+          <swiper
+              class="shopping-kenost-swiper"
+              :slides-per-view="2.5"
+              :space-between="8"
+              :slides-per-group="1"
+              loop
+              navigation
+              :pagination="{ clickable: true }"
+              :scrollbar="{ draggable: true }"
+          >
+
+            <swiper-slide v-for="item, index in this.shipModa.shops" v-bind:key="index" class="shopping-kenost__slider">
+              <div class="shopping-kenost__slide">
+                <img :src="item.image">
+                <div class="shopping-kenost__slide-info">
+                  <p>{{item.name}}</p>
+                  <span>{{ item.addres }}</span>
+                </div>
+              </div>
+            </swiper-slide>
+          </swiper>
+        </div>
+        <div class="shopping-kenost__cityone">
+          <div class="shopping-kenost__cityone-name">
+            <p>Владивосток</p>
+            <div class="btn btn-close"><i class="d_icon d_icon-close"></i></div>
+          </div>
+          <div class="shopping-kenost__cityone-checkbox mb-2">
+            <Checkbox v-model="this.form.not_sale_client" inputId="not_sale_client-1" name="not_sale_client-1" value="true" />
+            <label for="not_sale_client-1" class="ml-2 mb-0">Дата рассчитывается автоматически</label>
+          </div>
+          <div class="shopping-kenost__cityone-date">
+            <p class="k-mini-text">Дата и время окончания приема заказов</p>
+            <CalendarVue showIcon id="calendar-24h" v-model="this.shipModa.dateEnd" showTime hourFormat="24" />
+          </div>
+          <swiper
+              class="shopping-kenost-swiper"
+              :slides-per-view="2.5"
+              :space-between="8"
+              :slides-per-group="1"
+              loop
+              navigation
+              :pagination="{ clickable: true }"
+              :scrollbar="{ draggable: true }"
+          >
+
+            <swiper-slide v-for="item, index in this.shipModa.shops" v-bind:key="index" class="shopping-kenost__slider">
+              <div class="shopping-kenost__slide">
+                <img :src="item.image">
+                <div class="shopping-kenost__slide-info">
+                  <p>{{item.name}}</p>
+                  <span>{{ item.addres }}</span>
+                </div>
+              </div>
+            </swiper-slide>
+          </swiper>
+        </div>
+      </div>
+      <div class="shopping-kenost__button">
+        <button class="router-link-active dart-btn dart-btn-secondary btn-padding">Отменить</button>
+        <button type="submit" class="dart-btn dart-btn-primary btn-padding">Далее</button>
+      </div>
+    </div>
+  </Dialog> -->
+
+  <Dialog v-model:visible="this.showShip" header="Создание отгрузки" :style="{ width: '800px' }">
+    <div class="shopping-kenost">
+      <p class="shopping-kenost__b">Дата и время</p>
+      <div class="shopping-kenost__dates">
+        <div class="shopping-kenost__row">
+          <p class="k-mini-text">Дата и время отгрузки</p>
+          <CalendarVue showIcon id="calendar-24h" v-model="this.shipModa.dateStart" showTime hourFormat="24" />
+        </div>
+        <div class="shopping-kenost__row">
+          <p class="k-mini-text">Дата и время окончания приема заказов</p>
+          <CalendarVue showIcon id="calendar-24h" v-model="this.shipModa.dateEnd" showTime hourFormat="24" />
+        </div>
+      </div>
+      <p class="shopping-kenost__b mt-4 mb-1">Маршрут</p>
+      <div class="dart-form-group mt-1 mb-2">
+        <input v-model="this.shipModa.city" type="text" name="description" placeholder="Укажите город или магазины" class="dart-form-control">
+      </div>
+      <div class="shopping-kenost__citys">
+        <div class="shopping-kenost__cityone">
+          <div class="shopping-kenost__cityone-name">
+            <p>Москва</p>
+            <div class="btn btn-close"><i class="d_icon d_icon-close"></i></div>
+          </div>
+          <div class="shopping-kenost__cityone-date mb-3">
+            <p class="k-mini-text">Дата и время окончания приема заказов</p>
+            <CalendarVue showIcon id="calendar-24h" v-model="this.shipModa.dateEnd" showTime hourFormat="24" />
+          </div>
+        </div>
+        <div class="shopping-kenost__cityone">
+          <div class="shopping-kenost__cityone-name">
+            <p>Тверь</p>
+            <div class="btn btn-close"><i class="d_icon d_icon-close"></i></div>
+          </div>
+          <div class="shopping-kenost__cityone-date mb-3">
+            <p class="k-mini-text">Дата и время окончания приема заказов</p>
+            <CalendarVue showIcon id="calendar-24h" v-model="this.shipModa.dateEnd" showTime hourFormat="24" />
+          </div>
+        </div>
+        <div class="shopping-kenost__cityone">
+          <div class="shopping-kenost__cityone-name">
+            <p>Тула</p>
+            <div class="btn btn-close"><i class="d_icon d_icon-close"></i></div>
+          </div>
+          <div class="shopping-kenost__cityone-date mb-3">
+            <p class="k-mini-text">Дата и время окончания приема заказов</p>
+            <CalendarVue showIcon id="calendar-24h" v-model="this.shipModa.dateEnd" showTime hourFormat="24" />
+          </div>
+        </div>
+      </div>
+      <div class="shopping-kenost__button">
+        <button class="router-link-active dart-btn dart-btn-secondary btn-padding">Отменить</button>
+        <button type="submit" class="dart-btn dart-btn-primary btn-padding">Далее</button>
+      </div>
+    </div>
+  </Dialog>
 </template>
 
 <script>
@@ -188,9 +384,14 @@ import AutoComplete from 'primevue/autocomplete'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
 import { Calendar, DatePicker } from 'v-calendar'
+import CalendarVue from 'primevue/calendar'
 import customModal from '@/components/popup/CustomModal'
 import vTable from '../components/table/v-table'
 import 'v-calendar/dist/style.css'
+import Dialog from 'primevue/dialog'
+// import Checkbox from 'primevue/checkbox'
+// import { Swiper, SwiperSlide } from 'swiper/vue'
+// import 'swiper/css'
 
 export default {
   name: 'ProfileShipping',
@@ -208,6 +409,44 @@ export default {
     return {
       editMode: false,
       showShipModal: false,
+      showShip: true,
+      shipModa: {
+        dateStart: null,
+        dateEnd: null,
+        city: '',
+        shops: {
+          1: {
+            name: 'МастерТул',
+            addres: 'ул. Тверская, д. 15, стр. 2',
+            image: 'https://mst.tools/assets/content/images/shops_logo/spo-logo.png'
+          },
+          2: {
+            name: 'МастерТул',
+            addres: 'ул. Тверская, д. 15, стр. 2',
+            image: 'https://mst.tools/assets/content/images/shops_logo/spo-logo.png'
+          },
+          3: {
+            name: 'МастерТул',
+            addres: 'ул. Тверская, д. 15, стр. 2',
+            image: 'https://mst.tools/assets/content/images/shops_logo/spo-logo.png'
+          },
+          4: {
+            name: 'МастерТул',
+            addres: 'ул. Тверская, д. 15, стр. 2',
+            image: 'https://mst.tools/assets/content/images/shops_logo/spo-logo.png'
+          },
+          5: {
+            name: 'МастерТул',
+            addres: 'ул. Тверская, д. 15, стр. 2',
+            image: 'https://mst.tools/assets/content/images/shops_logo/spo-logo.png'
+          },
+          6: {
+            name: 'МастерТул',
+            addres: 'ул. Тверская, д. 15, стр. 2',
+            image: 'https://mst.tools/assets/content/images/shops_logo/spo-logo.png'
+          }
+        }
+      },
       modal: {
         store_name: '',
         store_date: ''
@@ -400,7 +639,8 @@ export default {
       })
     },
     async formSubmit (event) {
-      const result = await this.v$.$validate()
+      // const result = await this.v$.$validate()
+      const result = true
       if (!result) {
         console.log(result)
       } else {
@@ -533,7 +773,12 @@ export default {
     Calendar,
     DatePicker,
     customModal,
-    vTable
+    vTable,
+    Dialog,
+    CalendarVue
+    // Checkbox,
+    // Swiper,
+    // SwiperSlide
   },
   computed: {
     ...mapGetters([
@@ -572,6 +817,164 @@ export default {
 </script>
 
 <style lang="scss">
+.shopping-kenost-swiper{
+  width: 100%;
+  padding: 16px 0;
+}
+
+.shopping-kenost{
+  &__dates{
+    display: flex;
+    gap: 12px;
+  }
+
+  &__button{
+    display: flex;
+    gap: 12px;
+    margin-top: 20px;
+
+    .dart-btn{
+      width: 100%;
+    }
+  }
+
+  &__slide{
+    width: 280px;
+    box-shadow: 0px 0px 18px 0px #0000000F;
+    border-radius: 5px;
+    padding: 20px 16px;
+    display: flex;
+    gap: 12px;
+
+    img{
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 1px solid #E8E8E8;
+      object-fit: cover;
+    }
+
+    &-info{
+      p{
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 14.84px;
+        letter-spacing: 0.25px;
+        margin-bottom: 12px;
+      }
+
+      span{
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 14.84px;
+        letter-spacing: 0.25px;
+        color: #A0A0A0;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+    }
+  }
+
+  &__b{
+    color: #282828;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+
+  &__city{
+    display: flex;
+    gap: 12px;
+  }
+
+  &__row{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__checkbox{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 16px;
+  }
+
+  &__citys{
+    margin-top: 25px;
+    padding-left: 28px
+  }
+
+  &__cityone:not(:last-child){
+    &::before{
+      width: 1px;
+      height: 100%;
+      background: #008FFF;
+      content: "";
+      position: absolute;
+      left: -19px;
+      top: 5px;
+      transform: translate(-50%, 0);
+    }
+  }
+
+  &__cityone{
+    display: flex;
+    flex-direction: column;
+    position: relative;
+
+    &-checkbox{
+      display: flex;
+      align-items: center;
+    }
+
+    &-date{
+      width: 50%;
+
+      .p-calendar{
+        width: 100%;
+      }
+    }
+
+    &-name{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 8px;
+
+      p{
+        color: #282828;
+        font-size: 14px;
+        font-weight: 500;
+        position: relative;
+        margin: 0;
+
+        &::before{
+          width: 16px;
+          height: 16px;
+          border: 2px solid #008FFF;
+          background-color: #FFF;
+          content: "";
+          position: absolute;
+          border-radius: 50%;
+          left: -19px;
+          transform: translate(-50%, 0);
+        }
+      }
+    }
+  }
+}
+
+.k-mini-text{
+  color: #A0A0A0;
+  font-size: 12px;
+  font-weight: 400;
+  margin-bottom: 4px;
+}
+
 .vc-container{
   border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 5px;
