@@ -29,7 +29,7 @@
                 </div>
                 <div v-for="complect in store.complects" v-bind:key="complect.id" class="kenost-basket__complect">
                     <div class="kenost-basket">
-                        <div @click="clearBasketProduct(store.id, product.id_remain)" class="btn-close link-no-style"
+                        <div @click="clearBasketComplect(store.id, complect.info.id)" class="btn-close link-no-style"
                             ><i class="d_icon d_icon-close"></i
                         ></div>
                         <div class="kenost-basket__product">
@@ -49,7 +49,7 @@
                             <p v-if="index !== 0" class="kenost-basket-gift__name" :title="product.name">{{product.name}}</p>
                             <div v-if="index !== 0" class="kenost-basket-gift__info">
                                 <span>{{product.article}}</span>
-                                <span>{{product.info.count.toLocaleString('ru')}} х {{(product.info.price / product.info.count).toLocaleString('ru')}} ₽</span>
+                                <span>{{product.info.count.toLocaleString('ru')}} х {{(Number(product.info.price) / Number(product.info.count)).toLocaleString('ru')}} ₽</span>
                             </div>
                         </div>
                     </div>
