@@ -1,5 +1,126 @@
 <template>
-  <div class="block-header">
+  <div class="shipping">
+    <div class="shipping-table">
+      <p class="table-kenost__title">Мои отгрузки</p>
+      <table class="table-kenost__table">
+        <thead>
+            <tr>
+                <th class="table-kenost__name">Номер отгрузки</th>
+                <th class="table-kenost__name">Дата и время отгрузки</th>
+                <th class="table-kenost__name">Дата + время окончания приема заказов</th>
+                <th class="table-kenost__name">Маршрут</th>
+                <th class="table-kenost__name">Статус</th>
+            </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <span class="shipping-table__text">3454778</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">06.06 15:00</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">06.06 15:00</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">Москва — Тверь — Тула</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">Собирается</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="shipping-table__text">3454778</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">06.06 15:00</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">06.06 15:00</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">Москва — Тверь — Тула</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">Собирается</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="shipping-table__text">3454778</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">06.06 15:00</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">06.06 15:00</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">Москва — Тверь — Тула</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">Собирается</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="shipping-table__text">3454778</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">06.06 15:00</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">06.06 15:00</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">Москва — Тверь — Тула</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">Собирается</span>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <span class="shipping-table__text">3454778</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">06.06 15:00</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">06.06 15:00</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">Москва — Тверь — Тула</span>
+            </td>
+            <td>
+              <span class="shipping-table__text">Собирается</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="shipping-calendar">
+      <div class="shipping-calendar__head">
+        <p>Календарь отгрузок</p>
+        <div class="dart-btn dart-btn-primary" @click="this.showShip = true"><i class="pi pi-plus"></i></div>
+      </div>
+      <Calendar
+        class="shipping-calendar-css"
+        is-expanded
+        title-position="left"
+        :attributes="attributes"
+        :masks="{ weekdays: 'WW' }"
+        :modelValue="checkDate"
+        @dayclick='dayClicked'
+      />
+      <div class="calendar-associations">
+        <p class="calendar-associations__blue">— дни, в которые есть отгрузка</p>
+      </div>
+    </div>
+  </div>
+  <!-- <div class="block-header">
     <div class="dart-row dart-align-items-center">
       <div class="d-col-md-4">
         <span class="block-header__title">Отгрузки</span>
@@ -176,7 +297,7 @@
         />
       </div>
     </custom-modal>
-  </teleport>
+  </teleport> -->
 
   <!-- <Dialog v-model:visible="this.showShip" header="Создание отгрузки" :style="{ width: '800px' }">
     <div class="shopping-kenost">
@@ -368,7 +489,7 @@
         </div>
       </div>
       <div class="shopping-kenost__button">
-        <button class="router-link-active dart-btn dart-btn-secondary btn-padding">Отменить</button>
+        <div class="router-link-active dart-btn dart-btn-secondary btn-padding" @click="this.showShip = false">Отменить</div>
         <button type="submit" class="dart-btn dart-btn-primary btn-padding">Далее</button>
       </div>
     </div>
@@ -380,13 +501,13 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@/utils/i18n-validators'
 import router from '@/router'
-import AutoComplete from 'primevue/autocomplete'
-import Dropdown from 'primevue/dropdown'
-import MultiSelect from 'primevue/multiselect'
-import { Calendar, DatePicker } from 'v-calendar'
+// import AutoComplete from 'primevue/autocomplete'
+// import Dropdown from 'primevue/dropdown'
+// import MultiSelect from 'primevue/multiselect'
+import { Calendar } from 'v-calendar'
 import CalendarVue from 'primevue/calendar'
-import customModal from '@/components/popup/CustomModal'
-import vTable from '../components/table/v-table'
+// import customModal from '@/components/popup/CustomModal'
+// import vTable from '../components/table/v-table'
 import 'v-calendar/dist/style.css'
 import Dialog from 'primevue/dialog'
 // import Checkbox from 'primevue/checkbox'
@@ -409,7 +530,7 @@ export default {
     return {
       editMode: false,
       showShipModal: false,
-      showShip: true,
+      showShip: false,
       shipModa: {
         dateStart: null,
         dateEnd: null,
@@ -767,13 +888,13 @@ export default {
     )
   },
   components: {
-    Dropdown,
-    MultiSelect,
-    AutoComplete,
+    // Dropdown,
+    // MultiSelect,
+    // AutoComplete,
     Calendar,
-    DatePicker,
-    customModal,
-    vTable,
+    // DatePicker,
+    // customModal,
+    // vTable,
     Dialog,
     CalendarVue
     // Checkbox,
@@ -817,6 +938,106 @@ export default {
 </script>
 
 <style lang="scss">
+
+.shipping{
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.calendar-associations{
+  padding: 0 24px;
+  margin-bottom: 8px;
+  &__blue{
+    position: relative;
+    margin-bottom: 0;
+    padding-left: 20px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14.06px;
+    color: #5E5E5E;
+
+    &::before {
+      width: 13px;
+      height: 13px;
+      background: #008FFF;
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      left: 0px;
+      top: 50%;
+      transform: translate(0, -50%);
+    }
+  }
+}
+
+.shipping-calendar-css{
+  width: 100%;
+  border: none !important;
+  border-radius: none !important;
+
+  .vc-title{
+    background: unset !important;
+  }
+
+  .vc-focus{
+    background: unset !important;
+  }
+
+  .vc-header{
+    margin-bottom: 8px;
+  }
+}
+
+.shipping-calendar{
+  background: #FFF;
+  width: 450px;
+  border: 1px solid #E2E2E2;
+  border-radius: 5px;
+
+  &__head{
+    padding: 24px 24px 10px 24px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .dart-btn-primary{
+      padding: 7px;
+      display: flex;
+    }
+
+    .pi{
+      font-size: 12px;
+    }
+
+    p{
+      margin: 0;
+      font-size: 14px;
+      font-weight: 500;
+      line-height: 14.84px;
+      letter-spacing: 0.25px;
+      text-align: left;
+    }
+  }
+}
+
+.shipping-table{
+  background: #FFF;
+  width: calc(100% - 460px);
+  padding: 24px;
+  border: 1px solid #E2E2E2;
+  border-radius: 5px;
+  tr + tr{
+    border-top: 1px solid #E2E2E2
+  }
+
+  &__text{
+    color: #5E5E5E;
+    font-size: 14px;
+  }
+}
+
 .shopping-kenost-swiper{
   width: 100%;
   padding: 16px 0;
