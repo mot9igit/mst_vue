@@ -16,24 +16,24 @@
             </div>
         </div>
 
-        <div class="a-dart-btn a-dart-btn-secondary kenost-vendors">
+        <div class="a-dart-btn a-dart-btn-secondary kenost-vendors" @click="changeActive">
             <i class="mst-icon mst-icon-my_vendors kenost-vendors__icon"></i>
-            <span>6 из 45</span>
+            <span>{{ this.opt_vendors.selected_count }} из {{this.opt_vendors.available_count}}</span>
             <i class="pi pi-angle-down"></i>
             <div class="kenost-vendors__list">
                 <span>Выбранные поставщики</span>
                 <div class="kenost-vendors__images">
-                    <div class="k-order__actions">
-                        <div class="k-actions" v-for="(action) in opt_vendors.selected" v-bind:key="action.id">
+                    <div class="k-order__actions" v-if="this.opt_vendors.selected_count > 0">
+                        <div class="k-actions" v-for="(action) in this.opt_vendors.selected" v-bind:key="action.id">
                             <img class="k-order__actions-el" :src="action.image" >
                         </div>
                     </div>
-                    <div class="k-order__actions">
+                    <div class="k-order__actions" v-if="this.opt_vendors.selected_count > 6">
                         <div class="k-actions" v-for="(action, index) in opt_vendors.selected" v-bind:key="action.id">
                             <img v-if="index > 6 && index < 12" class="k-order__actions-el" :src="action.image" >
                         </div>
                     </div>
-                    <div class="k-order__actions">
+                    <div class="k-order__actions" v-if="this.opt_vendors.selected_count > 12">
                         <div class="k-actions" v-for="(action, index) in opt_vendors.selected" v-bind:key="action.id">
                             <img v-if="index > 12 && index < 18" class="k-order__actions-el" :src="action.image" >
                         </div>
@@ -41,6 +41,7 @@
                 </div>
             </div>
         </div>
+        <Vendors @changeActive="changeActive" @vendorCheck="vendorCheck" :vendorModal="this.vendorModal" :items="this.opt_vendors" />
 
         <!-- <a href="#" class="navmain__components_desctop a-dart-btn">
             <i class="pi pi-sliders-h"></i>
@@ -51,6 +52,7 @@
 <script>
 import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
+import Vendors from './opt/Vendors.vue'
 
 export default {
   name: 'Nav',
@@ -68,15 +70,27 @@ export default {
     return {
       loading: true,
       search: '',
-      opt_vendors: []
+      opt_vendors: [],
+      vendorModal: false
     }
   },
   methods: {
     ...mapActions([
-      'get_opt_vendors_from_api'
+      'get_opt_vendors_from_api',
+      'get_salses_banners_to_api'
     ]),
     toSearch () {
       router.push({ name: 'opt_search', params: { search: this.search } })
+    },
+    changeActive () {
+      this.vendorModal = !this.vendorModal
+    },
+    vendorCheck () {
+      const data = {
+        action: 'get/banners',
+        store_id: router.currentRoute._value.params.id
+      }
+      this.get_salses_banners_to_api(data)
     }
   },
   mounted () {
@@ -84,11 +98,17 @@ export default {
       this.opt_vendors = this.optvendors
     )
   },
-  components: { },
+  components: { Vendors },
   computed: {
     ...mapGetters([
-      'optvendors'
+      'optvendors',
+      'salesbanners'
     ])
+  },
+  watch: {
+    optvendors: function (newVal, oldVal) {
+      this.opt_vendors = newVal
+    }
   }
 }
 </script>
@@ -99,16 +119,26 @@ export default {
             font-size: 24px;
         }
 
+        &:hover{
+            .kenost-vendors__list{
+                opacity: 1;
+                pointer-events: all;
+            }
+        }
+
         &__list{
             position: absolute;
             width: 204px;
             padding: 12px;
             border-radius: 5px;
             box-shadow: 0px 0px 12px 0px rgba(51, 51, 51, 0.1490196078);
-            top: 60px;
+            top: 55px;
             z-index: 2;
             right: 0;
             background: #FFF;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.7s;
 
             span{
                 color: #ACABAB;

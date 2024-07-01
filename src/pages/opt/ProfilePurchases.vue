@@ -17,7 +17,7 @@
       </div>
     </div>
     <div class="d-col-map">
-      <Vendors @vendorCheck="vendorCheck" :items="this.opt_vendors" />
+      <!-- <Vendors @vendorCheck="vendorCheck" :items="this.opt_vendors" /> -->
       <Basket ref="childComponent" @toOrder="toOrder"/>
     </div>
   </div>
@@ -31,7 +31,7 @@ import CatalogMenu from '../../components/opt/CatalogMenu.vue'
 // import SeasonSwiper from '../../components/swipers/SeasonSwiper.vue'
 import Banners from '../../components/opt/Banners.vue'
 import Basket from '../../components/opt/Basket.vue'
-import Vendors from '../../components/opt/Vendors.vue'
+// import Vendors from '../../components/opt/Vendors.vue'
 import ChangeVendorsModal from '../../components/opt/ChangeVendorsModal.vue'
 import OrderModal from '../../components/opt/OrderModal.vue'
 import router from '@/router'
@@ -59,7 +59,7 @@ export default {
     // NewSwiper,
     Basket,
     Banners,
-    Vendors,
+    // Vendors,
     ChangeVendorsModal,
     OrderModal
   },

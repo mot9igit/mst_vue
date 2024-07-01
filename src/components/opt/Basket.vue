@@ -12,7 +12,39 @@
                 <div class="basket-container__adres" :style="{'background': store.color}">
                     {{store.name}}
                 </div>
-                <div v-for="product in store.products" v-bind:key="product.id" class="basket-container__card basket-item">
+                <div class="kenost-basket" v-for="product in store.products" v-bind:key="product.id">
+                    <p class="kenost-basket__name" :title="product.name">{{product.name}}</p>
+                    <div class="kenost-basket__info">
+                        <span>{{product.article}}</span>
+                        <div class="kenost-basket__info-left">
+                            <Counter :key="new Date().getMilliseconds() + product.id_remain" @ElemCount="ElemCount" :mini="true" :min="1" :max="product.remains" :value="product.info.count" :id="product.id_remain" :store_id="store.id"/>
+                            <b>{{(product.info.count * product.info.price).toLocaleString('ru')}} ₽</b>
+                        </div>
+                    </div>
+                </div>
+                <div v-for="complect in store.complects" v-bind:key="complect.id" class="kenost-basket__complect">
+                    <div class="kenost-basket">
+                        <p class="kenost-basket__name" :title="complect.products[0].name">{{complect.products[0].name}}</p>
+                        <div class="kenost-basket__info">
+                            <span>{{complect.products[0].article}}</span>
+                            <div class="kenost-basket__info-left">
+                                <Counter :key="new Date().getMilliseconds() + complect.info.id" @ElemCount="ElemComplectCount" :mini="true" :min="1" :max="complect.info.complect_data?.min_count" :value="complect.info.count" :id="complect.info.id" :store_id="store.id"/>
+                                <b>{{(complect.products[0].info.count * complect.products[0].info.price).toLocaleString('ru')}} ₽</b>
+                            </div>
+                        </div>
+                        <div class="kenost-basket__hide" @click="showGift($event.target)">— Посмотреть подарок</div>
+                    </div>
+                    <div class="kenost-basket-gift__container">
+                        <div v-for="(product, index) in complect.products" v-bind:key="product.id" class="kenost-basket-gift" :class="{ none: index === 0 }">
+                            <p v-if="index !== 0" class="kenost-basket-gift__name" :title="product.name">{{product.name}}</p>
+                            <div v-if="index !== 0" class="kenost-basket-gift__info">
+                                <span>{{product.article}}</span>
+                                <span>{{product.info.count.toLocaleString('ru')}} х {{(product.info.price / product.info.count).toLocaleString('ru')}} ₽</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- <div v-for="product in store.products" v-bind:key="product.id" class="basket-container__card basket-item">
                     <img
                         class="basket-container__img"
                         :src="product.image"
@@ -71,7 +103,7 @@
                             <i v-if="index === 0" class="mst-icon mst-icon-link basket-container__link-complect"></i>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -183,6 +215,18 @@ export default {
     },
     toOrder () {
       this.$emit('toOrder')
+    },
+    showGift (e) {
+      const el = e.parentElement.parentElement.querySelector('.kenost-basket-gift__container')
+      const text = e.parentElement.querySelector('.kenost-basket__hide')
+
+      if (el.style.maxHeight) {
+        el.style.maxHeight = null
+        text.innerText = '— Посмотреть подарок'
+      } else {
+        el.style.maxHeight = el.scrollHeight + 'px'
+        text.innerText = '— Скрыть подарок'
+      }
     }
   },
   mounted () {
@@ -208,6 +252,118 @@ export default {
 }
 </script>
 <style lang="scss">
+
+    .kenost-basket-gift{
+        background: #F8F7F5;
+        border-radius: 5px;
+        padding: 12px;
+        margin-top: 8px;
+        &__name{
+            line-height: 18px;
+            font-size: 14px;
+            white-space: nowrap;
+            width: 100%;
+            margin-bottom: 4px;
+            overflow: hidden;
+        }
+
+        &__container{
+            max-height: 0px;
+            overflow: hidden;
+            transition: all 0.5s;
+        }
+
+        &.none{
+            display: none !important;
+        }
+
+        &__info{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            span{
+                color: #ACABAB;
+                font-size: 14px;
+                line-height: 18px;
+            }
+
+            b{
+                color: #282828;
+                font-size: 14px;
+                line-height: 18px;
+                width: 77px;
+                text-align: right;
+            }
+
+            &-left{
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+        }
+    }
+
+    .kenost-basket + .kenost-basket{
+        padding-top: 8px;
+        margin-top: 8px;
+        border-top: 1px solid #E2E2E2
+    }
+
+    .kenost-basket{
+
+        &__hide{
+            color: #ACABAB;
+            font-size: 14px;
+            line-height: 18px;
+            margin-top: 4px;
+            cursor: pointer;
+        }
+
+        &.none{
+            display: none !important;
+        }
+
+        &__name{
+            line-height: 18px;
+            font-size: 14px;
+            white-space: nowrap;
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        &__complect{
+            padding-top: 8px;
+            margin-top: 8px;
+            border-top: 1px solid #E2E2E2
+        }
+
+        &__info{
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            span{
+                color: #ACABAB;
+                font-size: 14px;
+                line-height: 18px;
+            }
+
+            b{
+                color: #282828;
+                font-size: 14px;
+                line-height: 18px;
+                width: 77px;
+                text-align: right;
+            }
+
+            &-left{
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+        }
+    }
 
     .basket-item + .basket-item{
         border-top: 1px solid #E2E2E2;

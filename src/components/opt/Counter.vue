@@ -1,5 +1,5 @@
 <template>
-    <div class="k-quantity">
+    <div class="k-quantity" :class="{ mini: mini }">
         <form method="post" class="ms2_form form-inline" role="form">
             <input type="hidden" name="key">
             <div class="k-quantity__btn" @click="onMinus">
@@ -44,6 +44,10 @@ export default {
     index: {
       type: Number,
       default: 0
+    },
+    mini: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -109,6 +113,22 @@ export default {
     .k-quantity{
         width: 86px;
         height: 34px;
+
+        &.mini{
+          width: 64px;
+          height: 22px;
+
+          &__counter{
+            font-size: 14px;
+            font-weight: 500;
+          }
+
+          .pi{
+            font-size: 14px;
+            color: #ACABAB;
+          }
+        }
+
         form{
             display: flex;
             align-items: center;

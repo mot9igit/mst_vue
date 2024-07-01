@@ -1,6 +1,7 @@
 <template>
-    <div className="d-col-shop mb-2">
-        <Toast />
+    <Toast />
+
+    <!-- <div className="d-col-shop mb-2">
         <div className="d-col-shop__left">
             <span className="d-col-shop__span">Выбранные поставщики</span>
             <span className="h3 btnActiveChangeshopOn" @click.prevent="toggleVendorModal">{{ this.items.selected_count }} из {{ this.items.available_count }}<i className="pi pi-angle-down"></i></span>
@@ -8,7 +9,7 @@
         <div className="vendors">
             <VendorsSwiper :items="this.items.selected"/>
         </div>
-    </div>
+    </div> -->
     <teleport to="body">
       <div class="modalright__loyout" :class="{ active: vendorModal }" @click.prevent="toggleVendorModal"></div>
       <div class="modalright" :class="{ active: vendorModal }">
@@ -129,10 +130,10 @@ import router from '@/router'
 import Toast from 'primevue/toast'
 import { YandexMap, YandexMapDefaultSchemeLayer, YandexMapDefaultFeaturesLayer, YandexMapMarker, YandexMapClusterer } from 'vue-yandex-maps'
 import Checkbox from 'primevue/checkbox'
-import VendorsSwiper from '../swipers/VendorsSwiper.vue'
 
 export default {
   name: 'Vendors',
+  emits: ['changeActive'],
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -144,6 +145,9 @@ export default {
     },
     items: {
       type: Array
+    },
+    vendorModal: {
+      type: Boolean
     }
   },
   data () {
@@ -157,7 +161,6 @@ export default {
         }
       },
       loading: false,
-      vendorModal: false,
       vendorForm: {
         selected: []
       }
@@ -170,7 +173,9 @@ export default {
       'toggle_opts_visible'
     ]),
     toggleVendorModal () {
-      this.vendorModal = !this.vendorModal
+      this.$emit('changeActive')
+      // emit
+      // vendorModal = !this.vendorModal
     },
     checkVendor (id) {
       this.vendorForm.selected[id] = !this.vendorForm.selected[id]
@@ -236,7 +241,7 @@ export default {
   },
   mounted () {
   },
-  components: { VendorsSwiper, Checkbox, YandexMap, YandexMapDefaultSchemeLayer, YandexMapDefaultFeaturesLayer, YandexMapMarker, YandexMapClusterer, Toast },
+  components: { Checkbox, YandexMap, YandexMapDefaultSchemeLayer, YandexMapDefaultFeaturesLayer, YandexMapMarker, YandexMapClusterer, Toast },
   computed: {
     ...mapGetters([
       'optvendors'
