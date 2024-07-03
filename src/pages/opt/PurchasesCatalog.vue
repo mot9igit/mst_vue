@@ -37,7 +37,7 @@
       </div>
       <div class="d-col-map">
         <Vendors :items="this.opt_vendors" @vendorCheck="vendorCheck"/>
-        <Basket @catalogUpdate="catalogUpdate" ref="childComponent" @toOrder="toOrder"/>
+        <Basket ref="childComponent" @toOrder="toOrder" @catalogUpdate="catalogUpdate"/>
       </div>
     </div>
     <OrderModal :show="show_order" @fromOrder="fromOrder" @orderSubmit="updatePage($route.params.category_id)"/>
@@ -141,6 +141,7 @@ export default {
       }
     },
     catalogUpdate () {
+      console.log('cart update')
       this.get_opt_products_from_api({
         page: this.page,
         perpage: this.perpage

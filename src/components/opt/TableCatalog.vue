@@ -12,7 +12,7 @@
                     <th class="k-table__name k-table__th-buttons"></th>
                     <th class="k-table__name">Поставщик</th>
                     <th class="k-table__name">Цена</th>
-                    <th class="k-table__name">РРЦ / Наценка</th>
+                    <th class="k-table__name">РЦ / Наценка</th>
                     <th class="k-table__name">Отсрочка</th>
                     <th class="k-table__name">Оплата доставки</th>
                     <th class="k-table__name">Срок доставки</th>

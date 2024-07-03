@@ -45,6 +45,9 @@
           <div class="dart-form-group" v-if="ffilter.type == 'dropdown'">
             <Dropdown v-model="filtersdata[i]" :options="ffilter.values" filter showClear :optionLabel="(ffilter.optionLabel) ? ffilter.optionLabel : 'name'" :optionValue="(ffilter.optionValue) ? ffilter.optionValue : 'id'" :placeholder="ffilter.placeholder" @change="setFilter"></Dropdown>
           </div>
+          <div class="dart-form-group" v-if="ffilter.type == 'number'">
+            <InputNumber  v-model="filtersdata[i]" :min="0" :max="100" showButtons buttonLayout="horizontal" :step="ffilter.step ? ffilter.step : 1" :optionLabel="(ffilter.optionLabel) ? ffilter.optionLabel : 'name'" :optionValue="(ffilter.optionValue) ? ffilter.optionValue : 'id'" :placeholder="ffilter.placeholder" @update:modelValue="setFilter"/>
+          </div>
           <div class="dart-form-group" v-if="ffilter.type == 'vv'">
             <AutoComplete v-model="filtersdata[i]" placeholder="Производитель" optionLabel="name" dataKey="id" :suggestions="filteredVendor" @complete="searchVendor" @change="setFilter">
               <template #option="slotProps">
@@ -155,6 +158,7 @@ import TreeSelect from 'primevue/treeselect'
 import Dropdown from 'primevue/dropdown'
 import AutoComplete from 'primevue/autocomplete'
 import Checkbox from 'primevue/checkbox'
+import InputNumber from 'primevue/inputnumber'
 import Skeleton from 'primevue/skeleton'
 
 export default {
@@ -168,6 +172,7 @@ export default {
     Calendar,
     AutoComplete,
     Dropdown,
+    InputNumber,
     Skeleton,
     Checkbox
   },
@@ -384,6 +389,17 @@ export default {
 </script>
 
 <style lang="scss">
+  .p-inputnumber-buttons-horizontal{
+    .p-inputtext{
+      border-radius: 0;
+    }
+    .p-inputnumber-button-up{
+      border-radius: 0 6px 6px 0;
+    }
+    .p-inputnumber-button-down{
+      border-radius: 6px 0 0 6px;
+    }
+  }
   .v-table .profile-content__title{
     display: flex;
     width: 100%;

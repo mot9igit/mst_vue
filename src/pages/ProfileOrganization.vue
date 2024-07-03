@@ -379,7 +379,7 @@
               </v-table>
             </div>
           </div>
-          <div class="d-col-md-12">
+          <div class="d-col-md-12" :class="{'loading': loading_products}">
             <div class="panel-widget panel-widget-top-nomoney">
               <v-table
                 :items_data="products.products"
@@ -473,6 +473,7 @@ export default {
       showOperatingModeModal: false,
       showOperatingModeCalendarModal: false,
       chartData: null,
+      loading_products: false,
       work_loading: false,
       work_calendar_loading: false,
       work_date: new Date(),
@@ -596,6 +597,12 @@ export default {
           name: 'Наименование, артикул',
           placeholder: 'Наименование, артикул',
           type: 'text'
+        },
+        no_motion: {
+          name: 'Дней без движения',
+          placeholder: 'Дней без движения',
+          type: 'number',
+          step: 10
         },
         vendor: {
           name: 'Производитель',
@@ -894,18 +901,22 @@ export default {
     },
     filter (data) {
       this.page = 1
+      this.loading_products = true
       this.get_data_from_api(data).then(() => {
         this.avg_info.remains = this.products.avg_info?.remains
         this.avg_info.no_money = this.products.avg_info.no_money
         this.avg_info.sales_speed = this.products.avg_info.sales_speed
+        this.loading_products = false
       })
     },
     paginate (data) {
       this.page = data.page
+      this.loading_products = true
       this.get_data_from_api(data).then(() => {
         this.avg_info.remains = this.products.avg_info?.remains
         this.avg_info.no_money = this.products.avg_info.no_money
         this.avg_info.sales_speed = this.products.avg_info.sales_speed
+        this.loading_products = false
       })
     }
   },

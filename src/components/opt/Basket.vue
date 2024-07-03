@@ -138,7 +138,7 @@ import Dialog from 'primevue/dialog'
 
 export default {
   name: 'Basket',
-  emits: ['catalogUpdate', 'actionUpdate'],
+  emits: ['catalogUpdate', 'actionUpdate', 'toOrder'],
   props: {
     pagination_items_per_page: {
       type: Number,
@@ -170,8 +170,8 @@ export default {
       console.log(object)
       if (object.value > Number(object.max)) {
         this.modal_remain = true
-        console.log(this.modal_remain)
       } else {
+        this.$emit('catalogUpdate')
         const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_complect: object.id, value: object.value, store_id: object.store_id }
         this.busket_from_api(data).then((response) => {
           const datainfo = {
@@ -185,11 +185,10 @@ export default {
       }
     },
     ElemCount (object) {
-      console.log(object)
       if (object.value > Number(object.max)) {
         this.modal_remain = true
-        console.log(this.modal_remain)
       } else {
+        this.$emit('catalogUpdate')
         const data = { action: 'basket/update', id: router.currentRoute._value.params.id, id_remain: object.id, value: object.value, store_id: object.store_id }
         this.busket_from_api(data).then((response) => {
           const datainfo = {
@@ -203,25 +202,22 @@ export default {
       }
     },
     clearBasket () {
+      this.$emit('catalogUpdate')
+      this.$emit('actionUpdate')
       const data = { action: 'basket/clear', id: router.currentRoute._value.params.id }
-      this.busket_from_api(data).then((response) => {
-        this.$emit('catalogUpdate')
-        this.$emit('actionUpdate')
-      })
+      this.busket_from_api(data).then((response) => { })
     },
     clearBasketProduct (storeid, productid) {
+      this.$emit('catalogUpdate')
+      this.$emit('actionUpdate')
       const data = { action: 'basket/clear', id: router.currentRoute._value.params.id, store_id: storeid, id_remain: productid }
-      this.busket_from_api(data).then((response) => {
-        this.$emit('catalogUpdate')
-        this.$emit('actionUpdate')
-      })
+      this.busket_from_api(data).then((response) => { })
     },
     clearBasketComplect (storeid, complectid) {
+      this.$emit('catalogUpdate')
+      this.$emit('actionUpdate')
       const data = { action: 'basket/clear', id: router.currentRoute._value.params.id, store_id: storeid, id_complect: complectid }
-      this.busket_from_api(data).then((response) => {
-        this.$emit('catalogUpdate')
-        this.$emit('actionUpdate')
-      })
+      this.busket_from_api(data).then((response) => { })
     },
     toOrder () {
       this.$emit('toOrder')
@@ -229,7 +225,6 @@ export default {
     showGift (e) {
       const el = e.parentElement.parentElement.parentElement.querySelector('.kenost-basket-gift__container')
       const text = e.parentElement.parentElement.querySelector('.kenost-basket__hide')
-
       if (el.style.maxHeight) {
         el.style.maxHeight = null
         text.innerText = '— Посмотреть подарок'
@@ -257,6 +252,7 @@ export default {
   watch: {
     optbasket: function (newVal, oldVal) {
       this.basket = newVal
+      this.$emit('catalogUpdate')
     }
   }
 }

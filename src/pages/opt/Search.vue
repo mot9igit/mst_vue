@@ -27,7 +27,7 @@
     </div>
     <div class="d-col-map">
       <Vendors :items="this.opt_vendors"/>
-      <Basket ref="childComponent" @toOrder="toOrder"/>
+      <Basket ref="childComponent" @toOrder="toOrder" @catalogUpdate="catalogUpdate"/>
     </div>
   </div>
   <OrderModal :show="show_order" @fromOrder="fromOrder"/>
@@ -120,6 +120,17 @@ export default {
     },
     updateBasket () {
       this.$refs.childComponent.updateBasket()
+    },
+    catalogUpdate () {
+      console.log('cart update')
+      this.get_opt_products_from_api({
+        page: this.page,
+        perpage: this.perpage
+      }).then(() => {
+        this.opt_products = this.optproducts
+        this.loading = false
+      }
+      )
     },
     toOrder () {
       this.show_order = true

@@ -420,6 +420,27 @@ export default {
           })
       })
     },
+    approveComplects (value) {
+      this.$load(async () => {
+        await this.opt_api({
+          action: 'complect/approve',
+          store_id: router.currentRoute._value.params.id,
+          complect_id: value.id
+        })
+          .then((result) => {
+            this.page_complects = 1
+            this.opt_get_complects({
+              action: 'complects/get',
+              page: this.page_complects,
+              perpage: this.pagination_items_per_page_complects,
+              store_id: router.currentRoute._value.params.id
+            })
+          })
+          .catch((result) => {
+            console.log(result)
+          })
+      })
+    },
     deleteElem (value) {
       this.$load(async () => {
         await this.set_sales_to_api({
