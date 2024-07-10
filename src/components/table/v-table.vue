@@ -340,6 +340,11 @@ export default {
         page: pageNum,
         perpage: this.pagination_items_per_page
       })
+
+      const el = document.querySelector('.profile-table tbody')
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' })
+      }
     },
     searchVendor (event) {
       if (!event.query.trim().length > 2) {
@@ -389,6 +394,14 @@ export default {
 </script>
 
 <style lang="scss">
+
+  .profile-table{
+    thead{
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+  }
   .p-inputnumber-buttons-horizontal{
     .p-inputtext{
       border-radius: 0;

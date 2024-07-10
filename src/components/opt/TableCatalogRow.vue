@@ -1,5 +1,6 @@
 <template>
-  <tr @click="this.active = !this.active" :class="{'active-el' : this.active, 'no-active-el' : !this.active}">
+  <!-- {{ this.is_warehouses }} -->
+  <tr v-if="!this.is_warehouses" @click="this.active = !this.active" :class="{'active-el' : this.active, 'no-active-el' : !this.active}">
       <td><i class="pi pi-angle-up"></i></td>
       <td><span class="k-table__article">{{items.article}}</span></td>
       <td class="k-table__photo"><img class="k-table__image" :src="items.image" alt=""></td>
@@ -19,7 +20,7 @@
       <td></td>
       <td></td>
   </tr>
-  <tr class="kenost-table-background" v-for="(item, index) in items.stores" v-bind:key="item.id" :class="{'active' : this.active, 'no-active' : !this.active}">
+  <tr class="kenost-table-background" v-for="(item, index) in items.stores" v-bind:key="item.id" :class="{'active' : this.active || this.is_warehouses, 'no-active' : !this.active && !this.is_warehouses}">
       <td></td>
       <td><span class="k-table__article">{{items.article}}</span></td>
       <td class="k-table__photo"><img class="k-table__image" :src="items.image" alt=""></td>
@@ -50,8 +51,8 @@
       <td>{{item.remains}} шт</td>
   </tr>
   <!-- Вывод комплектов -->
-  <tbody class="complect-button kenost-table-background kenost-table-background-complect" v-for="complect in items.complects" v-bind:key="complect.id" :class="{'active' : this.active, 'no-active' : !this.active}">
-    <tr v-for="(item, index) in complect" v-bind:key="item.id" :class="{'active' : this.active, 'no-active' : !this.active}">
+  <tbody class="complect-button kenost-table-background kenost-table-background-complect" v-for="complect in items.complects" v-bind:key="complect.id" :class="{'active' : this.active || this.is_warehouses, 'no-active' : !this.active && !this.is_warehouses}">
+    <tr v-for="(item, index) in complect" v-bind:key="item.id" :class="{'active' : this.active || this.is_warehouses, 'no-active' : !this.active && !this.is_warehouses}">
       <td></td>
       <td><span class="k-table__article">{{item.article}}</span></td>
       <td class="k-table__photo">
@@ -115,6 +116,9 @@ export default {
     },
     items: {
       type: Array
+    },
+    is_warehouses: {
+      type: Boolean
     }
   },
   data () {

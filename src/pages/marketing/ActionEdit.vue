@@ -1,7 +1,7 @@
 <template>
     <Toast />
     <form @submit.prevent="formSubmit">
-      <div class="profile-content__title">
+      <div class="profile-content__title sticky-element">
           <span class="maintitle">Редактирование акции</span>
           <div class="buttons_container">
             <RouterLink :to="{ name: 'org_actions', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary btn-padding">Отменить</RouterLink>

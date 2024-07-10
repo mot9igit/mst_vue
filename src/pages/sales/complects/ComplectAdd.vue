@@ -1,6 +1,6 @@
 <template>
     <form @submit.prevent="formSubmit">
-        <div class="profile-content__title">
+        <div class="profile-content__title sticky-element">
             <span class="maintitle">Настройка комплекта</span>
             <div class="buttons_container">
             <RouterLink :to="{ name: 'org_sales', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary btn-padding">Отменить</RouterLink>
@@ -43,7 +43,7 @@
                     </div>
                     <div class="PickList__products">
                     <div class="PickList__el" v-for="item in this.products" :key="item.id">
-                        <img :src="'https://mst.tools' + item.image" alt="">
+                        <img :src="item.image" alt="">
                         <div class="PickList__product-info">
                         <div class="PickList__name">{{item.name}}</div>
                         <div class="PickList__article">{{item.article}}</div>
@@ -70,7 +70,7 @@
                     </div>
                     <div class="PickList__products">
                     <div class="PickList__el" v-for="(item) in this.selected" :key="item.id">
-                        <img :src="'https://mst.tools' + item.image" alt="">
+                        <img :src="item.image" alt="">
                         <div class="PickList__info">
                         <div class="PickList__product-info off">
                             <div class="PickList__name">{{item.name}}</div>
@@ -104,7 +104,7 @@
                         <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="'select_' + item.id" />
                     </td>
                     <td class="table-kenost__product">
-                        <img :src="'https://mst.tools' + item.image">
+                        <img :src="item.image">
                         <div class="table-kenost__product-text">
                         <p>{{ item.name }}</p>
                         <span>{{item.article}}</span>
@@ -223,7 +223,7 @@
     <Dialog v-model:visible="this.modals.price" :header="this.modals.headers[this.modals.price_step]" :style="{ width: '600px' }">
         <div class="kenost-modal-price">
             <div class="product-kenost-card">
-              <img :src="'https://mst.tools' + this.selected[this.modals.product_id]?.image">
+              <img :src="this.selected[this.modals.product_id]?.image">
               <div class="product-kenost-card__text">
                 <p>{{ this.selected[this.modals.product_id]?.name }}</p>
                 <span>{{this.selected[this.modals.product_id]?.article}}</span>

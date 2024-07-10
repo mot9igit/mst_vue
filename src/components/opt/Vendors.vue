@@ -90,7 +90,7 @@
                 <div class="vendor_select__rows" v-if="avLength">
                   <div class="vendor_select__row" v-for="(item) in items.available" :key="item.id">
                     <div class="vendor_select__row-check">
-                      <Checkbox v-model="vendorForm.selected[item.id]" name="0" :binary="true"/>
+                      <Checkbox @change="changeSelectCheckbox(item.id)" v-model="vendorForm.selected[item.id]" name="0" :binary="true"/>
                     </div>
                     <div class="vendor_select__row-text">
                       <span class="name">{{ item.name_short }}</span>
@@ -163,7 +163,8 @@ export default {
       loading: false,
       vendorForm: {
         selected: []
-      }
+      },
+      multisupplier: false
     }
   },
   methods: {
@@ -178,7 +179,22 @@ export default {
       // vendorModal = !this.vendorModal
     },
     checkVendor (id) {
-      this.vendorForm.selected[id] = !this.vendorForm.selected[id]
+      if (!this.multisupplier) {
+        for (let i = 0; i < this.vendorForm.selected.length; i++) {
+          // if (i !== id) {
+          this.vendorForm.selected[i] = false
+          // }
+        }
+        this.vendorForm.selected[id] = true
+      }
+    },
+    changeSelectCheckbox (id) {
+      if (!this.multisupplier) {
+        for (let i = 0; i < this.vendorForm.selected.length; i++) {
+          this.vendorForm.selected[i] = false
+        }
+        this.vendorForm.selected[id] = true
+      }
     },
     changeOpts (id, action) {
       this.loading = true
@@ -216,6 +232,17 @@ export default {
         }
       })
       if (!error) {
+        if (!this.multisupplier) {
+          console.log(this.items.selected)
+          for (let i = 0; i < this.items.selected.length; i++) {
+            const data = {
+              id: this.items.selected[i].id,
+              action: 0,
+              store: router.currentRoute._value.params.id
+            }
+            this.toggle_opts_visible(data)
+          }
+        }
         this.loading = true
         this.$load(async () => {
           await this.set_vendors_to_api({
