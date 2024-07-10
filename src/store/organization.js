@@ -121,6 +121,43 @@ export default {
           }
         })
     },
+    set_organization_data ({ commit }, data) {
+      return Axios('/rest/front_setobjects', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          // commit('SET_MATRIX_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    set_organization_settings ({ commit }, data) {
+      data.action = 'set/organization/settings'
+      return Axios('/rest/front_setobjects', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          // commit('SET_MATRIX_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
     delete_organization_from_api ({ commit }) {
       commit('DELETE_ORGANIZATION_FROM_VUEX')
     },

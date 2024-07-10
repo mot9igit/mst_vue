@@ -1,6 +1,6 @@
 <template>
   <Toast />
-  <div class="profile-content b-wrap">
+  <div class="profile-content b-wrap" :class="{ loading: loading }">
     <TabView class="tab-custom">
       <TabPanel header="О компании">
         <div class="profile-content__title">
@@ -45,7 +45,7 @@
           </div>
         </form>
         <teleport to="body">
-          <custom-modal v-model="showFormModal" @confirm="confirm" @cancel="cancel">
+          <custom-modal v-model="showFormModal">
             <template v-slot:title>Запрос на изменение реквизитов</template>
             <form action="">
               <div class="form_input_group" v-for="(field, index) in form.fields" :key="index">
@@ -59,30 +59,17 @@
           </custom-modal>
         </teleport>
       </TabPanel>
-      <TabPanel header="Настройки">
+      <TabPanel header="Настройки" v-if="organization.settings">
         <form action="#" @submit.prevent="formChangeSettings">
           <div class="dart-row">
-            <div class="d-col-md-6">
+            <div class="d-col-md-6" v-for="(group, index) in organization.settings.groups" :key="index">
               <div class="dart-form-block">
-                <span class="title">Маркетплейс</span>
+                <span class="title">{{ group.label }}</span>
                 <div class="dart-form-block__content">
-                  <div class="dart-form-group">
-                    <FloatLabel class="w-full md:w-14rem">
-                      <Dropdown v-model="this.settingsForm.price" :options="this.typePrice" optionLabel="name" class="w-full" />
-                      <label for="dd-city">Выберите цену по умолчанию для маркетплейса</label>
-                    </FloatLabel>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="d-col-md-6">
-              <div class="dart-form-block">
-                <span class="title">Закупки</span>
-                <div class="dart-form-block__content">
-                  <div class="dart-form-group">
-                    <FloatLabel class="w-full md:w-14rem">
-                      <Dropdown v-model="this.settingsForm.opt_price" :options="this.typePrice" optionLabel="name" class="w-full" />
-                      <label for="dd-city">Выберите цену по умолчанию для маркетплейса</label>
+                  <div class="dart-form-group" v-for="(setting) in group.settings" :key="setting.id">
+                    <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 2">
+                      <Dropdown v-model="this.settingsForm[setting.key]" :options="this.typePrice" optionLabel="name" class="w-full" />
+                      <label for="dd-city">{{ setting.label }}</label>
                     </FloatLabel>
                   </div>
                 </div>
@@ -114,12 +101,10 @@ export default {
   props: {},
   data () {
     return {
+      loading: false,
       showFormModal: false,
       typePrice: [],
-      settingsForm: {
-        price: 0,
-        opt_price: 0
-      },
+      settingsForm: { },
       form: {
         fields: [
           {
@@ -207,6 +192,7 @@ export default {
     ...mapActions([
       'get_organization_from_api',
       'set_organization_data',
+      'set_organization_settings',
       'opt_get_prices'
     ]),
     onUpload (data) {
@@ -242,7 +228,24 @@ export default {
           })
       })
     },
-    formSendRequest () {
+    formChangeSettings () {
+      this.loading = true
+      this.$load(async () => {
+        await this.set_organization_settings({
+          action: 'set',
+          type: 'organization',
+          id: router.currentRoute._value.params.id,
+          settings: this.settingsForm
+        })
+          .then((result) => {
+            this.loading = false
+            this.$toast.add({ severity: 'info', summary: 'Данные изменены', detail: 'Данные были успешно изменены', life: 3000 })
+            this.get_organization_from_api()
+          })
+          .catch((result) => {
+            console.log(result)
+          })
+      })
     }
   },
   mounted () {
@@ -261,6 +264,18 @@ export default {
     ])
   },
   watch: {
+    organization: function (newVal, oldVal) {
+      const settings = JSON.parse(JSON.stringify(newVal.settings))
+      const groupKeys = Object.keys(settings.groups)
+      for (let i = 0; i < groupKeys.length; i++) {
+        const keys = Object.keys(settings.groups[groupKeys[i]].settings)
+        for (let j = 0; j < keys.length; j++) {
+          if (settings.groups[groupKeys[i]].settings[keys[j]].type === '2') {
+            this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = settings.groups[groupKeys[i]].settings[keys[j]].value
+          }
+        }
+      }
+    },
     oprprices: function (newVal, oldVal) {
       this.typePrice = []
       for (let i = 0; i < newVal.length; i++) {

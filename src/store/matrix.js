@@ -790,24 +790,6 @@ export default {
           }
         })
     },
-    set_organization_data ({ commit }, data) {
-      return Axios('/rest/front_setobjects', {
-        method: 'POST',
-        data: data,
-        headers: {
-          'Access-Control-Allow-Origin': '*'
-        }
-      })
-        .then((response) => {
-          // commit('SET_MATRIX_TO_VUEX', response.data)
-        })
-        .catch(error => {
-          if (error.response.status === 403) {
-            localStorage.removeItem('user')
-            router.push({ name: 'home' })
-          }
-        })
-    },
     set_bonus_to_api ({ commit }, bonusData) {
       console.log(bonusData)
       return Axios('/rest/front_setobjects', {
