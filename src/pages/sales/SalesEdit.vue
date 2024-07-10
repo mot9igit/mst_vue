@@ -1,6 +1,6 @@
 <template>
     <form @submit.prevent="formSubmit" :class="{ loading: loading }">
-        <div class="profile-content__title">
+        <div class="profile-content__title sticky-element">
             <span class="maintitle">Настройка программы</span>
             <div class="buttons_container">
             <RouterLink :to="{ name: 'org_sales', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary btn-padding">Отменить</RouterLink>
@@ -255,8 +255,12 @@
 
                   <a :href="site_url_prefix + '/assets/files/files/examples/ExampleLoadingProducts.xlsx'" class="kenost-link-blue mt-2">Скачать шаблон файла</a>
                 </div>
+                <div v-if="this.form.addProductType == '1'" class="flex align-items-center kenost-gray-p">
+                  <Checkbox @change="setAllProducts" v-model="this.form.is_all_products" inputId="is_all_products-1" name="is_all_products-1" value="true" />
+                  <label for="is_all_products-1" class="ml-2 mb-0">Добавить все товары</label>
+                </div>
 
-                <div v-if="this.form.addProductType == '1'" class="PickList mt-3">
+                <div v-if="this.form.addProductType == '1' && this.form.is_all_products.length == 0" class="PickList mt-3">
                     <div class="PickList__product" :style="{ width: '40%' }">
                         <b class="PickList__title">Доступные товары</b>
                         <div class="PickList__filters">
@@ -385,6 +389,28 @@
 
                 <div v-if="this.form.addProductType != '3'" class="table-kenost mt-4">
                   <p class="table-kenost__title">Таблица добавленных товаров</p>
+                  <div class="table-kenost__filters">
+                    <div class="table-kenost__filters-left">
+                      <div class="form_input_group input_pl input-parent required">
+                          <input
+                          type="text"
+                          id="filter_table"
+                          placeholder="Введите артикул или название"
+                          class="dart-form-control"
+                          v-model="filter_table.name"
+                          @input="setFilter('filter')"
+                          />
+                          <label for="product_filter_name" class="s-complex-input__label">Введите артикул или название</label>
+                          <div class="form_input_group__icon">
+                              <i class="d_icon d_icon-search"></i>
+                          </div>
+                      </div>
+                      <div class="dart-form-group">
+                          <TreeSelect v-model="this.filter_table.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
+                      </div>
+                    </div>
+                    <!-- <div @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</div> -->
+                  </div>
                   <table class="table-kenost__table">
                     <thead>
                         <tr>
@@ -395,11 +421,12 @@
                             <th class="table-kenost__name">Цена со скидкой за шт.</th>
                             <th class="table-kenost__name">Кратность</th>
                             <th class="table-kenost__name">Сумма</th>
+                            <th class="table-kenost__name">Действие</th>
                         </tr>
                     </thead>
                     <!-- Вывод комплектов -->
                     <tbody v-for="item in this.selected" :key="item.id">
-                      <tr v-if="this.complects_ids.indexOf(item.id) === -1">
+                      <tr v-if="this.complects_ids.indexOf(item.id) === -1 && item.hide">
                         <td class="table-kenost__checkbox">
                           <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
                         </td>
@@ -426,9 +453,26 @@
                         <td>
                           {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru') * item.multiplicity}} ₽
                         </td>
+                        <td>
+                          <div class="kenost-basker-delete">
+                            <div class="kenost-basker-delete__button" @click="deleteSelect(item.id)">
+                              <i class="pi pi-trash"></i>
+                            </div>
+                          </div>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
+                  <paginate
+                    :page-count="pagesCountSelect"
+                    :click-handler="pagClickCallbackSelect"
+                    :prev-text="'Пред'"
+                    :next-text="'След'"
+                    :container-class="'pagination justify-content-center'"
+                    :initialPage="this.page_selected"
+                    :forcePage="this.page_selected"
+                    >
+                  </paginate>
                 </div>
 
                 <div class="kenost-all-table-activity" v-if="this.form.addProductType == '1' || this.form.addProductType == '2'">
@@ -740,6 +784,7 @@ import Checkbox from 'primevue/checkbox'
 import Counter from '../../components/opt/Counter.vue'
 import MultiSelect from 'primevue/multiselect'
 import router from '@/router'
+import Paginate from 'vuejs-paginate-next'
 
 export default {
   name: 'ProfileSalesAdd',
@@ -752,6 +797,10 @@ export default {
         name: '',
         category: {}
       },
+      filter_table: {
+        name: '',
+        category: {}
+      },
       error_product: [],
       upload_product: false,
       page_complects: 1,
@@ -761,6 +810,7 @@ export default {
       selected_complects: {},
       postponement_period: 0,
       selected: {},
+      total_selected: -1,
       kenost_table_all: [],
       kenost_table: [],
       products: [],
@@ -809,7 +859,8 @@ export default {
         conditionMinCount: 0,
         conditionMinSum: 0,
         bigDiscount: [],
-        not_sale_client: []
+        not_sale_client: [],
+        is_all_products: []
       },
       listAction: {},
       kenostActivityAll: {
@@ -992,7 +1043,27 @@ export default {
       }
     },
     setFilter () {
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      this.page_selected = 1
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: this.selected,
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
+      this.get_available_products_from_api(data)
+    },
+    setAllProducts () {
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: this.selected,
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page,
+        isallproducts: this.form.is_all_products.length !== 0
+      }
       this.get_available_products_from_api(data)
     },
     setFilterComplects () {
@@ -1042,7 +1113,8 @@ export default {
           complects: this.selected_complects,
           action_id: router.currentRoute._value.params.sales_id,
           big_sale_actions: this.form.bigDiscount,
-          not_sale_client: this.form.not_sale_client[0] === 'true'
+          not_sale_client: this.form.not_sale_client[0] === 'true',
+          is_all_products: this.form.is_all_products.length !== 0
         })
           .then((result) => {
             this.loading = false
@@ -1111,13 +1183,13 @@ export default {
 
       this.opt_get_remain_prices(dataProduct).then((res) => {
         product.prices = res.data.data
-      })
 
-      this.selected[product.id] = product
-      this.products = this.products.filter((r) => r.id !== id)
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
-      this.get_available_products_from_api(data)
-      this.total_selected++
+        this.selected[product.id] = product
+        this.products = this.products.filter((r) => r.id !== id)
+        const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+        this.get_available_products_from_api(data)
+        this.total_selected++
+      })
     },
     deleteSelect (id) {
       this.products.push(this.selected[id])
@@ -1135,7 +1207,7 @@ export default {
       this.selected = new_selected
 
       // this.selected = this.selected.filter((r) => r.id !== id)
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
       this.total_selected--
     },
@@ -1166,15 +1238,35 @@ export default {
     },
     pagClickCallback (pageNum) {
       this.page = pageNum
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: this.selected,
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
+      this.get_available_products_from_api(data)
+    },
+    pagClickCallbackSelect (pageNum) {
+      this.page_selected = pageNum
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: this.selected,
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
       this.get_available_products_from_api(data)
     },
     kenostTableCheckedAll () {
       if (this.kenost_table_all.length === 0) {
         this.kenost_table = []
         for (let i = 0; i < Object.keys(this.selected).length; i++) {
-          this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
-          // console.log(this.selected[Object.keys(this.selected)[i]])
+          if (this.selected[Object.keys(this.selected)[i]].hide) {
+            this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
+          }
         }
       } else {
         this.kenost_table = []
@@ -1292,7 +1384,8 @@ export default {
     DropZone,
     Checkbox,
     Counter,
-    MultiSelect
+    MultiSelect,
+    Paginate
   },
   computed: {
     ...mapGetters([
@@ -1306,12 +1399,24 @@ export default {
       'allactions',
       'oprprices',
       'oprpricesremain'
-    ])
+    ]),
+    pagesCountSelect () {
+      let pages = Math.round(this.total_selected / this.per_page)
+      if (pages === 0) {
+        pages = 1
+      }
+      return pages
+    }
   },
   watch: {
     available_products: function (newVal, oldVal) {
       this.products = newVal.products
+      // this.selected = newVal.selected
+      if (newVal.selected) {
+        this.selected = newVal.selected
+      }
       this.total_products = newVal.total
+      this.total_selected = newVal.total_selected
     },
     getcatalog: function (newVal, oldVal) {
       this.get_catalog = newVal
@@ -1387,6 +1492,10 @@ export default {
         this.form.not_sale_client = ['true']
       }
 
+      if (newVal.is_all_products) {
+        this.form.is_all_products = ['true']
+      }
+
       this.form.delay = newVal.delay_graph
       this.regions_select = newVal.regions
       this.all_organizations_selected = newVal.organization
@@ -1397,7 +1506,7 @@ export default {
         this.all_organizations = this.allorganizations
       )
 
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data)
 
       const dataComplect = {

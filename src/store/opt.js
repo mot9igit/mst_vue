@@ -5,6 +5,7 @@ export default {
   state: {
     mainpage: [],
     optcatalog: [],
+    optcatalogtree: [],
     optvendors: [],
     optproducts: [],
     optbasket: [],
@@ -153,6 +154,27 @@ export default {
       })
         .then((response) => {
           commit('SET_OPT_CATALOG_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    get_opt_catalog_tree_from_api ({ commit }) {
+      return Axios('/rest/front_opt', {
+        method: 'POST',
+        data: {
+          warehouse_id: router.currentRoute._value.params.id,
+          action: 'get/catalog'
+        },
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_OPT_CATALOG_TREE_TO_VUEX', response.data)
         })
         .catch(error => {
           if (error.response.status === 403) {
@@ -349,6 +371,9 @@ export default {
     SET_OPT_CATALOG_TO_VUEX: (state, data) => {
       state.optcatalog = data.data
     },
+    SET_OPT_CATALOG_TREE_TO_VUEX: (state, data) => {
+      state.optcatalogtree = data.data
+    },
     SET_OPT_VENDORS_TO_VUEX: (state, data) => {
       state.optvendors = data.data
     },
@@ -454,6 +479,9 @@ export default {
     },
     oprpricesremain (state) {
       return state.oprpricesremain
+    },
+    optcatalogtree (state) {
+      return state.optcatalogtree
     }
   }
 }

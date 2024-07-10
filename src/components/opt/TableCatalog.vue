@@ -21,7 +21,7 @@
                 </tr>
             </thead>
             <!-- <tbody> -->
-                <TableCatalogRow @ElemAction="ElemAction" @updateBasket="updateBasket" v-for="item in items.items" v-bind:key="item.id" :items="item"/>
+                <TableCatalogRow :is_warehouses="this.is_warehouses" @ElemAction="ElemAction" @updateBasket="updateBasket" v-for="item in items.items" v-bind:key="item.id" :items="item"/>
             <!-- </tbody> -->
         </table>
     </div>
@@ -86,6 +86,10 @@ export default {
     },
     items: {
       type: Array
+    },
+    is_warehouses: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -427,11 +431,11 @@ export default {
     }
 
     tbody tr.active-el{
-        box-shadow: 0px 4px 12.5px 0px #0000001F;
+      box-shadow: 0px 4px 12.5px 0px #0000001F;
     }
 
-    tbody tr.active-el{
-        border-bottom: 1px solid #FF000073
+    tr.active-el td{
+      border-bottom: 1px solid #FF000073
     }
 
     tr.no-active{
@@ -446,7 +450,7 @@ export default {
     }
 
     .no-active-el, .active-el{
-      border-bottom: 1px solid #0000001F;
+      border-top: 1px solid #0000001F;
     }
 
     .active-el{

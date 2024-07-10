@@ -1,6 +1,6 @@
 <template>
     <form @submit.prevent="formSubmit">
-        <div class="profile-content__title">
+        <div class="profile-content__title sticky-element">
             <span class="maintitle">Настройка программы</span>
             <div class="buttons_container">
             <RouterLink :to="{ name: 'org_sales', params: { id: $route.params.id }}" class="dart-btn dart-btn-secondary btn-padding">Отменить</RouterLink>
@@ -255,10 +255,16 @@
 
                   <a :href="site_url_prefix + '/assets/files/files/examples/ExampleLoadingProducts.xlsx'" class="kenost-link-blue mt-2">Скачать шаблон файла</a>
                 </div>
+                <div v-if="this.form.addProductType == '1'" class="flex align-items-center kenost-gray-p">
+                  <Checkbox @change="setAllProducts" v-model="this.form.is_all_products" inputId="is_all_products-1" name="is_all_products-1" value="true" />
+                  <label for="is_all_products-1" class="ml-2 mb-0">Добавить все товары</label>
+                </div>
 
-                <div v-if="this.form.addProductType == '1'" class="PickList mt-3">
+                <div v-if="this.form.addProductType == '1' && this.form.is_all_products.length == 0" class="PickList mt-3">
                     <div class="PickList__product" :style="{ width: '40%' }">
-                        <b class="PickList__title">Доступные товары</b>
+                        <div class="PickList__title">
+                          <b>Доступные товары</b>
+                        </div>
                         <div class="PickList__filters">
                         <div class="form_input_group input_pl input-parent required">
                             <input
@@ -275,7 +281,7 @@
                             </div>
                         </div>
                         <div class="dart-form-group">
-                            <TreeSelect v-model="this.filter.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
+                          <TreeSelect v-model="this.filter.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
                         </div>
                         </div>
                         <div class="PickList__products">
@@ -385,7 +391,7 @@
 
                 <div v-if="this.form.addProductType != '3'" class="table-kenost mt-4" :class="{ loading: table_products_loading }">
                   <p class="table-kenost__title">Таблица добавленных товаров</p>
-                  <!-- <div class="table-kenost__filters">
+                  <div class="table-kenost__filters">
                     <div class="table-kenost__filters-left">
                       <div class="form_input_group input_pl input-parent required">
                           <input
@@ -402,11 +408,11 @@
                           </div>
                       </div>
                       <div class="dart-form-group">
-                          <TreeSelect v-model="this.filter_table.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
+                          <TreeSelect label="name" v-model="this.filter_table.category" :options="this.opt_catalog_tree" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
                       </div>
                     </div>
-                    <div @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</div>
-                  </div> -->
+                    <!-- <div @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</div> -->
+                  </div>
                   <table class="table-kenost__table">
                     <thead>
                         <tr>
@@ -417,10 +423,11 @@
                             <th class="table-kenost__name">Цена со скидкой за шт.</th>
                             <th class="table-kenost__name">Кратность</th>
                             <th class="table-kenost__name">Сумма</th>
+                            <th class="table-kenost__name">Действие</th>
                         </tr>
                     </thead>
                     <tbody v-for="item in this.selected" :key="item.id">
-                      <tr>
+                      <tr v-if="item.hide">
                         <td class="table-kenost__checkbox">
                           <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
                         </td>
@@ -447,9 +454,26 @@
                         <td>
                           {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru') * item.multiplicity}} ₽
                         </td>
+                        <td>
+                          <div class="kenost-basker-delete">
+                            <div class="kenost-basker-delete__button" @click="deleteSelect(item.id)">
+                              <i class="pi pi-trash"></i>
+                            </div>
+                          </div>
+                        </td>
                       </tr>
                     </tbody>
                   </table>
+                  <paginate
+                    :page-count="pagesCountSelect"
+                    :click-handler="pagClickCallbackSelect"
+                    :prev-text="'Пред'"
+                    :next-text="'След'"
+                    :container-class="'pagination justify-content-center'"
+                    :initialPage="this.page_selected"
+                    :forcePage="this.page_selected"
+                    >
+                  </paginate>
                 </div>
 
                 <div class="kenost-all-table-activity" v-if="this.form.addProductType == '1' || this.form.addProductType == '2'">
@@ -761,6 +785,7 @@ import Checkbox from 'primevue/checkbox'
 import Counter from '../../components/opt/Counter.vue'
 import MultiSelect from 'primevue/multiselect'
 import router from '@/router'
+import Paginate from 'vuejs-paginate-next'
 
 export default {
   name: 'ProfileSalesAdd',
@@ -784,12 +809,14 @@ export default {
       upload_product: false,
       postponement_period: 0,
       selected: {},
+      total_selected: -1,
       kenost_table_all: [],
       kenost_table: [],
       products: [],
       complects: [],
       selected_complects: {},
       get_catalog: [],
+      opt_catalog_tree: [],
       total_products: 0,
       total_complects: 0,
       saleValue: 0,
@@ -834,7 +861,8 @@ export default {
         conditionMinCount: 0,
         conditionMinSum: 0,
         bigDiscount: [],
-        not_sale_client: []
+        not_sale_client: [],
+        is_all_products: []
       },
       kenostActivityAll: {
         type: {},
@@ -907,7 +935,8 @@ export default {
       'opt_upload_products_file',
       'get_all_sales_to_api',
       'opt_get_prices',
-      'opt_get_remain_prices'
+      'opt_get_remain_prices',
+      'get_opt_catalog_tree_from_api'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -928,7 +957,6 @@ export default {
     },
     massActionTable () {
       for (let i = 0; i < this.kenost_table.length; i++) {
-        console.log(this.kenostActivityAll.type.key)
         switch (this.kenostActivityAll.type.key) {
           case 0:
             this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
@@ -949,7 +977,6 @@ export default {
             this.selected[this.kenost_table[i]].multiplicity = this.kenostActivityAll.multiplicity
             break
         }
-        console.log(this.selected[this.kenost_table[i]])
       }
     },
     delayUpdate () {
@@ -1013,7 +1040,27 @@ export default {
       }
     },
     setFilter () {
-      const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      this.page_selected = 1
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: this.selected,
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
+      this.get_available_products_from_api(data)
+    },
+    setAllProducts () {
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: this.selected,
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page,
+        isallproducts: this.form.is_all_products.length !== 0
+      }
       this.get_available_products_from_api(data)
     },
     setFilterComplects () {
@@ -1062,14 +1109,14 @@ export default {
           available_stores: this.form.available_stores[0] === 'true',
           available_vendors: this.form.available_vendors[0] === 'true',
           available_opt: this.form.available_opt[0] === 'true',
-          not_sale_client: this.form.not_sale_client[0] === 'true'
+          not_sale_client: this.form.not_sale_client[0] === 'true',
+          is_all_products: this.form.is_all_products.length !== 0
         })
           .then((result) => {
             this.loading = false
             router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
           })
           .catch((result) => {
-            console.log(result)
           })
       })
       this.loading = true
@@ -1091,13 +1138,20 @@ export default {
 
       this.opt_get_remain_prices(dataProduct).then((res) => {
         product.prices = res.data.data
-      })
 
-      this.selected[product.id] = product
-      this.products = this.products.filter((r) => r.id !== id)
-      const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
-      this.get_available_products_from_api(data)
-      this.total_selected++
+        this.selected[product.id] = product
+        this.products = this.products.filter((r) => r.id !== id)
+        const data = {
+          filter: this.filter,
+          filterselected: this.filter_table,
+          selected: this.selected,
+          pageselected: this.page_selected,
+          page: this.page,
+          perpage: this.per_page
+        }
+        this.get_available_products_from_api(data)
+        this.total_selected++
+      })
     },
     selectComplect (id) {
       const complect = this.complects.find(r => r.id === id)
@@ -1155,7 +1209,14 @@ export default {
       this.selected = new_selected
 
       // this.selected = this.selected.filter((r) => r.id !== id)
-      const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: this.selected,
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
       this.get_available_products_from_api(data)
       this.total_selected--
     },
@@ -1192,22 +1253,41 @@ export default {
     },
     pagClickCallback (pageNum) {
       this.page = pageNum
-      const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: this.selected,
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
+      this.get_available_products_from_api(data)
+    },
+    pagClickCallbackSelect (pageNum) {
+      this.page_selected = pageNum
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: this.selected,
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
       this.get_available_products_from_api(data)
     },
     kenostTableCheckedAll () {
       if (this.kenost_table_all.length === 0) {
         this.kenost_table = []
         for (let i = 0; i < Object.keys(this.selected).length; i++) {
-          this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
-          // console.log(this.selected[Object.keys(this.selected)[i]])
+          if (this.selected[Object.keys(this.selected)[i]].hide) {
+            this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
+          }
         }
       } else {
         this.kenost_table = []
       }
     },
     ElemCount (obj) {
-      console.log(obj)
       this.selected[obj.id].multiplicity = obj.value
     },
     closeDialogPrice () {
@@ -1272,7 +1352,6 @@ export default {
       this.regions_all = this.regions.map(function (el) {
         return { name: el.label, code: el.key }
       })
-      // console.log(this.regions_all)
     })
     this.get_all_sales_to_api({
       id: router.currentRoute._value.params.id,
@@ -1288,6 +1367,7 @@ export default {
       action: 'get/type/prices',
       store_id: router.currentRoute._value.params.id
     })
+    this.get_opt_catalog_tree_from_api()
   },
   components: {
     FileUpload,
@@ -1300,7 +1380,8 @@ export default {
     DropZone,
     Checkbox,
     Counter,
-    MultiSelect
+    MultiSelect,
+    Paginate
   },
   computed: {
     ...mapGetters([
@@ -1312,16 +1393,35 @@ export default {
       'optproductsfile',
       'allactions',
       'oprprices',
-      'oprpricesremain'
-    ])
+      'oprpricesremain',
+      'optcatalogtree'
+    ]),
+    pagesCountSelect () {
+      let pages = Math.round(this.total_selected / this.per_page)
+      if (pages === 0) {
+        pages = 1
+      }
+      return pages
+    }
   },
   watch: {
     available_products: function (newVal, oldVal) {
       this.products = newVal.products
+      // this.selected = newVal.selected
+      if (newVal.selected) {
+        this.selected = newVal.selected
+      }
       this.total_products = newVal.total
+      this.total_selected = newVal.total_selected
     },
     getcatalog: function (newVal, oldVal) {
       this.get_catalog = newVal
+    },
+    optcatalogtree: function (newVal, oldVal) {
+      // for (let i = 0; i < newVal.length; i++) {
+
+      // }
+      this.opt_catalog_tree = newVal
     },
     allorganizations: function (newVal, oldVal) {
       this.all_organizations = newVal
@@ -1348,6 +1448,48 @@ export default {
 }
 </script>
 <style lang="scss">
+
+.kenost-basker-delete{
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  &__button{
+    width: 34px;
+    height: 34px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    background: #F8F8F8 !important;
+    box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px;
+    display: flex;
+    border-radius: 5px;
+    align-items: center;
+    transition: all 0.4s;
+    justify-content: center;
+
+    &:hover{
+      border: 1px solid #64748B;
+    }
+
+    .pi-trash{
+      color: #64748B;
+    }
+  }
+}
+
+.kenost-gray-p{
+  color: #ADADAD;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+}
+
+.sticky-element{
+  position: sticky;
+  top: 0;
+  padding: 10px 0;
+  z-index: 1;
+  background: #FFF;
+}
 
   .upload-icon__image{
     background: #D9D9D9;
