@@ -67,9 +67,21 @@
                 <span class="title">{{ group.label }}</span>
                 <div class="dart-form-block__content">
                   <div class="dart-form-group" v-for="(setting) in group.settings" :key="setting.id">
+                    <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 1">
+                      <InputText :id="setting.key" v-model="this.settingsForm[setting.key]" />
+                      <label :for="setting.key">{{ setting.label }}</label>
+                    </FloatLabel>
                     <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 2">
-                      <Dropdown v-model="this.settingsForm[setting.key]" :options="this.typePrice" optionLabel="name" class="w-full" />
-                      <label for="dd-city">{{ setting.label }}</label>
+                      <Dropdown :id="setting.key" v-model="this.settingsForm[setting.key]" :options="this.typePrice" optionLabel="name" class="w-full" />
+                      <label :for="setting.key">{{ setting.label }}</label>
+                    </FloatLabel>
+                    <div class="flex align-items-center" v-if="setting.type == 3">
+                      <Checkbox :id="setting.key" v-model="this.settingsForm[setting.key]" :inputId="setting.key" :name="setting.key" binary />
+                      <label :for="setting.key" class="ml-2"> {{ setting.label }} </label>
+                    </div>
+                    <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 4">
+                      <InputNumber :id="setting.key" v-model="this.settingsForm[setting.key]" class="w-full" />
+                      <label :for="setting.key">{{ setting.label }}</label>
                     </FloatLabel>
                   </div>
                 </div>
@@ -95,6 +107,9 @@ import Toast from 'primevue/toast'
 import FileUpload from 'primevue/fileupload'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
+import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import Checkbox from 'primevue/checkbox'
 
 export default {
   name: 'ProfileProfile',
@@ -104,6 +119,13 @@ export default {
       loading: false,
       showFormModal: false,
       typePrice: [],
+      booleanValue: [{
+        name: 'Да',
+        value: 1
+      }, {
+        name: 'Нет',
+        value: 0
+      }],
       settingsForm: { },
       form: {
         fields: [
@@ -256,7 +278,7 @@ export default {
       })
     })
   },
-  components: { customModal, FileUpload, Toast, TabView, TabPanel, Dropdown, FloatLabel },
+  components: { customModal, FileUpload, Toast, TabView, TabPanel, Dropdown, FloatLabel, InputText, InputNumber, Checkbox },
   computed: {
     ...mapGetters([
       'organization',
@@ -271,6 +293,14 @@ export default {
         const keys = Object.keys(settings.groups[groupKeys[i]].settings)
         for (let j = 0; j < keys.length; j++) {
           if (settings.groups[groupKeys[i]].settings[keys[j]].type === '2') {
+            this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = settings.groups[groupKeys[i]].settings[keys[j]].value
+          } if (settings.groups[groupKeys[i]].settings[keys[j]].type === '3') {
+            if (settings.groups[groupKeys[i]].settings[keys[j]].value === '1') {
+              this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = true
+            } else {
+              this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = false
+            }
+          } else {
             this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = settings.groups[groupKeys[i]].settings[keys[j]].value
           }
         }
@@ -308,6 +338,12 @@ export default {
     padding: 15px 0;
     .dart-form-group{
       padding-top: 15px;
+    }
+  }
+  .p-float-label{
+    label{
+      margin-top: -0.5rem;
+      transform: none;
     }
   }
 }

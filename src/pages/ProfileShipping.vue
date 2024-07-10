@@ -21,10 +21,11 @@
       >
         <template v-slot:button>
           <div>
-            <button class="dart-btn dart-btn-primary" type="submit">Добавить</button>
+            <!-- <button class="dart-btn dart-btn-primary" type="submit">Добавить</button> -->
           </div>
         </template>
       </v-table>
+      <!--
       <table class="table-kenost__table">
         <thead>
             <tr>
@@ -123,6 +124,7 @@
           </tr>
         </tbody>
       </table>
+      -->
     </div>
     <div class="shipping-calendar">
       <div class="shipping-calendar__head">
@@ -490,11 +492,11 @@
         <div class="shopping-kenost__dates">
           <div class="shopping-kenost__row">
             <p class="k-mini-text">Дата и время отгрузки</p>
-            <CalendarVue showIcon id="calendar-24h" v-model="this.shipModa.dateStart" showTime hourFormat="24" />
+            <CalendarVue showIcon id="calendar-24h" v-model="form.dateStart" showTime hourFormat="24" />
           </div>
           <div class="shopping-kenost__row">
             <p class="k-mini-text">Дата и время окончания приема заказов</p>
-            <CalendarVue showIcon id="calendar-24h" v-model="this.shipModa.dateEnd" showTime hourFormat="24" />
+            <CalendarVue showIcon id="calendar-24h" v-model="form.dateEnd" showTime hourFormat="24" />
           </div>
         </div>
         <div class="dart-row mt-2">
@@ -543,10 +545,10 @@
         <div class="dart-form-group-simple" v-if="form.timeSelected.repeater == 'day' || form.timeSelected.repeater == 'week'" :class="{ error: v$.form.timeSelected.range.$errors.length }">
           <label for="">В период</label>
           <DatePicker
-            :modelValue="form.timeSelected.range"
+            v-model.range="form.timeSelected.range"
             :masks="{ weekdays: 'WW' }"
             mode="date"
-            is-range
+            range
           >
             <template v-slot="{ inputValue, inputEvents, isDragging }">
               <div class="dart-row">
@@ -606,7 +608,7 @@
         </div>
         <div class="shopping-kenost__button">
           <div class="router-link-active dart-btn dart-btn-secondary btn-padding" @click="this.showShip = false">Отменить</div>
-          <button type="submit" class="dart-btn dart-btn-primary btn-padding">Далее</button>
+          <button type="submit" class="dart-btn dart-btn-primary btn-padding">Сохранить</button>
         </div>
       </div>
     </form>
@@ -614,6 +616,7 @@
 </template>
 
 <script>
+import { ref } from 'vue'
 import { mapActions, mapGetters, mapMutations } from 'vuex'
 import { useVuelidate } from '@vuelidate/core'
 import { required } from '@/utils/i18n-validators'
@@ -625,8 +628,9 @@ import { Calendar, DatePicker } from 'v-calendar'
 import CalendarVue from 'primevue/calendar'
 // import customModal from '@/components/popup/CustomModal'
 import vTable from '../components/table/v-table'
-import 'v-calendar/dist/style.css'
+import 'v-calendar/style.css'
 import Dialog from 'primevue/dialog'
+// import { date } from 'yup'
 // import Checkbox from 'primevue/checkbox'
 // import { Swiper, SwiperSlide } from 'swiper/vue'
 // import 'swiper/css'
@@ -649,8 +653,6 @@ export default {
       showShipModal: false,
       showShip: false,
       shipModa: {
-        dateStart: null,
-        dateEnd: null,
         city: '',
         shops: {
           1: {
@@ -697,6 +699,8 @@ export default {
         filteredStores: null,
         selectedCities: null,
         filteredCities: null,
+        dateStart: new Date(),
+        dateEnd: new Date(),
         citiesDates: [],
         filter: '',
         timeSelect: {
@@ -747,10 +751,10 @@ export default {
           }]
         },
         timeSelected: {
-          repeater: null,
+          repeater: 0,
           weeks: null,
           days: null,
-          range: null
+          range: ref(null)
         }
       },
       selectedDay: null,
@@ -780,12 +784,16 @@ export default {
           checked: false,
           type: 'editmode'
         },
+        ship_id: {
+          label: 'Номер отгрузки',
+          type: 'text'
+        },
         date: {
           label: 'Дата',
           type: 'text'
         },
-        store_name: {
-          label: 'Дилер',
+        date_order_end: {
+          label: 'Дата окончания приема заказов',
           type: 'clickevent'
         },
         city_name: {
@@ -811,14 +819,6 @@ export default {
           placeholder: 'Выберите регион',
           type: 'tree',
           values: this.getregions
-        },
-        store: {
-          name: 'Магазин',
-          type: 'dropdown',
-          optionLabel: 'label',
-          optionValue: 'value',
-          placeholder: 'Магазин',
-          values: []
         },
         range: {
           name: 'Временной промежуток',
@@ -860,8 +860,6 @@ export default {
       'SET_SHIPPING_CHECK_ONE'
     ]),
     deletePunkt (index) {
-      console.log(index)
-      console.log(this.form)
       if (Object.prototype.hasOwnProperty.call(this.form.selectedCities, index)) {
         // delete this.form.selectedCities[index]
         const { [index]: _, ...newCities } = this.form.selectedCities
@@ -914,13 +912,11 @@ export default {
           await this.set_shipping_to_api({
             action: 'set',
             id: router.currentRoute._value.params.id,
-            type: router.currentRoute._value.params.type,
-            timing: this.form.timeSelected,
-            stores: this.form.selectedStores
+            data: this.form
           })
           this.attributes.pop()
           this.attributes.push(this.shipping.dates)
-          this.showShippingModal = false
+          this.showShip = false
           this.formReset()
         })
       }
@@ -942,11 +938,14 @@ export default {
       this.unset_ship_data()
     },
     formReset () {
-      this.form.timeSelected.repeater = null
+      this.form.timeSelected.repeater = 0
       this.form.timeSelected.weeks = null
       this.form.timeSelected.days = null
       this.form.timeSelected.range = null
       this.form.selectedStores = null
+      this.form.selectedCities = null
+      this.form.dateStart = new Date()
+      this.form.dateEnd = new Date()
     },
     dayClicked (day) {
       this.form.timeSelected.range = {
@@ -1371,6 +1370,20 @@ export default {
     line-height: 1.3;
     letter-spacing: 0.25px;
     color: #ADADAD;
+  }
+  &.error{
+    .p-inputwrapper,
+    .dart-form-control{
+      border: 1px solid #f00;
+      border-radius: 6px;
+      .p-inputtext{
+        border: none;
+      }
+    }
+    span.error_desc{
+      color: #e24c4c;
+      font-size: 12px
+    }
   }
 }
 .dart-form-group{
