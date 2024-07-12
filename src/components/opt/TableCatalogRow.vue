@@ -48,7 +48,7 @@
         </div>
         <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span>
       </td>
-      <td>{{item.remains}} шт</td>
+      <td>{{item.remains}}</td>
   </tr>
   <!-- Вывод комплектов -->
   <tbody class="complect-button kenost-table-background kenost-table-background-complect" v-for="complect in items.complects" v-bind:key="complect.id" :class="{'active' : this.active || this.is_warehouses, 'no-active' : !this.active && !this.is_warehouses}">

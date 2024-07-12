@@ -17,7 +17,7 @@
                     <th class="k-table__name">Оплата доставки</th>
                     <th class="k-table__name">Срок доставки</th>
                     <th class="k-table__name k-table__th-actions">Акции</th>
-                    <th class="k-table__name">Остатки на складе</th>
+                    <th class="k-table__name">Остатки на складе, шт</th>
                 </tr>
             </thead>
             <!-- <tbody> -->
