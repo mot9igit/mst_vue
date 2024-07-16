@@ -110,6 +110,11 @@
           </div>
         </div>
 
+        <div v-if="this.form.addProductType == '1'" class="flex align-items-center kenost-gray-p mb-2">
+          <Checkbox @change="setAllProducts" v-model="this.form.is_all_products" inputId="is_all_products-1" name="is_all_products-1" value="true" />
+          <label for="is_all_products-1" class="ml-2 mb-0">Добавить все товары</label>
+        </div>
+
         <div v-if="this.form.addProductType == '2'" class="dart-form-group mb-4">
           <DropZone
             v-if="!this.upload_product"
@@ -150,7 +155,7 @@
         <div class="dart-form-group picker-wrap">
           <!-- <span class="ktitle">Добавление товаров</span> -->
           <span v-if="this.validation.selected.error" class="kenost-error-text">{{ this.validation.selected.text }}</span>
-          <div class="PickList">
+          <div class="PickList" v-if="this.form.is_all_products.length == 0">
             <div class="PickList__product" :class="{'kenost-error':this.validation.selected.error}">
               <b class="PickList__title">Доступные товары</b>
               <div class="PickList__filters">
@@ -195,68 +200,144 @@
               </div>
             </div>
 
-            <div class="PickList__selected">
+            <div class="PickList__selected" :style="{ width: '40%' }">
               <div class="PickList__title mb-4">
-                <b>Добавленные товары</b>
-                <div class="PickList__title-left">
-                  <b>Скидка в %</b>
-                  <b>Скидка в ₽</b>
-                  <b>Итоговая цена в ₽</b>
-                </div>
+              <b>Добавленные товары</b>
               </div>
               <div class="PickList__products">
-                <div class="PickList__el" v-for="(item, index) in this.selected" :key="item.id">
+              <div class="PickList__el" v-for="(item) in this.selected" :key="item.id">
                   <img :src="item.image" alt="">
-                    <div class="PickList__info">
-                    <div class="PickList__product-info off">
+                  <div class="PickList__info">
+                  <div class="PickList__product-info off">
                       <div class="PickList__name">{{item.name}}</div>
                       <div class="PickList__article">{{item.article}}</div>
                       <div class="PickList__price">{{Number(item.price).toFixed(0)}} ₽</div>
-                    </div>
-                    <div class="PickList__values">
-                      <div class="PickList__valuer-inputs">
-                        <InputNumber
-                            v-model="this.selected[index].discountInterest"
-                            inputId="horizontal-buttons"
-                            :step="1"
-                            min="0"
-                            max="100"
-                            suffix=" %"
-                            @update:modelValue="setPrices(index, 'discountInterest', this.selected[index].discountInterest)"
-                            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-                        />
-                        <InputNumber
-                            v-model="selected[index].discountInRubles"
-                            inputId="horizontal-buttons"
-                            :step="1"
-                            min="0"
-                            :max="item.price"
-                            mode="currency" currency="RUB"
-                            @update:modelValue="setPrices(index, 'discountInRubles', this.selected[index].discountInRubles)"
-                            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-                        />
-                        <InputNumber
-                            v-model="selected[index].finalPrice"
-                            inputId="horizontal-buttons"
-                            :step="1"
-                            :max="item.price"
-                            mode="currency" currency="RUB"
-                            min="0"
-                            @update:modelValue="setPrices(index, 'finalPrice', this.selected[index].finalPrice)"
-                            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-                        />
-                      </div>
-                    </div>
+                  </div>
                   </div>
                   <div @click="deleteSelect(item.id)" class="PickList__select"><i class="pi pi-times"></i></div>
-                </div>
               </div>
-              <!-- <div class="PickList__button">
-                <div class="dart-btn dart-btn-secondary alert_change_btn">Задать скидку для всех</div>
-              </div> -->
+              </div>
             </div>
+
           </div>
         </div>
+
+        <div class="table-kenost mt-4 table-b2c" :class="{ loading: this.table_products_loading }">
+          <p class="table-kenost__title">Таблица добавленных товаров</p>
+          <div class="table-kenost__filters">
+            <div class="table-kenost__filters-left">
+              <div class="form_input_group input_pl input-parent required">
+                  <input
+                  type="text"
+                  id="filter_table"
+                  placeholder="Введите артикул или название"
+                  class="dart-form-control"
+                  v-model="filter_table.name"
+                  @input="setFilter('filter')"
+                  />
+                  <label for="product_filter_name" class="s-complex-input__label">Введите артикул или название</label>
+                  <div class="form_input_group__icon">
+                      <i class="d_icon d_icon-search"></i>
+                  </div>
+              </div>
+              <div class="dart-form-group">
+                  <TreeSelect label="name" v-model="this.filter_table.category" :options="this.opt_catalog_tree" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
+              </div>
+            </div>
+            <!-- <div @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</div> -->
+          </div>
+          <table class="table-kenost__table">
+            <thead>
+                <tr>
+                    <th class="table-kenost__name table-kenost__name-checkbox"><Checkbox @update:modelValue="kenostTableCheckedAll" v-model="this.kenost_table_all" inputId="kenost_table_all" value="1" /></th>
+                    <th class="table-kenost__name table-kenost__name-product">Товар</th>
+                    <th class="table-kenost__name">РРЦ (₽)</th>
+                    <th class="table-kenost__name">Скидка %</th>
+                    <th class="table-kenost__name">Цена со скидкой за шт.</th>
+                    <th class="table-kenost__name">Действие</th>
+                </tr>
+            </thead>
+            <tbody v-for="item in this.selected" :key="item.id">
+              <tr v-if="item.hide">
+                <td class="table-kenost__checkbox">
+                  <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
+                </td>
+                <td class="table-kenost__product">
+                  <img :src="item.image">
+                  <div class="table-kenost__product-text">
+                    <p>{{ item.name }}</p>
+                    <span>{{item.article}}</span>
+                  </div>
+                </td>
+                <td>
+                  {{(Number(item.price).toFixed(0)).toLocaleString('ru')}} ₽
+                </td>
+                <td>
+                  {{(Number(item.discountInterest).toFixed(2)).toLocaleString('ru')}}
+                </td>
+                <td>
+                  {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru')}} ₽
+                  <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_id = item.id;">Настроить</p>
+                </td>
+                <td>
+                  <div class="kenost-basker-delete">
+                    <div class="kenost-basker-delete__button" @click="deleteSelect(item.id)">
+                      <i class="pi pi-trash"></i>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <paginate
+            :page-count="pagesCountSelect"
+            :click-handler="pagClickCallbackSelect"
+            :prev-text="'Пред'"
+            :next-text="'След'"
+            :container-class="'pagination justify-content-center'"
+            :initialPage="this.page_selected"
+            :forcePage="this.page_selected"
+            >
+          </paginate>
+        </div>
+      </div>
+
+      <div class="kenost-all-table-activity" v-if="this.form.addProductType == '1' || this.form.addProductType == '2'">
+        <div class="kenost-wiget">
+          <p>Массовое действие</p>
+          <Dropdown v-model="this.kenostActivityAll.type" :options="this.massAction" optionLabel="name" placeholder="Массовое действие" class="w-full md:w-14rem" />
+        </div>
+        <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0 || this.kenostActivityAll.type.key == 1">
+          <p>Тип цен</p>
+          <Dropdown v-model="this.kenostActivityAll.typePrice" :options="this.typePrice" optionLabel="name" placeholder="Тип цен" class="w-full md:w-14rem" />
+        </div>
+        <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0">
+          <p>Значение</p>
+          <InputNumber
+            v-model="this.kenostActivityAll.value"
+            inputId="horizontal-buttons"
+            :step="1"
+            min="0"
+            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+          />
+        </div>
+        <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0">
+          <p>&nbsp;</p>
+          <Dropdown v-model="kenostActivityAll.typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
+        </div>
+
+        <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 3">
+          <p>Значение</p>
+          <InputNumber
+            v-model="this.kenostActivityAll.multiplicity"
+            inputId="horizontal-buttons"
+            :step="1"
+            min="1"
+            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+          />
+        </div>
+
+        <div v-if="this.kenostActivityAll.type.key == 0 || this.kenostActivityAll.type.key == 1 || this.kenostActivityAll.type.key == 2 || this.kenostActivityAll.type.key == 3" @click="massActionTable" class="dart-btn dart-btn-primary mt-3"><i class="pi pi-check"></i></div>
       </div>
     </form>
 
@@ -274,6 +355,121 @@
           </table>
         </div>
     </Dialog>
+
+    <Dialog v-model:visible="this.modals.price" :header="this.modals.headers[this.modals.price_step]" :style="{ width: '600px' }">
+        <div class="kenost-modal-price">
+            <div class="product-kenost-card">
+              <img :src="this.selected[this.modals.product_id]?.image">
+              <div class="product-kenost-card__text">
+                <p>{{ this.selected[this.modals.product_id]?.name }}</p>
+                <span>{{this.selected[this.modals.product_id]?.article}}</span>
+              </div>
+            </div>
+            <div class="kenost-method-edit-flex" v-if="this.modals.price_step == 0">
+              <div class="flex align-items-center mt-3">
+                <RadioButton v-model="this.modals.type_price" inputId="type_price-1" name="type_price" value="1"/>
+                <label for="type_price-1" class="ml-2 radioLabel">Скидка по формуле</label>
+              </div>
+              <div class="flex align-items-center mt-3">
+                <RadioButton v-model="this.modals.type_price" inputId="type_price-2" name="type_price" value="2"/>
+                <label for="type_price-2" class="ml-2 radioLabel">Тип цен</label>
+              </div>
+              <div class="flex align-items-center mt-3">
+                <RadioButton v-model="this.modals.type_price" inputId="type_price-3" name="type_price" value="3"/>
+                <label for="type_price-3" class="ml-2 radioLabel">Задать вручную</label>
+              </div>
+            </div>
+
+            <div v-if="this.modals.price_step == 1" class="two-colums mt-3">
+              <div class="kenost-wiget">
+                  <p>Тип цены</p>
+                  <Dropdown @change="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue, this.selected[this.modals.product_id].typePrice)" v-model="this.selected[this.modals.product_id].typePrice" :options="this.selected[this.modals.product_id].prices" optionLabel="name" class="w-full md:w-14rem" />
+              </div>
+              <div class="kenost-wiget-two">
+                <div class="kenost-wiget">
+                  <p>Значение</p>
+                  <InputNumber
+                    v-model="this.saleValue"
+                    inputId="horizontal-buttons"
+                    :step="0.1"
+                    min="0"
+                    @update:modelValue="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue, this.selected[this.modals.product_id].typePrice)"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                  />
+                </div>
+                <div class="kenost-wiget">
+                  <p>&nbsp;</p>
+                  <Dropdown @change="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue, this.selected[this.modals.product_id].typePrice)" v-model="this.selected[this.modals.product_id].typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
+                </div>
+              </div>
+            </div>
+
+            <div v-if="this.modals.price_step == 2" class="two-colums mt-3">
+              <div class="kenost-wiget">
+                  <p>Тип цены</p>
+                  <Dropdown @change="setTypePrice()" v-model="this.selected[this.modals.product_id].typePrice" :options="this.selected[this.modals.product_id].prices" optionLabel="name" class="w-full md:w-14rem" />
+              </div>
+            </div>
+
+            <div v-if="this.modals.price_step == 3" class="two-colums mt-3">
+              <div class="kenost-wiget">
+                <p>Скидка в %</p>
+                <InputNumber
+                    v-model="this.selected[this.modals.product_id].discountInterest"
+                    inputId="horizontal-buttons"
+                    :step="1"
+                    min="0"
+                    max="100"
+                    suffix=" %"
+                    @update:modelValue="setPrices(this.modals.product_id, 'discountInterest', this.selected[this.modals.product_id].discountInterest)"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                />
+              </div>
+              <div class="kenost-wiget">
+                <p>Скидка в ₽</p>
+                <InputNumber
+                    v-model="selected[this.modals.product_id].discountInRubles"
+                    inputId="horizontal-buttons"
+                    :step="1"
+                    min="0"
+                    :max="selected[this.modals.product_id].price"
+                    mode="currency" currency="RUB"
+                    @update:modelValue="setPrices(this.modals.product_id, 'discountInRubles', this.selected[this.modals.product_id].discountInRubles)"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                />
+              </div>
+              <div class="kenost-wiget">
+                <p>Цена со скидкой</p>
+                <InputNumber
+                    v-model="selected[this.modals.product_id].finalPrice"
+                    inputId="horizontal-buttons"
+                    :step="1"
+                    :max="selected[this.modals.product_id].price"
+                    mode="currency" currency="RUB"
+                    min="0"
+                    @update:modelValue="setPrices(this.modals.product_id, 'finalPrice', this.selected[this.modals.product_id].finalPrice)"
+                    incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                />
+              </div>
+            </div>
+
+            <div class="kenost-info-line" v-if="this.modals.price_step != 0">
+              <p>РРЦ: {{this.selected[this.modals.product_id]?.price}} ₽</p>
+              <p>Скидка: {{(this.selected[this.modals.product_id]?.discountInterest).toFixed(2)}} %</p>
+              <p>Цена со скидой: {{this.selected[this.modals.product_id]?.finalPrice}} ₽</p>
+            </div>
+
+            <div class="kenost-modal-price__button kenost-modal-price__flex">
+                <span v-if="this.modals.price_step == 0"></span>
+                <div v-if="this.modals.price_step != 0" class="dart-btn dart-btn-secondary btn-padding" @click="this.modals.price_step = 0">
+                  Назад
+                </div>
+                <div class="dart-btn dart-btn-primary btn-padding" @click="closeDialogPrice">
+                  {{this.modals.price_step == 0? 'Далее' : 'Готово'}}
+                </div>
+            </div>
+        </div>
+    </Dialog>
   </template>
 
 <script>
@@ -289,6 +485,7 @@ import Checkbox from 'primevue/checkbox'
 import RadioButton from 'primevue/radiobutton'
 import DropZone from 'dropzone-vue'
 import Dialog from 'primevue/dialog'
+import Dropdown from 'primevue/dropdown'
 
 export default {
   name: 'ProfileSalesAdd',
@@ -298,6 +495,7 @@ export default {
       pagination_items_per_page_selected: 25,
       pagination_offset_selected: 0,
       page: 1,
+      table_products_loading: false,
       page_selected: 1,
       total_selected: 0,
       loading: false,
@@ -305,6 +503,18 @@ export default {
       compatibilityPost: 0,
       availability: [],
       regions: this.getregions,
+      filter_table: {
+        name: '',
+        category: {}
+      },
+      kenostActivityAll: {
+        type: {},
+        typePrice: {},
+        value: 0,
+        typeFormul: {},
+        discountInterest: 0,
+        multiplicity: 1
+      },
       select_regions: {},
       validation: {
         name: {
@@ -330,6 +540,7 @@ export default {
       },
       upload_product: false,
       region_all: [],
+      opt_catalog_tree: [],
       files: {
         max: {
           original_href: ''
@@ -344,8 +555,21 @@ export default {
           original_href: ''
         }
       },
+      kenost_table_all: [],
+      kenost_table: [],
       modals: {
-        error_product: false
+        error_product: false,
+        delay: false,
+        price: false,
+        price_step: 0,
+        type_price: '1',
+        product_id: -1,
+        headers: [
+          'Метод редактирования цены',
+          'Скидка по формуле',
+          'Тип цен',
+          'Скидка вручную'
+        ]
       },
       error_product: [],
       filter: {
@@ -362,10 +586,22 @@ export default {
       per_page: 25,
       form: {
         date: null,
-        addProductType: '1'
+        addProductType: '1',
+        is_all_products: []
       },
       editMode: true,
-      get_catalog: []
+      get_catalog: [],
+      typeFormul: [
+        { name: '₽', key: 0 },
+        { name: '%', key: 1 }
+      ],
+      typePrice: [
+        { name: 'Заданная', key: 0 }
+      ],
+      massAction: [
+        { name: 'Скидка по формуле', key: 0 },
+        { name: 'Тип цен', key: 1 }
+      ]
     }
   },
   methods: {
@@ -375,7 +611,10 @@ export default {
       'get_catalog_from_api',
       'get_regions_from_api',
       'get_sales_to_api',
-      'opt_upload_products_file'
+      'opt_upload_products_file',
+      'get_opt_catalog_tree_from_api',
+      'opt_get_prices',
+      'opt_get_remain_prices'
     ]),
     paginate (obj) {
       this.page_selected = obj.page
@@ -401,6 +640,94 @@ export default {
       }
       this.$toast.add({ severity: 'info', summary: 'Файлы загружены', detail: 'Файл был успешно загружен', life: 3000 })
     },
+    massActionTable () {
+      for (let i = 0; i < this.kenost_table.length; i++) {
+        switch (this.kenostActivityAll.type.key) {
+          case 0:
+            this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
+            if (this.kenostActivityAll.typeFormul.key === 0) {
+              this.selected[this.kenost_table[i]].finalPrice = Number(this.selected[this.kenost_table[i]].price) - this.kenostActivityAll.value
+              this.selected[this.kenost_table[i]].discountInRubles = this.kenostActivityAll.value
+              this.selected[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value / (Number(this.selected[this.kenost_table[i]].price) / 100)
+            } else {
+              this.selected[this.kenost_table[i]].finalPrice = Number(this.selected[this.kenost_table[i]].price) - ((Number(this.selected[this.kenost_table[i]].price) / 100) * this.kenostActivityAll.value)
+              this.selected[this.kenost_table[i]].discountInRubles = this.selected[this.kenost_table[i]].finalPrice - Number(this.selected[this.kenost_table[i]].price)
+              this.selected[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value
+            }
+            break
+          case 1:
+            // eslint-disable-next-line no-case-declarations
+            const isPrice = this.selected[this.kenost_table[i]].prices.find(r => r.guid === this.kenostActivityAll.typePrice.key)
+
+            if (isPrice) {
+              console.log(this.selected[this.kenost_table[i]])
+              this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
+              this.selected[this.kenost_table[i]].finalPrice = isPrice.price
+              this.selected[this.kenost_table[i]].discountInRubles = Number(this.selected[this.kenost_table[i]].price) - this.selected[this.kenost_table[i]].finalPrice
+              this.selected[this.kenost_table[i]].discountInterest = isPrice.price / (Number(this.selected[this.kenost_table[i]].price) / 100)
+            }
+            // this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
+            // console.log(this.selected[this.kenost_table[i]])
+            // this.selected[this.kenost_table[i]].finalPrice = Number(this.selected[this.kenost_table[i]].price) - this.kenostActivityAll.value
+            // this.selected[this.kenost_table[i]].discountInRubles = this.kenostActivityAll.value
+            // this.selected[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value / (Number(this.selected[this.kenost_table[i]].price) / 100)
+            break
+        }
+      }
+    },
+    setDiscountFormul (type, value, typePrice) {
+      if (type && value >= 0 && typePrice) {
+        this.setTypePrice()
+        value = Number(value)
+        let getPrice = Number(this.selected[this.modals.product_id].price)
+
+        if (this.selected[this.modals.product_id].typePrice) {
+          // eslint-disable-next-line no-unused-vars
+          getPrice = Number(this.selected[this.modals.product_id].prices.find(r => r.guid === this.selected[this.modals.product_id].typePrice.guid).price)
+        }
+        if (type.key === 0) {
+          this.selected[this.modals.product_id].discountInRubles = Number(this.selected[this.modals.product_id].price) - (getPrice - value)
+          this.selected[this.modals.product_id].discountInterest = (Number(this.selected[this.modals.product_id].price) - (getPrice - value)) / (Number(this.selected[this.modals.product_id].price) / 100)
+          this.selected[this.modals.product_id].finalPrice = getPrice - value
+        } else if (type.key === 1) {
+          this.selected[this.modals.product_id].discountInRubles = Number(this.selected[this.modals.product_id].price) - (getPrice - (value * (getPrice / 100)))
+          this.selected[this.modals.product_id].discountInterest = (Number(this.selected[this.modals.product_id].price) - (value * (getPrice / 100))) / (Number(this.selected[this.modals.product_id].price) / 100)
+          this.selected[this.modals.product_id].finalPrice = getPrice - (value * (getPrice / 100))
+        }
+      }
+    },
+    setTypePrice () {
+      const getPrice = this.selected[this.modals.product_id].prices.find(r => r.guid === this.selected[this.modals.product_id].typePrice.guid).price
+      this.selected[this.modals.product_id].finalPrice = Number(getPrice)
+      this.selected[this.modals.product_id].discountInRubles = Number(this.selected[this.modals.product_id].price) - Number(getPrice)
+      this.selected[this.modals.product_id].discountInterest = (Number(this.selected[this.modals.product_id].price) - Number(getPrice)) / (Number(this.selected[this.modals.product_id].price) / 100)
+    },
+    pagClickCallbackSelect (pageNum) {
+      this.page_selected = pageNum
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: this.selected,
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
+      this.get_available_products_from_api(data)
+    },
+    kenostTableCheckedAll () {
+      if (this.kenost_table_all.length === 0) {
+        this.table_products_loading = true
+        this.kenost_table = Object.keys(this.selected)
+        // for (let i = 0; i < Object.keys(this.selected).length; i++) {
+        //   // if (this.selected[Object.keys(this.selected)[i]].hide) {
+        //   this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
+        //   // }
+        // }
+        this.table_products_loading = false
+      } else {
+        this.kenost_table = []
+      }
+    },
     setPrices (index, name, value) {
       switch (name) {
         case 'discountInterest':
@@ -415,6 +742,26 @@ export default {
           this.selected[index].discountInRubles = Number(this.selected[index].price) - value
           this.selected[index].discountInterest = this.selected[index].discountInRubles / (Number(this.selected[index].price) / 100)
           break
+      }
+    },
+    setAllProducts () {
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: this.selected,
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page,
+        isallproducts: this.form.is_all_products.length !== 0
+      }
+      this.get_available_products_from_api(data)
+    },
+    closeDialogPrice () {
+      if (this.modals.price_step === 0) {
+        this.modals.price_step = Number(this.modals.type_price)
+      } else {
+        this.modals.price_step = 0
+        this.modals.price = false
       }
     },
     parseFile (files, xhr, formData) {
@@ -476,12 +823,34 @@ export default {
       product.finalPrice = Number(product.price)
       console.log(product)
       // console.log(this.selected)
-      this.selected[product.id] = product
-      console.log(this.selected)
-      this.products = this.products.filter((r) => r.id !== id)
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
-      this.get_available_products_from_api(data)
-      this.total_selected++
+      // this.selected[product.id] = product
+      // console.log(this.selected)
+      // this.products = this.products.filter((r) => r.id !== id)
+      // const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      // this.get_available_products_from_api(data)
+      // this.total_selected++
+
+      const dataProduct = {
+        action: 'get/product/prices',
+        remain_id: product.id
+      }
+
+      this.opt_get_remain_prices(dataProduct).then((res) => {
+        product.prices = res.data.data
+
+        this.selected[product.id] = product
+        this.products = this.products.filter((r) => r.id !== id)
+        const data = {
+          filter: this.filter,
+          filterselected: this.filter_table,
+          selected: this.selected,
+          pageselected: this.page_selected,
+          page: this.page,
+          perpage: this.per_page
+        }
+        this.get_available_products_from_api(data)
+        this.total_selected++
+      })
     },
     deleteSelect (id) {
       this.products.push(this.selected[id])
@@ -509,7 +878,15 @@ export default {
       this.get_available_products_from_api(data)
     },
     setFilter () {
-      const data = { filter: this.filter, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      this.page_selected = 1
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: this.selected,
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
       this.get_available_products_from_api(data)
     },
     saveData () {
@@ -625,16 +1002,43 @@ export default {
     if (router.currentRoute._value.params.action_id) {
       this.get_sales_to_api({ id: router.currentRoute._value.params.sales_id, actionid: router.currentRoute._value.params.action_id })
     }
+    this.get_opt_catalog_tree_from_api()
+    this.opt_get_prices({
+      action: 'get/type/prices',
+      store_id: router.currentRoute._value.params.id
+    })
   },
-  components: { Calendar, TreeSelect, Paginate, FileUpload, Toast, InputNumber, Checkbox, RadioButton, DropZone, Dialog },
+  components: {
+    Calendar,
+    TreeSelect,
+    Paginate,
+    FileUpload,
+    Toast,
+    InputNumber,
+    Checkbox,
+    RadioButton,
+    DropZone,
+    Dialog,
+    Dropdown
+  },
   computed: {
     ...mapGetters([
       'available_products',
       'getcatalog',
       'getregions',
       'actions',
-      'optproductsfile'
+      'optproductsfile',
+      'optcatalogtree',
+      'oprpricesremain',
+      'oprprices'
     ]),
+    pagesCountSelect () {
+      let pages = Math.round(this.total_selected / this.per_page)
+      if (pages === 0) {
+        pages = 1
+      }
+      return pages
+    },
     pagesCount () {
       let pages = Math.round(this.total_products / this.per_page)
       if (pages === 0) {
@@ -649,10 +1053,28 @@ export default {
     },
     available_products: function (newVal, oldVal) {
       this.products = newVal.products
-      this.total_products = newVal.total
+
+      if (newVal.selected) {
+        this.selected = newVal.selected
+      }
+      this.total_selected = newVal.total_selected
+      if (newVal.total !== 0) {
+        this.total_products = newVal.total
+      }
+    },
+    optcatalogtree: function (newVal, oldVal) {
+      this.opt_catalog_tree = newVal
     },
     getregions: function (newVal, oldVal) {
       this.regions = this.getregions
+    },
+    oprprices: function (newVal, oldVal) {
+      console.log(newVal)
+      this.typePrice = []
+      for (let i = 0; i < newVal.length; i++) {
+        this.typePrice.push({ key: newVal[i].guid, name: newVal[i].name })
+      }
+      console.log(this.typePrice)
     },
     actions: function (newVal, oldVal) {
       this.form.name = newVal.name
@@ -691,6 +1113,23 @@ export default {
 </script>
 
 <style lang="scss">
+
+  .table-b2c{
+    width: 1200px;
+  }
+
+  .PickList__products.selected{
+    // height: 400px;
+    gap: 0px;
+
+    .PickList__el{
+      padding: 12px 0;
+    }
+  }
+
+    .none{
+      display: none !important;
+    }
 
     .kenost-upload-button{
       background: #F8F8F8 !important;

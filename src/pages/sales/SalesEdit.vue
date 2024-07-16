@@ -406,7 +406,7 @@
                           </div>
                       </div>
                       <div class="dart-form-group">
-                          <TreeSelect v-model="this.filter_table.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
+                        <TreeSelect label="name" v-model="this.filter_table.category" :options="this.opt_catalog_tree" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
                       </div>
                     </div>
                     <!-- <div @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</div> -->
@@ -681,7 +681,7 @@
             <div v-if="this.modals.price_step == 1" class="two-colums mt-3">
               <div class="kenost-wiget">
                   <p>Тип цены</p>
-                  <Dropdown @change="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue, this.selected[this.modals.product_id].typePrice)" v-model="this.selected[this.modals.product_id].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown @change="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue, this.selected[this.modals.product_id].typePrice)" v-model="this.selected[this.modals.product_id].typePrice" :options="this.selected[this.modals.product_id].prices" optionLabel="name" class="w-full md:w-14rem" />
               </div>
               <div class="kenost-wiget-two">
                 <div class="kenost-wiget">
@@ -705,7 +705,7 @@
             <div v-if="this.modals.price_step == 2" class="two-colums mt-3">
               <div class="kenost-wiget">
                   <p>Тип цены</p>
-                  <Dropdown v-model="this.selected[this.modals.product_id].typePrice" :options="this.typePrice" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown @change="setTypePrice()" v-model="this.selected[this.modals.product_id].typePrice" :options="this.selected[this.modals.product_id].prices" optionLabel="name" class="w-full md:w-14rem" />
               </div>
             </div>
 
@@ -801,6 +801,7 @@ export default {
         name: '',
         category: {}
       },
+      opt_catalog_tree: [],
       error_product: [],
       upload_product: false,
       page_complects: 1,
@@ -941,7 +942,8 @@ export default {
       'opt_upload_products_file',
       'get_all_sales_to_api',
       'opt_get_prices',
-      'opt_get_remain_prices'
+      'opt_get_remain_prices',
+      'get_opt_catalog_tree_from_api'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -1033,7 +1035,17 @@ export default {
             }
             break
           case 1:
-            this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
+            console.log(this.selected)
+            // eslint-disable-next-line no-case-declarations
+            const isPrice = this.selected[this.kenost_table[i]].prices.find(r => r.guid === this.kenostActivityAll.typePrice.key)
+
+            if (isPrice) {
+              // console.log(this.selected[this.kenost_table[i]])
+              this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
+              this.selected[this.kenost_table[i]].finalPrice = isPrice.price
+              this.selected[this.kenost_table[i]].discountInRubles = Number(this.selected[this.kenost_table[i]].price) - this.selected[this.kenost_table[i]].finalPrice
+              this.selected[this.kenost_table[i]].discountInterest = isPrice.price / (Number(this.selected[this.kenost_table[i]].price) / 100)
+            }
             break
           case 3:
             this.selected[this.kenost_table[i]].multiplicity = this.kenostActivityAll.multiplicity
@@ -1262,12 +1274,12 @@ export default {
     },
     kenostTableCheckedAll () {
       if (this.kenost_table_all.length === 0) {
-        this.kenost_table = []
-        for (let i = 0; i < Object.keys(this.selected).length; i++) {
-          if (this.selected[Object.keys(this.selected)[i]].hide) {
-            this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
-          }
-        }
+        this.kenost_table = Object.keys(this.selected)
+        // for (let i = 0; i < Object.keys(this.selected).length; i++) {
+        //   // if (this.selected[Object.keys(this.selected)[i]].hide) {
+        //   this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
+        //   // }
+        // }
       } else {
         this.kenost_table = []
       }
@@ -1300,7 +1312,7 @@ export default {
       }
     },
     setTypePrice () {
-      const getPrice = this.selected[this.modals.product_id].prices.find(r => r.guid === this.selected[this.modals.product_id].typePrice.key).price
+      const getPrice = this.selected[this.modals.product_id].prices.find(r => r.guid === this.selected[this.modals.product_id].typePrice.guid).price
       this.selected[this.modals.product_id].finalPrice = Number(getPrice)
       this.selected[this.modals.product_id].discountInRubles = Number(this.selected[this.modals.product_id].price) - Number(getPrice)
       this.selected[this.modals.product_id].discountInterest = (Number(this.selected[this.modals.product_id].price) - Number(getPrice)) / (Number(this.selected[this.modals.product_id].price) / 100)
@@ -1323,7 +1335,7 @@ export default {
 
         if (this.selected[this.modals.product_id].typePrice) {
           // eslint-disable-next-line no-unused-vars
-          getPrice = Number(this.selected[this.modals.product_id].prices.find(r => r.guid === this.selected[this.modals.product_id].typePrice.key).price)
+          getPrice = Number(this.selected[this.modals.product_id].prices.find(r => r.guid === this.selected[this.modals.product_id].typePrice.guid).price)
         }
         if (type.key === 0) {
           this.selected[this.modals.product_id].discountInRubles = Number(this.selected[this.modals.product_id].price) - (getPrice - value)
@@ -1372,6 +1384,7 @@ export default {
       action: 'get/type/prices',
       store_id: router.currentRoute._value.params.id
     })
+    this.get_opt_catalog_tree_from_api()
   },
   components: {
     FileUpload,
@@ -1398,7 +1411,8 @@ export default {
       'optproductsfile',
       'allactions',
       'oprprices',
-      'oprpricesremain'
+      'oprpricesremain',
+      'optcatalogtree'
     ]),
     pagesCountSelect () {
       let pages = Math.round(this.total_selected / this.per_page)
@@ -1423,6 +1437,12 @@ export default {
     },
     allorganizations: function (newVal, oldVal) {
       this.all_organizations = newVal
+    },
+    optcatalogtree: function (newVal, oldVal) {
+      // for (let i = 0; i < newVal.length; i++) {
+
+      // }
+      this.opt_catalog_tree = newVal
     },
     getregions: function (newVal, oldVal) {
       this.regions = this.getregions
