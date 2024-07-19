@@ -69,6 +69,11 @@
         </div>
 
         <div class="dart-form-group mb-4">
+          <span class="ktitle">Описание</span>
+          <input v-model="this.form.description" type="text" name="conditions" placeholder="Укажите описание акции" class="dart-form-control">
+        </div>
+
+        <div class="dart-form-group mb-4">
             <div class="rules-container">
                 <div class="rules-container__text">
                     <span class="ktitle">Правила акции</span>
@@ -587,7 +592,8 @@ export default {
       form: {
         date: null,
         addProductType: '1',
-        is_all_products: []
+        is_all_products: [],
+        description: ''
       },
       editMode: true,
       get_catalog: [],
@@ -947,6 +953,7 @@ export default {
               type: 'b2c',
               id: router.currentRoute._value.params.id,
               name: this.form.name,
+              description: this.form.description,
               conditions: this.form.conditions,
               dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
               products: this.selected,
@@ -968,6 +975,7 @@ export default {
               type: 'b2c',
               id: router.currentRoute._value.params.id,
               name: this.form.name,
+              description: this.form.description,
               conditions: this.form.conditions,
               dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
               products: this.selected,
@@ -1095,6 +1103,7 @@ export default {
       this.form.dates = [datefrom, dateto]
       this.selected = newVal.products
       this.total_selected = newVal.total_products
+      this.form.description = newVal.description
       this.form.conditions = newVal.conditions
       this.status = newVal.status
       this.moderator_comment = newVal.moderator_comment

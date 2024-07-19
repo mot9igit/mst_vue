@@ -600,6 +600,29 @@
                     </div>
                   </div>
                 </div>
+
+            <div class="dart-form-group mt-4">
+              <span class="ktitle">Ограничения</span>
+              <div class="flex align-items-center mt-2">
+                <RadioButton v-model="this.form.limitations" inputId="limitations-1" name="limitations" value="1"/>
+                <label for="limitations-1" class="ml-2 radioLabel">Без ограничений</label>
+              </div>
+              <div class="flex align-items-center mt-3">
+                <RadioButton v-model="this.form.limitations" inputId="limitations-2" name="limitations" value="2"/>
+                <label for="limitations-2" class="ml-2 radioLabel">Ограничить по сумме</label>
+              </div>
+            </div>
+
+            <div class="kenost-wiget" v-if="this.form.limitations == '2'">
+              <p>Значение</p>
+              <InputNumber
+                v-model="this.form.limitationValue"
+                inputId="horizontal-buttons"
+                :step="0.1"
+                min="0"
+                incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+              />
+            </div>
         </div>
     </form>
     <Dialog v-model:visible="this.modals.delay" header="Настройка отсрочки платежа" :style="{ width: '800px' }">
@@ -847,6 +870,8 @@ export default {
         postponementConditionsValue: 0,
         condition: { name: 'Скидка без условий', key: 0 },
         addProductType: '1',
+        limitations: '1',
+        limitationValue: 0,
         delay: [
           {
             percent: 100,
@@ -1120,7 +1145,9 @@ export default {
           available_vendors: this.form.available_vendors[0] === 'true',
           available_opt: this.form.available_opt[0] === 'true',
           not_sale_client: this.form.not_sale_client[0] === 'true',
-          is_all_products: this.form.is_all_products.length !== 0
+          is_all_products: this.form.is_all_products.length !== 0,
+          limit_sum: this.form.limitationValue,
+          limit_type: this.form.limitations
         })
           .then((result) => {
             this.loading = false
@@ -1340,7 +1367,7 @@ export default {
           this.selected[this.modals.product_id].finalPrice = getPrice - value
         } else if (type.key === 1) {
           this.selected[this.modals.product_id].discountInRubles = Number(this.selected[this.modals.product_id].price) - (getPrice - (value * (getPrice / 100)))
-          this.selected[this.modals.product_id].discountInterest = (Number(this.selected[this.modals.product_id].price) - (value * (getPrice / 100))) / (Number(this.selected[this.modals.product_id].price) / 100)
+          this.selected[this.modals.product_id].discountInterest = (value * (getPrice / 100)) / (Number(this.selected[this.modals.product_id].price) / 100)
           this.selected[this.modals.product_id].finalPrice = getPrice - (value * (getPrice / 100))
         }
       }
