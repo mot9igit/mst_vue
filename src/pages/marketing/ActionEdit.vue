@@ -718,20 +718,52 @@ export default {
         page: this.page,
         perpage: this.per_page
       }
-      this.get_available_products_from_api(data)
+      this.get_available_products_from_api(data).then((res) => {
+        this.kenostTableCheckedAllCheck()
+      })
+    },
+    kenostTableCheckedAllCheck () {
+      let count = 0
+      for (let i = 0; i < Object.keys(this.selected).length; i++) {
+        if (this.selected[Object.keys(this.selected)[i]].hide) {
+          console.log(this.kenost_table.indexOf(this.selected[Object.keys(this.selected)[i]].id))
+          if (this.kenost_table.indexOf(this.selected[Object.keys(this.selected)[i]].id) !== -1) {
+            count++
+          } else {
+            this.kenost_table_all = []
+            break
+          }
+        }
+        if (count === 25) {
+          this.kenost_table_all = ['1']
+          break
+        }
+      }
     },
     kenostTableCheckedAll () {
       if (this.kenost_table_all.length === 0) {
-        this.table_products_loading = true
-        this.kenost_table = Object.keys(this.selected)
-        // for (let i = 0; i < Object.keys(this.selected).length; i++) {
-        //   // if (this.selected[Object.keys(this.selected)[i]].hide) {
-        //   this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
-        //   // }
-        // }
-        this.table_products_loading = false
+        // this.kenost_table = Object.keys(this.selected)
+        let count = 0
+        for (let i = 0; i < Object.keys(this.selected).length; i++) {
+          if (this.selected[Object.keys(this.selected)[i]].hide) {
+            this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
+            count++
+          }
+          if (count === 25) {
+            break
+          }
+        }
       } else {
-        this.kenost_table = []
+        let count = 0
+        for (let i = 0; i < Object.keys(this.selected).length; i++) {
+          if (this.selected[Object.keys(this.selected)[i]].hide) {
+            this.kenost_table.filter((el) => el !== this.selected[Object.keys(this.selected)[i]].id)
+            count++
+          }
+          if (count === 25) {
+            break
+          }
+        }
       }
     },
     setPrices (index, name, value) {
@@ -893,7 +925,9 @@ export default {
         page: this.page,
         perpage: this.per_page
       }
-      this.get_available_products_from_api(data)
+      this.get_available_products_from_api(data).then((res) => {
+        this.kenostTableCheckedAllCheck()
+      })
     },
     saveData () {
       this.selected = this.available_products.products[1]
