@@ -65,7 +65,7 @@
                 <input v-model="this.form.award" type="text" name="award" placeholder="Укажите вознаграждение" class="dart-form-control">
             </div>
 
-            <div class="dart-form-group mb-4">
+            <div class="dart-form-group mb-3">
                 <span class="ktitle">Совместимость скидок</span>
                 <div class="flex align-items-center mt-3">
                   <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-1" name="compatibilityDiscount" value="1"/>
@@ -85,7 +85,12 @@
                 </div>
             </div>
 
-            <div class="dart-form-group mb-4" v-if="this.form.compatibilityDiscount == 3 || this.form.compatibilityDiscount == 4">
+            <div v-if="this.form.compatibilityDiscount == '1'" class="flex align-items-center kenost-gray-p mb-3">
+              <Checkbox v-model="this.form.actionLast" inputId="actionLast-1" name="actionLast-1" value="true" />
+              <label for="actionLast-1" class="ml-2 mb-0">Применяется последней (от стоимости товара по всем акциям)</label>
+            </div>
+
+            <div class="dart-form-group mt-4" v-if="this.form.compatibilityDiscount == 3 || this.form.compatibilityDiscount == 4">
               <MultiSelect filter v-model="this.form.bigDiscount" display="chip" :options="this.allAction" optionLabel="name" placeholder="Выберите из списка" class="w-full md:w-20rem kenost-multiselect" />
             </div>
 
@@ -255,10 +260,10 @@
 
                   <a :href="site_url_prefix + '/assets/files/files/examples/ExampleLoadingProducts.xlsx'" class="kenost-link-blue mt-2">Скачать шаблон файла</a>
                 </div>
-                <div v-if="this.form.addProductType == '1'" class="flex align-items-center kenost-gray-p">
+                <!-- <div v-if="this.form.addProductType == '1'" class="flex align-items-center kenost-gray-p">
                   <Checkbox @change="setAllProducts" v-model="this.form.is_all_products" inputId="is_all_products-1" name="is_all_products-1" value="true" />
                   <label for="is_all_products-1" class="ml-2 mb-0">Добавить все товары</label>
-                </div>
+                </div> -->
 
                 <div v-if="this.form.addProductType == '1' && this.form.is_all_products.length == 0" class="PickList mt-3">
                     <div class="PickList__product" :style="{ width: '40%' }">
@@ -279,7 +284,7 @@
                             </div>
                         </div>
                         <div class="dart-form-group">
-                            <TreeSelect v-model="this.filter.category" :options="this.get_catalog" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
+                            <TreeSelect v-model="this.filter.category" :options="this.opt_catalog_tree" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
                         </div>
                         </div>
                         <div class="PickList__products">
@@ -305,11 +310,16 @@
                         </div>
                     </div>
 
+                    <div class="PickList__buttons">
+                      <div class="PickList__select" @click="setAllProducts(true)"><i class="pi pi-angle-double-right"></i></div>
+                      <div class="PickList__select mt-2" @click="setAllProducts(false)"><i class="pi pi-angle-double-left"></i></div>
+                    </div>
+
                     <div class="PickList__selected" :style="{ width: '40%' }">
                       <div class="PickList__title mb-4">
                       <b>Добавленные товары</b>
                       </div>
-                      <div class="PickList__products">
+                      <div class="PickList__products PickList__products-selected">
                       <div class="PickList__el" v-for="(item) in this.selected" :key="item.id">
                           <img :src="item.image" alt="">
                           <div class="PickList__info">
@@ -425,8 +435,8 @@
                         </tr>
                     </thead>
                     <!-- Вывод комплектов -->
-                    <tbody v-for="item in this.selected" :key="item.id">
-                      <tr v-if="this.complects_ids.indexOf(item.id) === -1 && item.hide">
+                    <tbody v-for="item in this.selected_visible" :key="item.id">
+                      <tr v-if="this.complects_ids.indexOf(item.id) === -1">
                         <td class="table-kenost__checkbox">
                           <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
                         </td>
@@ -438,20 +448,23 @@
                           </div>
                         </td>
                         <td>
-                          {{(Number(item.price).toFixed(0)).toLocaleString('ru')}} ₽
+                          {{(Number(item.price).toFixed(2)).toLocaleString('ru')}} ₽
                         </td>
                         <td>
-                          {{(Number(item.discountInterest).toFixed(2)).toLocaleString('ru')}}
+                          {{ this.selected_data[item.id] ? (Number(this.selected_data[item.id].discountInterest).toFixed(2)).toLocaleString('ru') : Number(0.00).toFixed(2) }}
                         </td>
                         <td>
-                          {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru')}} ₽
-                          <p class="table-kenost__settings" @click="this.modals.price = true; this.modals.product_id = item.id" >Настроить</p>
+                          {{this.selected_data[item.id] ? (Number(this.selected_data[item.id].finalPrice).toFixed(2)).toLocaleString('ru') : item.price.toLocaleString('ru')}} ₽
+                          <p class="table-kenost__settings" @click="settings(item)" >Настроить</p>
+                        </td>
+                        <td v-if="this.selected_data[item.id]">
+                          <Counter class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="this.selected_data[item.id].multiplicity" :key="new Date().getMilliseconds() + item.id"/>
+                        </td>
+                        <td v-else>
+                          <Counter class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="1"/>
                         </td>
                         <td>
-                          <Counter class="margin-auto" @ElemCount="ElemCount" :id="item.id" :min="1" :value="item.multiplicity"/>
-                        </td>
-                        <td>
-                          {{(Number(item.finalPrice).toFixed(0)).toLocaleString('ru') * item.multiplicity}} ₽
+                          {{ this.selected_data[item.id] ? (Number(this.selected_data[item.id].finalPrice) * this.selected_data[item.id].multiplicity).toFixed(2) : item.price.toLocaleString('ru') }} ₽
                         </td>
                         <td>
                           <div class="kenost-basker-delete">
@@ -704,7 +717,7 @@
             <div v-if="this.modals.price_step == 1" class="two-colums mt-3">
               <div class="kenost-wiget">
                   <p>Тип цены</p>
-                  <Dropdown @change="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue, this.selected[this.modals.product_id].typePrice)" v-model="this.selected[this.modals.product_id].typePrice" :options="this.selected[this.modals.product_id].prices" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown @change="setDiscountFormul(this.selected_data[this.modals.product_id].typeFormul, this.saleValue, this.selected_data[this.modals.product_id].typePrice)" v-model="this.selected_data[this.modals.product_id].typePrice" :options="this.selected[this.modals.product_id].prices" optionLabel="name" class="w-full md:w-14rem" />
               </div>
               <div class="kenost-wiget-two">
                 <div class="kenost-wiget">
@@ -714,13 +727,13 @@
                     inputId="horizontal-buttons"
                     :step="0.1"
                     min="0"
-                    @update:modelValue="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue, this.selected[this.modals.product_id].typePrice)"
+                    @update:modelValue="setDiscountFormul(this.selected_data[this.modals.product_id].typeFormul, this.saleValue, this.selected_data[this.modals.product_id].typePrice)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                   />
                 </div>
                 <div class="kenost-wiget">
                   <p>&nbsp;</p>
-                  <Dropdown @change="setDiscountFormul(this.selected[this.modals.product_id].typeFormul, this.saleValue, this.selected[this.modals.product_id].typePrice)" v-model="this.selected[this.modals.product_id].typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown @change="setDiscountFormul(this.selected_data[this.modals.product_id].typeFormul, this.saleValue, this.selected_data[this.modals.product_id].typePrice)" v-model="this.selected_data[this.modals.product_id].typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
                 </div>
               </div>
             </div>
@@ -728,7 +741,7 @@
             <div v-if="this.modals.price_step == 2" class="two-colums mt-3">
               <div class="kenost-wiget">
                   <p>Тип цены</p>
-                  <Dropdown @change="setTypePrice()" v-model="this.selected[this.modals.product_id].typePrice" :options="this.selected[this.modals.product_id].prices" optionLabel="name" class="w-full md:w-14rem" />
+                  <Dropdown @change="setTypePrice()" v-model="this.selected_data[this.modals.product_id].typePrice" :options="this.selected[this.modals.product_id].prices" optionLabel="name" class="w-full md:w-14rem" />
               </div>
             </div>
 
@@ -736,39 +749,39 @@
               <div class="kenost-wiget">
                 <p>Скидка в %</p>
                 <InputNumber
-                    v-model="this.selected[this.modals.product_id].discountInterest"
+                    v-model="this.selected_data[this.modals.product_id].discountInterest"
                     inputId="horizontal-buttons"
                     :step="1"
                     min="0"
                     max="100"
                     suffix=" %"
-                    @update:modelValue="setPrices(this.modals.product_id, 'discountInterest', this.selected[this.modals.product_id].discountInterest)"
+                    @update:modelValue="setPrices(this.modals.product_id, 'discountInterest', this.selected_data[this.modals.product_id].discountInterest)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                 />
               </div>
               <div class="kenost-wiget">
                 <p>Скидка в ₽</p>
                 <InputNumber
-                    v-model="selected[this.modals.product_id].discountInRubles"
+                    v-model="selected_data[this.modals.product_id].discountInRubles"
                     inputId="horizontal-buttons"
                     :step="1"
                     min="0"
                     :max="selected[this.modals.product_id].price"
                     mode="currency" currency="RUB"
-                    @update:modelValue="setPrices(this.modals.product_id, 'discountInRubles', this.selected[this.modals.product_id].discountInRubles)"
+                    @update:modelValue="setPrices(this.modals.product_id, 'discountInRubles', this.selected_data[this.modals.product_id].discountInRubles)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                 />
               </div>
               <div class="kenost-wiget">
                 <p>Цена со скидкой</p>
                 <InputNumber
-                    v-model="selected[this.modals.product_id].finalPrice"
+                    v-model="selected_data[this.modals.product_id].finalPrice"
                     inputId="horizontal-buttons"
                     :step="1"
                     :max="selected[this.modals.product_id].price"
                     mode="currency" currency="RUB"
                     min="0"
-                    @update:modelValue="setPrices(this.modals.product_id, 'finalPrice', this.selected[this.modals.product_id].finalPrice)"
+                    @update:modelValue="setPrices(this.modals.product_id, 'finalPrice', this.selected_data[this.modals.product_id].finalPrice)"
                     incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
                 />
               </div>
@@ -776,8 +789,8 @@
 
             <div class="kenost-info-line" v-if="this.modals.price_step != 0">
               <p>РРЦ: {{this.selected[this.modals.product_id]?.price}} ₽</p>
-              <p>Скидка: {{(this.selected[this.modals.product_id]?.discountInterest).toFixed(2)}} %</p>
-              <p>Цена со скидой: {{this.selected[this.modals.product_id]?.finalPrice}} ₽</p>
+              <p>Скидка: {{ this.selected_data[this.modals.product_id] ? (Number(this.selected_data[this.modals.product_id].discountInterest).toFixed(2)).toLocaleString('ru') : 0 }} %</p>
+              <p>Цена со скидой: {{this.selected_data[this.modals.product_id] ? this.selected_data[this.modals.product_id]?.finalPrice : this.selected[this.modals.product_id]?.price}} ₽</p>
             </div>
 
             <div class="kenost-modal-price__button kenost-modal-price__flex">
@@ -834,11 +847,12 @@ export default {
       selected_complects: {},
       postponement_period: 0,
       selected: {},
+      selected_data: {},
+      selected_visible: {},
       total_selected: -1,
       kenost_table_all: [],
       kenost_table: [],
       products: [],
-      get_catalog: [],
       total_products: 0,
       saleValue: 0,
       per_page: 25,
@@ -854,22 +868,23 @@ export default {
       regions_select: [],
       complects_ids: [],
       form: {
+        actionLast: [],
         name: '',
         description: '',
         award: '',
         dates: [],
-        compatibilityDiscount: 0,
-        compatibilityPost: 0,
-        typeShipment: 0,
+        compatibilityDiscount: '1',
+        compatibilityPost: '1',
+        typeShipment: '1',
         dateShipment: '',
-        paymentDelivery: 0,
-        conditionPaymentDelivery: 0,
+        paymentDelivery: { name: 'Покупатель', key: 0 },
+        conditionPaymentDelivery: { name: 'Без условий', key: 0 },
         conditionPaymentDeliveryValue: 0,
-        postponementConditions: 0,
+        postponementConditions: { name: 'Без условий', key: 0 },
         postponementConditionsValue: 0,
+        condition: { name: 'Скидка без условий', key: 0 },
         limitations: '1',
         limitationValue: 0,
-        condition: 0,
         addProductType: '1',
         delay: [
           {
@@ -878,7 +893,7 @@ export default {
           }
         ],
         delayPercentSum: 0,
-        participantsType: 1,
+        participantsType: '3',
         available_stores: [],
         available_vendors: [],
         available_opt: [],
@@ -958,7 +973,6 @@ export default {
   methods: {
     ...mapActions([
       'get_available_products_from_api',
-      'get_catalog_from_api',
       'get_all_organizations_from_api',
       'get_regions_from_api',
       'set_sales_to_api',
@@ -995,7 +1009,20 @@ export default {
         this.postponement_period = this.postponement_period + (this.form.delay[i].day * (this.form.delay[i].percent / 100))
       }
     },
-
+    settings (item) {
+      this.modals.price = true
+      this.modals.product_id = item.id
+      if (!this.selected_data[item.id]) {
+        const elem = {
+          price: item.price,
+          multiplicity: 1,
+          finalPrice: item.price,
+          discountInterest: 0,
+          discountInRubles: 0
+        }
+        this.selected_data[item.id] = elem
+      }
+    },
     parseFile (files, xhr, formData) {
       const callback = (e) => {
         const res = JSON.parse(e)
@@ -1045,65 +1072,80 @@ export default {
     },
     massActionTable () {
       for (let i = 0; i < this.kenost_table.length; i++) {
-        console.log(this.kenostActivityAll.type.key)
+        // console.log(this.kenostActivityAll.type.key)
+        if (!this.selected_data[this.kenost_table[i]]) {
+          const elem = {
+            price: this.selected[this.kenost_table[i]].price,
+            multiplicity: 1,
+            finalPrice: this.selected[this.kenost_table[i]].price,
+            discountInterest: 0,
+            discountInRubles: 0
+          }
+          this.selected_data[this.kenost_table[i]] = elem
+        }
         switch (this.kenostActivityAll.type.key) {
           case 0:
-            this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
+            this.selected_data[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
             if (this.kenostActivityAll.typeFormul.key === 0) {
-              this.selected[this.kenost_table[i]].finalPrice = Number(this.selected[this.kenost_table[i]].price) - this.kenostActivityAll.value
-              this.selected[this.kenost_table[i]].discountInRubles = this.kenostActivityAll.value
-              this.selected[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value / (Number(this.selected[this.kenost_table[i]].price) / 100)
+              this.selected[this.kenost_table[i]].finalPrice = Number(this.selected_data[this.kenost_table[i]].price) - this.kenostActivityAll.value
+              this.selected_data[this.kenost_table[i]].discountInRubles = this.kenostActivityAll.value
+              this.selected_data[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value / (Number(this.selected_data[this.kenost_table[i]].price) / 100)
             } else {
-              this.selected[this.kenost_table[i]].finalPrice = Number(this.selected[this.kenost_table[i]].price) - ((Number(this.selected[this.kenost_table[i]].price) / 100) * this.kenostActivityAll.value)
-              this.selected[this.kenost_table[i]].discountInRubles = this.selected[this.kenost_table[i]].finalPrice - Number(this.selected[this.kenost_table[i]].price)
-              this.selected[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value
+              this.selected_data[this.kenost_table[i]].finalPrice = Number(this.selected_data[this.kenost_table[i]].price) - ((Number(this.selected_data[this.kenost_table[i]].price) / 100) * this.kenostActivityAll.value)
+              this.selected_data[this.kenost_table[i]].discountInRubles = this.selected_data[this.kenost_table[i]].finalPrice - Number(this.selected_data[this.kenost_table[i]].price)
+              this.selected_data[this.kenost_table[i]].discountInterest = this.kenostActivityAll.value
             }
             break
           case 1:
-            console.log(this.selected)
+            // console.log(this.selected)
             // eslint-disable-next-line no-case-declarations
             const isPrice = this.selected[this.kenost_table[i]].prices.find(r => r.guid === this.kenostActivityAll.typePrice.key)
 
             if (isPrice) {
               // console.log(this.selected[this.kenost_table[i]])
-              this.selected[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
-              this.selected[this.kenost_table[i]].finalPrice = isPrice.price
-              this.selected[this.kenost_table[i]].discountInRubles = Number(this.selected[this.kenost_table[i]].price) - this.selected[this.kenost_table[i]].finalPrice
-              this.selected[this.kenost_table[i]].discountInterest = isPrice.price / (Number(this.selected[this.kenost_table[i]].price) / 100)
+              this.selected_data[this.kenost_table[i]].typePrice = this.kenostActivityAll.typePrice
+              this.selected_data[this.kenost_table[i]].finalPrice = isPrice.price
+              this.selected_data[this.kenost_table[i]].discountInRubles = Number(this.selected_data[this.kenost_table[i]].price) - this.selected_data[this.kenost_table[i]].finalPrice
+              this.selected_data[this.kenost_table[i]].discountInterest = isPrice.price / (Number(this.selected_data[this.kenost_table[i]].price) / 100)
             }
             break
           case 3:
-            this.selected[this.kenost_table[i]].multiplicity = this.kenostActivityAll.multiplicity
+            this.selected_data[this.kenost_table[i]].multiplicity = this.kenostActivityAll.multiplicity
             break
         }
-        console.log(this.selected[this.kenost_table[i]])
+        // console.log(this.selected[this.kenost_table[i]])
       }
     },
     setFilter () {
       this.page_selected = 1
+      this.page = 1
       const data = {
         filter: this.filter,
         filterselected: this.filter_table,
-        selected: this.selected,
         pageselected: this.page_selected,
         page: this.page,
-        perpage: this.per_page
+        perpage: this.per_page,
+        selected: Object.keys(this.selected)
       }
       this.get_available_products_from_api(data).then((res) => {
         this.kenostTableCheckedAllCheck()
       })
     },
-    setAllProducts () {
+    setAllProducts (is) {
       const data = {
         filter: this.filter,
         filterselected: this.filter_table,
-        selected: this.selected,
         pageselected: this.page_selected,
         page: this.page,
         perpage: this.per_page,
-        isallproducts: this.form.is_all_products.length !== 0
+        isallproducts: is ? 'all' : 'null'
       }
-      this.get_available_products_from_api(data)
+      if (is) {
+        data.selected = Object.keys(this.selected)
+      }
+      this.get_available_products_from_api(data).then((res) => {
+        this.kenostTableCheckedAllCheck()
+      })
     },
     setFilterComplects () {
       const data = {
@@ -1118,52 +1160,104 @@ export default {
     },
     formSubmit (event) {
       this.$load(async () => {
-        await this.set_sales_to_api({
-          action: 'set',
-          type: 'b2b',
-          id: router.currentRoute._value.params.id,
-          name: this.form.name,
-          files: this.files,
-          description: this.form.description,
-          award: this.form.award,
-          compatibilityDiscount: this.form.compatibilityDiscount,
-          compatibilityPost: this.form.compatibilityPost,
-          dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
-          shipment_type: this.form.typeShipment,
-          shipment_date: this.form.dateShipment,
-          payer: this.form.paymentDelivery.key,
-          delivery_payment_terms: this.form.conditionPaymentDelivery.key,
-          delivery_payment_value: this.form.conditionPaymentDeliveryValue,
-          delay: this.postponement_period,
-          delay_graph: this.form.delay,
-          delay_condition: this.form.postponementConditions.key,
-          delay_condition_value: this.form.postponementConditionsValue,
-          condition_type: this.form.condition.key,
-          condition_min_sum: this.form.conditionMinSum,
-          condition_SKU: this.form.conditionMinCount,
-          participants_type: this.form.participantsType,
-          products: this.selected,
-          regions_select: this.regions_select,
-          organizations: this.all_organizations_selected,
-          method_adding_products: this.form.addProductType,
-          available_stores: this.form.available_stores[0] === 'true',
-          available_vendors: this.form.available_vendors[0] === 'true',
-          available_opt: this.form.available_opt[0] === 'true',
-          complects: this.selected_complects,
-          action_id: router.currentRoute._value.params.sales_id,
-          big_sale_actions: this.form.bigDiscount,
-          not_sale_client: this.form.not_sale_client[0] === 'true',
-          is_all_products: this.form.is_all_products.length !== 0,
-          limit_sum: this.form.limitationValue,
-          limit_type: this.form.limitations
-        })
-          .then((result) => {
-            this.loading = false
-            router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
+        if (router.currentRoute._value.params.sales_id) {
+          await this.set_sales_to_api({
+            action: 'set',
+            type: 'b2b',
+            id: router.currentRoute._value.params.id,
+            name: this.form.name,
+            files: this.files,
+            description: this.form.description,
+            award: this.form.award,
+            compatibilityDiscount: this.form.compatibilityDiscount,
+            compatibilityPost: this.form.compatibilityPost,
+            dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
+            shipment_type: this.form.typeShipment,
+            shipment_date: this.form.dateShipment,
+            payer: this.form.paymentDelivery.key,
+            delivery_payment_terms: this.form.conditionPaymentDelivery.key,
+            delivery_payment_value: this.form.conditionPaymentDeliveryValue,
+            delay: this.postponement_period,
+            delay_graph: this.form.delay,
+            delay_condition: this.form.postponementConditions.key,
+            delay_condition_value: this.form.postponementConditionsValue,
+            condition_type: this.form.condition.key,
+            condition_min_sum: this.form.conditionMinSum,
+            condition_SKU: this.form.conditionMinCount,
+            participants_type: this.form.participantsType,
+            products: Object.keys(this.selected),
+            products_data: this.selected_data,
+            regions_select: this.regions_select,
+            organizations: this.all_organizations_selected,
+            method_adding_products: this.form.addProductType,
+            available_stores: this.form.available_stores[0] === 'true',
+            available_vendors: this.form.available_vendors[0] === 'true',
+            available_opt: this.form.available_opt[0] === 'true',
+            complects: this.selected_complects,
+            action_id: router.currentRoute._value.params.sales_id,
+            big_sale_actions: this.form.bigDiscount,
+            not_sale_client: this.form.not_sale_client[0] === 'true',
+            is_all_products: this.form.is_all_products.length !== 0,
+            limit_sum: this.form.limitationValue,
+            limit_type: this.form.limitations,
+            actionLast: this.form.actionLast[0] === 'true'
           })
-          .catch((result) => {
-            console.log(result)
+            .then((result) => {
+              this.loading = false
+              router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
+            })
+            .catch((result) => {
+              // console.log(result)
+            })
+        } else {
+          await this.set_sales_to_api({
+            action: 'set',
+            type: 'b2b',
+            id: router.currentRoute._value.params.id,
+            name: this.form.name,
+            files: this.files,
+            description: this.form.description,
+            award: this.form.award,
+            compatibilityDiscount: this.form.compatibilityDiscount,
+            compatibilityPost: this.form.compatibilityPost,
+            dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
+            shipment_type: this.form.typeShipment,
+            shipment_date: this.form.dateShipment,
+            payer: this.form.paymentDelivery.key,
+            delivery_payment_terms: this.form.conditionPaymentDelivery.key,
+            delivery_payment_value: this.form.conditionPaymentDeliveryValue,
+            delay: this.postponement_period,
+            delay_graph: this.form.delay,
+            delay_condition: this.form.postponementConditions.key,
+            delay_condition_value: this.form.postponementConditionsValue,
+            condition_type: this.form.condition.key,
+            condition_min_sum: this.form.conditionMinSum,
+            condition_SKU: this.form.conditionMinCount,
+            participants_type: this.form.participantsType,
+            products: Object.keys(this.selected),
+            products_data: this.selected_data,
+            regions_select: this.regions_select,
+            organizations: this.all_organizations_selected,
+            method_adding_products: this.form.addProductType,
+            available_stores: this.form.available_stores[0] === 'true',
+            available_vendors: this.form.available_vendors[0] === 'true',
+            available_opt: this.form.available_opt[0] === 'true',
+            complects: this.selected_complects,
+            big_sale_actions: this.form.bigDiscount,
+            not_sale_client: this.form.not_sale_client[0] === 'true',
+            is_all_products: this.form.is_all_products.length !== 0,
+            limit_sum: this.form.limitationValue,
+            limit_type: this.form.limitations,
+            actionLast: this.form.actionLast[0] === 'true'
           })
+            .then((result) => {
+              this.loading = false
+              router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
+            })
+            .catch((result) => {
+              // console.log(result)
+            })
+        }
       })
       this.loading = true
       // }
@@ -1227,8 +1321,17 @@ export default {
 
         this.selected[product.id] = product
         this.products = this.products.filter((r) => r.id !== id)
-        const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
-        this.get_available_products_from_api(data)
+        const data = {
+          filter: this.filter,
+          filterselected: this.filter_table,
+          selected: Object.keys(this.selected),
+          pageselected: this.page_selected,
+          page: this.page,
+          perpage: this.per_page
+        }
+        this.get_available_products_from_api(data).then((res) => {
+          this.kenostTableCheckedAllCheck()
+        })
         this.total_selected++
       })
     },
@@ -1248,8 +1351,17 @@ export default {
       this.selected = new_selected
 
       // this.selected = this.selected.filter((r) => r.id !== id)
-      const data = { filter: this.filter, filterselected: this.filter_table, selected: this.selected, pageselected: this.page_selected, page: this.page, perpage: this.per_page }
-      this.get_available_products_from_api(data)
+      const data = {
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: Object.keys(this.selected),
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
+      this.get_available_products_from_api(data).then((res) => {
+        this.kenostTableCheckedAllCheck()
+      })
       this.total_selected--
     },
     selectOrganization (id) {
@@ -1282,19 +1394,21 @@ export default {
       const data = {
         filter: this.filter,
         filterselected: this.filter_table,
-        selected: this.selected,
+        selected: Object.keys(this.selected),
         pageselected: this.page_selected,
         page: this.page,
         perpage: this.per_page
       }
-      this.get_available_products_from_api(data)
+      this.get_available_products_from_api(data).then((res) => {
+        this.kenostTableCheckedAllCheck()
+      })
     },
     pagClickCallbackSelect (pageNum) {
       this.page_selected = pageNum
       const data = {
         filter: this.filter,
         filterselected: this.filter_table,
-        selected: this.selected,
+        selected: Object.keys(this.selected),
         pageselected: this.page_selected,
         page: this.page,
         perpage: this.per_page
@@ -1304,51 +1418,38 @@ export default {
       })
     },
     kenostTableCheckedAllCheck () {
-      let count = 0
-      for (let i = 0; i < Object.keys(this.selected).length; i++) {
-        if (this.selected[Object.keys(this.selected)[i]].hide) {
-          console.log(this.kenost_table.indexOf(this.selected[Object.keys(this.selected)[i]].id))
-          if (this.kenost_table.indexOf(this.selected[Object.keys(this.selected)[i]].id) !== -1) {
-            count++
-          } else {
-            this.kenost_table_all = []
-            break
-          }
-        }
-        if (count === 25) {
-          this.kenost_table_all = ['1']
-          break
+      if (Object.keys(this.selected_visible).length === 0) {
+        this.kenost_table_all = []
+        return
+      }
+      for (let i = 0; i < Object.keys(this.selected_visible).length; i++) {
+        if (this.kenost_table.indexOf(this.selected_visible[Object.keys(this.selected_visible)[i]].id) === -1) {
+          this.kenost_table_all = []
+          return
         }
       }
+      this.kenost_table_all = ['1']
     },
     kenostTableCheckedAll () {
       if (this.kenost_table_all.length === 0) {
-        // this.kenost_table = Object.keys(this.selected)
-        let count = 0
-        for (let i = 0; i < Object.keys(this.selected).length; i++) {
-          if (this.selected[Object.keys(this.selected)[i]].hide) {
-            this.kenost_table.push(this.selected[Object.keys(this.selected)[i]].id)
-            count++
-          }
-          if (count === 25) {
-            break
-          }
+        for (let i = 0; i < Object.keys(this.selected_visible).length; i++) {
+          this.kenost_table.push(this.selected_visible[Object.keys(this.selected_visible)[i]].id)
         }
       } else {
-        let count = 0
-        for (let i = 0; i < Object.keys(this.selected).length; i++) {
-          if (this.selected[Object.keys(this.selected)[i]].hide) {
-            this.kenost_table.filter((el) => el !== this.selected[Object.keys(this.selected)[i]].id)
-            count++
-          }
-          if (count === 25) {
-            break
-          }
+        for (let i = 0; i < Object.keys(this.selected_visible).length; i++) {
+          this.kenost_table.filter((el) => el !== this.selected_visible[Object.keys(this.selected_visible)[i]].id)
         }
       }
     },
     ElemCount (obj) {
-      this.selected[obj.id].multiplicity = obj.value
+      if (!this.selected_data[obj.id]) {
+        this.selected_data[obj.id] = []
+        this.selected_data[obj.id].multiplicity = obj.value
+        this.selected_data[obj.id].finalPrice = this.selected[obj.id].price
+        this.selected_data[obj.id].discountInterest = 0
+        this.selected_data[obj.id].discountInRubles = 0
+      }
+      this.selected_data[obj.id].multiplicity = obj.value
     },
     closeDialogPrice () {
       if (this.modals.price_step === 0) {
@@ -1361,24 +1462,24 @@ export default {
     setPrices (index, name, value) {
       switch (name) {
         case 'discountInterest':
-          this.selected[index].discountInRubles = (Number(this.selected[index].price) / 100) * value
-          this.selected[index].finalPrice = Number(this.selected[index].price) - this.selected[index].discountInRubles
+          this.selected_data[index].discountInRubles = (Number(this.selected_data[index].price) / 100) * value
+          this.selected_data[index].finalPrice = Number(this.selected_data[index].price) - this.selected_data[index].discountInRubles
           break
         case 'discountInRubles':
-          this.selected[index].discountInterest = value / (Number(this.selected[index].price) / 100)
-          this.selected[index].finalPrice = Number(this.selected[index].price) - this.selected[index].discountInRubles
+          this.selected_data[index].discountInterest = value / (Number(this.selected_data[index].price) / 100)
+          this.selected_data[index].finalPrice = Number(this.selected_data[index].price) - this.selected_data[index].discountInRubles
           break
         case 'finalPrice':
-          this.selected[index].discountInRubles = Number(this.selected[index].price) - value
-          this.selected[index].discountInterest = this.selected[index].discountInRubles / (Number(this.selected[index].price) / 100)
+          this.selected_data[index].discountInRubles = Number(this.selected_data[index].price) - value
+          this.selected_data[index].discountInterest = this.selected_data[index].discountInRubles / (Number(this.selected_data[index].price) / 100)
           break
       }
     },
     setTypePrice () {
-      const getPrice = this.selected[this.modals.product_id].prices.find(r => r.guid === this.selected[this.modals.product_id].typePrice.guid).price
-      this.selected[this.modals.product_id].finalPrice = Number(getPrice)
-      this.selected[this.modals.product_id].discountInRubles = Number(this.selected[this.modals.product_id].price) - Number(getPrice)
-      this.selected[this.modals.product_id].discountInterest = (Number(this.selected[this.modals.product_id].price) - Number(getPrice)) / (Number(this.selected[this.modals.product_id].price) / 100)
+      const getPrice = this.selected[this.modals.product_id].prices.find(r => r.guid === this.selected_data[this.modals.product_id].typePrice.guid).price
+      this.selected_data[this.modals.product_id].finalPrice = Number(getPrice)
+      this.selected_data[this.modals.product_id].discountInRubles = Number(this.selected_data[this.modals.product_id].price) - Number(getPrice)
+      this.selected_data[this.modals.product_id].discountInterest = (Number(this.selected_data[this.modals.product_id].price) - Number(getPrice)) / (Number(this.selected_data[this.modals.product_id].price) / 100)
     },
     createSet () {
       // Создание комлпекта
@@ -1394,30 +1495,28 @@ export default {
       if (type && value >= 0 && typePrice) {
         this.setTypePrice()
         value = Number(value)
-        let getPrice = Number(this.selected[this.modals.product_id].price)
+        this.selected_data[this.modals.product_id].price = this.selected[this.modals.product_id].price
+        let getPrice = Number(this.selected_data[this.modals.product_id].price)
 
-        if (this.selected[this.modals.product_id].typePrice) {
+        if (this.selected_data[this.modals.product_id].typePrice) {
           // eslint-disable-next-line no-unused-vars
-          getPrice = Number(this.selected[this.modals.product_id].prices.find(r => r.guid === this.selected[this.modals.product_id].typePrice.guid).price)
+          getPrice = Number(this.selected[this.modals.product_id].prices.find(r => r.guid === this.selected_data[this.modals.product_id].typePrice.guid).price)
         }
         if (type.key === 0) {
-          this.selected[this.modals.product_id].discountInRubles = Number(this.selected[this.modals.product_id].price) - (getPrice - value)
-          this.selected[this.modals.product_id].discountInterest = (Number(this.selected[this.modals.product_id].price) - (getPrice - value)) / (Number(this.selected[this.modals.product_id].price) / 100)
-          this.selected[this.modals.product_id].finalPrice = getPrice - value
+          this.selected_data[this.modals.product_id].discountInRubles = Number(this.selected_data[this.modals.product_id].price) - (getPrice - value)
+          this.selected_data[this.modals.product_id].discountInterest = (Number(this.selected_data[this.modals.product_id].price) - (getPrice - value)) / (Number(this.selected_data[this.modals.product_id].price) / 100)
+          this.selected_data[this.modals.product_id].finalPrice = getPrice - value
         } else if (type.key === 1) {
-          this.selected[this.modals.product_id].discountInRubles = Number(this.selected[this.modals.product_id].price) - (getPrice - (value * (getPrice / 100)))
-          this.selected[this.modals.product_id].discountInterest = (value * (getPrice / 100)) / (Number(this.selected[this.modals.product_id].price) / 100)
-          this.selected[this.modals.product_id].finalPrice = getPrice - (value * (getPrice / 100))
+          this.selected_data[this.modals.product_id].discountInRubles = Number(this.selected_data[this.modals.product_id].price) - (getPrice - (value * (getPrice / 100)))
+          this.selected_data[this.modals.product_id].discountInterest = (value * (getPrice / 100)) / (Number(this.selected_data[this.modals.product_id].price) / 100)
+          this.selected_data[this.modals.product_id].finalPrice = getPrice - (value * (getPrice / 100))
         }
       }
     }
   },
   mounted () {
-    this.get_available_products_from_api({ filter: '', selected: [], page: this.page }).then(
+    this.get_available_products_from_api({ filter: '', selected: ['0'], page: this.page }).then(
       this.products = this.available_products.products
-    )
-    this.get_catalog_from_api().then(
-      this.get_catalog = this.getcatalog
     )
     const data = { filter: this.filter_organizations }
     this.get_all_organizations_from_api(data).then(
@@ -1483,6 +1582,13 @@ export default {
         pages = 1
       }
       return pages
+    },
+    pagesCount () {
+      let pages = Math.round(this.total_products / this.per_page)
+      if (pages === 0) {
+        pages = 1
+      }
+      return pages
     }
   },
   watch: {
@@ -1492,11 +1598,11 @@ export default {
       if (newVal.selected) {
         this.selected = newVal.selected
       }
+      if (newVal.visible) {
+        this.selected_visible = newVal.visible
+      }
       this.total_products = newVal.total
       this.total_selected = newVal.total_selected
-    },
-    getcatalog: function (newVal, oldVal) {
-      this.get_catalog = newVal
     },
     allorganizations: function (newVal, oldVal) {
       this.all_organizations = newVal
@@ -1524,106 +1630,161 @@ export default {
       for (let i = 0; i < newVal.length; i++) {
         this.typePrice.push({ key: newVal[i].guid, name: newVal[i].name })
       }
-      console.log(this.typePrice)
+      // console.log(this.typePrice)
     },
     actions: function (newVal, oldVal) {
-      this.form.name = newVal.name
-      if (newVal.image) {
-        this.files.max.original_href = this.site_url_prefix + newVal.image
-      }
-      if (newVal.image_inner) {
-        this.files.min.original_href = this.site_url_prefix + newVal.image_inner
-      }
-
-      if (newVal.icon) {
-        this.files.icon.original_href = this.site_url_prefix + newVal.icon
-      }
-      this.selected_complects = newVal.complects
-      this.form.description = newVal.description
-      this.form.compatibilityDiscount = newVal.compatibility_discount.toString()
-      this.form.compatibilityPost = newVal.compatibility_postponement.toString()
-      const dateto = new Date(newVal.date_to)
-      const datefrom = new Date(newVal.date_from)
-      this.form.dates = [datefrom, dateto]
-      this.selected = newVal.products
-      let count = 0
-      for (let i = 0; i < Object.keys(newVal.products).length; i++) {
-        if (count === 25) {
-          break
+      if (router.currentRoute._value.params.sales_id) {
+        this.form.name = newVal.name
+        if (newVal.image) {
+          this.files.max.original_href = this.site_url_prefix + newVal.image
         }
-        count++
-        console.log(newVal.products[Object.keys(newVal.products)[i]])
-        // this.selectes[Object.keys(this.selected)[i]].hide = true
-      }
-      this.total_selected = newVal.total_products
-      this.all_organizations_selected = newVal.organization
-      this.form.award = newVal.award
-      this.form.typeShipment = newVal.shipment_type.toString()
-      this.form.paymentDelivery = this.paymentDelivery[newVal.payer]
-      this.form.conditionPaymentDelivery = this.conditionPaymentDelivery[newVal.delivery_payment_terms]
-      this.form.conditionPaymentDeliveryValue = newVal.delivery_payment_value
-      this.form.postponementConditions = this.postponementConditions[newVal.delay_condition]
-      this.form.postponementConditionsValue = newVal.delay_condition_value
-      this.postponement_period = newVal.delay
-      this.form.condition = this.condition[newVal.condition_type]
-      this.form.conditionMinSum = newVal.condition_min_sum
-      this.form.conditionMinCount = newVal.condition_SKU
-      this.form.addProductType = newVal.method_adding_products.toString()
-      this.form.participantsType = newVal.participants_type.toString()
-      if (newVal.available_stores) {
-        this.form.available_stores = ['true']
-      }
-      if (newVal.available_vendors) {
-        this.form.available_vendors = ['true']
-      }
-      if (newVal.available_opt) {
-        this.form.available_opt = ['true']
-      }
+        if (newVal.image_inner) {
+          this.files.min.original_href = this.site_url_prefix + newVal.image_inner
+        }
 
-      if (newVal.not_sale_client) {
-        this.form.not_sale_client = ['true']
+        if (newVal.icon) {
+          this.files.icon.original_href = this.site_url_prefix + newVal.icon
+        }
+        this.selected_complects = newVal.complects
+        this.form.description = newVal.description
+        if (newVal.compatibility_discount) {
+          this.form.compatibilityDiscount = newVal.compatibility_discount.toString()
+        }
+
+        if (newVal.compatibility_postponement) {
+          this.form.compatibilityPost = newVal.compatibility_postponement.toString()
+        }
+        const dateto = new Date(newVal.date_to)
+        const datefrom = new Date(newVal.date_from)
+        this.form.dates = [datefrom, dateto]
+        this.selected = newVal.products
+        this.selected_data = newVal.products_data
+        // let count = 0
+        // for (let i = 0; i < Object.keys(newVal.products).length; i++) {
+        //   if (count === 25) {
+        //     break
+        //   }
+        //   count++
+        //   console.log(newVal.products[Object.keys(newVal.products)[i]])
+        //   // this.selectes[Object.keys(this.selected)[i]].hide = true
+        // }
+        this.total_selected = newVal.total_products
+        this.all_organizations_selected = newVal.organization
+        this.form.award = newVal.award
+        if (newVal.shipment_type) {
+          this.form.typeShipment = newVal.shipment_type.toString()
+        }
+        this.form.paymentDelivery = this.paymentDelivery[newVal.payer]
+        this.form.conditionPaymentDelivery = this.conditionPaymentDelivery[newVal.delivery_payment_terms]
+        this.form.conditionPaymentDeliveryValue = newVal.delivery_payment_value
+        this.form.postponementConditions = this.postponementConditions[newVal.delay_condition]
+        this.form.postponementConditionsValue = newVal.delay_condition_value
+        this.postponement_period = newVal.delay
+        this.form.condition = this.condition[newVal.condition_type]
+        this.form.conditionMinSum = newVal.condition_min_sum
+        this.form.conditionMinCount = newVal.condition_SKU
+        if (newVal.method_adding_products) {
+          this.form.addProductType = newVal.method_adding_products.toString()
+        }
+        if (newVal.participants_type) {
+          this.form.participantsType = newVal.participants_type.toString()
+        }
+        if (newVal.available_stores) {
+          this.form.available_stores = ['true']
+        }
+        if (newVal.available_vendors) {
+          this.form.available_vendors = ['true']
+        }
+        if (newVal.available_opt) {
+          this.form.available_opt = ['true']
+        }
+
+        if (newVal.not_sale_client) {
+          this.form.not_sale_client = ['true']
+        }
+
+        if (newVal.is_all_products) {
+          this.form.is_all_products = ['true']
+        }
+
+        if (newVal.action_last) {
+          this.form.actionLast = ['true']
+        }
+
+        this.form.delay = newVal.delay_graph
+        this.regions_select = newVal.regions
+        this.all_organizations_selected = newVal.organization
+        this.form.bigDiscount = newVal.big_sale_actions
+        this.form.limitationValue = newVal.limit_sum
+
+        if (newVal.limit_type) {
+          this.form.limitations = newVal.limit_type.toString()
+        }
+
+        const dataorg = { filter: this.filter_organizations, selected: this.all_organizations_selected }
+        this.get_all_organizations_from_api(dataorg).then(
+          this.all_organizations = this.allorganizations
+        )
+
+        const data = {
+          filter: this.filter,
+          filterselected: this.filter_table,
+          selected: Object.keys(this.selected),
+          pageselected: this.page_selected,
+          page: this.page,
+          perpage: this.per_page
+        }
+        this.get_available_products_from_api(data)
+
+        const dataComplect = {
+          action: 'complects/get',
+          filter: this.filter_complects,
+          page: this.page_complects,
+          perpage: this.pagination_items_per_page_complects,
+          store_id: router.currentRoute._value.params.id,
+          selected: this.selected_complects
+        }
+        this.opt_get_complects(dataComplect)
       }
-
-      if (newVal.is_all_products) {
-        this.form.is_all_products = ['true']
-      }
-
-      this.form.delay = newVal.delay_graph
-      this.regions_select = newVal.regions
-      this.all_organizations_selected = newVal.organization
-      this.form.bigDiscount = newVal.big_sale_actions
-      this.form.limitationValue = newVal.limit_sum
-      this.form.limitations = newVal.limit_type.toString()
-
-      const dataorg = { filter: this.filter_organizations, selected: this.all_organizations_selected }
-      this.get_all_organizations_from_api(dataorg).then(
-        this.all_organizations = this.allorganizations
-      )
-
-      const data = {
-        filter: this.filter,
-        filterselected: this.filter_table,
-        selected: this.selected,
-        pageselected: this.page_selected,
-        page: this.page,
-        perpage: this.per_page
-      }
-      this.get_available_products_from_api(data)
-
-      const dataComplect = {
-        action: 'complects/get',
-        filter: this.filter_complects,
-        page: this.page_complects,
-        perpage: this.pagination_items_per_page_complects,
-        store_id: router.currentRoute._value.params.id,
-        selected: this.selected_complects
-      }
-      this.opt_get_complects(dataComplect)
     }
   }
 }
 </script>
 <style lang="scss">
+  .kenost-basker-delete{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    &__button{
+      width: 34px;
+      height: 34px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      background: #F8F8F8 !important;
+      box-shadow: rgba(0, 0, 0, 0.14) 0px 2px 2px 0px;
+      display: flex;
+      border-radius: 5px;
+      align-items: center;
+      transition: all 0.4s;
+      justify-content: center;
+
+      &:hover{
+        border: 1px solid #64748B;
+      }
+
+      .pi-trash{
+        color: #64748B;
+      }
+    }
+  }
+
+  .sticky-element{
+    position: sticky;
+    top: 0;
+    padding: 10px 0;
+    z-index: 1;
+    background: #FFF;
+  }
 
   .p-multiselect-filter-icon{
     top: 50%;
@@ -1631,7 +1792,7 @@ export default {
   }
 
   .kenost-multiselect{
-    margin-top: 16px;
+    // margin-top: 16px;
     width: 100%;
     .p-multiselect-label{
       display: flex;
@@ -1751,6 +1912,25 @@ export default {
             text-align: left;
           }
         }
+    }
+
+    .kenost-gray-p label{
+      color: #ADADAD;
+    }
+
+    .upload-icon__image{
+      background: #D9D9D9;
+      width: 100px !important;
+      height: 100px !important;
+      border-radius: 50%;
+      margin-top: 16px;
+      overflow: hidden;
+    }
+
+    .kenost-all-table-activity{
+      display: flex;
+      gap: 8px;
+      margin-top: 10px
     }
 
     .table-kenost{
@@ -1944,6 +2124,12 @@ export default {
           color: #1874CF;
           text-decoration: underline;
         }
+      }
+    }
+
+    .PickList{
+      &__products-selected{
+        height: 412px !important;
       }
     }
 

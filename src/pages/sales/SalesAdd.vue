@@ -1556,14 +1556,6 @@ export default {
   cursor: pointer;
 }
 
-.sticky-element{
-  position: sticky;
-  top: 0;
-  padding: 10px 0;
-  z-index: 1;
-  background: #FFF;
-}
-
   .upload-icon__image{
     background: #D9D9D9;
     width: 100px !important;
