@@ -16,13 +16,13 @@
                         src="../../../assets/img/icons/BonusProgram/progress.svg"
                       />
                     </div>
-                    <p class="bonus-progress__title">86%</p>
+                    <p class="bonus-progress__title">{{this.get_bonus?.info?.percent}}%</p>
                   </div>
                   <div class="bonus-progress__sales">
                     <div class="bonus-progress__text-container">
                       <p class="bonus-progress__text">продаж всего</p>
                       <p class="bonus-progress__title">
-                        107 <span class="bonus-progress__span">шт</span>
+                        {{this.get_bonus?.info?.sales}} <span class="bonus-progress__span">шт</span>
                       </p>
                     </div>
                     <div class="bonus-progress__text-container">
@@ -30,18 +30,14 @@
                         продаж с регистрацией в бонусной программе
                       </p>
                       <p class="bonus-progress__title">
-                        80
+                        {{this.get_bonus?.info?.sales_bonus}}
                         <span class="bonus-progress__span">шт</span>
                       </p>
                     </div>
                   </div>
                 </div>
                 <div class="bonus-progress__filter bonus-progress-filter">
-                  <p class="bonus-progress-filter__text">Текущий месяц</p>
-                  <img
-                    src="../../../assets/img/icons/arrow.svg"
-                    class="bonus-progress-filter__arrow"
-                  />
+                  <Dropdown @change="updatePeriod" v-model="this.time_filter_selected" :options="this.time_filter" optionLabel="name" placeholder="Выберите промежуток времени" class="w-full md:w-14rem" />
                 </div>
               </header>
               <main class="bonus-progress__main">
@@ -59,26 +55,25 @@
                   Цели по регистрации покупателей в бонусной программе
                 </h3>
                 <div class="targets__filters">
-                  <TreeSelect
+                  <!-- <TreeSelect
                     placeholder="Время проведения"
                     class="targets__select"
                   />
-                  <TreeSelect placeholder="Тип цели" class="targets__select" />
+                  <TreeSelect placeholder="Тип цели" class="targets__select" /> -->
                 </div>
               </header>
-              <main class="targets__main targets">
+              <main class="targets__main">
                 <TargetCard
                   :target="{
-                    image: '../../../assets/img/gallery/1.jpg',
-                    title:
-                      'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+                    image: '',
+                    title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
                     text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit',
                     status: 'not_completed',
                     date: '10.10.2021',
                     images: ['', '', '', ''],
                   }"
                 />
-                <TargetCard
+                <!-- <TargetCard
                   :target="{
                     image: '../../../assets/img/gallery/1.jpg',
                     title:
@@ -97,26 +92,62 @@
                     status: 'completed',
                     date: '10.10.2021',
                   }"
-                />
+                /> -->
               </main>
             </div>
             <div class="bonus__advantages advantages">
-              <CardContainer
-                title="Для продавца"
-                :cards="bonusCards1"
-                type="large"
-              />
+              <section class="section">
+                  <h4 class="section__title">Для продавца</h4>
+                  <div :class="`section__card-container section__card-container--large`">
+                      <article class="section__card card">
+                        <img src="../../../assets/img/icons/BonusProgram/telephone.svg" class="card__img">
+                        <p class="card__text">При продаже в магазине спросите у покупателя его номер телефона для начисления бонусов</p>
+                      </article>
+                      <article class="section__card card">
+                        <img src="../../../assets/img/icons/BonusProgram/edit.svg" class="card__img">
+                        <p class="card__text">При оформлении заказа внесите номер в поле «Спросить у Равиля»</p>
+                      </article>
+                      <article class="section__card card">
+                        <img src="../../../assets/img/icons/BonusProgram/target.svg" class="card__img">
+                        <p class="card__text">Выполняйте цели по регистрации покупателей в бонусной программе - получайте вознаграждение от MachineStore</p>
+                      </article>
+                  </div>
+              </section>
               <div class="advantages__horizontal">
-                <CardContainer
-                  title="Для розничных покупателей (вариант 1)"
-                  :cards="bonusCards2"
-                  type="small"
-                />
-                <CardContainer
-                  title="Для розничных покупателей (вариант 2)"
-                  :cards="bonusCards3"
-                  type="small"
-                />
+                <section class="section">
+                  <h4 class="section__title">Для розничных покупателей (вариант 1)</h4>
+                  <div :class="`section__card-container section__card-container--small`">
+                      <article class="section__card card">
+                        <img src="../../../assets/img/icons/BonusProgram/store-discount1.svg" class="card__img">
+                        <p class="card__text">Клиент, покупая в вашем магазине офлайн, получает 1% от суммы покупки бонусами</p>
+                      </article>
+                      <article class="section__card card">
+                        <img src="../../../assets/img/icons/BonusProgram/telephone-small.svg" class="card__img">
+                        <p class="card__text">Для начисления бонусов клиент должен предоставить номер телефона</p>
+                      </article>
+                      <article class="section__card card">
+                        <img src="../../../assets/img/icons/BonusProgram/bonus.svg" class="card__img">
+                        <p class="card__text">При регистрации на сайте MachineStore клиент получит все бонусы, заработанные за покупки в вашем магазине</p>
+                      </article>
+                      <article class="section__card card">
+                        <img src="../../../assets/img/icons/BonusProgram/bonus-payment.svg" class="card__img">
+                        <p class="card__text">Клиент может полностью или частично  оплачивать бонусами покупки на сайте MachineStore</p>
+                      </article>
+                  </div>
+                </section>
+                <section class="section">
+                    <h4 class="section__title">Для розничных покупателей (вариант 2)</h4>
+                    <div :class="`section__card-container section__card-container--small`">
+                        <article class="section__card card">
+                          <img src="../../../assets/img/icons/BonusProgram/store-discount2.svg" class="card__img">
+                          <p class="card__text">Клиент, покупая в вашем магазине онлайн, получает 2% от суммы покупки бонусами</p>
+                        </article>
+                        <article class="section__card card">
+                          <img src="../../../assets/img/icons/BonusProgram/bonus-payment.svg" class="card__img">
+                          <p class="card__text">Клиент может полностью или частично  оплачивать бонусами покупки на сайте MachineStore</p>
+                        </article>
+                    </div>
+                </section>
               </div>
             </div>
           </section>
@@ -127,8 +158,8 @@
 </template>
 
 <script>
-import CardContainer from './CardContainer.vue'
 import TargetCard from './TargetCard.vue'
+import Dropdown from 'primevue/dropdown'
 import {
   Chart as ChartJS,
   Title,
@@ -138,8 +169,10 @@ import {
   CategoryScale,
   LinearScale
 } from 'chart.js'
-import TreeSelect from 'primevue/treeselect'
+// import TreeSelect from 'primevue/treeselect'
 import Chart from 'primevue/chart'
+import { mapActions, mapGetters } from 'vuex'
+import router from '@/router'
 
 ChartJS.register(
   CategoryScale,
@@ -153,100 +186,6 @@ ChartJS.register(
 export default {
   name: 'BonusProgram',
   setup () {
-    const bonusCards1 = [
-      {
-        id: 11,
-        image: '../../../assets/img/icons/BonusProgram/telephone.svg',
-        text: 'При продаже в магазине спросите у покупателя его номер телефона для начисления бонусов'
-      },
-      {
-        id: 12,
-        image: '../../../assets/img/icons/BonusProgram/edit.svg',
-        text: 'При оформлении заказа внесите номер в поле «Спросить у Равиля»'
-      },
-      {
-        id: 13,
-        image: '../../../assets/img/icons/BonusProgram/target.svg',
-        text: 'Выполняйте цели по регистрации покупателей в бонусной программе - получайте вознаграждение от MachineStore'
-      }
-    ]
-    const bonusCards2 = [
-      {
-        id: 21,
-        image: '../../../assets/img/icons/BonusProgram/store-discount1.svg',
-        text: 'Клиент, покупая в вашем магазине офлайн, получает 1% от суммы покупки бонусами'
-      },
-      {
-        id: 22,
-        image: '../../../assets/img/icons/BonusProgram/telephone-small.svg',
-        text: 'Для начисления бонусов клиент должен предоставить номер телефона'
-      },
-      {
-        id: 23,
-        image: '../../../assets/img/icons/BonusProgram/bonus.svg',
-        text: 'При регистрации на сайте MachineStore клиент получит все бонусы, заработанные за покупки в вашем магазине'
-      },
-      {
-        id: 24,
-        image: '../../../assets/img/icons/BonusProgram/bonus-payment.svg',
-        text: 'Клиент может полностью или частично  оплачивать бонусами покупки на сайте MachineStore'
-      }
-    ]
-    const bonusCards3 = [
-      {
-        id: 31,
-        image: '../../../assets/img/icons/BonusProgram/store-discount2.svg',
-        text: 'Клиент, покупая в вашем магазине онлайн, получает 2% от суммы покупки бонусами'
-      },
-      {
-        id: 32,
-        image: '../../../assets/img/icons/BonusProgram/bonus-payment.svg',
-        text: 'Клиент может полностью или частично  оплачивать бонусами покупки на сайте MachineStore'
-      }
-    ]
-
-    const barData = {
-      labels: [
-        '10.10.2021',
-        '11.10.2021',
-        '12.10.2021',
-        '13.10.2021',
-        '14.10.2021',
-        '15.10.2021',
-        '16.10.2021',
-        '10.10.2021',
-        '11.10.2021',
-        '12.10.2021',
-        '13.10.2021',
-        '14.10.2021',
-        '15.10.2021',
-        '16.10.2021',
-        '10.10.2021',
-        '11.10.2021',
-        '12.10.2021',
-        '13.10.2021',
-        '14.10.2021',
-        '15.10.2021',
-        '16.10.2021'
-      ],
-      datasets: [
-        {
-          type: 'bar',
-          label: 'С бонусами',
-          data: [5, 15, 5, 25, 10, 30, 15, 5, 15, 5, 25, 10, 30, 15, 5, 15, 5, 25, 10, 30, 15],
-          backgroundColor: '#ff6221',
-          borderRadius: 5
-        },
-        {
-          type: 'bar',
-          label: 'Всего',
-          data: [10, 20, 10, 30, 15, 40, 20, 10, 20, 10, 30, 15, 40, 20, 10, 20, 10, 30, 15, 40, 20],
-          backgroundColor: '#dedede',
-          borderRadius: 5
-        }
-      ]
-    }
-
     const barOptions = {
       maintainAspectRatio: false,
       aspectRatio: 0.8,
@@ -267,25 +206,169 @@ export default {
     }
 
     return {
-      bonusCards1,
-      bonusCards2,
-      bonusCards3,
-      barData,
       barOptions
     }
   },
+  data () {
+    return {
+      time_filter_selected: { name: 'Текущий месяц', code: 'month' },
+      time_filter: [
+        { name: 'Текущие 3 месяца', code: '3month' },
+        { name: 'Текущий месяц', code: 'month' },
+        { name: 'Текущая неделя', code: 'week' },
+        { name: 'Текущай день', code: 'day' }
+      ],
+      get_bonus: {},
+      get_bonus_targets: {},
+      barData: null
+    }
+  },
   components: {
-    CardContainer,
     TargetCard,
-    TreeSelect,
+    Dropdown,
+    // TreeSelect,
     Chart
   },
-  methods: {},
-  mounted () {}
+  methods: {
+    ...mapActions([
+      'bonus_api',
+      'bonus_targets_api'
+    ]),
+    updatePeriod () {
+      this.bonus_api({
+        action: 'get/sales/bonus',
+        id: router.currentRoute._value.params.id,
+        period: this.time_filter_selected.code
+      })
+      this.bonus_targets_api({
+        action: 'get/sales/targets',
+        id: router.currentRoute._value.params.id
+      })
+    },
+    setChartData (newVal) {
+      return {
+        labels: newVal?.chart?.dates,
+        datasets: [
+          {
+            type: 'bar',
+            label: 'С бонусами',
+            data: newVal?.chart?.sales_bonus,
+            backgroundColor: '#ff6221',
+            borderRadius: 5
+          },
+          {
+            type: 'bar',
+            label: 'Всего',
+            data: newVal?.chart?.sales,
+            backgroundColor: '#dedede',
+            borderRadius: 5
+          }
+        ]
+      }
+    }
+  },
+  mounted () {
+    this.bonus_api({
+      action: 'get/sales/bonus',
+      id: router.currentRoute._value.params.id,
+      period: this.time_filter_selected.code
+    })
+    this.bonus_targets_api({
+      action: 'get/sales/targets',
+      id: router.currentRoute._value.params.id
+    })
+  },
+  computed: {
+    ...mapGetters([
+      'bonuses',
+      'bonus_targets'
+    ])
+  },
+  watch: {
+    bonuses: function (newVal, oldVal) {
+      this.get_bonus = newVal
+      this.barData = this.setChartData(newVal)
+    },
+    bonus_targets: function (newVal, oldVal) {
+      this.get_bonus_targets = newVal
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    border: 1px solid rgba(226, 226, 226, 1);
+    border-radius: 5px;
+
+    padding: 24px;
+
+    &__title {
+        background-color: rgba(248, 247, 245, 1);
+        color: rgba(40, 40, 40, 1);
+
+        font-size: 14px;
+        font-weight: 500;
+
+        padding: 12px 16px;
+        width: fit-content;
+    }
+
+    &__card-container {
+        display: grid;
+        justify-content: space-around;
+        gap: 40px;
+
+        &--large {
+            grid-template: auto / repeat(3, 1fr);
+
+            .card {
+                gap: 10px;
+
+                &__img {
+                    width: 95px;
+                    aspect-ratio: 1;
+                }
+            }
+        }
+
+        &--small {
+            grid-template: auto / repeat(2, 1fr);
+
+            .card {
+                gap: 6px;
+
+                &__img {
+                    width: 55px;
+                    aspect-ratio: 1;
+                }
+            }
+        }
+    }
+
+    &__card,
+    .card {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+
+        border: none;
+
+        &__img {
+            object-fit: contain;
+        }
+
+        &__text {
+            font-size: 14px;
+            text-align: center;
+        }
+    }
+}
 .bonus {
   display: flex;
   flex-direction: column;

@@ -115,11 +115,6 @@
           </div>
         </div>
 
-        <!-- <div v-if="this.form.addProductType == '1'" class="flex align-items-center kenost-gray-p mb-2">
-          <Checkbox @change="setAllProducts" v-model="this.form.is_all_products" inputId="is_all_products-1" name="is_all_products-1" value="true" />
-          <label for="is_all_products-1" class="ml-2 mb-0">Добавить все товары</label>
-        </div> -->
-
         <div v-if="this.form.addProductType == '2'" class="dart-form-group mb-4">
           <DropZone
             v-if="!this.upload_product"
@@ -160,7 +155,7 @@
         <div class="dart-form-group picker-wrap">
           <!-- <span class="ktitle">Добавление товаров</span> -->
           <span v-if="this.validation.selected.error" class="kenost-error-text">{{ this.validation.selected.text }}</span>
-          <div class="PickList" v-if="this.form.is_all_products.length == 0">
+          <div class="PickList">
             <div class="PickList__product" :class="{'kenost-error':this.validation.selected.error}">
               <b class="PickList__title">Доступные товары</b>
               <div class="PickList__filters">
@@ -601,7 +596,6 @@ export default {
       form: {
         date: null,
         addProductType: '1',
-        is_all_products: [],
         description: ''
       },
       editMode: true,
@@ -1139,7 +1133,7 @@ export default {
       }
       console.log(this.typePrice)
     },
-    actions: function (newVal, oldVal) {
+    actions: async function (newVal, oldVal) {
       this.form.name = newVal.name
       if (newVal.image) {
         this.files.max.original_href = this.site_url_prefix + newVal.image

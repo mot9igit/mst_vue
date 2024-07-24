@@ -260,12 +260,8 @@
 
                   <a :href="site_url_prefix + '/assets/files/files/examples/ExampleLoadingProducts.xlsx'" class="kenost-link-blue mt-2">Скачать шаблон файла</a>
                 </div>
-                <!-- <div v-if="this.form.addProductType == '1'" class="flex align-items-center kenost-gray-p">
-                  <Checkbox @change="setAllProducts" v-model="this.form.is_all_products" inputId="is_all_products-1" name="is_all_products-1" value="true" />
-                  <label for="is_all_products-1" class="ml-2 mb-0">Добавить все товары</label>
-                </div> -->
 
-                <div v-if="this.form.addProductType == '1' && this.form.is_all_products.length == 0" class="PickList mt-3">
+                <div v-if="this.form.addProductType == '1'" class="PickList mt-3">
                     <div class="PickList__product" :style="{ width: '40%' }">
                         <b class="PickList__title">Доступные товары</b>
                         <div class="PickList__filters">
@@ -900,8 +896,7 @@ export default {
         conditionMinCount: 0,
         conditionMinSum: 0,
         bigDiscount: [],
-        not_sale_client: [],
-        is_all_products: []
+        not_sale_client: []
       },
       listAction: {},
       kenostActivityAll: {
@@ -1197,7 +1192,6 @@ export default {
             action_id: router.currentRoute._value.params.sales_id,
             big_sale_actions: this.form.bigDiscount,
             not_sale_client: this.form.not_sale_client[0] === 'true',
-            is_all_products: this.form.is_all_products.length !== 0,
             limit_sum: this.form.limitationValue,
             limit_type: this.form.limitations,
             actionLast: this.form.actionLast[0] === 'true'
@@ -1245,7 +1239,6 @@ export default {
             complects: this.selected_complects,
             big_sale_actions: this.form.bigDiscount,
             not_sale_client: this.form.not_sale_client[0] === 'true',
-            is_all_products: this.form.is_all_products.length !== 0,
             limit_sum: this.form.limitationValue,
             limit_type: this.form.limitations,
             actionLast: this.form.actionLast[0] === 'true'
@@ -1632,7 +1625,7 @@ export default {
       }
       // console.log(this.typePrice)
     },
-    actions: function (newVal, oldVal) {
+    actions: async function (newVal, oldVal) {
       if (router.currentRoute._value.params.sales_id) {
         this.form.name = newVal.name
         if (newVal.image) {
@@ -1703,10 +1696,6 @@ export default {
           this.form.not_sale_client = ['true']
         }
 
-        if (newVal.is_all_products) {
-          this.form.is_all_products = ['true']
-        }
-
         if (newVal.action_last) {
           this.form.actionLast = ['true']
         }
@@ -1734,7 +1723,9 @@ export default {
           page: this.page,
           perpage: this.per_page
         }
-        this.get_available_products_from_api(data)
+        this.get_available_products_from_api(data).then((res) => {
+          this.kenostTableCheckedAllCheck()
+        })
 
         const dataComplect = {
           action: 'complects/get',

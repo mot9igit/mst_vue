@@ -262,6 +262,12 @@ export default {
             label: 'Закупки',
             icon: 'mst-icon mst-icon-opt',
             to: { name: 'purchases_home', params: { id: this.$route.params.id } }
+          },
+          {
+            key: '8',
+            label: 'Бонусная программа',
+            icon: 'mst-icon mst-icon-bonuses',
+            to: { name: 'bonus_program', params: { id: this.$route.params.id } }
           }]
         }
         if (this.organization.type === 2) {
@@ -336,6 +342,12 @@ export default {
             label: 'Закупки',
             icon: 'mst-icon mst-icon-opt',
             to: { name: 'purchases_home', params: { id: this.$route.params.id } }
+          },
+          {
+            key: '9',
+            label: 'Бонусная программа',
+            icon: 'mst-icon mst-icon-bonuses',
+            to: { name: 'bonus_program', params: { id: this.$route.params.id } }
           }]
         }
         if (this.organization.type === 3) {
@@ -428,6 +440,12 @@ export default {
             label: 'Закупки',
             icon: 'mst-icon mst-icon-opt',
             to: { name: 'purchases_home', params: { id: this.$route.params.id } }
+          },
+          {
+            key: '15',
+            label: 'Бонусная программа',
+            icon: 'mst-icon mst-icon-bonuses',
+            to: { name: 'bonus_program', params: { id: this.$route.params.id } }
           }]
         }
         return []

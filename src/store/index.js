@@ -25,6 +25,7 @@ import training from './training'
 import returns from './returns'
 import allorganizations from './allOrganizations'
 import sales from './sales'
+import bonus from './bonus'
 
 export default new Vuex.Store({
   modules: {
@@ -52,6 +53,7 @@ export default new Vuex.Store({
     training,
     returns,
     allorganizations,
-    sales
+    sales,
+    bonus
   }
 })
