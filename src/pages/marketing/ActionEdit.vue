@@ -267,7 +267,7 @@
             <tbody v-for="item in this.selected_visible" :key="item.id">
               <tr>
                 <td class="table-kenost__checkbox">
-                  <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
+                  <Checkbox @change="kenostTableCheckedAllCheck" v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
                 </td>
                 <td class="table-kenost__product">
                   <img :src="item.image">
@@ -306,6 +306,13 @@
             :forcePage="this.page_selected"
             >
           </paginate>
+          <div class="table-kenost-help">
+            <div class="table-kenost-help__select"><span>Отмечено:</span> {{ this.kenost_table.length }} / {{ Object.keys(this.selected).length }}</div>
+            <div class="flex align-items-center">
+              <Checkbox @change="globalTable" v-model="this.form.global_kenost_table" inputId="global_kenost_table-1" name="global_kenost_table-1" value="true" />
+              <label for="global_kenost_table-1" class="ml-2 mb-0">Все</label>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -596,7 +603,8 @@ export default {
       form: {
         date: null,
         addProductType: '1',
-        description: ''
+        description: '',
+        global_kenost_table: []
       },
       editMode: true,
       typeFormul: [
@@ -748,18 +756,37 @@ export default {
         this.kenostTableCheckedAllCheck()
       })
     },
+    globalTable () {
+      if (this.form.global_kenost_table.length === 0) {
+        this.kenost_table = []
+      } else {
+        this.kenost_table = Object.keys(this.selected)
+      }
+      this.kenostTableCheckedAllCheck()
+    },
     kenostTableCheckedAllCheck () {
+      let isPageSelect = false
       if (Object.keys(this.selected_visible).length === 0) {
         this.kenost_table_all = []
-        return
+        // eslint-disable-next-line no-unused-vars
+        isPageSelect = true
       }
       for (let i = 0; i < Object.keys(this.selected_visible).length; i++) {
         if (this.kenost_table.indexOf(this.selected_visible[Object.keys(this.selected_visible)[i]].id) === -1) {
           this.kenost_table_all = []
-          return
+          // eslint-disable-next-line no-unused-vars
+          isPageSelect = true
+          break
         }
       }
-      this.kenost_table_all = ['1']
+      if (!isPageSelect) {
+        this.kenost_table_all = ['1']
+      }
+      if (Object.keys(this.selected).length === this.kenost_table.length) {
+        this.form.global_kenost_table = ['true']
+      } else {
+        this.form.global_kenost_table = []
+      }
     },
     kenostTableCheckedAll () {
       if (this.kenost_table_all.length === 0) {

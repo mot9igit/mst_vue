@@ -64,13 +64,25 @@
               </header>
               <main class="targets__main">
                 <TargetCard
+                  v-for="item in this.get_bonus_targets" :key="item.id"
                   :target="{
-                    image: '',
-                    title: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                    text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit lorem ipsum dolor sit amet, consectetur adipiscing elit',
-                    status: 'not_completed',
-                    date: '10.10.2021',
-                    images: ['', '', '', ''],
+                    image: item.image,
+                    title: item.name,
+                    text: item.description,
+                    gift: item.gift,
+                    status: item.status,
+                    date: `${new Date(item.date_from).toLocaleString('ru', {year: 'numeric', month: 'long', day: 'numeric',})} - ${new Date(item.date_to).toLocaleString('ru', {year: 'numeric', month: 'long', day: 'numeric',})}`,
+                    image_gift: item.gift.image,
+                    chart: {
+                      datasets: [
+                        {
+                          data: [item.info.sales, item.info.sales_bonus],
+                          backgroundColor: ['#eeeeee', '#008fff']
+                        }
+                      ]
+                    },
+                    chart_percent: item.info.percent,
+                    percent: item.percent
                   }"
                 />
                 <!-- <TargetCard
@@ -240,10 +252,6 @@ export default {
         id: router.currentRoute._value.params.id,
         period: this.time_filter_selected.code
       })
-      this.bonus_targets_api({
-        action: 'get/sales/targets',
-        id: router.currentRoute._value.params.id
-      })
     },
     setChartData (newVal) {
       return {
@@ -286,6 +294,7 @@ export default {
   },
   watch: {
     bonuses: function (newVal, oldVal) {
+      console.log('bonuses')
       this.get_bonus = newVal
       this.barData = this.setChartData(newVal)
     },
@@ -499,6 +508,12 @@ export default {
 
     &__select {
       min-width: 220px;
+    }
+
+    &__main{
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
     }
   }
 

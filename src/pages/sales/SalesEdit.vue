@@ -434,7 +434,7 @@
                     <tbody v-for="item in this.selected_visible" :key="item.id">
                       <tr v-if="this.complects_ids.indexOf(item.id) === -1">
                         <td class="table-kenost__checkbox">
-                          <Checkbox v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
+                          <Checkbox @change="kenostTableCheckedAllCheck" v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
                         </td>
                         <td class="table-kenost__product">
                           <img :src="item.image">
@@ -482,6 +482,13 @@
                     :forcePage="this.page_selected"
                     >
                   </paginate>
+                  <div class="table-kenost-help">
+                    <div class="table-kenost-help__select"><span>Отмечено:</span> {{ this.kenost_table.length }} / {{ Object.keys(this.selected).length }}</div>
+                    <div class="flex align-items-center">
+                      <Checkbox @change="globalTable" v-model="this.form.global_kenost_table" inputId="global_kenost_table-1" name="global_kenost_table-1" value="true" />
+                      <label for="global_kenost_table-1" class="ml-2 mb-0">Все</label>
+                    </div>
+                  </div>
                 </div>
 
                 <div class="kenost-all-table-activity" v-if="this.form.addProductType == '1' || this.form.addProductType == '2'">
@@ -865,6 +872,7 @@ export default {
       complects_ids: [],
       form: {
         actionLast: [],
+        global_kenost_table: [],
         name: '',
         description: '',
         award: '',
@@ -1064,6 +1072,14 @@ export default {
           callback(xhr.response)
         }
       }
+    },
+    globalTable () {
+      if (this.form.global_kenost_table.length === 0) {
+        this.kenost_table = []
+      } else {
+        this.kenost_table = Object.keys(this.selected)
+      }
+      this.kenostTableCheckedAllCheck()
     },
     massActionTable () {
       for (let i = 0; i < this.kenost_table.length; i++) {
@@ -1411,17 +1427,28 @@ export default {
       })
     },
     kenostTableCheckedAllCheck () {
+      let isPageSelect = false
       if (Object.keys(this.selected_visible).length === 0) {
         this.kenost_table_all = []
-        return
+        // eslint-disable-next-line no-unused-vars
+        isPageSelect = true
       }
       for (let i = 0; i < Object.keys(this.selected_visible).length; i++) {
         if (this.kenost_table.indexOf(this.selected_visible[Object.keys(this.selected_visible)[i]].id) === -1) {
           this.kenost_table_all = []
-          return
+          // eslint-disable-next-line no-unused-vars
+          isPageSelect = true
+          break
         }
       }
-      this.kenost_table_all = ['1']
+      if (!isPageSelect) {
+        this.kenost_table_all = ['1']
+      }
+      if (Object.keys(this.selected).length === this.kenost_table.length) {
+        this.form.global_kenost_table = ['true']
+      } else {
+        this.form.global_kenost_table = []
+      }
     },
     kenostTableCheckedAll () {
       if (this.kenost_table_all.length === 0) {
@@ -1766,6 +1793,25 @@ export default {
       .pi-trash{
         color: #64748B;
       }
+    }
+  }
+
+  .table-kenost-help{
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    &__select{
+      color: #A0A0A0;
+      font-size: 13px;
+
+      span{
+        font-size: 12px;
+        color: #757474;
+      }
+    }
+
+    label{
+      color: #A0A0A0 !important;
     }
   }
 

@@ -58,7 +58,7 @@ export default {
   },
   getters: {
     bonuses (state) {
-      return state.bonus
+      return state.bonuses
     },
     bonus_targets (state) {
       return state.bonus_targets

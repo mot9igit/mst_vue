@@ -1,10 +1,11 @@
 <template>
   <article :class="`target target--${target.status}`">
     <div class="target__info info">
-      <img src="../../../assets/img/gallery/1.jpg" alt="" class="info__img" />
+      <img :src="target.image" alt="" class="info__img" />
       <div class="info__content">
         <h3 class="info__title">{{ target.title }}</h3>
         <p class="info__text">{{ target.text }}</p>
+        <p class="info__text"><b>Необходимый % для выполнения цели: </b>{{ target.percent }}</p>
         <p class="info__text">{{ target.date }}</p>
       </div>
     </div>
@@ -20,51 +21,45 @@
             src="../../../assets/img/icons/BonusProgram/check-mark.svg"
           />
           {{
-            target.status === "completed"
+            target.status === "done"
               ? "Выполнено"
-              : target.status === "received"
-              ? "Получено"
+              : target.status === "expectation"
+              ? "Выполняется"
               : "Не выполнено"
           }}
         </span>
       </div>
-      <p class="content__text">{{ target.text }}</p>
-      <div class="swiper-container content__swiper">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide">
-            <img src="../../../assets/img/gallery/1.jpg" class="content__img" />
-          </div>
-          <div class="swiper-slide">
-            <img src="../../../assets/img/gallery/1.jpg" class="content__img" />
-          </div>
-          <div class="swiper-slide">
-            <img src="../../../assets/img/gallery/1.jpg" class="content__img" />
-          </div>
-          <div class="swiper-slide">
-            <img src="../../../assets/img/gallery/1.jpg" class="content__img" />
-          </div>
-          <div class="swiper-slide">
-            <img src="../../../assets/img/gallery/1.jpg" class="content__img" />
-          </div>
-        </div>
-      </div>
+      <p class="content__text">{{ target.description_gifts }}</p>
+      <swiper
+        class="SwiperGift"
+        :slides-per-view="4"
+        :space-between="8"
+        loop
+        navigation
+        :pagination="{ clickable: true }"
+        :scrollbar="{ draggable: true }"
+      >
+        <swiper-slide v-for="item, index in target.gift" v-bind:key="index" class="promoSwiper__slide">
+          <img :src="item.image">
+        </swiper-slide>
+      </swiper>
     </div>
     <div class="target__progress target-progress">
       <div class="target-progress__diagram">
         <Doughnut
-          :data="chartData"
+          :data="target.chart"
           :options="chartOptions"
           class="target-progress__chart"
         />
-        <p class="target-progress__progress">90%</p>
+        <p class="target-progress__progress">{{target.chart_percent}}%</p>
       </div>
       <p class="target-progress__text">
         {{
-          target.status === "completed"
-            ? "Выполнено"
-            : target.status === "received"
-            ? "Получено"
-            : "Не выполнено"
+          target.status === "done"
+              ? "Выполнено"
+              : target.status === "expectation"
+              ? "Выполняется"
+              : "Не выполнено"
         }}
       </p>
     </div>
@@ -77,28 +72,22 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 
 // import function to register Swiper custom elements
 import { register } from 'swiper/element/bundle'
-import { Swiper } from 'swiper'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules'
+import 'swiper/css'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 register()
 
 export default {
   setup () {
-    const chartData = {
-      datasets: [
-        {
-          data: [90, 10],
-          backgroundColor: ['#008fff', '#eeeeee']
-        }
-      ]
-    }
     const chartOptions = {
       responsive: true
     }
 
     return {
-      chartData,
-      chartOptions
+      chartOptions,
+      modules: [Navigation, Pagination, Scrollbar, A11y]
     }
   },
   props: {
@@ -108,30 +97,38 @@ export default {
     }
   },
   components: {
-    Doughnut
-  },
-  mounted () {
-    const swiper = new Swiper('.swiper-container', {
-      slidesPerView: 4,
-      spaceBetween: 8,
-      pagination: {
-        el: '.swiper-pagination',
-        clickable: true
-      }
-    })
-
-    swiper.a11y = true
+    Doughnut,
+    Swiper,
+    SwiperSlide
   }
 }
 </script>
 
 <style lang="scss" scoped>
+
+.SwiperGift{
+  height: 70px;
+  width: 100%;
+
+  img{
+    height: 100% !important;
+  }
+}
+
+.content__container-img{
+  height: 70px;
+
+  img{
+    height: 100% !important;
+  }
+}
+
 .target {
   display: flex;
   gap: 167px;
 
   &--completed,
-  &--received {
+  &--not_completed {
     opacity: 0.5;
   }
 
@@ -151,7 +148,7 @@ export default {
     display: flex;
     gap: 24px;
 
-    max-width: 510px;
+    width: 100%;
 
     &__img {
       border-radius: 5px;
@@ -182,7 +179,8 @@ export default {
     flex-direction: column;
     gap: 12px;
 
-    max-width: 450px;
+    width: 100%;
+    // max-width: 450px;
     overflow: hidden;
 
     &__button-container {
@@ -234,6 +232,7 @@ export default {
     align-items: center;
     flex-direction: column;
     gap: 12px;
+    width: 100%;
 
     &__diagram {
       position: relative;
