@@ -5,7 +5,8 @@ export default {
   state: {
     actions: [],
     allactions: [],
-    salesbanners: []
+    salesbanners: [],
+    adv_pages: []
   },
   actions: {
     set_sales_to_api ({ commit }, data) {
@@ -49,6 +50,24 @@ export default {
         .then((response) => {
           commit('GET_ACTIONS_TO_VUEX', response.data)
           return response
+        })
+    },
+    get_sales_adv_pages_to_api ({ commit }, data) {
+      return Axios('/rest/front_sales', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('SET_MATRIX_ADV_PAGES_TO_VUEX', response.data)
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
         })
     },
     get_all_sales_to_api ({ commit }, data) {
@@ -98,6 +117,9 @@ export default {
     GET_BANNERS_SALES_TO_VUEX: (state, data) => {
       state.salesbanners = data.data
     },
+    SET_MATRIX_ADV_PAGES_TO_VUEX: (state, data) => {
+      state.adv_pages = data.data
+    },
     SET_SALES_PRODUCTS_MUTATION_TO_VUEX: (state, data) => {
       if (Object.keys(state.actions).length) {
         console.log('mut 1')
@@ -131,6 +153,9 @@ export default {
     },
     salesbanners (state) {
       return state.salesbanners
+    },
+    adv_pages (state) {
+      return state.adv_pages
     }
   }
 }

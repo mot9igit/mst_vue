@@ -9,9 +9,8 @@
           </div>
       </div>
       <div>
-
         <div>
-          <p class="kgraytext m-0" v-if="this.status">Статус: <span>{{this.status}}</span></p>
+          <p class="kgraytext m-0" v-if="this.status">Статус: <span :class="{ 'status-moderation': this.status === 'Модерация', 'status-fatal': this.status === 'Отказ', 'status-planned': this.status === 'Запланирована', 'status-active': this.status === 'Активна' }">{{this.status}}</span></p>
           <p class="kgraytext" v-if="this.moderator_comment != '' && this.moderator_comment">Комментарий от модератора: {{ this.moderator_comment }}</p>
         </div>
 
@@ -22,7 +21,15 @@
           <span v-if="this.validation.name.error" class="kenost-error-text">{{ this.validation.name.text }}</span>
         </div>
 
-        <div class="dart-form-group mb-4">
+        <div class="dart-form-group mb-0">
+          <span class="ktitle">Страница акции</span>
+          <div class="flex align-items-center">
+              <Checkbox v-model="this.create_page_action" inputId="create-page-action" name="create_page_action" value="true" />
+              <label for="create-page-action" class="ml-2 mb-0"> Создавать страницу акции </label>
+          </div>
+        </div>
+
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
           <div class="upload-banner">
             <div class="upload-banner__text">
               <span class="ktitle">Большой баннер</span>
@@ -36,44 +43,33 @@
           </div>
         </div>
 
-        <div class="dart-form-group mb-4">
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
           <div class="upload-banner">
             <div class="upload-banner__text">
               <span class="ktitle">Малый баннер</span>
               <span>Загрузить изображение нужно размером не менее 324х161, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
             </div>
-            <FileUpload class="kenost-upload-button" mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+            <FileUpload class="kenost-upload-button" mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=small'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+          </div>
+          <div class="upload-banner__image">
+            <img :src="files?.small?.original_href" v-if="files?.small?.original_href">
+          </div>
+        </div>
+
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+          <div class="upload-banner">
+            <div class="upload-banner__text">
+              <span class="ktitle">Квадратный баннер</span>
+              <span>Загрузить изображение нужно размером не менее 459х459, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
+            </div>
+            <FileUpload class="kenost-upload-button" mode="basic" name="small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
           </div>
           <div class="upload-banner__image">
             <img :src="files?.min?.original_href" v-if="files?.min?.original_href">
           </div>
         </div>
 
-        <div class="dart-form-group mb-4">
-          <div class="upload-banner">
-            <div class="upload-banner__text">
-              <span class="ktitle">Квадратный баннер</span>
-              <span>Загрузить изображение нужно размером не менее 459х459, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
-            </div>
-            <FileUpload class="kenost-upload-button" mode="basic" name="icon[]" :url="'/rest/file_upload.php?banner=icon'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
-          </div>
-          <div class="upload-banner__image">
-            <img :src="files?.icon?.original_href" v-if="files?.icon?.original_href">
-          </div>
-        </div>
-
-        <div class="dart-form-group mb-4">
-          <span class="ktitle">Условия</span>
-          <input v-model="form.conditions" type="text" name="conditions" placeholder="Укажите условия акции" class="dart-form-control" :class="{'kenost-error':this.validation.conditions.error}">
-          <span v-if="this.validation.conditions.error" class="kenost-error-text">{{ this.validation.conditions.text }}</span>
-        </div>
-
-        <div class="dart-form-group mb-4">
-          <span class="ktitle">Описание</span>
-          <input v-model="this.form.description" type="text" name="conditions" placeholder="Укажите описание акции" class="dart-form-control">
-        </div>
-
-        <div class="dart-form-group mb-4">
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
             <div class="rules-container">
                 <div class="rules-container__text">
                     <span class="ktitle">Правила акции</span>
@@ -87,6 +83,40 @@
             </div>
         </div>
 
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+          <span class="ktitle">Место размещение баннера/товара</span>
+          <MultiSelect v-model="this.place_action" :options="this.place" optionLabel="name" placeholder="Выберите один или несколько вариантов"
+             class="w-full" />
+        </div>
+
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+          <span class="ktitle">География показа</span>
+          <Dropdown v-model="this.geo_action" :options="this.geo" optionLabel="name" placeholder="Массовое действие" class="w-full md:w-14rem" />
+        </div>
+
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+          <span class="ktitle">Позиция в карусели</span>
+          <InputNumber
+            v-model="this.position"
+            inputId="horizontal-buttons"
+            :step="1"
+            min="0"
+            max="100"
+            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+          />
+        </div>
+
+        <div class="dart-form-group mb-4 mt-4">
+          <span class="ktitle">Условия</span>
+          <input v-model="form.conditions" type="text" name="conditions" placeholder="Укажите условия акции" class="dart-form-control" :class="{'kenost-error':this.validation.conditions.error}">
+          <span v-if="this.validation.conditions.error" class="kenost-error-text">{{ this.validation.conditions.text }}</span>
+        </div>
+
+        <div class="dart-form-group mb-4">
+          <span class="ktitle">Описание</span>
+          <input v-model="this.form.description" type="text" name="conditions" placeholder="Укажите описание акции" class="dart-form-control">
+        </div>
+
         <div class="dart-form-group mb-4">
           <span class="ktitle">Сроки проведения</span>
           <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите даты" :manualInput="false" showIcon :class="{'kenost-error':this.validation.dates.error}"/>
@@ -97,7 +127,7 @@
           <span class="ktitle">Регион</span>
           <div class="flex align-items-center mb-3">
               <Checkbox v-model="this.region_all" inputId="region_all" name="region_all" value="1" />
-              <label for="region_all" class="ml-2"> Доступна для всех регионов </label>
+              <label for="region_all" class="ml-2 mb-0"> Доступна для всех регионов </label>
           </div>
           <TreeSelect :class="{'kenost-error':this.validation.region.error}" v-if="this.region_all.length == 0" v-model="this.select_regions" :options="this.regions" selectionMode="checkbox" :placeholder="'Зависит от выбранного ценового предложения'" class="w-full"/>
           <span v-if="this.validation.region.error" class="kenost-error-text">{{ this.validation.region.text }}</span>
@@ -500,6 +530,7 @@ import RadioButton from 'primevue/radiobutton'
 import DropZone from 'dropzone-vue'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
+import MultiSelect from 'primevue/multiselect'
 
 export default {
   name: 'ProfileSalesAdd',
@@ -517,6 +548,9 @@ export default {
       compatibilityPost: 0,
       availability: [],
       regions: this.getregions,
+      place_action: [],
+      geo_action: [],
+      position: 0,
       filter_table: {
         name: '',
         category: {}
@@ -552,11 +586,15 @@ export default {
           text: 'Пожалуйста, укажите регион!'
         }
       },
+      create_page_action: [],
       upload_product: false,
       region_all: [],
       opt_catalog_tree: [],
       files: {
         max: {
+          original_href: ''
+        },
+        small: {
           original_href: ''
         },
         min: {
@@ -617,6 +655,12 @@ export default {
       massAction: [
         { name: 'Скидка по формуле', key: 0 },
         { name: 'Тип цен', key: 1 }
+      ],
+      place: [
+      ],
+      geo: [
+        { name: 'Только в своём магазине', key: 0 },
+        { name: 'По географии акции', key: 1 }
       ]
     }
   },
@@ -629,7 +673,8 @@ export default {
       'opt_upload_products_file',
       'get_opt_catalog_tree_from_api',
       'opt_get_prices',
-      'opt_get_remain_prices'
+      'opt_get_remain_prices',
+      'get_sales_adv_pages_to_api'
     ]),
     paginate (obj) {
       this.page_selected = obj.page
@@ -650,6 +695,8 @@ export default {
             this.files.min = response.data.files[0]
           } else if (response.data.files[0].type_banner === 'icon') {
             this.files.icon = response.data.files[0]
+          } else if (response.data.files[0].type_banner === 'small') {
+            this.files.small = response.data.files[0]
           } else if (response.data.files[0].type_banner === 'file') {
             this.files.file = response.data.files[0]
           }
@@ -1039,6 +1086,10 @@ export default {
               files: this.files,
               regins: this.select_regions,
               region_all: reginsall,
+              page_places: this.place_action.map(x => x.code),
+              page_geo: this.geo_action.key,
+              page_place_position: this.position,
+              page_create: this.create_page_action[0] === 'true',
               action_id: router.currentRoute._value.params.action_id
             })
               .then((result) => {
@@ -1061,6 +1112,10 @@ export default {
               products_data: this.selected_data,
               files: this.files,
               regins: this.select_regions,
+              page_places: this.place_action.map(x => x.code),
+              page_geo: this.geo_action.key,
+              page_place_position: this.position,
+              page_create: this.create_page_action[0] === 'true',
               region_all: reginsall
             })
               .then((result) => {
@@ -1092,6 +1147,10 @@ export default {
       action: 'get/type/prices',
       store_id: router.currentRoute._value.params.id
     })
+    this.get_sales_adv_pages_to_api({
+      action: 'get/adv/pages',
+      store_id: router.currentRoute._value.params.id
+    })
   },
   components: {
     Calendar,
@@ -1104,7 +1163,8 @@ export default {
     RadioButton,
     DropZone,
     Dialog,
-    Dropdown
+    Dropdown,
+    MultiSelect
   },
   computed: {
     ...mapGetters([
@@ -1115,7 +1175,8 @@ export default {
       'optproductsfile',
       'optcatalogtree',
       'oprpricesremain',
-      'oprprices'
+      'oprprices',
+      'adv_pages'
     ]),
     pagesCountSelect () {
       let pages = Math.round(this.total_selected / this.per_page)
@@ -1146,6 +1207,9 @@ export default {
       this.total_products = newVal.total
       this.total_selected = newVal.total_selected
     },
+    adv_pages: function (newVal, oldVal) {
+      this.place = newVal
+    },
     optcatalogtree: function (newVal, oldVal) {
       this.opt_catalog_tree = newVal
     },
@@ -1171,6 +1235,9 @@ export default {
       if (newVal.icon) {
         this.files.icon.original_href = this.site_url_prefix + newVal.icon
       }
+      if (newVal.image_small) {
+        this.files.small.original_href = this.site_url_prefix + newVal.image_small
+      }
       if (newVal.rules_file) {
         this.files.file.original_href = this.site_url_prefix + newVal.rules_file
       }
@@ -1189,6 +1256,14 @@ export default {
       this.status = newVal.status
       this.moderator_comment = newVal.moderator_comment
 
+      this.place_action = newVal.page_places
+      this.geo_action = this.geo[newVal.page_geo]
+      this.position = newVal.page_place_position
+
+      if (newVal.page_create) {
+        this.create_page_action = ['true']
+      }
+
       if (newVal.global) {
         this.region_all = ['1']
       } else {
@@ -1205,6 +1280,30 @@ export default {
 </script>
 
 <style lang="scss">
+
+  .status-moderation{
+    color: #20c8fb;
+  }
+
+  .status-fatal{
+    color: #FB203A;
+  }
+
+  .status-planned{
+    color: #fbb620;
+  }
+
+  .status-active{
+    color: #54e979;
+  }
+
+  .kenost-action-page{
+    padding-left: 20px;
+    border-left: 2px solid #E2E2E2;
+    margin-left: 10px;
+    margin-bottom: 0 !important;
+    // padding-top: 40px;
+  }
 
   .table-b2c{
     width: 1200px;
