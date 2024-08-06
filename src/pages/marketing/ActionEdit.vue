@@ -49,10 +49,10 @@
               <span class="ktitle">Малый баннер</span>
               <span>Загрузить изображение нужно размером не менее 324х161, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
             </div>
-            <FileUpload class="kenost-upload-button" mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=small'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+            <FileUpload class="kenost-upload-button" mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
           </div>
           <div class="upload-banner__image">
-            <img :src="files?.small?.original_href" v-if="files?.small?.original_href">
+            <img :src="files?.min?.original_href" v-if="files?.min?.original_href">
           </div>
         </div>
 
@@ -62,10 +62,10 @@
               <span class="ktitle">Квадратный баннер</span>
               <span>Загрузить изображение нужно размером не менее 459х459, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
             </div>
-            <FileUpload class="kenost-upload-button" mode="basic" name="small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+            <FileUpload class="kenost-upload-button" mode="basic" name="small[]" :url="'/rest/file_upload.php?banner=small'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
           </div>
           <div class="upload-banner__image">
-            <img :src="files?.min?.original_href" v-if="files?.min?.original_href">
+            <img :src="files?.small?.original_href" v-if="files?.small?.original_href">
           </div>
         </div>
 
@@ -108,13 +108,48 @@
 
         <div class="dart-form-group mb-4 mt-4">
           <span class="ktitle">Условия</span>
-          <input v-model="form.conditions" type="text" name="conditions" placeholder="Укажите условия акции" class="dart-form-control" :class="{'kenost-error':this.validation.conditions.error}">
-          <span v-if="this.validation.conditions.error" class="kenost-error-text">{{ this.validation.conditions.text }}</span>
+          <input v-model="form.conditions" type="text" name="conditions" placeholder="Укажите условия акции" class="dart-form-control" >
+        <!-- :class="{'kenost-error':this.validation.conditions.error}" -->
+          <!-- <span v-if="this.validation.conditions.error" class="kenost-error-text">{{ this.validation.conditions.text }}</span> -->
         </div>
 
         <div class="dart-form-group mb-4">
           <span class="ktitle">Описание</span>
-          <input v-model="this.form.description" type="text" name="conditions" placeholder="Укажите описание акции" class="dart-form-control">
+          <!-- <Editor ref="editorRef" v-model="this.form.description" @load="updateEditorContent(this.form.description)" editorStyle="height: 320px" /> -->
+          <Editor
+            api-key="ctqgmxpl4dimvsnrt6lnhbyk2xb7eyrhvbbh9lch2kltngkh"
+            language_url='../../../src/locales/tiny/ru.js'
+            :language_load=true
+            v-model="this.form.description"
+            initial-value="<b>Подзаголовок акции</b>
+            <br>
+            <p><span style='text-decoration: underline'>Перечислить все выгодные условия:</span> скидки, подарки, бонусы, возможность выиграть приз и т.д.</p>
+            <p><span style='text-decoration: underline'>Выделить ключевые преимущества:</span> чем ваша акция лучше, чем у конкурентов?</p>
+            <p><span style='text-decoration: underline'>Указать, для кого она предназначена:</span> для всех, для определенной возрастной группы, для постоянных клиентов и т.д.</p>"
+            :init="{
+              plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+              ],
+              toolbar: 'undo redo | ' +
+              'bold italic underline backcolor | alignleft aligncenter ' +
+              'alignright alignjustify | bullist numlist outdent indent | ' +
+              'removeformat | help',
+              content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+              menu: {
+                file: { title: 'Файл', items: 'newdocument restoredraft | preview | importword exportpdf exportword | deleteallconversations' },
+                edit: { title: 'Редактировать', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace' },
+                view: { title: 'View', items: '' },
+                insert: { title: 'Вставить', items: 'image link media addcomment pageembed codesample inserttable | math | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime' },
+                format: { title: 'Форматирование', items: 'bold italic underline strikethrough superscript subscript | align lineheight | forecolor | language | removeformat' },
+                tools: { title: 'Tools', items: '' },
+                table: { title: 'Таблица', items: 'inserttable | cell row column | advtablesort | tableprops deletetable' },
+                help: { title: 'Help', items: '' }
+              }
+            }"
+          />
+          <!-- <input v-model="this.form.description" type="text" name="conditions" placeholder="Укажите описание акции" class="dart-form-control"> -->
         </div>
 
         <div class="dart-form-group mb-4">
@@ -531,6 +566,7 @@ import DropZone from 'dropzone-vue'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
 import MultiSelect from 'primevue/multiselect'
+import Editor from '@tinymce/tinymce-vue'
 
 export default {
   name: 'ProfileSalesAdd',
@@ -569,10 +605,10 @@ export default {
           error: false,
           text: 'Пожалуйста, заполните наименование!'
         },
-        conditions: {
-          error: false,
-          text: 'Пожалуйста, заполните условия!'
-        },
+        // conditions: {
+        //   error: false,
+        //   text: 'Пожалуйста, заполните условия!'
+        // },
         dates: {
           error: false,
           text: 'Пожалуйста, укажите даты проведения!'
@@ -923,10 +959,35 @@ export default {
               product.typePrice = ''
               this.selected[tempProduct.remain.id] = product
               this.total_selected++
+
+              const selectdata = {}
+              if (tempProduct.E === 0 || tempProduct.E === null) {
+                selectdata.discountInterest = 100
+                selectdata.discountInRubles = '-'
+              } else {
+                selectdata.discountInRubles = tempProduct.E - tempProduct.D
+                selectdata.discountInterest = (tempProduct.E - tempProduct.D) / (tempProduct.E / 100)
+              }
+              selectdata.finalPrice = tempProduct.D
+              selectdata.price = tempProduct.E
+              selectdata.multiplicity = 1
+
+              this.selected_data[tempProduct.remain.id] = selectdata
             } else {
               this.error_product.push(tempProduct.A)
             }
           }
+          const data = {
+            filter: this.filter,
+            filterselected: this.filter_table,
+            selected: Object.keys(this.selected),
+            pageselected: this.page_selected,
+            page: this.page,
+            perpage: this.per_page
+          }
+          this.get_available_products_from_api(data).then((res) => {
+            this.kenostTableCheckedAllCheck()
+          })
           this.upload_product = true
           this.table_products_loading = false
         })
@@ -975,6 +1036,9 @@ export default {
         })
         this.total_selected++
       })
+
+      // console.log('this.selected', this.selected)
+      // console.log('selected_data', this.selected_data)
     },
     deleteSelect (id) {
       this.products.push(this.selected[id])
@@ -1034,13 +1098,13 @@ export default {
         this.validation.name.error = false
       }
 
-      if (!this.form.conditions) {
-        this.validation.conditions.error = true
-        // eslint-disable-next-line no-unused-vars
-        stop = true
-      } else {
-        this.validation.conditions.error = false
-      }
+      // if (!this.form.conditions) {
+      //   this.validation.conditions.error = true
+      //   // eslint-disable-next-line no-unused-vars
+      //   stop = true
+      // } else {
+      //   this.validation.conditions.error = false
+      // }
 
       if (!this.form.dates) {
         this.validation.dates.error = true
@@ -1130,6 +1194,18 @@ export default {
         this.loading = true
       }
     }
+    // updateEditorContent (content) {
+    //   if (this.$refs.editorRef.quill && content) {
+    //     console.log('content', content)
+    //     console.log('this.$refs.editorRef.quill', this.$refs.editorRef.quill)
+    //     const editor = this.$refs.editorRef.quill
+    //     // console.log(editor.setContents('rer'))
+    //     const test = editor.setContents(editor.clipboard.convert({
+    //       html: content
+    //     }))
+    //     console.log(test)
+    //   }
+    // }
   },
   mounted () {
     this.get_available_products_from_api({ filter: '', selected: ['0'], page: this.page }).then((res) => {
@@ -1164,7 +1240,8 @@ export default {
     DropZone,
     Dialog,
     Dropdown,
-    MultiSelect
+    MultiSelect,
+    Editor
   },
   computed: {
     ...mapGetters([
@@ -1217,12 +1294,10 @@ export default {
       this.regions = this.getregions
     },
     oprprices: function (newVal, oldVal) {
-      console.log(newVal)
       this.typePrice = []
       for (let i = 0; i < newVal.length; i++) {
         this.typePrice.push({ key: newVal[i].guid, name: newVal[i].name })
       }
-      console.log(this.typePrice)
     },
     actions: async function (newVal, oldVal) {
       this.form.name = newVal.name
@@ -1281,6 +1356,71 @@ export default {
 
 <style lang="scss">
 
+.tox-statusbar__branding{
+  display: none;
+}
+
+.kenost-upload-xlsx{
+    &__file{
+      border-radius: 5px;
+      border: 1px solid #E2E2E2;
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      gap: 20px;
+
+      img{
+        height: 45px !important;
+      }
+
+      a{
+        margin: 0;
+        font-size: 14px;
+        text-decoration: none;
+      }
+    }
+
+    &__info{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+
+      p{
+        margin: 0;
+        color: #A0A0A0;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .kenost-all-table-activity{
+    display: flex;
+    gap: 8px;
+    margin-top: 10px
+  }
+
+  .kenost-list-error{
+    table{
+      width: 100%;
+
+      th{
+        background-color: #F8F7F5;
+        padding: 16px;
+        color: #5E5E5E;
+        font-weight: 400;
+        font-size: 14px;
+      }
+
+      td{
+        padding: 16px;
+        color: #282828;
+        font-weight: 400;
+        font-size: 14px;
+      }
+    }
+  }
+
   .status-moderation{
     color: #20c8fb;
   }
@@ -1307,6 +1447,16 @@ export default {
 
   .table-b2c{
     width: 1200px;
+  }
+
+  .ql-color,
+  .ql-background,
+  .ql-font{
+    display: none !important;
+  }
+
+  .ql-header{
+    display: none !important;
   }
 
   .PickList__products.selected{

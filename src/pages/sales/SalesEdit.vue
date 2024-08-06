@@ -1105,10 +1105,36 @@ export default {
               product.typePrice = ''
               this.selected[tempProduct.remain.id] = product
               this.total_selected++
+
+              const selectdata = {}
+              if (tempProduct.E === 0 || tempProduct.E === null) {
+                selectdata.discountInterest = 100
+                selectdata.discountInRubles = '-'
+              } else {
+                selectdata.discountInRubles = tempProduct.E - tempProduct.D
+                selectdata.discountInterest = (tempProduct.E - tempProduct.D) / (tempProduct.E / 100)
+              }
+              selectdata.finalPrice = tempProduct.D
+              selectdata.price = tempProduct.E
+              selectdata.multiplicity = tempProduct.F
+
+              this.selected_data[tempProduct.remain.id] = selectdata
             } else {
               this.error_product.push(tempProduct.A)
             }
           }
+
+          const data = {
+            filter: this.filter,
+            filterselected: this.filter_table,
+            selected: Object.keys(this.selected),
+            pageselected: this.page_selected,
+            page: this.page,
+            perpage: this.per_page
+          }
+          this.get_available_products_from_api(data).then((res) => {
+            this.kenostTableCheckedAllCheck()
+          })
           this.upload_product = true
         })
       }
