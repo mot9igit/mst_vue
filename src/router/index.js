@@ -66,6 +66,7 @@ import ComplectAdd from '../pages/sales/complects/ComplectAdd.vue'
 import ComplectEdit from '../pages/sales/complects/ComplectEdit.vue'
 import Promotion from '../pages/opt/Promotion/Promotion.vue'
 import BonusProgram from '@/pages/opt/BonusProgram/BonusProgram.vue'
+import OrgProfile from '@/pages/OrgProfile.vue'
 
 const routes = [
   {
@@ -172,6 +173,10 @@ const routes = [
           path: 'profile',
           name: 'org_profile',
           component: ProfileProfile
+        }, {
+          path: 'settings',
+          name: 'profile',
+          component: OrgProfile
         }, {
           path: 'dilers',
           component: OrganizationsLoyout,

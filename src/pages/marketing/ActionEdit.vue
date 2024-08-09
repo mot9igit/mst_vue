@@ -164,7 +164,8 @@
               <Checkbox v-model="this.region_all" inputId="region_all" name="region_all" value="1" />
               <label for="region_all" class="ml-2 mb-0"> Доступна для всех регионов </label>
           </div>
-          <TreeSelect :class="{'kenost-error':this.validation.region.error}" v-if="this.region_all.length == 0" v-model="this.select_regions" :options="this.regions" selectionMode="checkbox" :placeholder="'Зависит от выбранного ценового предложения'" class="w-full"/>
+          <MultiSelect :class="{'kenost-error':this.validation.region.error}" v-if="this.region_all.length == 0" filter v-model="this.select_regions" display="chip" :options="this.regions_all" optionLabel="name" placeholder="Выберите регионы" class="w-full md:w-20rem kenost-multiselect" />
+          <!-- <TreeSelect :class="{'kenost-error':this.validation.region.error}" v-if="this.region_all.length == 0" v-model="this.select_regions" :options="this.regions" selectionMode="checkbox" :placeholder="'Зависит от выбранного ценового предложения'" class="w-full"/> -->
           <span v-if="this.validation.region.error" class="kenost-error-text">{{ this.validation.region.text }}</span>
         </div>
 
@@ -219,9 +220,9 @@
 
         <div class="dart-form-group picker-wrap">
           <!-- <span class="ktitle">Добавление товаров</span> -->
-          <span v-if="this.validation.selected.error" class="kenost-error-text">{{ this.validation.selected.text }}</span>
+          <!-- <span v-if="this.validation.selected.error" class="kenost-error-text">{{ this.validation.selected.text }}</span> -->
           <div class="PickList">
-            <div class="PickList__product" :class="{'kenost-error':this.validation.selected.error}">
+            <div class="PickList__product" >
               <b class="PickList__title">Доступные товары</b>
               <div class="PickList__filters">
                 <div class="form_input_group input_pl input-parent required">
@@ -349,7 +350,7 @@
                 </td>
                 <td>
                   {{this.selected_data[item.id] ? (Number(this.selected_data[item.id].finalPrice).toFixed(2)).toLocaleString('ru') : item.price.toLocaleString('ru')}} ₽
-                  <p class="table-kenost__settings" @click="settings(item)" >Настроить</p>
+                  <p class="table-kenost__settings" @click="settings(item)">Настроить</p>
                 </td>
                 <td>
                   <div class="kenost-basker-delete">
@@ -584,6 +585,7 @@ export default {
       compatibilityPost: 0,
       availability: [],
       regions: this.getregions,
+      regions_all: [],
       place_action: [],
       geo_action: [],
       position: 0,
@@ -599,7 +601,7 @@ export default {
         discountInterest: 0,
         multiplicity: 1
       },
-      select_regions: {},
+      select_regions: [],
       validation: {
         name: {
           error: false,
@@ -1114,18 +1116,23 @@ export default {
         this.validation.dates.error = false
       }
 
-      if (this.total_selected === 0) {
-        this.validation.selected.error = true
-        stop = true
-      } else {
-        this.validation.selected.error = false
-      }
+      // if (this.total_selected === 0) {
+      //   this.validation.selected.error = true
+      //   stop = true
+      // } else {
+      //   this.validation.selected.error = false
+      // }
 
       if (this.region_all.length === 0 && Object.keys(this.select_regions).length === 0) {
         this.validation.region.error = true
         stop = true
       } else {
         this.validation.region.error = false
+      }
+
+      if (this.form.description.length > 2040) {
+        this.$toast.add({ severity: 'info', summary: 'Ошибка!', detail: `Описание должно содержать не больше 2040 символов, у вас ${this.form.description.length}`, life: 3000 })
+        stop = true
       }
 
       if (!stop) {
@@ -1215,6 +1222,12 @@ export default {
     this.get_regions_from_api().then(
       this.regions = this.getregions
     )
+    this.get_regions_from_api().then(() => {
+      this.regions = this.getregions
+      this.regions_all = this.regions.map(function (el) {
+        return { name: el.label, code: el.key }
+      })
+    })
     if (router.currentRoute._value.params.action_id) {
       this.get_sales_to_api({ id: router.currentRoute._value.params.sales_id, actionid: router.currentRoute._value.params.action_id })
     }
@@ -1342,13 +1355,16 @@ export default {
       if (newVal.global) {
         this.region_all = ['1']
       } else {
-        this.select_regions = newVal.regions_and_sities
+        this.select_regions = newVal.regions
+        // this.select_regions = newVal.regions_and_sities
       }
 
-      const data = { filter: this.filter, selected: Object.keys(this.selected), pageselected: this.page_selected, page: this.page, perpage: this.per_page }
-      this.get_available_products_from_api(data).then((res) => {
-        this.kenostTableCheckedAllCheck()
-      })
+      setTimeout(() => {
+        const data = { filter: this.filter, selected: Object.keys(this.selected), pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+        this.get_available_products_from_api(data).then((res) => {
+          this.kenostTableCheckedAllCheck()
+        })
+      }, 1000)
     }
   }
 }

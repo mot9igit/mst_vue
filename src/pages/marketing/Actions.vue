@@ -78,10 +78,10 @@ export default {
         }
       },
       table_data: {
-        image_inner: {
+        image_small: {
           label: 'Баннер',
-          type: 'image'
-          // baseurl: true
+          type: 'image',
+          baseurl: true
         },
         name: {
           label: 'Наименование',
