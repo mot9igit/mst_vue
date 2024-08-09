@@ -67,6 +67,7 @@ import ComplectEdit from '../pages/sales/complects/ComplectEdit.vue'
 import Promotion from '../pages/opt/Promotion/Promotion.vue'
 import BonusProgram from '@/pages/opt/BonusProgram/BonusProgram.vue'
 import OrgProfile from '@/pages/OrgProfile.vue'
+import OptOrder from '@/pages/opt/OptOrder/OptOrder.vue'
 
 const routes = [
   {
@@ -325,6 +326,11 @@ const routes = [
             path: 'opt/:order_id',
             name: 'opt_order',
             component: ProfileOrderOpt
+          },
+          {
+            path: 'opt-order/:order_id',
+            name: 'opt_order_opt',
+            component: OptOrder
           }]
         }, {
           path: 'shipping',
