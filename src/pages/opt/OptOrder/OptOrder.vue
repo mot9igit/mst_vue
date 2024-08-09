@@ -17,10 +17,11 @@
       </div>
 
       <div class="opt-order-top__right">
-        <button class="dart-btn dart-btn-secondary opt-order__button">
+        <!-- <button class="dart-btn dart-btn-secondary opt-order__button">
           Скачать документы
           <i class="d_icon d_icon-arrow opt-order__button-arrow"></i>
-        </button>
+        </button> -->
+        <DropdownButton />
         <button class="dart-btn dart-btn-secondary opt-order__button">
           Удалить заказ
         </button>
@@ -256,6 +257,7 @@
 
 <script>
 import TreeSelect from 'primevue/treeselect'
+import DropdownButton from './DropdownButton.vue'
 
 export default {
   setup () {
@@ -263,7 +265,8 @@ export default {
   },
 
   components: {
-    TreeSelect
+    TreeSelect,
+    DropdownButton
   }
 }
 </script>
@@ -294,6 +297,7 @@ export default {
     align-items: center;
     margin-top: 4px;
     width: 250px;
+    height: 48px;
   }
 
   &__button {
@@ -301,6 +305,8 @@ export default {
 
     margin-block: 4px;
     padding-inline: 55px;
+    width: max-content;
+
     transition-duration: 0.3s;
 
     &:hover {
@@ -309,15 +315,6 @@ export default {
       .opt-order__button-arrow::before {
         color: #fff;
       }
-    }
-  }
-
-  &__button-arrow {
-    margin-left: 13px;
-
-    &::before {
-      color: #B4B4B4;
-      font-size: 10px;
     }
   }
 
@@ -342,7 +339,7 @@ export default {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      gap: 8px;
+      // gap: 8px;
     }
 
     &__left,
@@ -525,6 +522,7 @@ export default {
   }
 
   &__title {
+    font-weight: 400;
     padding: 0;
     margin: 0;
   }
