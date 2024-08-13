@@ -872,7 +872,7 @@ export default {
         name: '',
         category: {}
       },
-      geo_action: [],
+      geo_action: { name: 'По географии акции', key: 1 },
       opt_catalog_tree: [],
       error_product: [],
       create_page_action: [],
