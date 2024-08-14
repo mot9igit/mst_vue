@@ -516,6 +516,23 @@
             </div>
           </div>
         </div>
+        <div class="dart-row">
+          <div class="d-col-md-12">
+            <div class="dart-form-group"  :class="{ error: v$.form.timeSelected.repeater.$errors.length }">
+              <label for="">Склад</label>
+              <Dropdown
+                v-model="this.form.store_id"
+                :options="this.stores"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Выберите период повторения"
+              />
+              <!-- <span class="error_desc" v-for="error of v$.form.timeSelected.repeater.$errors" :key="error.$uid">
+                {{ error.$message }}
+              </span> -->
+            </div>
+          </div>
+        </div>
         <div class="dart-row" v-if="form.timeSelected.repeater != 0">
           <div class="d-col-md-6" v-if="form.timeSelected.repeater == 'week'">
             <div class="dart-form-group">
@@ -652,6 +669,7 @@ export default {
       editMode: false,
       showShipModal: false,
       showShip: false,
+      stores: [],
       shipModa: {
         city: '',
         shops: {
@@ -701,6 +719,7 @@ export default {
         filteredCities: null,
         dateStart: new Date(),
         dateEnd: new Date(),
+        store_id: '',
         citiesDates: [],
         filter: '',
         timeSelect: {
@@ -788,6 +807,10 @@ export default {
           label: 'Номер отгрузки',
           type: 'text'
         },
+        name_short: {
+          label: 'Склад',
+          type: 'text'
+        },
         date: {
           label: 'Дата',
           type: 'text'
@@ -853,7 +876,8 @@ export default {
       'get_regions_from_api',
       'get_shipping_statuses',
       'get_ship_data_api',
-      'unset_ship_data'
+      'unset_ship_data',
+      'org_get_stores_from_api'
     ]),
     ...mapMutations([
       'SET_SHIPPING_CHECK',
@@ -914,8 +938,10 @@ export default {
             id: router.currentRoute._value.params.id,
             data: this.form
           })
-          this.attributes.pop()
+          await this.get_shipping_from_api({ filter: [] })
           this.attributes.push(this.shipping.dates)
+          // this.attributes.pop()
+          // this.attributes.push(this.shipping.dates)
           this.showShip = false
           this.formReset()
         })
@@ -955,7 +981,7 @@ export default {
       this.showShippingModal = true
     },
     filter (data) {
-      console.log(data)
+      // console.log(data)
       if (typeof data.filtersdata !== 'undefined') {
         if (typeof data.filtersdata.range !== 'undefined' && data.filtersdata.range !== null) {
           data.filtersdata.dates = []
@@ -1027,6 +1053,10 @@ export default {
       })
       this.form.filteredCities = cities.data.data.cities
     })
+    this.org_get_stores_from_api({
+      action: 'get/stores',
+      org_id: this.$route.params.id
+    })
     this.get_regions_from_api().then(
       // this.filters.region.values = this.getregions
     )
@@ -1053,7 +1083,8 @@ export default {
       'shipping',
       'getregions',
       'shipping_statuses',
-      'getshipdata'
+      'getshipdata',
+      'org_stores'
     ])
   },
   setup () {
@@ -1080,6 +1111,16 @@ export default {
     },
     shipping: function (newVal, oldVal) {
       this.shipping_values = newVal
+    },
+    org_stores: function (newVal, oldVal) {
+      // this.stores = newVal
+      console.log(newVal)
+      this.stores = []
+      for (let i = 0; i < newVal.items.length; i++) {
+        this.stores.push({ label: newVal.items[i].name, value: newVal.items[i].store_id })
+      }
+      console.log(this.stores)
+      // { name: 'New York', code: 'NY' },
     }
   }
 }
