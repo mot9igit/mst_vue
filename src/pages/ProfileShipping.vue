@@ -525,7 +525,7 @@
                 :options="this.stores"
                 optionLabel="label"
                 optionValue="value"
-                placeholder="Выберите период повторения"
+                placeholder="Выберите склад"
               />
               <!-- <span class="error_desc" v-for="error of v$.form.timeSelected.repeater.$errors" :key="error.$uid">
                 {{ error.$message }}
