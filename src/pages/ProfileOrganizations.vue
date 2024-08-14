@@ -76,7 +76,8 @@ export default {
   },
   methods: {
     ...mapActions([
-      'get_organizations_from_api'
+      'get_organizations_from_api',
+      'org_get_from_api'
     ])
   },
   mounted () {
@@ -85,7 +86,7 @@ export default {
     }
     this.org_get_from_api(data)
 
-    this.org_get_stores_from_api({ action: 'get/stores' })
+    // this.org_get_stores_from_api({ action: 'get/stores' })
   },
   computed: {
     ...mapGetters([
