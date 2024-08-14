@@ -100,8 +100,8 @@
           </div>
         </form>
       </TabPanel>
-      <TabPanel header="Настройки" v-if="organization.settings">
-      </TabPanel>
+      <!-- <TabPanel header="Настройки" v-if="organization.settings">
+      </TabPanel> -->
     </TabView>
   <!-- </div> -->
   <!-- <Dialog v-model:visible="this.modals.bank" header="Запрос на создание банковских реквизитов" :style="{ width: '740px' }">

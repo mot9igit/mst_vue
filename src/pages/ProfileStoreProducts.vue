@@ -1,6 +1,8 @@
 <template>
+    <h1 class="h1-mini">{{ organization.name }}</h1>
     <TabView class="tab-custom">
        <TabPanel header="Сопоставление товаров">
+        <h1 class="h1-mini">Сопоставление товаров</h1>
         <div class="copo">
            <!-- <div class="dart-back-link">
              <router-link :to="{ name: 'organizations' }">
@@ -8,7 +10,6 @@
                <span>Назад к товарам</span>
              </router-link>
            </div> -->
-           <h1 class="h1-mini">Сопоставление товаров: {{ organization.name }}</h1>
            <p class="info-text mb-3">Для работы вам необходимо достигнуть и поддерживать уровень сопоставления товаров по стоимости не менее 80%.</p>
            <div class="analitics-widget">
              <div class="organization" >
@@ -315,6 +316,40 @@
            </div>
         </div>
        </TabPanel>
+       <TabPanel header="Настройки">
+        <form action="#" @submit.prevent="formChangeSettings">
+          <div class="dart-row">
+            <div class="d-col-md-6" v-for="(group, index) in organization?.settings?.groups" :key="index">
+              <div class="dart-form-block">
+                <span class="title">{{ group.label }}</span>
+                <div class="dart-form-block__content">
+                  <div class="dart-form-group" v-for="(setting) in group.settings" :key="setting.id">
+                    <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 1">
+                      <InputText :id="setting.key" v-model="this.settingsForm[setting.key]" />
+                      <label :for="setting.key">{{ setting.label }}</label>
+                    </FloatLabel>
+                    <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 2">
+                      <label :for="setting.key">{{ setting.label }}</label>
+                      <Dropdown :id="setting.key" v-model="this.settingsForm[setting.key]" :options="this.typePrice" optionLabel="name" class="w-full" />
+                    </FloatLabel>
+                    <div class="flex align-items-center" v-if="setting.type == 3">
+                      <Checkbox :id="setting.key" v-model="this.settingsForm[setting.key]" :inputId="setting.key" :name="setting.key" binary />
+                      <label :for="setting.key" class="ml-2"> {{ setting.label }} </label>
+                    </div>
+                    <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 4">
+                      <InputNumber :id="setting.key" v-model="this.settingsForm[setting.key]" class="w-full" />
+                      <label :for="setting.key">{{ setting.label }}</label>
+                    </FloatLabel>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="form_input_group">
+            <button class="dart-btn dart-btn-primary dart-mt-1" type="submit">Сохранить</button>
+          </div>
+        </form>
+      </TabPanel>
    </TabView>
 </template>
 
@@ -325,6 +360,11 @@ import Chart from 'primevue/chart'
 import TabView from 'primevue/tabview'
 import TabPanel from 'primevue/tabpanel'
 import RadioButton from 'primevue/radiobutton'
+import router from '@/router'
+import Dropdown from 'primevue/dropdown'
+import InputText from 'primevue/inputtext'
+import InputNumber from 'primevue/inputnumber'
+import Checkbox from 'primevue/checkbox'
 
 export default {
   name: 'ProfileProducts',
@@ -352,6 +392,8 @@ export default {
       chartDataHelpTwo: null,
       chartDataHelpThee: null,
       chartDataHelpFour: null,
+      typePrice: [],
+      settingsForm: { },
       isModal: false,
       isModalBrand: false,
       chartOptions: {
@@ -575,7 +617,9 @@ export default {
       'get_cardstatus_from_api',
       'get_vendors_from_api',
       'get_msproducts_from_api',
-      'get_catalog_from_api'
+      'get_catalog_from_api',
+      'opt_get_prices',
+      'set_organization_settings'
     ]),
     setChartData () {
       return {
@@ -642,6 +686,25 @@ export default {
           }
         ]
       }
+    },
+    formChangeSettings () {
+      this.loading = true
+      this.$load(async () => {
+        await this.set_organization_settings({
+          action: 'set',
+          type: 'organization',
+          id: router.currentRoute._value.params.id,
+          settings: this.settingsForm
+        })
+          .then((result) => {
+            this.loading = false
+            this.$toast.add({ severity: 'info', summary: 'Данные изменены', detail: 'Данные были успешно изменены', life: 3000 })
+            this.get_organization_from_api()
+          })
+          .catch((result) => {
+            console.log(result)
+          })
+      })
     },
     modalToggle () {
       this.isModal = !this.isModal
@@ -737,6 +800,11 @@ export default {
         page: this.page_modal,
         perpage: this.pagination_items_per_page
       })
+
+      this.opt_get_prices({
+        action: 'get/type/prices',
+        store_id: router.currentRoute._value.params.id
+      })
     })
   },
   components: {
@@ -744,7 +812,11 @@ export default {
     Chart,
     TabView,
     TabPanel,
-    RadioButton
+    RadioButton,
+    Dropdown,
+    InputText,
+    InputNumber,
+    Checkbox
   },
   computed: {
     ...mapGetters([
@@ -754,7 +826,8 @@ export default {
       'getcardstatus',
       'getvendors',
       'msproducts',
-      'getcatalog'
+      'getcatalog',
+      'oprprices'
     ]),
     date () {
       const today = new Date()
@@ -774,6 +847,27 @@ export default {
     }
   },
   watch: {
+    organization: function (newVal, oldVal) {
+      console.log(newVal)
+      const settings = JSON.parse(JSON.stringify(newVal.settings))
+      const groupKeys = Object.keys(settings.groups)
+      for (let i = 0; i < groupKeys.length; i++) {
+        const keys = Object.keys(settings.groups[groupKeys[i]].settings)
+        for (let j = 0; j < keys.length; j++) {
+          if (settings.groups[groupKeys[i]].settings[keys[j]].type === '2') {
+            this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = settings.groups[groupKeys[i]].settings[keys[j]].value
+          } if (settings.groups[groupKeys[i]].settings[keys[j]].type === '3') {
+            if (settings.groups[groupKeys[i]].settings[keys[j]].value === '1') {
+              this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = true
+            } else {
+              this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = false
+            }
+          } else {
+            this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = settings.groups[groupKeys[i]].settings[keys[j]].value
+          }
+        }
+      }
+    },
     getcardstatus: function (newVal, oldVal) {
       this.filters.status.values = newVal
     },
@@ -785,6 +879,12 @@ export default {
     },
     getcatalog: function (newVal, oldVal) {
       this.filters_modal.parent_name.values = newVal
+    },
+    oprprices: function (newVal, oldVal) {
+      this.typePrice = []
+      for (let i = 0; i < newVal.length; i++) {
+        this.typePrice.push({ key: newVal[i].guid, name: newVal[i].name })
+      }
     }
   }
 }

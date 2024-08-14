@@ -7,6 +7,7 @@
           <div class="analitics-widget">
             <div class="organization" >
               <div class="dart-row">
+                <!-- {{ prods }} -->
                 <div class="d-col-md-6" v-if="prods.all">
                   <div class="panel-widget panel-widget-remains">
                       <div class="panel-widget-remains__graph">
@@ -322,8 +323,8 @@
           </div>
         </div>
       </TabPanel>
-      <TabPanel header="Настройки">
-      </TabPanel>
+      <!-- <TabPanel header="Настройки">
+      </TabPanel> -->
   </TabView>
   <div class="search-for-catalog" v-bind:class="{ active: isModal }" @click="modalToggle">
       <div class="search-for-catalog__content" @click.stop="">
@@ -827,7 +828,10 @@ export default {
       page: this.page,
       perpage: this.pagination_items_per_page
     })
-    this.org_get_stores_from_api({ action: 'get/stores' })
+    this.org_get_stores_from_api({
+      action: 'get/stores',
+      org_id: this.$route.params.id
+    })
     this.get_organization_from_api().then(() => {
       this.chartData = this.setChartData()
       this.chartDataMoney = this.setChartDataMoney()
