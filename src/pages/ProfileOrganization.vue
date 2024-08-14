@@ -620,6 +620,11 @@ export default {
           name: 'Только отрицательные значения',
           placeholder: 'Только отрицательные значения',
           type: 'checkbox'
+        },
+        instock: {
+          name: 'Только в наличии',
+          placeholder: 'Только в наличии',
+          type: 'checkbox'
         }
       },
       product_table_data: {
