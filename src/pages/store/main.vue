@@ -310,6 +310,12 @@ export default {
           placeholder: 'Наименование, артикул',
           type: 'text'
         },
+        no_motion: {
+          name: 'Дней без движения',
+          placeholder: 'Дней без движения',
+          type: 'number',
+          step: 10
+        },
         vendor: {
           name: 'Производитель',
           placeholder: 'Выберите производителя',
@@ -325,6 +331,11 @@ export default {
         minuses: {
           name: 'Только отрицательные значения',
           placeholder: 'Только отрицательные значения',
+          type: 'checkbox'
+        },
+        instock: {
+          name: 'Только в наличии',
+          placeholder: 'Только в наличии',
           type: 'checkbox'
         }
       },
