@@ -68,6 +68,7 @@ import Promotion from '../pages/opt/Promotion/Promotion.vue'
 import BonusProgram from '@/pages/opt/BonusProgram/BonusProgram.vue'
 import OrgProfile from '@/pages/OrgProfile.vue'
 import OptOrder from '@/pages/opt/OptOrder/OptOrder.vue'
+import ProfileStoreProducts from '@/pages/ProfileStoreProducts.vue'
 
 const routes = [
   {
@@ -115,7 +116,7 @@ const routes = [
             }
           }
         }, {
-          path: 'products',
+          path: 'stores',
           component: OrganizationsLoyout,
           children: [{
             path: '',
@@ -125,11 +126,28 @@ const routes = [
             component: ProfileProducts
           },
           {
-            path: ':product_id',
-            name: 'org_product',
-            label: 'Товар',
-            component: ProfileProduct
+            path: '',
+            children: [{
+              path: ':store_id',
+              name: 'org_store_product',
+              label: 'Товар',
+              component: ProfileStoreProducts,
+              children: [
+                {
+                  path: ':product_id',
+                  name: 'org_product',
+                  label: 'Товар',
+                  component: ProfileProduct
+                }
+              ]
+            }]
           },
+          // {
+          //   path: ':store_id/:product_id',
+          //   name: 'org_product',
+          //   label: 'Товар',
+          //   component: ProfileProduct
+          // },
           {
             path: 'report',
             component: OrganizationsLoyout,
@@ -173,11 +191,11 @@ const routes = [
         }, {
           path: 'profile',
           name: 'org_profile',
-          component: ProfileProfile
+          component: OrgProfile
         }, {
           path: 'settings',
           name: 'profile',
-          component: OrgProfile
+          component: ProfileProfile
         }, {
           path: 'dilers',
           component: OrganizationsLoyout,

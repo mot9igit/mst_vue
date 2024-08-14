@@ -1,316 +1,401 @@
 <template>
-  <div class="copo">
-    <div class="dart-back-link">
-      <router-link :to="{ name: 'organizations' }">
-        <mdicon name="arrow-left" />
-        <span>Назад к товарам</span>
-      </router-link>
-    </div>
-    <h1 class="h1-mini">Сопоставление товаров</h1>
-    <p class="info-text mb-3">Для работы вам необходимо достигнуть и поддерживать уровень сопоставления товаров по стоимости не менее 80%.</p>
-    <div class="analitics-widget">
-      <div class="organization" >
-        <div class="dart-row">
-          <div class="d-col-md-6" v-if="prods.all">
-            <div class="panel-widget panel-widget-remains">
-                <div class="panel-widget-remains__graph">
-                  <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem graph-main" />
-                  <span class="count">{{ $filters.round(prods.copo_money_percent) }}%</span>
-                  <span>сопоставленных<br/> товаров по стоимости</span>
+   <TabView class="tab-custom">
+      <TabPanel header="Сопоставление товаров">
+        <div class="copo">
+          <h1 class="h1-mini">Сопоставление товаров</h1>
+          <p class="info-text mb-3">Для работы вам необходимо достигнуть и поддерживать уровень сопоставления товаров по стоимости не менее 80%.</p>
+          <div class="analitics-widget">
+            <div class="organization" >
+              <div class="dart-row">
+                <div class="d-col-md-6" v-if="prods.all">
+                  <div class="panel-widget panel-widget-remains">
+                      <div class="panel-widget-remains__graph">
+                        <Chart type="doughnut" :data="chartDataMoney" :options="chartOptions" class="w-full md:w-5rem graph-main" />
+                        <span class="count">{{ $filters.round(prods.copo_money_percent) }}%</span>
+                        <span>сопоставленных<br/> товаров по стоимости</span>
+                      </div>
+                      <div class="panel-widget-remains__stat">
+                        <div class="panel-widget-remains__stat-item">
+                          <div class="data">
+                            <span>Товаров на сумму</span>
+                            <span>{{ prods.summ }}</span>
+                          </div>
+                          <div class="line">
+                            <span style="width: 100%;"></span>
+                          </div>
+                        </div>
+                        <div class="panel-widget-remains__stat-item">
+                          <div class="data">
+                            <span>Товаров сопоставлено на сумму</span>
+                            <span>{{ prods.summ_copo }}</span>
+                          </div>
+                          <div class="line">
+                            <span :style="'width: ' + prods.copo_money_percent + '%;'"></span>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="products_href">
+                        <router-link :to="{ name: 'report_copo', params: { id: $route.params.id } }">
+                          Отчет по сопоставлению
+                          <mdicon name="arrow-right" />
+                        </router-link>
+                      </div>
+                  </div>
                 </div>
-                <div class="panel-widget-remains__stat">
-                  <div class="panel-widget-remains__stat-item">
-                    <div class="data">
-                      <span>Товаров на сумму</span>
-                      <span>{{ prods.summ }}</span>
+                <div class="d-col-md-6" v-if="prods.all">
+                  <div class="panel-widget panel-widget-remains">
+                    <div class="panel-widget-remains__graph">
+                      <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-5rem graph-main" />
+                      <span class="count">{{ $filters.round(prods.copo_percent) }}%</span>
+                      <span>сопоставленных<br/> товаров</span>
                     </div>
-                    <div class="line">
-                      <span style="width: 100%;"></span>
+                    <div class="panel-widget-remains__stat">
+                      <div class="panel-widget-remains__stat-item">
+                        <div class="data">
+                          <span>Товаров всего</span>
+                          <span>{{ prods.all }}</span>
+                        </div>
+                        <div class="line">
+                          <span style="width: 100%;"></span>
+                        </div>
+                      </div>
+                      <div class="panel-widget-remains__stat-item">
+                        <div class="data">
+                          <span>Товаров сопоставлено</span>
+                          <span>{{ prods.copo }}</span>
+                        </div>
+                        <div class="line">
+                          <span :style="'width: ' + prods.copo_percent + '%;'"></span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div class="panel-widget-remains__stat-item">
-                    <div class="data">
-                      <span>Товаров сопоставлено на сумму</span>
-                      <span>{{ prods.summ_copo }}</span>
-                    </div>
-                    <div class="line">
-                      <span :style="'width: ' + prods.copo_money_percent + '%;'"></span>
-                    </div>
+                    <div class="products_href">
+                        <router-link :to="{ name: 'report_copo', params: { id: $route.params.id } }">
+                          Отчет по сопоставлению
+                          <mdicon name="arrow-right" />
+                        </router-link>
+                      </div>
                   </div>
                 </div>
-                <div class="products_href">
-                  <router-link :to="{ name: 'report_copo', params: { id: $route.params.id } }">
-                    Отчет по сопоставлению
-                    <mdicon name="arrow-right" />
-                  </router-link>
-                </div>
-            </div>
-          </div>
-          <div class="d-col-md-6" v-if="prods.all">
-            <div class="panel-widget panel-widget-remains">
-              <div class="panel-widget-remains__graph">
-                <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-5rem graph-main" />
-                <span class="count">{{ $filters.round(prods.copo_percent) }}%</span>
-                <span>сопоставленных<br/> товаров</span>
-              </div>
-              <div class="panel-widget-remains__stat">
-                <div class="panel-widget-remains__stat-item">
-                  <div class="data">
-                    <span>Товаров всего</span>
-                    <span>{{ prods.all }}</span>
-                  </div>
-                  <div class="line">
-                    <span style="width: 100%;"></span>
-                  </div>
-                </div>
-                <div class="panel-widget-remains__stat-item">
-                  <div class="data">
-                    <span>Товаров сопоставлено</span>
-                    <span>{{ prods.copo }}</span>
-                  </div>
-                  <div class="line">
-                    <span :style="'width: ' + prods.copo_percent + '%;'"></span>
-                  </div>
-                </div>
-              </div>
-              <div class="products_href">
-                  <router-link :to="{ name: 'report_copo', params: { id: $route.params.id } }">
-                    Отчет по сопоставлению
-                    <mdicon name="arrow-right" />
-                  </router-link>
-                </div>
-            </div>
-          </div>
 
-          <div class="d-col-xxl-3 d-col-lg-6" v-if="products.status">
-            <div class="dart-helper dart-helper-1">
-              <div class="dart-helper__nav">
-                <div class="dart-helper__left">
-                  <p>Укажите цену</p>
-                  <span>{{ (products.status[5]?.count)?.toLocaleString('ru') }}</span>
+                <div class="d-col-xxl-3 d-col-lg-6" v-if="products.status">
+                  <div class="dart-helper dart-helper-1">
+                    <div class="dart-helper__nav">
+                      <div class="dart-helper__left">
+                        <p>Укажите цену</p>
+                        <span>{{ (products.status[5]?.count)?.toLocaleString('ru') }}</span>
+                      </div>
+                      <div class="dart-helper__right">
+                      </div>
+                    </div>
+                    <div class="dart-helper__body">
+                      <Chart type="doughnut" :data="chartDataHelpOne" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
+                      <div class="dart-helper__info">
+                        <b>{{(this.products.status[5]?.count / (this.products.status.total / 100)).toFixed(2)}} %</b>
+                        <p>от общего сопоставления</p>
+                      </div>
+                    </div>
+                    <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][0] }">
+                      <div class="dart-helper-footer__text">
+                        <p>Укажите цену в карточке</p>
+                      </div>
+                      <div class="dart-helper-footer__icon">
+                        <i class="d_icon d_icon-arrow" @click="helpers[0][0] = !helpers[0][0]"></i>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <div class="dart-helper__right">
+                <div class="d-col-xxl-3 d-col-lg-6" v-if="products.status">
+                  <div class="dart-helper dart-helper-2">
+                    <div class="dart-helper__nav">
+                      <div class="dart-helper__left">
+                        <p>Нет бренда</p>
+                        <span>{{ (products.status[1]?.count)?.toLocaleString('ru') }}</span>
+                      </div>
+                      <div class="dart-helper__right">
+                        <p>На сумму</p>
+                        <span>{{ Number((products.status[1]?.sum))?.toLocaleString('ru') }} ₽</span>
+                      </div>
+                    </div>
+                    <div class="dart-helper__body">
+                      <Chart type="doughnut" :data="chartDataHelpTwo" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
+                      <div class="dart-helper__info">
+                        <b>{{(this.products.status[1]?.count / (this.products.status.total / 100)).toFixed(2)}} %</b>
+                        <p>от общего сопоставления</p>
+                      </div>
+                    </div>
+                    <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][1] }">
+                      <div class="dart-helper-footer__text">
+                        <p>Укажите бренд в карточке</p>
+                      </div>
+                      <div class="dart-helper-footer__icon">
+                        <i class="d_icon d_icon-arrow" @click="helpers[0][1] = !helpers[0][1]"></i>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="dart-helper__body">
-                <Chart type="doughnut" :data="chartDataHelpOne" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
-                <div class="dart-helper__info">
-                  <b>{{(this.products.status[5]?.count / (this.products.status.total / 100)).toFixed(2)}} %</b>
-                  <p>от общего сопоставления</p>
+                <div class="d-col-xxl-3 d-col-lg-6" v-if="products.status">
+                  <div class="dart-helper dart-helper-3">
+                    <div class="dart-helper__nav">
+                      <div class="dart-helper__left">
+                        <p>Нет артикула</p>
+                        <span>{{ (products.status[2]?.count)?.toLocaleString('ru') }}</span>
+                      </div>
+                      <div class="dart-helper__right">
+                        <p>На сумму</p>
+                        <span>{{ Number((products.status[2]?.sum))?.toLocaleString('ru') }} ₽</span>
+                      </div>
+                    </div>
+                    <div class="dart-helper__body">
+                      <Chart type="doughnut" :data="chartDataHelpThee" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
+                      <div class="dart-helper__info">
+                        <b>{{(this.products.status[2]?.count / (this.products.status.total / 100)).toFixed(2)}} %</b>
+                        <p>от общего сопоставления</p>
+                      </div>
+                    </div>
+                    <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][2] }">
+                      <div class="dart-helper-footer__text">
+                        <p>Укажите артикул в карточке</p>
+                      </div>
+                      <div class="dart-helper-footer__icon">
+                        <i class="d_icon d_icon-arrow" @click="helpers[0][2] = !helpers[0][2]"></i>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
-              <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][0] }">
-                <div class="dart-helper-footer__text">
-                  <p>Укажите цену в карточке</p>
-                </div>
-                <div class="dart-helper-footer__icon">
-                  <i class="d_icon d_icon-arrow" @click="helpers[0][0] = !helpers[0][0]"></i>
+                <div class="d-col-xxl-3 d-col-lg-6" v-if="products.status">
+                  <div class="dart-helper dart-helper-4">
+                    <div class="dart-helper__nav">
+                      <div class="dart-helper__left">
+                        <p>Нет карточки</p>
+                        <span>{{ (products.status[4]?.count)?.toLocaleString('ru') }}</span>
+                      </div>
+                      <div class="dart-helper__right">
+                        <p>На сумму</p>
+                        <span>{{ Number((products.status[4]?.sum))?.toLocaleString('ru') }} ₽</span>
+                      </div>
+                    </div>
+                    <div class="dart-helper__body">
+                      <Chart type="doughnut" :data="chartDataHelpFour" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
+                      <div class="dart-helper__info">
+                        <b>{{(this.products.status[4]?.count / (this.products.status.total / 100)).toFixed(2)}} %</b>
+                        <p>от общего сопоставления</p>
+                      </div>
+                    </div>
+                    <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][3] }">
+                      <div class="dart-helper-footer__text">
+                        <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
+                        <p>Запросите добавление карточек бренда</p>
+                        <p>Запросите добавление карточки товара</p>
+                      </div>
+                      <div class="dart-helper-footer__icon">
+                        <i class="d_icon d_icon-arrow" @click="helpers[0][3] = !helpers[0][3]"></i>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-          <div class="d-col-xxl-3 d-col-lg-6" v-if="products.status">
-            <div class="dart-helper dart-helper-2">
-              <div class="dart-helper__nav">
-                <div class="dart-helper__left">
-                  <p>Нет бренда</p>
-                  <span>{{ (products.status[1]?.count)?.toLocaleString('ru') }}</span>
-                </div>
-                <div class="dart-helper__right">
-                  <p>На сумму</p>
-                  <span>{{ Number((products.status[1]?.sum))?.toLocaleString('ru') }} ₽</span>
-                </div>
-              </div>
-              <div class="dart-helper__body">
-                <Chart type="doughnut" :data="chartDataHelpTwo" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
-                <div class="dart-helper__info">
-                  <b>{{(this.products.status[1]?.count / (this.products.status.total / 100)).toFixed(2)}} %</b>
-                  <p>от общего сопоставления</p>
-                </div>
-              </div>
-              <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][1] }">
-                <div class="dart-helper-footer__text">
-                  <p>Укажите бренд в карточке</p>
-                </div>
-                <div class="dart-helper-footer__icon">
-                  <i class="d_icon d_icon-arrow" @click="helpers[0][1] = !helpers[0][1]"></i>
-                </div>
-              </div>
-            </div>
+          <!-- {{org_stores}} -->
+          <v-table
+            :items_data="org_stores.items"
+            :total="org_stores.total"
+            :pagination_items_per_page="this.pagination_items_per_page"
+            :pagination_offset="this.pagination_offset"
+            :page="this.page_modal"
+            :table_data="this.table_stores"
+            :filters="{}"
+            title="Склады"
+          >
+          </v-table>
+
+          <div class="products">
+            <TabView class="tab-custom">
+                <TabPanel header="По брендам">
+                    <v-table
+                      :items_data="report_copo.items"
+                      :total="report_copo.total"
+                      :pagination_items_per_page="this.pagination_items_per_page"
+                      :pagination_offset="this.pagination_offset"
+                      :page="this.page_brand"
+                      :table_data="this.table_data_brand"
+                      :filters="this.filtersbrand"
+                      @filter="filterbrand"
+                      @sort="filterbrand"
+                      @paginate="paginatebrand"
+                    >
+                    </v-table>
+                </TabPanel>
+                <TabPanel header="По товарам">
+                  <v-table
+                    :items_data="products.products"
+                    :total="products.total"
+                    :pagination_items_per_page="this.pagination_items_per_page"
+                    :pagination_offset="this.pagination_offset"
+                    :page="this.page"
+                    :table_data="this.table_data"
+                    :filters="this.filters"
+                    title="Сопоставление по товарам"
+                    @filter="filter"
+                    @sort="filter"
+                    @paginate="paginate"
+                  >
+                    <template v-slot:button>
+                      <button class="dart-btn dart-btn-primary" @click="modalToggle"><i class="d_icon d_icon-search"></i> Поиск по каталогу</button>
+                    </template>
+                  </v-table>
+                </TabPanel>
+            </TabView>
           </div>
-          <div class="d-col-xxl-3 d-col-lg-6" v-if="products.status">
-            <div class="dart-helper dart-helper-3">
-              <div class="dart-helper__nav">
-                <div class="dart-helper__left">
-                  <p>Нет артикула</p>
-                  <span>{{ (products.status[2]?.count)?.toLocaleString('ru') }}</span>
-                </div>
-                <div class="dart-helper__right">
-                  <p>На сумму</p>
-                  <span>{{ Number((products.status[2]?.sum))?.toLocaleString('ru') }} ₽</span>
-                </div>
+          <div class="search-for-catalog" v-bind:class="{ active: isModal }" @click="modalToggle">
+              <div class="search-for-catalog__content" @click.stop="">
+                  <div class="search-for-catalog__title">
+                    <h2>Поиск по каталогу карточек</h2>
+                    <i @click="modalToggle" class="d_icon d_icon-close"></i>
+                  </div>
+                  <div class="search-for-catalog__table">
+                    <v-table
+                      :items_data="msproducts.items"
+                      :total="msproducts.total"
+                      :pagination_items_per_page="this.pagination_items_per_page"
+                      :pagination_offset="this.pagination_offset"
+                      :page="this.page_modal"
+                      :table_data="this.table_modal"
+                      :filters="this.filters_modal"
+                      title=""
+                      @filter="filterModal"
+                      @sort="filterModal"
+                      @paginate="paginateModal"
+                    >
+                      <template v-slot:widgets>
+                        <a class="search-for-catalog__get" @click="modalToggleBrand">Запросить добавление бренда</a>
+                      </template>
+                    </v-table>
+                  </div>
               </div>
-              <div class="dart-helper__body">
-                <Chart type="doughnut" :data="chartDataHelpThee" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
-                <div class="dart-helper__info">
-                  <b>{{(this.products.status[2]?.count / (this.products.status.total / 100)).toFixed(2)}} %</b>
-                  <p>от общего сопоставления</p>
-                </div>
-              </div>
-              <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][2] }">
-                <div class="dart-helper-footer__text">
-                  <p>Укажите артикул в карточке</p>
-                </div>
-                <div class="dart-helper-footer__icon">
-                  <i class="d_icon d_icon-arrow" @click="helpers[0][2] = !helpers[0][2]"></i>
-                </div>
-              </div>
-            </div>
           </div>
-          <div class="d-col-xxl-3 d-col-lg-6" v-if="products.status">
-            <div class="dart-helper dart-helper-4">
-              <div class="dart-helper__nav">
-                <div class="dart-helper__left">
-                  <p>Нет карточки</p>
-                  <span>{{ (products.status[4]?.count)?.toLocaleString('ru') }}</span>
-                </div>
-                <div class="dart-helper__right">
-                  <p>На сумму</p>
-                  <span>{{ Number((products.status[4]?.sum))?.toLocaleString('ru') }} ₽</span>
-                </div>
+          <div class="add-brand" v-bind:class="{ active: isModalBrand }" @click="modalToggleBrand">
+              <div class="add-brand__content" @click.stop="">
+                  <div class="add-brand__title">
+                    <h2>Запрос на добавление бренда</h2>
+                    <i @click="modalToggleBrand" class="d_icon d_icon-close"></i>
+                  </div>
+                  <form class="add-brand__body">
+                    <p class="info-text mb-3">Прежде чем оставлять запрос, проверьте, не оставлял ли кто-то такой запрос до вас.</p>
+                    <div class="dart-row">
+                      <div class="d-col-md-6">
+                        <div class="add-brand__el">
+                          <b>Название бренда</b>
+                          <div class="form_input_group input_pl input-parent required mb-4">
+                            <input type="text" id="filter_name" placeholder="Наименование, артикул" name="name" class="dart-form-control">
+                            <label for="product_filter_name" class="s-complex-input__label">Введите название бренда</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="d-col-md-6">
+                        <div class="add-brand__el">
+                          <b>Ссылка на сайт</b>
+                          <div class="form_input_group input_pl input-parent required mb-4">
+                            <input type="text" id="filter_name" placeholder="Наименование, артикул" name="name" class="dart-form-control">
+                            <label for="product_filter_name" class="s-complex-input__label">Вставьте URL</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <b>Можете ли вы помочь связаться с брендом?</b>
+                    <div class="flex flex-wrap gap-3 mt-2">
+                        <div class="flex align-items-center">
+                          <RadioButton inputId="ingredient1" name="brand_connection" value="1" />
+                          <label for="ingredient1" class="ml-2">Да</label>
+                        </div>
+                        <div class="flex align-items-center">
+                          <RadioButton inputId="ingredient2" name="brand_connection" value="0" />
+                          <label for="ingredient2" class="ml-2">Нет</label>
+                        </div>
+                    </div>
+                    <div class="add-brand__button">
+                      <button class="dart-btn dart-btn-primary">Запросить</button>
+                    </div>
+                  </form>
               </div>
-              <div class="dart-helper__body">
-                <Chart type="doughnut" :data="chartDataHelpFour" :options="chartOptions" class="w-full md:w-5rem dart-helper__graph" />
-                <div class="dart-helper__info">
-                  <b>{{(this.products.status[4]?.count / (this.products.status.total / 100)).toFixed(2)}} %</b>
-                  <p>от общего сопоставления</p>
-                </div>
-              </div>
-              <div class="dart-helper-footer" v-bind:class="{ show: helpers[0][3] }">
-                <div class="dart-helper-footer__text">
-                  <p>Проверьте правильность вашего артикула в нашем каталоге карточек</p>
-                  <p>Запросите добавление карточек бренда</p>
-                  <p>Запросите добавление карточки товара</p>
-                </div>
-                <div class="dart-helper-footer__icon">
-                  <i class="d_icon d_icon-arrow" @click="helpers[0][3] = !helpers[0][3]"></i>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
-      </div>
-    </div>
-    <div class="products">
-      <TabView class="tab-custom">
-          <TabPanel header="По брендам">
-              <v-table
-                :items_data="report_copo.items"
-                :total="report_copo.total"
-                :pagination_items_per_page="this.pagination_items_per_page"
-                :pagination_offset="this.pagination_offset"
-                :page="this.page_brand"
-                :table_data="this.table_data_brand"
-                :filters="this.filtersbrand"
-                @filter="filterbrand"
-                @sort="filterbrand"
-                @paginate="paginatebrand"
-              >
-              </v-table>
-          </TabPanel>
-          <TabPanel header="По товарам">
+      </TabPanel>
+      <TabPanel header="Настройки">
+      </TabPanel>
+  </TabView>
+  <div class="search-for-catalog" v-bind:class="{ active: isModal }" @click="modalToggle">
+      <div class="search-for-catalog__content" @click.stop="">
+          <div class="search-for-catalog__title">
+            <h2>Поиск по каталогу карточек</h2>
+            <i @click="modalToggle" class="d_icon d_icon-close"></i>
+          </div>
+          <div class="search-for-catalog__table">
             <v-table
-              :items_data="products.products"
-              :total="products.total"
+              :items_data="msproducts.items"
+              :total="msproducts.total"
               :pagination_items_per_page="this.pagination_items_per_page"
               :pagination_offset="this.pagination_offset"
-              :page="this.page"
-              :table_data="this.table_data"
-              :filters="this.filters"
-              title="Сопоставление по товарам"
-              @filter="filter"
-              @sort="filter"
-              @paginate="paginate"
+              :page="this.page_modal"
+              :table_data="this.table_modal"
+              :filters="this.filters_modal"
+              title=""
+              @filter="filterModal"
+              @sort="filterModal"
+              @paginate="paginateModal"
             >
-              <template v-slot:button>
-                <button class="dart-btn dart-btn-primary" @click="modalToggle"><i class="d_icon d_icon-search"></i> Поиск по каталогу</button>
+              <template v-slot:widgets>
+                <a class="search-for-catalog__get" @click="modalToggleBrand">Запросить добавление бренда</a>
               </template>
             </v-table>
-          </TabPanel>
-      </TabView>
-    </div>
-    <div class="search-for-catalog" v-bind:class="{ active: isModal }" @click="modalToggle">
-        <div class="search-for-catalog__content" @click.stop="">
-            <div class="search-for-catalog__title">
-              <h2>Поиск по каталогу карточек</h2>
-              <i @click="modalToggle" class="d_icon d_icon-close"></i>
-            </div>
-            <div class="search-for-catalog__table">
-              <v-table
-                :items_data="msproducts.items"
-                :total="msproducts.total"
-                :pagination_items_per_page="this.pagination_items_per_page"
-                :pagination_offset="this.pagination_offset"
-                :page="this.page_modal"
-                :table_data="this.table_modal"
-                :filters="this.filters_modal"
-                title=""
-                @filter="filterModal"
-                @sort="filterModal"
-                @paginate="paginateModal"
-              >
-                <template v-slot:widgets>
-                  <a class="search-for-catalog__get" @click="modalToggleBrand">Запросить добавление бренда</a>
-                </template>
-              </v-table>
-            </div>
-        </div>
-    </div>
-    <div class="add-brand" v-bind:class="{ active: isModalBrand }" @click="modalToggleBrand">
-        <div class="add-brand__content" @click.stop="">
-            <div class="add-brand__title">
-              <h2>Запрос на добавление бренда</h2>
-              <i @click="modalToggleBrand" class="d_icon d_icon-close"></i>
-            </div>
-            <form class="add-brand__body">
-              <p class="info-text mb-3">Прежде чем оставлять запрос, проверьте, не оставлял ли кто-то такой запрос до вас.</p>
-              <div class="dart-row">
-                <div class="d-col-md-6">
-                  <div class="add-brand__el">
-                    <b>Название бренда</b>
-                    <div class="form_input_group input_pl input-parent required mb-4">
-                      <input type="text" id="filter_name" placeholder="Наименование, артикул" name="name" class="dart-form-control">
-                      <label for="product_filter_name" class="s-complex-input__label">Введите название бренда</label>
-                    </div>
-                  </div>
-                </div>
-                <div class="d-col-md-6">
-                  <div class="add-brand__el">
-                    <b>Ссылка на сайт</b>
-                    <div class="form_input_group input_pl input-parent required mb-4">
-                      <input type="text" id="filter_name" placeholder="Наименование, артикул" name="name" class="dart-form-control">
-                      <label for="product_filter_name" class="s-complex-input__label">Вставьте URL</label>
-                    </div>
+          </div>
+      </div>
+  </div>
+  <div class="add-brand" v-bind:class="{ active: isModalBrand }" @click="modalToggleBrand">
+      <div class="add-brand__content" @click.stop="">
+          <div class="add-brand__title">
+            <h2>Запрос на добавление бренда</h2>
+            <i @click="modalToggleBrand" class="d_icon d_icon-close"></i>
+          </div>
+          <form class="add-brand__body">
+            <p class="info-text mb-3">Прежде чем оставлять запрос, проверьте, не оставлял ли кто-то такой запрос до вас.</p>
+            <div class="dart-row">
+              <div class="d-col-md-6">
+                <div class="add-brand__el">
+                  <b>Название бренда</b>
+                  <div class="form_input_group input_pl input-parent required mb-4">
+                    <input type="text" id="filter_name" placeholder="Наименование, артикул" name="name" class="dart-form-control">
+                    <label for="product_filter_name" class="s-complex-input__label">Введите название бренда</label>
                   </div>
                 </div>
               </div>
-              <b>Можете ли вы помочь связаться с брендом?</b>
-              <div class="flex flex-wrap gap-3 mt-2">
-                  <div class="flex align-items-center">
-                    <RadioButton inputId="ingredient1" name="brand_connection" value="1" />
-                    <label for="ingredient1" class="ml-2">Да</label>
+              <div class="d-col-md-6">
+                <div class="add-brand__el">
+                  <b>Ссылка на сайт</b>
+                  <div class="form_input_group input_pl input-parent required mb-4">
+                    <input type="text" id="filter_name" placeholder="Наименование, артикул" name="name" class="dart-form-control">
+                    <label for="product_filter_name" class="s-complex-input__label">Вставьте URL</label>
                   </div>
-                  <div class="flex align-items-center">
-                    <RadioButton inputId="ingredient2" name="brand_connection" value="0" />
-                    <label for="ingredient2" class="ml-2">Нет</label>
-                  </div>
+                </div>
               </div>
-              <div class="add-brand__button">
-                <button class="dart-btn dart-btn-primary">Запросить</button>
-              </div>
-            </form>
-        </div>
-    </div>
+            </div>
+            <b>Можете ли вы помочь связаться с брендом?</b>
+            <div class="flex flex-wrap gap-3 mt-2">
+                <div class="flex align-items-center">
+                  <RadioButton inputId="ingredient1" name="brand_connection" value="1" />
+                  <label for="ingredient1" class="ml-2">Да</label>
+                </div>
+                <div class="flex align-items-center">
+                  <RadioButton inputId="ingredient2" name="brand_connection" value="0" />
+                  <label for="ingredient2" class="ml-2">Нет</label>
+                </div>
+            </div>
+            <div class="add-brand__button">
+              <button class="dart-btn dart-btn-primary">Запросить</button>
+            </div>
+          </form>
+      </div>
   </div>
 </template>
 
@@ -493,6 +578,45 @@ export default {
           sort: true
         }
       },
+      table_stores: {
+        image: {
+          label: 'Фото',
+          type: 'image',
+          baseurl: true
+        },
+        name_short: {
+          label: 'Название',
+          type: 'link',
+          link_to: 'org_store_product',
+          link_params: {
+            id: this.$route.params.id,
+            store_id: 'id'
+          }
+        },
+        active: {
+          label: 'Активно',
+          type: 'boolean'
+        },
+        address_short: {
+          label: 'Адрес',
+          type: 'text'
+        }
+        // vendor_article: {
+        //   label: 'Артикул',
+        //   type: 'text',
+        //   sort: true
+        // },
+        // pagetitle: {
+        //   label: 'Наименование',
+        //   type: 'text',
+        //   sort: true
+        // },
+        // parent_name: {
+        //   label: 'Категория',
+        //   type: 'text',
+        //   sort: true
+        // }
+      },
       table_data: {
         image: {
           label: 'Фото',
@@ -509,6 +633,7 @@ export default {
           link_to: 'org_product',
           link_params: {
             id: this.$route.params.id,
+            store_id: 'store_id',
             product_id: 'id'
           },
           description: {
@@ -570,7 +695,8 @@ export default {
       'get_cardstatus_from_api',
       'get_vendors_from_api',
       'get_msproducts_from_api',
-      'get_catalog_from_api'
+      'get_catalog_from_api',
+      'org_get_stores_from_api'
     ]),
     setChartData () {
       return {
@@ -701,6 +827,7 @@ export default {
       page: this.page,
       perpage: this.pagination_items_per_page
     })
+    this.org_get_stores_from_api({ action: 'get/stores' })
     this.get_organization_from_api().then(() => {
       this.chartData = this.setChartData()
       this.chartDataMoney = this.setChartDataMoney()
@@ -743,7 +870,8 @@ export default {
       'getcardstatus',
       'getvendors',
       'msproducts',
-      'getcatalog'
+      'getcatalog',
+      'org_stores'
     ]),
     date () {
       const today = new Date()
@@ -961,7 +1089,7 @@ export default {
 
 .h1-mini{
   font-size: 24px;
-  font-weight: 400;
+  font-weight: 500 !important;
   margin-top: 16px;
   margin-bottom: 8px;
 }

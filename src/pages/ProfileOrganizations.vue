@@ -1,11 +1,11 @@
 <template>
-  <div class="profile-block" v-if="organizations.stores">
+  <div class="profile-block" v-if="this.organizations">
     <div class="profile-block__title">
-        <span class="title">Магазины</span>
+      <span class="title">Огранизации</span>
     </div>
-    <div class="organizations" :organizations_data="organizations">
+    <div class="organizations">
       <div class="dart-row">
-        <div class="d-col-xl-custom d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.stores" v-bind:key="item.id">
+        <div class="d-col-xl-custom d-col-lg-3 panel_widget_organization_wrap" v-for="item in this.organizations" v-bind:key="item.id">
           <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
             <div class="panel_widget_organization__top">
               <div class="panel_widget_organization__icon" v-if="item.image">
@@ -18,128 +18,19 @@
               <div class="panel_widget_organization__icon" v-else>
                 <i class="d_icon d_icon-house"></i>
               </div>
-              <!-- <div class="panel_widget_organization__notifications">
-                <i class="d_icon d_icon-alerts"><div class="panel_widget_organization__notifications-cout">1</div></i>
-              </div> -->
             </div>
-            <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name_short }}</router-link>
+            <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.org_id }}">{{ item.name }}</router-link>
             <p class="panel_widget_organization__addres">{{ item.address }}</p>
             <hr/>
             <div class="panel_widget_organization__two-collums">
               <p class="panel_widget_organization__name">Баланс</p>
-              <p class="panel_widget_organization__value">{{item.balance}} ₽</p>
+              <p class="panel_widget_organization__value">999 999 999 ₽</p>
             </div>
             <hr/>
             <div class="panel_widget_organization__two-collums">
               <p class="panel_widget_organization__name">Заказы</p>
-              <p class="panel_widget_organization__circle active">{{item.orders.count}}</p>
+              <p class="panel_widget_organization__circle active">99</p>
             </div>
-            <!--
-            <div class="panel_widget_organization__two-collums">
-              <p class="panel_widget_organization__name">Упущенные продажи</p>
-              <p class="panel_widget_organization__value">268 950 ₽</p>
-            </div>
-            -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="profile-block" v-if="organizations.warehouses">
-    <div class="profile-block__title">
-        <span class="title">Оптовые компании</span>
-    </div>
-    <div class="organizations" :organizations_data="organizations">
-      <div class="dart-row">
-        <div class="d-col-xl-custom d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.warehouses" v-bind:key="item.id">
-          <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
-            <div class="panel_widget_organization__top">
-              <div class="panel_widget_organization__icon" v-if="item.image">
-                <img :src="item.image" alt="">
-                <div class="panel_widget_organization__status">
-                  <i class="d_icon d_icon-check" v-if="item.active"></i>
-                  <i class="d_icon d_icon-focus" v-if="!item.active"></i>
-                </div>
-              </div>
-              <div class="panel_widget_organization__icon" v-else>
-                <i class="d_icon d_icon-house"></i>
-              </div>
-              <!-- <div class="panel_widget_organization__notifications">
-                <i class="d_icon d_icon-alerts"><div class="panel_widget_organization__notifications-cout active">10</div></i>
-              </div> -->
-            </div>
-            <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name }}</router-link>
-            <p class="panel_widget_organization__addres">{{ item.address }}</p>
-            <hr/>
-            <div class="panel_widget_organization__two-collums">
-              <p class="panel_widget_organization__name">Баланс</p>
-              <p class="panel_widget_organization__value">{{item.balance}} ₽</p>
-            </div>
-            <hr/>
-            <div class="panel_widget_organization__two-collums">
-              <p class="panel_widget_organization__name">Заказы</p>
-              <p class="panel_widget_organization__circle">{{item.orders.count}}</p>
-            </div>
-            <div class="panel_widget_organization__two-collums">
-              <p class="panel_widget_organization__name">Отгрузки</p>
-              <p class="panel_widget_organization__circle">{{item.ships.count}}</p>
-            </div>
-            <!--
-            <div class="panel_widget_organization__two-collums">
-              <p class="panel_widget_organization__name">Упущенные продажи</p>
-              <p class="panel_widget_organization__value">268 950 ₽</p>
-            </div>
-            -->
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="profile-block" v-if="organizations.vendors">
-    <div class="profile-block__title">
-        <span class="title">Производители</span>
-    </div>
-    <div class="organizations" :organizations_data="organizations">
-      <div class="dart-row">
-        <div class="d-col-xl-custom d-col-lg-3 panel_widget_organization_wrap" v-for="item in organizations.vendors" v-bind:key="item.id">
-          <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
-            <div class="panel_widget_organization__top">
-              <div class="panel_widget_organization__icon" v-if="item.image">
-                <img :src="item.image" alt="">
-                <div class="panel_widget_organization__status">
-                  <i class="d_icon d_icon-check" v-if="item.active"></i>
-                  <i class="d_icon d_icon-focus" v-if="!item.active"></i>
-                </div>
-              </div>
-              <div class="panel_widget_organization__icon" v-else>
-                <i class="d_icon d_icon-house"></i>
-              </div>
-              <!-- <div class="panel_widget_organization__notifications">
-                <i class="d_icon d_icon-alerts"><div class="panel_widget_organization__notifications-cout active">10</div></i>
-              </div> -->
-            </div>
-            <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name }}</router-link>
-            <p class="panel_widget_organization__addres">{{ item.address }}</p>
-            <hr/>
-            <div class="panel_widget_organization__two-collums">
-              <p class="panel_widget_organization__name">Баланс</p>
-              <p class="panel_widget_organization__value">{{item.balance}} ₽</p>
-            </div>
-            <hr/>
-            <div class="panel_widget_organization__two-collums">
-              <p class="panel_widget_organization__name">Заказы</p>
-              <p class="panel_widget_organization__circle">{{item.orders.count}}</p>
-            </div>
-            <div class="panel_widget_organization__two-collums">
-              <p class="panel_widget_organization__name">Отгрузки</p>
-              <p class="panel_widget_organization__circle">{{item.ships.count}}</p>
-            </div>
-            <!--
-            <div class="panel_widget_organization__two-collums">
-              <p class="panel_widget_organization__name">Упущенные продажи</p>
-              <p class="panel_widget_organization__value">268 950 ₽</p>
-            </div>
-            -->
           </div>
         </div>
       </div>
@@ -154,12 +45,12 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
   name: 'ProfileOrganizations',
   props: {
-    organizations_data: {
-      type: Array,
-      default: () => {
-        return []
-      }
-    }
+    // organizations_data: {
+    //   type: Array,
+    //   default: () => {
+    //     return []
+    //   }
+    // }
   },
   data () {
     return {
@@ -179,7 +70,8 @@ export default {
           numVisible: 2,
           numScroll: 1
         }
-      ]
+      ],
+      organizations: []
     }
   },
   methods: {
@@ -188,11 +80,16 @@ export default {
     ])
   },
   mounted () {
-    this.get_organizations_from_api()
+    const data = {
+      action: 'get/orgs'
+    }
+    this.org_get_from_api(data)
+
+    this.org_get_stores_from_api({ action: 'get/stores' })
   },
   computed: {
     ...mapGetters([
-      'organizations'
+      'orgs'
     ]),
     getmenu: function () {
       return function (type, id) {
@@ -353,11 +250,24 @@ export default {
         }
       }
     }
+  },
+  watch: {
+    orgs: function (newVal, oldVal) {
+      this.organizations = newVal
+    }
   }
 }
 </script>
 
 <style lang="scss">
+
+  .panel_widget {
+      background: #fff;
+      padding: 24px;
+      border: 1px solid rgba(0, 0, 0, .12);
+      border-radius: 5px;
+      margin-bottom: 20px;
+  }
   .profile-block{
     margin-bottom: 40px;
     &__title{
@@ -405,6 +315,7 @@ export default {
         border-radius: 5px;
         img{
           max-height: 34px;
+          border-radius: 50%;
         }
         i{
           display: flex;

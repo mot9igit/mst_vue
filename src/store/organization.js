@@ -14,12 +14,23 @@ export default {
   },
   actions: {
     get_organization_from_api ({ commit }) {
+      const data = {
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      }
+
+      // ВРЕМЕННОЕ РЕШЕНИЕ KENOSTDEVELOPER
+      if (router.currentRoute._value.params.store_id) {
+        data.id = router.currentRoute._value.params.store_id
+      } else {
+        data.id = router.currentRoute._value.params.id
+      }
+
+      if (router.currentRoute._value.params.store_id) {
+        data.store_id = router.currentRoute._value.params.store_id
+      }
       return Axios('/rest/front_organization', {
         method: 'POST',
-        data: {
-          id: router.currentRoute._value.params.id,
-          timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-        },
+        data: data,
         headers: {
           'Access-Control-Allow-Origin': '*'
         }

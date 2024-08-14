@@ -17,6 +17,9 @@ export default {
         page: page,
         perpage: perpage
       }
+      if (router.currentRoute._value.params.store_id) {
+        data.store_id = router.currentRoute._value.params.store_id
+      }
       return Axios('/rest/front_getproducts', {
         method: 'POST',
         data: data,
