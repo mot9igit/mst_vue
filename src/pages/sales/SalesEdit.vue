@@ -14,7 +14,20 @@
                 <input v-model="this.form.name" type="text" name="name" placeholder="Укажите название программы" class="dart-form-control mt-2">
             </div>
 
-            <div class="dart-form-group mb-4">
+            <div class="dart-form-group mb-0">
+              <span class="ktitle">Реклама</span>
+              <div class="flex align-items-center">
+                  <Checkbox v-model="this.create_page_action" inputId="create-page-action" name="create_page_action" value="true" />
+                  <label for="create-page-action" class="ml-2 mb-0"> Разместить рекламные баннеры </label>
+              </div>
+            </div>
+            <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+              <span class="ktitle">Место размещение баннера/товара</span>
+              <MultiSelect v-model="this.place_action" :options="this.place" optionLabel="name" placeholder="Выберите один или несколько вариантов"
+                class="w-full" />
+            </div>
+
+            <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
                 <div class="upload-banner">
                 <div class="upload-banner__text">
                     <span class="ktitle">Большой баннер</span>
@@ -28,11 +41,11 @@
                 </div>
             </div>
 
-            <div class="dart-form-group mb-4">
+            <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
                 <div class="upload-banner">
                 <div class="upload-banner__text">
-                    <span class="ktitle">Малый баннер</span>
-                    <span>Загрузить изображение нужно размером не менее 324х161, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
+                    <span class="ktitle">Средний баннер</span>
+                    <span>Загрузить изображение нужно размером не менее 532х264, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
                 </div>
                 <!-- <div class="dart-btn dart-btn-secondary btn-padding">Загрузить</div> -->
                 <FileUpload class="kenost-upload-button" mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
@@ -42,7 +55,26 @@
                 </div>
             </div>
 
-            <div class="dart-form-group mb-4">
+            <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+                <div class="upload-banner">
+                <div class="upload-banner__text">
+                    <span class="ktitle">Малый баннер</span>
+                    <span>Загрузить изображение нужно размером не менее 472х52, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
+                </div>
+                <!-- <div class="dart-btn dart-btn-secondary btn-padding">Загрузить</div> -->
+                <FileUpload class="kenost-upload-button" mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+                </div>
+                <div class="upload-banner__image">
+                  <img :src="files?.min?.original_href" v-if="files?.min?.original_href">
+                </div>
+            </div>
+
+            <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+              <span class="ktitle">География показа</span>
+              <Dropdown v-model="this.geo_action" :options="this.geo" optionLabel="name" placeholder="Массовое действие" class="w-full md:w-14rem" />
+            </div>
+
+            <div class="dart-form-group mb-4 mt-3">
                 <div class="upload-banner">
                 <div class="upload-banner__text">
                     <span class="ktitle">Иконка</span>
@@ -840,8 +872,10 @@ export default {
         name: '',
         category: {}
       },
+      geo_action: { name: 'По географии акции', key: 1 },
       opt_catalog_tree: [],
       error_product: [],
+      create_page_action: [],
       upload_product: false,
       page_complects: 1,
       per_complects: 25,
@@ -867,6 +901,7 @@ export default {
       all_organizations_selected: {},
       page_selected: 1,
       regions: [],
+      place_action: [],
       regions_all: [],
       regions_select: [],
       complects_ids: [],
@@ -970,6 +1005,17 @@ export default {
         { name: 'Скидка по формуле', key: 0 },
         { name: 'Тип цен', key: 1 },
         { name: 'Кратность', key: 3 }
+      ],
+      place: [
+        { name: 'На главной', code: 0 },
+        { name: 'На странице огранизаций', code: 1 },
+        { name: 'В каталоге', code: 2 },
+        { name: 'При выборе поставщика', code: 3 },
+        { name: 'При офомлении заказа', code: 4 }
+      ],
+      geo: [
+        { name: 'Показывать всем', key: 0 },
+        { name: 'По географии акции', key: 1 }
       ]
     }
   },
@@ -1059,10 +1105,36 @@ export default {
               product.typePrice = ''
               this.selected[tempProduct.remain.id] = product
               this.total_selected++
+
+              const selectdata = {}
+              if (tempProduct.E === 0 || tempProduct.E === null) {
+                selectdata.discountInterest = 100
+                selectdata.discountInRubles = '-'
+              } else {
+                selectdata.discountInRubles = tempProduct.E - tempProduct.D
+                selectdata.discountInterest = (tempProduct.E - tempProduct.D) / (tempProduct.E / 100)
+              }
+              selectdata.finalPrice = tempProduct.D
+              selectdata.price = tempProduct.E
+              selectdata.multiplicity = tempProduct.F
+
+              this.selected_data[tempProduct.remain.id] = selectdata
             } else {
               this.error_product.push(tempProduct.A)
             }
           }
+
+          const data = {
+            filter: this.filter,
+            filterselected: this.filter_table,
+            selected: Object.keys(this.selected),
+            pageselected: this.page_selected,
+            page: this.page,
+            perpage: this.per_page
+          }
+          this.get_available_products_from_api(data).then((res) => {
+            this.kenostTableCheckedAllCheck()
+          })
           this.upload_product = true
         })
       }

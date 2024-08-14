@@ -22,7 +22,7 @@
               </div>
             </div>
             <TableCatalog :is_warehouses="true" @updateBasket="updateBasket" v-if="opt_products.total !== 0 && $route.params.warehouse_id && !$route.params.warehouse_cat_id" :items="opt_products"/>
-            <TableCatalog :is_warehouses="this.$route.params.warehouse_id ? true : false" @updateBasket="updateBasket" v-else-if="opt_products.total !== 0" :items="opt_products"/>
+            <TableCatalog @updateBasket="updateBasket" v-else-if="opt_products.total !== 0" :items="opt_products"/>
             <paginate
                 v-if="opt_products.total !== 0"
                 :page-count="pageCount"

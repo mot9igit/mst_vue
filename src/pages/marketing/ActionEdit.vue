@@ -9,9 +9,8 @@
           </div>
       </div>
       <div>
-
         <div>
-          <p class="kgraytext m-0" v-if="this.status">Статус: <span>{{this.status}}</span></p>
+          <p class="kgraytext m-0" v-if="this.status">Статус: <span :class="{ 'status-moderation': this.status === 'Модерация', 'status-fatal': this.status === 'Отказ', 'status-planned': this.status === 'Запланирована', 'status-active': this.status === 'Активна' }">{{this.status}}</span></p>
           <p class="kgraytext" v-if="this.moderator_comment != '' && this.moderator_comment">Комментарий от модератора: {{ this.moderator_comment }}</p>
         </div>
 
@@ -22,7 +21,15 @@
           <span v-if="this.validation.name.error" class="kenost-error-text">{{ this.validation.name.text }}</span>
         </div>
 
-        <div class="dart-form-group mb-4">
+        <div class="dart-form-group mb-0">
+          <span class="ktitle">Страница акции</span>
+          <div class="flex align-items-center">
+              <Checkbox v-model="this.create_page_action" inputId="create-page-action" name="create_page_action" value="true" />
+              <label for="create-page-action" class="ml-2 mb-0"> Создавать страницу акции </label>
+          </div>
+        </div>
+
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
           <div class="upload-banner">
             <div class="upload-banner__text">
               <span class="ktitle">Большой баннер</span>
@@ -36,7 +43,7 @@
           </div>
         </div>
 
-        <div class="dart-form-group mb-4">
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
           <div class="upload-banner">
             <div class="upload-banner__text">
               <span class="ktitle">Малый баннер</span>
@@ -49,31 +56,20 @@
           </div>
         </div>
 
-        <div class="dart-form-group mb-4">
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
           <div class="upload-banner">
             <div class="upload-banner__text">
               <span class="ktitle">Квадратный баннер</span>
               <span>Загрузить изображение нужно размером не менее 459х459, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
             </div>
-            <FileUpload class="kenost-upload-button" mode="basic" name="icon[]" :url="'/rest/file_upload.php?banner=icon'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+            <FileUpload class="kenost-upload-button" mode="basic" name="small[]" :url="'/rest/file_upload.php?banner=small'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
           </div>
           <div class="upload-banner__image">
-            <img :src="files?.icon?.original_href" v-if="files?.icon?.original_href">
+            <img :src="files?.small?.original_href" v-if="files?.small?.original_href">
           </div>
         </div>
 
-        <div class="dart-form-group mb-4">
-          <span class="ktitle">Условия</span>
-          <input v-model="form.conditions" type="text" name="conditions" placeholder="Укажите условия акции" class="dart-form-control" :class="{'kenost-error':this.validation.conditions.error}">
-          <span v-if="this.validation.conditions.error" class="kenost-error-text">{{ this.validation.conditions.text }}</span>
-        </div>
-
-        <div class="dart-form-group mb-4">
-          <span class="ktitle">Описание</span>
-          <input v-model="this.form.description" type="text" name="conditions" placeholder="Укажите описание акции" class="dart-form-control">
-        </div>
-
-        <div class="dart-form-group mb-4">
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
             <div class="rules-container">
                 <div class="rules-container__text">
                     <span class="ktitle">Правила акции</span>
@@ -87,6 +83,75 @@
             </div>
         </div>
 
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+          <span class="ktitle">Место размещение баннера/товара</span>
+          <MultiSelect v-model="this.place_action" :options="this.place" optionLabel="name" placeholder="Выберите один или несколько вариантов"
+             class="w-full" />
+        </div>
+
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+          <span class="ktitle">География показа</span>
+          <Dropdown v-model="this.geo_action" :options="this.geo" optionLabel="name" placeholder="Массовое действие" class="w-full md:w-14rem" />
+        </div>
+
+        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+          <span class="ktitle">Позиция в карусели</span>
+          <InputNumber
+            v-model="this.position"
+            inputId="horizontal-buttons"
+            :step="1"
+            min="0"
+            max="100"
+            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+          />
+        </div>
+
+        <div class="dart-form-group mb-4 mt-4">
+          <span class="ktitle">Условия</span>
+          <input v-model="form.conditions" type="text" name="conditions" placeholder="Укажите условия акции" class="dart-form-control" >
+        <!-- :class="{'kenost-error':this.validation.conditions.error}" -->
+          <!-- <span v-if="this.validation.conditions.error" class="kenost-error-text">{{ this.validation.conditions.text }}</span> -->
+        </div>
+
+        <div class="dart-form-group mb-4">
+          <span class="ktitle">Описание</span>
+          <!-- <Editor ref="editorRef" v-model="this.form.description" @load="updateEditorContent(this.form.description)" editorStyle="height: 320px" /> -->
+          <Editor
+            api-key="ctqgmxpl4dimvsnrt6lnhbyk2xb7eyrhvbbh9lch2kltngkh"
+            language_url='../../../src/locales/tiny/ru.js'
+            :language_load=true
+            v-model="this.form.description"
+            initial-value="<b>Подзаголовок акции</b>
+            <br>
+            <p><span style='text-decoration: underline'>Перечислить все выгодные условия:</span> скидки, подарки, бонусы, возможность выиграть приз и т.д.</p>
+            <p><span style='text-decoration: underline'>Выделить ключевые преимущества:</span> чем ваша акция лучше, чем у конкурентов?</p>
+            <p><span style='text-decoration: underline'>Указать, для кого она предназначена:</span> для всех, для определенной возрастной группы, для постоянных клиентов и т.д.</p>"
+            :init="{
+              plugins: [
+                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                'insertdatetime', 'media', 'table', 'help', 'wordcount'
+              ],
+              toolbar: 'undo redo | ' +
+              'bold italic underline backcolor | alignleft aligncenter ' +
+              'alignright alignjustify | bullist numlist outdent indent | ' +
+              'removeformat | help',
+              content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+              menu: {
+                file: { title: 'Файл', items: 'newdocument restoredraft | preview | importword exportpdf exportword | deleteallconversations' },
+                edit: { title: 'Редактировать', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace' },
+                view: { title: 'View', items: '' },
+                insert: { title: 'Вставить', items: 'image link media addcomment pageembed codesample inserttable | math | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime' },
+                format: { title: 'Форматирование', items: 'bold italic underline strikethrough superscript subscript | align lineheight | forecolor | language | removeformat' },
+                tools: { title: 'Tools', items: '' },
+                table: { title: 'Таблица', items: 'inserttable | cell row column | advtablesort | tableprops deletetable' },
+                help: { title: 'Help', items: '' }
+              }
+            }"
+          />
+          <!-- <input v-model="this.form.description" type="text" name="conditions" placeholder="Укажите описание акции" class="dart-form-control"> -->
+        </div>
+
         <div class="dart-form-group mb-4">
           <span class="ktitle">Сроки проведения</span>
           <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите даты" :manualInput="false" showIcon :class="{'kenost-error':this.validation.dates.error}"/>
@@ -97,9 +162,10 @@
           <span class="ktitle">Регион</span>
           <div class="flex align-items-center mb-3">
               <Checkbox v-model="this.region_all" inputId="region_all" name="region_all" value="1" />
-              <label for="region_all" class="ml-2"> Доступна для всех регионов </label>
+              <label for="region_all" class="ml-2 mb-0"> Доступна для всех регионов </label>
           </div>
-          <TreeSelect :class="{'kenost-error':this.validation.region.error}" v-if="this.region_all.length == 0" v-model="this.select_regions" :options="this.regions" selectionMode="checkbox" :placeholder="'Зависит от выбранного ценового предложения'" class="w-full"/>
+          <MultiSelect :class="{'kenost-error':this.validation.region.error}" v-if="this.region_all.length == 0" filter v-model="this.select_regions" display="chip" :options="this.regions_all" optionLabel="name" placeholder="Выберите регионы" class="w-full md:w-20rem kenost-multiselect" />
+          <!-- <TreeSelect :class="{'kenost-error':this.validation.region.error}" v-if="this.region_all.length == 0" v-model="this.select_regions" :options="this.regions" selectionMode="checkbox" :placeholder="'Зависит от выбранного ценового предложения'" class="w-full"/> -->
           <span v-if="this.validation.region.error" class="kenost-error-text">{{ this.validation.region.text }}</span>
         </div>
 
@@ -154,9 +220,9 @@
 
         <div class="dart-form-group picker-wrap">
           <!-- <span class="ktitle">Добавление товаров</span> -->
-          <span v-if="this.validation.selected.error" class="kenost-error-text">{{ this.validation.selected.text }}</span>
+          <!-- <span v-if="this.validation.selected.error" class="kenost-error-text">{{ this.validation.selected.text }}</span> -->
           <div class="PickList">
-            <div class="PickList__product" :class="{'kenost-error':this.validation.selected.error}">
+            <div class="PickList__product" >
               <b class="PickList__title">Доступные товары</b>
               <div class="PickList__filters">
                 <div class="form_input_group input_pl input-parent required">
@@ -284,7 +350,7 @@
                 </td>
                 <td>
                   {{this.selected_data[item.id] ? (Number(this.selected_data[item.id].finalPrice).toFixed(2)).toLocaleString('ru') : item.price.toLocaleString('ru')}} ₽
-                  <p class="table-kenost__settings" @click="settings(item)" >Настроить</p>
+                  <p class="table-kenost__settings" @click="settings(item)">Настроить</p>
                 </td>
                 <td>
                   <div class="kenost-basker-delete">
@@ -500,6 +566,8 @@ import RadioButton from 'primevue/radiobutton'
 import DropZone from 'dropzone-vue'
 import Dialog from 'primevue/dialog'
 import Dropdown from 'primevue/dropdown'
+import MultiSelect from 'primevue/multiselect'
+import Editor from '@tinymce/tinymce-vue'
 
 export default {
   name: 'ProfileSalesAdd',
@@ -517,6 +585,10 @@ export default {
       compatibilityPost: 0,
       availability: [],
       regions: this.getregions,
+      regions_all: [],
+      place_action: [],
+      geo_action: [],
+      position: 0,
       filter_table: {
         name: '',
         category: {}
@@ -529,16 +601,16 @@ export default {
         discountInterest: 0,
         multiplicity: 1
       },
-      select_regions: {},
+      select_regions: [],
       validation: {
         name: {
           error: false,
           text: 'Пожалуйста, заполните наименование!'
         },
-        conditions: {
-          error: false,
-          text: 'Пожалуйста, заполните условия!'
-        },
+        // conditions: {
+        //   error: false,
+        //   text: 'Пожалуйста, заполните условия!'
+        // },
         dates: {
           error: false,
           text: 'Пожалуйста, укажите даты проведения!'
@@ -552,11 +624,15 @@ export default {
           text: 'Пожалуйста, укажите регион!'
         }
       },
+      create_page_action: [],
       upload_product: false,
       region_all: [],
       opt_catalog_tree: [],
       files: {
         max: {
+          original_href: ''
+        },
+        small: {
           original_href: ''
         },
         min: {
@@ -617,6 +693,12 @@ export default {
       massAction: [
         { name: 'Скидка по формуле', key: 0 },
         { name: 'Тип цен', key: 1 }
+      ],
+      place: [
+      ],
+      geo: [
+        { name: 'Только в своём магазине', key: 0 },
+        { name: 'По географии акции', key: 1 }
       ]
     }
   },
@@ -629,7 +711,8 @@ export default {
       'opt_upload_products_file',
       'get_opt_catalog_tree_from_api',
       'opt_get_prices',
-      'opt_get_remain_prices'
+      'opt_get_remain_prices',
+      'get_sales_adv_pages_to_api'
     ]),
     paginate (obj) {
       this.page_selected = obj.page
@@ -650,6 +733,8 @@ export default {
             this.files.min = response.data.files[0]
           } else if (response.data.files[0].type_banner === 'icon') {
             this.files.icon = response.data.files[0]
+          } else if (response.data.files[0].type_banner === 'small') {
+            this.files.small = response.data.files[0]
           } else if (response.data.files[0].type_banner === 'file') {
             this.files.file = response.data.files[0]
           }
@@ -876,10 +961,35 @@ export default {
               product.typePrice = ''
               this.selected[tempProduct.remain.id] = product
               this.total_selected++
+
+              const selectdata = {}
+              if (tempProduct.E === 0 || tempProduct.E === null) {
+                selectdata.discountInterest = 100
+                selectdata.discountInRubles = '-'
+              } else {
+                selectdata.discountInRubles = tempProduct.E - tempProduct.D
+                selectdata.discountInterest = (tempProduct.E - tempProduct.D) / (tempProduct.E / 100)
+              }
+              selectdata.finalPrice = tempProduct.D
+              selectdata.price = tempProduct.E
+              selectdata.multiplicity = 1
+
+              this.selected_data[tempProduct.remain.id] = selectdata
             } else {
               this.error_product.push(tempProduct.A)
             }
           }
+          const data = {
+            filter: this.filter,
+            filterselected: this.filter_table,
+            selected: Object.keys(this.selected),
+            pageselected: this.page_selected,
+            page: this.page,
+            perpage: this.per_page
+          }
+          this.get_available_products_from_api(data).then((res) => {
+            this.kenostTableCheckedAllCheck()
+          })
           this.upload_product = true
           this.table_products_loading = false
         })
@@ -928,6 +1038,9 @@ export default {
         })
         this.total_selected++
       })
+
+      // console.log('this.selected', this.selected)
+      // console.log('selected_data', this.selected_data)
     },
     deleteSelect (id) {
       this.products.push(this.selected[id])
@@ -987,13 +1100,13 @@ export default {
         this.validation.name.error = false
       }
 
-      if (!this.form.conditions) {
-        this.validation.conditions.error = true
-        // eslint-disable-next-line no-unused-vars
-        stop = true
-      } else {
-        this.validation.conditions.error = false
-      }
+      // if (!this.form.conditions) {
+      //   this.validation.conditions.error = true
+      //   // eslint-disable-next-line no-unused-vars
+      //   stop = true
+      // } else {
+      //   this.validation.conditions.error = false
+      // }
 
       if (!this.form.dates) {
         this.validation.dates.error = true
@@ -1003,18 +1116,23 @@ export default {
         this.validation.dates.error = false
       }
 
-      if (this.total_selected === 0) {
-        this.validation.selected.error = true
-        stop = true
-      } else {
-        this.validation.selected.error = false
-      }
+      // if (this.total_selected === 0) {
+      //   this.validation.selected.error = true
+      //   stop = true
+      // } else {
+      //   this.validation.selected.error = false
+      // }
 
       if (this.region_all.length === 0 && Object.keys(this.select_regions).length === 0) {
         this.validation.region.error = true
         stop = true
       } else {
         this.validation.region.error = false
+      }
+
+      if (this.form.description.length > 2040) {
+        this.$toast.add({ severity: 'info', summary: 'Ошибка!', detail: `Описание должно содержать не больше 2040 символов, у вас ${this.form.description.length}`, life: 3000 })
+        stop = true
       }
 
       if (!stop) {
@@ -1039,6 +1157,10 @@ export default {
               files: this.files,
               regins: this.select_regions,
               region_all: reginsall,
+              page_places: this.place_action.map(x => x.code),
+              page_geo: this.geo_action.key,
+              page_place_position: this.position,
+              page_create: this.create_page_action[0] === 'true',
               action_id: router.currentRoute._value.params.action_id
             })
               .then((result) => {
@@ -1061,6 +1183,10 @@ export default {
               products_data: this.selected_data,
               files: this.files,
               regins: this.select_regions,
+              page_places: this.place_action.map(x => x.code),
+              page_geo: this.geo_action.key,
+              page_place_position: this.position,
+              page_create: this.create_page_action[0] === 'true',
               region_all: reginsall
             })
               .then((result) => {
@@ -1075,6 +1201,18 @@ export default {
         this.loading = true
       }
     }
+    // updateEditorContent (content) {
+    //   if (this.$refs.editorRef.quill && content) {
+    //     console.log('content', content)
+    //     console.log('this.$refs.editorRef.quill', this.$refs.editorRef.quill)
+    //     const editor = this.$refs.editorRef.quill
+    //     // console.log(editor.setContents('rer'))
+    //     const test = editor.setContents(editor.clipboard.convert({
+    //       html: content
+    //     }))
+    //     console.log(test)
+    //   }
+    // }
   },
   mounted () {
     this.get_available_products_from_api({ filter: '', selected: ['0'], page: this.page }).then((res) => {
@@ -1084,12 +1222,22 @@ export default {
     this.get_regions_from_api().then(
       this.regions = this.getregions
     )
+    this.get_regions_from_api().then(() => {
+      this.regions = this.getregions
+      this.regions_all = this.regions.map(function (el) {
+        return { name: el.label, code: el.key }
+      })
+    })
     if (router.currentRoute._value.params.action_id) {
       this.get_sales_to_api({ id: router.currentRoute._value.params.sales_id, actionid: router.currentRoute._value.params.action_id })
     }
     this.get_opt_catalog_tree_from_api()
     this.opt_get_prices({
       action: 'get/type/prices',
+      store_id: router.currentRoute._value.params.id
+    })
+    this.get_sales_adv_pages_to_api({
+      action: 'get/adv/pages',
       store_id: router.currentRoute._value.params.id
     })
   },
@@ -1104,7 +1252,9 @@ export default {
     RadioButton,
     DropZone,
     Dialog,
-    Dropdown
+    Dropdown,
+    MultiSelect,
+    Editor
   },
   computed: {
     ...mapGetters([
@@ -1115,7 +1265,8 @@ export default {
       'optproductsfile',
       'optcatalogtree',
       'oprpricesremain',
-      'oprprices'
+      'oprprices',
+      'adv_pages'
     ]),
     pagesCountSelect () {
       let pages = Math.round(this.total_selected / this.per_page)
@@ -1146,6 +1297,9 @@ export default {
       this.total_products = newVal.total
       this.total_selected = newVal.total_selected
     },
+    adv_pages: function (newVal, oldVal) {
+      this.place = newVal
+    },
     optcatalogtree: function (newVal, oldVal) {
       this.opt_catalog_tree = newVal
     },
@@ -1153,12 +1307,10 @@ export default {
       this.regions = this.getregions
     },
     oprprices: function (newVal, oldVal) {
-      console.log(newVal)
       this.typePrice = []
       for (let i = 0; i < newVal.length; i++) {
         this.typePrice.push({ key: newVal[i].guid, name: newVal[i].name })
       }
-      console.log(this.typePrice)
     },
     actions: async function (newVal, oldVal) {
       this.form.name = newVal.name
@@ -1170,6 +1322,9 @@ export default {
       }
       if (newVal.icon) {
         this.files.icon.original_href = this.site_url_prefix + newVal.icon
+      }
+      if (newVal.image_small) {
+        this.files.small.original_href = this.site_url_prefix + newVal.image_small
       }
       if (newVal.rules_file) {
         this.files.file.original_href = this.site_url_prefix + newVal.rules_file
@@ -1189,16 +1344,27 @@ export default {
       this.status = newVal.status
       this.moderator_comment = newVal.moderator_comment
 
+      this.place_action = newVal.page_places
+      this.geo_action = this.geo[newVal.page_geo]
+      this.position = newVal.page_place_position
+
+      if (newVal.page_create) {
+        this.create_page_action = ['true']
+      }
+
       if (newVal.global) {
         this.region_all = ['1']
       } else {
-        this.select_regions = newVal.regions_and_sities
+        this.select_regions = newVal.regions
+        // this.select_regions = newVal.regions_and_sities
       }
 
-      const data = { filter: this.filter, selected: Object.keys(this.selected), pageselected: this.page_selected, page: this.page, perpage: this.per_page }
-      this.get_available_products_from_api(data).then((res) => {
-        this.kenostTableCheckedAllCheck()
-      })
+      setTimeout(() => {
+        const data = { filter: this.filter, selected: Object.keys(this.selected), pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+        this.get_available_products_from_api(data).then((res) => {
+          this.kenostTableCheckedAllCheck()
+        })
+      }, 1000)
     }
   }
 }
@@ -1206,8 +1372,107 @@ export default {
 
 <style lang="scss">
 
+.tox-statusbar__branding{
+  display: none;
+}
+
+.kenost-upload-xlsx{
+    &__file{
+      border-radius: 5px;
+      border: 1px solid #E2E2E2;
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      gap: 20px;
+
+      img{
+        height: 45px !important;
+      }
+
+      a{
+        margin: 0;
+        font-size: 14px;
+        text-decoration: none;
+      }
+    }
+
+    &__info{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 20px;
+
+      p{
+        margin: 0;
+        color: #A0A0A0;
+        font-size: 12px;
+      }
+    }
+  }
+
+  .kenost-all-table-activity{
+    display: flex;
+    gap: 8px;
+    margin-top: 10px
+  }
+
+  .kenost-list-error{
+    table{
+      width: 100%;
+
+      th{
+        background-color: #F8F7F5;
+        padding: 16px;
+        color: #5E5E5E;
+        font-weight: 400;
+        font-size: 14px;
+      }
+
+      td{
+        padding: 16px;
+        color: #282828;
+        font-weight: 400;
+        font-size: 14px;
+      }
+    }
+  }
+
+  .status-moderation{
+    color: #20c8fb;
+  }
+
+  .status-fatal{
+    color: #FB203A;
+  }
+
+  .status-planned{
+    color: #fbb620;
+  }
+
+  .status-active{
+    color: #54e979;
+  }
+
+  .kenost-action-page{
+    padding-left: 20px;
+    border-left: 2px solid #E2E2E2;
+    margin-left: 10px;
+    margin-bottom: 0 !important;
+    // padding-top: 40px;
+  }
+
   .table-b2c{
     width: 1200px;
+  }
+
+  .ql-color,
+  .ql-background,
+  .ql-font{
+    display: none !important;
+  }
+
+  .ql-header{
+    display: none !important;
   }
 
   .PickList__products.selected{
