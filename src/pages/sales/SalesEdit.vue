@@ -14,6 +14,20 @@
                 <input v-model="this.form.name" type="text" name="name" placeholder="Укажите название программы" class="dart-form-control mt-2">
             </div>
 
+            <div class="dart-form-group mt-2 mb-4">
+              <span class="ktitle">Склад</span>
+              <!-- <label for="name">Введите наименование, которое будет отражать смысл вашей акции</label> -->
+              <!-- <input v-model="form.name" type="text" name="name" placeholder="Укажите склад акции" class="dart-form-control"> -->
+              <Dropdown
+                @change="updateProducts"
+                v-model="this.form.store_id"
+                :options="this.stores"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Выберите склад"
+              />
+            </div>
+
             <div class="dart-form-group mb-0">
               <span class="ktitle">Реклама</span>
               <div class="flex align-items-center">
@@ -254,6 +268,84 @@
               </div>
             </div>
 
+            <div class="dart-form-group" v-if="this.form.condition.key == 2 || this.form.condition.key == 5">
+              <span class="ktitle">Выбор подарков</span>
+            </div>
+
+            <div v-if="(this.form.condition.key == 2 || this.form.condition.key == 5) && this.form.store_id" class="PickList mt-1 mb-3 PickList__mini">
+                  <div class="PickList__product" :style="{ width: '40%' }">
+                      <b class="PickList__title">Доступные товары</b>
+                      <div class="PickList__filters">
+                      <div class="form_input_group input_pl input-parent required">
+                          <input
+                          type="text"
+                          id="filter_name"
+                          placeholder="Введите артикул или название"
+                          class="dart-form-control"
+                          v-model="filterGift.name"
+                          @input="setFilterGift('filter')"
+                          />
+                          <label for="product_filter_name" class="s-complex-input__label">Введите артикул или название</label>
+                          <div class="form_input_group__icon">
+                              <i class="d_icon d_icon-search"></i>
+                          </div>
+                      </div>
+                      <div class="dart-form-group">
+                          <TreeSelect v-model="this.filterGift.category" :options="this.opt_catalog_tree" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilterGift"/>
+                      </div>
+                      </div>
+                      <div class="PickList__products">
+                      <div class="PickList__el" v-for="item in this.productsGift" :key="item.id">
+                          <img :src="item.image" alt="">
+                          <div class="PickList__product-info">
+                            <div class="PickList__name">{{item.name}}</div>
+                            <div class="PickList__article">{{item.article}}</div>
+                            <div class="PickList__price">{{Number(item.price).toFixed(0)}} ₽</div>
+                          </div>
+                          <div @click="selectGift(item.id)" class="PickList__select"><i class="pi pi-angle-right"></i></div>
+                      </div>
+                      <paginate
+                          :page-count="pagesCountGift"
+                          :click-handler="pagClickCallbackGift"
+                          :prev-text="'Пред'"
+                          :next-text="'След'"
+                          :container-class="'pagination justify-content-center'"
+                          :initialPage="this.pageGift"
+                          :forcePage="this.pageGift"
+                      >
+                      </paginate>
+                      </div>
+                  </div>
+
+                  <div class="PickList__selected" :style="{ width: '40%' }">
+                    <div class="PickList__title mb-4">
+                      <b>Выбранные подарки</b>
+                      <b style="margin-right: 63px;">Количество</b>
+                    </div>
+                    <div class="PickList__products PickList__products-selected">
+                    <div class="PickList__el" v-for="(item) in this.selectedGift" :key="item.id">
+                        <img :src="item.image" alt="">
+                        <div class="PickList__info">
+                          <div class="PickList__product-info off">
+                            <div class="PickList__name">{{item.name}}</div>
+                            <div class="PickList__article">{{item.article}}</div>
+                            <div class="PickList__price">{{Number(item.price).toFixed(0)}} ₽</div>
+                          </div>
+                          <InputNumber
+                            style="width: 100px;"
+                            v-model="item.multiplicity"
+                            inputId="horizontal-buttons"
+                            :step="1"
+                            min="0"
+                            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+                          />
+                        </div>
+                        <div @click="deleteSelectGift(item.id)" class="PickList__select"><i class="pi pi-times"></i></div>
+                    </div>
+                    </div>
+                  </div>
+                </div>
+
             <div class="dart-form-group mb-4">
               <div class="flex align-items-center">
                 <Checkbox v-model="this.form.not_sale_client" inputId="not_sale_client-1" name="not_sale_client-1" value="true" />
@@ -261,7 +353,7 @@
               </div>
             </div>
 
-            <div class="dart-form-group picker-wrap">
+            <div class="dart-form-group picker-wrap" v-if="this.form.store_id">
                 <span class="ktitle">Добавление товаров</span>
                 <div class="flex align-items-center mt-2">
                   <RadioButton v-model="this.form.addProductType" inputId="addProductType-1" name="addProductType" value="1"/>
@@ -314,7 +406,7 @@
                   <a :href="site_url_prefix + '/assets/files/files/examples/ExampleLoadingProducts.xlsx'" class="kenost-link-blue mt-2">Скачать шаблон файла</a>
                 </div>
 
-                <div v-if="this.form.addProductType == '1'" class="PickList mt-3">
+                <div v-if="this.form.addProductType == '1' && this.form.store_id" class="PickList mt-3">
                     <div class="PickList__product" :style="{ width: '40%' }">
                         <b class="PickList__title">Доступные товары</b>
                         <div class="PickList__filters">
@@ -446,7 +538,7 @@
                     </div>
                 </div>
 
-                <div v-if="this.form.addProductType != '3'" class="table-kenost mt-4">
+                <div v-if="this.form.addProductType != '3' && this.form.store_id" class="table-kenost mt-4">
                   <p class="table-kenost__title">Таблица добавленных товаров</p>
                   <div class="table-kenost__filters">
                     <div class="table-kenost__filters-left">
@@ -544,7 +636,7 @@
                   </div>
                 </div>
 
-                <div class="kenost-all-table-activity" v-if="this.form.addProductType == '1' || this.form.addProductType == '2'">
+                <div class="kenost-all-table-activity" v-if="(this.form.addProductType == '1' || this.form.addProductType == '2') && this.form.store_id">
                   <div class="kenost-wiget">
                     <p>Массовое действие</p>
                     <Dropdown v-model="this.kenostActivityAll.type" :options="this.massAction" optionLabel="name" placeholder="Массовое действие" class="w-full md:w-14rem" />
@@ -884,8 +976,13 @@ export default {
   data () {
     return {
       page: 1,
+      pageGift: 1,
       loading: true,
       filter: {
+        name: '',
+        category: {}
+      },
+      filterGift: {
         name: '',
         category: {}
       },
@@ -902,16 +999,20 @@ export default {
       per_complects: 25,
       filter_complects: '',
       complects: [],
+      stores: [],
       selected_complects: {},
       postponement_period: 0,
       selected: {},
+      selectedGift: {},
       selected_data: {},
       selected_visible: {},
       total_selected: -1,
       kenost_table_all: [],
       kenost_table: [],
       products: [],
+      productsGift: [],
       total_products: 0,
+      total_gift_products: 0,
       saleValue: 0,
       per_page: 25,
       filter_organizations: {
@@ -946,6 +1047,7 @@ export default {
         limitations: '1',
         limitationValue: 0,
         addProductType: '1',
+        store_id: '',
         delay: [
           {
             percent: 100,
@@ -1022,6 +1124,7 @@ export default {
         { name: 'Скидка без условий', key: 0 },
         { name: 'Купи Х товаров по цене Y', key: 1 },
         { name: 'Получи подарок при покупке Х товаров', key: 2 },
+        // { name: 'Получи подарок при покупке на Х рублей', key: 5 },
         { name: 'Купи на Х рублей - получи Y скидку на выбранный товар', key: 3 },
         { name: 'Купи на Х рублей - получи скидку на Y %', key: 4 }
       ],
@@ -1060,7 +1163,8 @@ export default {
       'get_all_sales_to_api',
       'opt_get_prices',
       'opt_get_remain_prices',
-      'get_opt_catalog_tree_from_api'
+      'get_opt_catalog_tree_from_api',
+      'org_get_stores_from_api'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -1078,6 +1182,39 @@ export default {
         }
       }
       this.$toast.add({ severity: 'info', summary: 'Файлы загружены', detail: 'Файл был успешно загружен', life: 3000 })
+    },
+    updateProducts () {
+      const data = {
+        storeid: this.form.store_id,
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: Object.keys(this.selected),
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
+
+      this.selected = {}
+      this.selected_data = {}
+      this.selected_visible = {}
+      this.products = []
+
+      this.get_available_products_from_api(data).then(
+        this.kenostTableCheckedAllCheck()
+      )
+
+      const dataGift = {
+        storeid: this.form.store_id,
+        filter: this.filterGift,
+        filterselected: this.filter_table,
+        selected: Object.keys(this.selected),
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page,
+        type: 'gift'
+      }
+
+      this.get_available_products_from_api(dataGift).then()
     },
     delayUpdate () {
       this.delayPercentSum = 0
@@ -1154,6 +1291,7 @@ export default {
           }
 
           const data = {
+            storeid: this.form.store_id,
             filter: this.filter,
             filterselected: this.filter_table,
             selected: Object.keys(this.selected),
@@ -1232,6 +1370,7 @@ export default {
       this.page_selected = 1
       this.page = 1
       const data = {
+        storeid: this.form.store_id,
         filter: this.filter,
         filterselected: this.filter_table,
         pageselected: this.page_selected,
@@ -1243,8 +1382,26 @@ export default {
         this.kenostTableCheckedAllCheck()
       })
     },
+
+    setFilterGift () {
+      this.pageGift = 1
+      const data = {
+        storeid: this.form.store_id,
+        filter: this.filterGift,
+        filterselected: this.filter_table,
+        pageselected: this.page_selected,
+        page: this.pageGift,
+        perpage: this.per_page,
+        selected: Object.keys(this.selectedGift),
+        type: 'gift'
+      }
+      this.get_available_products_from_api(data).then((res) => {
+        this.kenostTableCheckedAllCheck()
+      })
+    },
     setAllProducts (is) {
       const data = {
+        storeid: this.form.store_id,
         filter: this.filter,
         filterselected: this.filter_table,
         pageselected: this.page_selected,
@@ -1271,104 +1428,145 @@ export default {
       this.opt_get_complects(data)
     },
     formSubmit (event) {
-      this.$load(async () => {
-        if (router.currentRoute._value.params.sales_id) {
-          await this.set_sales_to_api({
-            action: 'set',
-            type: 'b2b',
-            id: router.currentRoute._value.params.id,
-            name: this.form.name,
-            files: this.files,
-            description: this.form.description,
-            award: this.form.award,
-            compatibilityDiscount: this.form.compatibilityDiscount,
-            compatibilityPost: this.form.compatibilityPost,
-            dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
-            shipment_type: this.form.typeShipment,
-            shipment_date: this.form.dateShipment,
-            payer: this.form.paymentDelivery.key,
-            delivery_payment_terms: this.form.conditionPaymentDelivery.key,
-            delivery_payment_value: this.form.conditionPaymentDeliveryValue,
-            delay: this.postponement_period,
-            delay_graph: this.form.delay,
-            delay_condition: this.form.postponementConditions.key,
-            delay_condition_value: this.form.postponementConditionsValue,
-            condition_type: this.form.condition.key,
-            condition_min_sum: this.form.conditionMinSum,
-            condition_SKU: this.form.conditionMinCount,
-            participants_type: this.form.participantsType,
-            products: Object.keys(this.selected),
-            products_data: this.selected_data,
-            regions_select: this.regions_select,
-            organizations: this.all_organizations_selected,
-            method_adding_products: this.form.addProductType,
-            available_stores: this.form.available_stores[0] === 'true',
-            available_vendors: this.form.available_vendors[0] === 'true',
-            available_opt: this.form.available_opt[0] === 'true',
-            complects: this.selected_complects,
-            action_id: router.currentRoute._value.params.sales_id,
-            big_sale_actions: this.form.bigDiscount,
-            not_sale_client: this.form.not_sale_client[0] === 'true',
-            limit_sum: this.form.limitationValue,
-            limit_type: this.form.limitations,
-            actionLast: this.form.actionLast[0] === 'true'
-          })
-            .then((result) => {
-              this.loading = false
-              router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
-            })
-            .catch((result) => {
-              // console.log(result)
-            })
-        } else {
-          await this.set_sales_to_api({
-            action: 'set',
-            type: 'b2b',
-            id: router.currentRoute._value.params.id,
-            name: this.form.name,
-            files: this.files,
-            description: this.form.description,
-            award: this.form.award,
-            compatibilityDiscount: this.form.compatibilityDiscount,
-            compatibilityPost: this.form.compatibilityPost,
-            dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
-            shipment_type: this.form.typeShipment,
-            shipment_date: this.form.dateShipment,
-            payer: this.form.paymentDelivery.key,
-            delivery_payment_terms: this.form.conditionPaymentDelivery.key,
-            delivery_payment_value: this.form.conditionPaymentDeliveryValue,
-            delay: this.postponement_period,
-            delay_graph: this.form.delay,
-            delay_condition: this.form.postponementConditions.key,
-            delay_condition_value: this.form.postponementConditionsValue,
-            condition_type: this.form.condition.key,
-            condition_min_sum: this.form.conditionMinSum,
-            condition_SKU: this.form.conditionMinCount,
-            participants_type: this.form.participantsType,
-            products: Object.keys(this.selected),
-            products_data: this.selected_data,
-            regions_select: this.regions_select,
-            organizations: this.all_organizations_selected,
-            method_adding_products: this.form.addProductType,
-            available_stores: this.form.available_stores[0] === 'true',
-            available_vendors: this.form.available_vendors[0] === 'true',
-            available_opt: this.form.available_opt[0] === 'true',
-            complects: this.selected_complects,
-            big_sale_actions: this.form.bigDiscount,
-            not_sale_client: this.form.not_sale_client[0] === 'true',
-            limit_sum: this.form.limitationValue,
-            limit_type: this.form.limitations,
-            actionLast: this.form.actionLast[0] === 'true'
-          })
-            .then((result) => {
-              this.loading = false
-              router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
-            })
-            .catch((result) => {
-              // console.log(result)
-            })
-        }
+      console.log({
+        action: 'set',
+        type: 'b2b',
+        id: router.currentRoute._value.params.id,
+        name: this.form.name,
+        files: this.files,
+        description: this.form.description,
+        award: this.form.award,
+        compatibilityDiscount: this.form.compatibilityDiscount,
+        compatibilityPost: this.form.compatibilityPost,
+        dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
+        shipment_type: this.form.typeShipment,
+        shipment_date: this.form.dateShipment,
+        payer: this.form.paymentDelivery.key,
+        delivery_payment_terms: this.form.conditionPaymentDelivery.key,
+        delivery_payment_value: this.form.conditionPaymentDeliveryValue,
+        delay: this.postponement_period,
+        delay_graph: this.form.delay,
+        delay_condition: this.form.postponementConditions.key,
+        delay_condition_value: this.form.postponementConditionsValue,
+        condition_type: this.form.condition.key,
+        condition_min_sum: this.form.conditionMinSum,
+        condition_SKU: this.form.conditionMinCount,
+        participants_type: this.form.participantsType,
+        products: Object.keys(this.selected),
+        products_data: this.selected_data,
+        regions_select: this.regions_select,
+        organizations: this.all_organizations_selected,
+        method_adding_products: this.form.addProductType,
+        available_stores: this.form.available_stores[0] === 'true',
+        available_vendors: this.form.available_vendors[0] === 'true',
+        available_opt: this.form.available_opt[0] === 'true',
+        complects: this.selected_complects,
+        action_id: router.currentRoute._value.params.sales_id,
+        big_sale_actions: this.form.bigDiscount,
+        not_sale_client: this.form.not_sale_client[0] === 'true',
+        limit_sum: this.form.limitationValue,
+        limit_type: this.form.limitations,
+        actionLast: this.form.actionLast[0] === 'true',
+        gifts: this.selectGift
       })
+      // this.$load(async () => {
+      //   if (router.currentRoute._value.params.sales_id) {
+      //     await this.set_sales_to_api({
+      //       action: 'set',
+      //       type: 'b2b',
+      //       id: router.currentRoute._value.params.id,
+      //       name: this.form.name,
+      //       files: this.files,
+      //       description: this.form.description,
+      //       award: this.form.award,
+      //       compatibilityDiscount: this.form.compatibilityDiscount,
+      //       compatibilityPost: this.form.compatibilityPost,
+      //       dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
+      //       shipment_type: this.form.typeShipment,
+      //       shipment_date: this.form.dateShipment,
+      //       payer: this.form.paymentDelivery.key,
+      //       delivery_payment_terms: this.form.conditionPaymentDelivery.key,
+      //       delivery_payment_value: this.form.conditionPaymentDeliveryValue,
+      //       delay: this.postponement_period,
+      //       delay_graph: this.form.delay,
+      //       delay_condition: this.form.postponementConditions.key,
+      //       delay_condition_value: this.form.postponementConditionsValue,
+      //       condition_type: this.form.condition.key,
+      //       condition_min_sum: this.form.conditionMinSum,
+      //       condition_SKU: this.form.conditionMinCount,
+      //       participants_type: this.form.participantsType,
+      //       products: Object.keys(this.selected),
+      //       products_data: this.selected_data,
+      //       regions_select: this.regions_select,
+      //       organizations: this.all_organizations_selected,
+      //       method_adding_products: this.form.addProductType,
+      //       available_stores: this.form.available_stores[0] === 'true',
+      //       available_vendors: this.form.available_vendors[0] === 'true',
+      //       available_opt: this.form.available_opt[0] === 'true',
+      //       complects: this.selected_complects,
+      //       action_id: router.currentRoute._value.params.sales_id,
+      //       big_sale_actions: this.form.bigDiscount,
+      //       not_sale_client: this.form.not_sale_client[0] === 'true',
+      //       limit_sum: this.form.limitationValue,
+      //       limit_type: this.form.limitations,
+      //       actionLast: this.form.actionLast[0] === 'true'
+      //     })
+      //       .then((result) => {
+      //         this.loading = false
+      //         router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
+      //       })
+      //       .catch((result) => {
+      //         // console.log(result)
+      //       })
+      //   } else {
+      //     await this.set_sales_to_api({
+      //       action: 'set',
+      //       type: 'b2b',
+      //       id: router.currentRoute._value.params.id,
+      //       name: this.form.name,
+      //       files: this.files,
+      //       description: this.form.description,
+      //       award: this.form.award,
+      //       compatibilityDiscount: this.form.compatibilityDiscount,
+      //       compatibilityPost: this.form.compatibilityPost,
+      //       dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
+      //       shipment_type: this.form.typeShipment,
+      //       shipment_date: this.form.dateShipment,
+      //       payer: this.form.paymentDelivery.key,
+      //       delivery_payment_terms: this.form.conditionPaymentDelivery.key,
+      //       delivery_payment_value: this.form.conditionPaymentDeliveryValue,
+      //       delay: this.postponement_period,
+      //       delay_graph: this.form.delay,
+      //       delay_condition: this.form.postponementConditions.key,
+      //       delay_condition_value: this.form.postponementConditionsValue,
+      //       condition_type: this.form.condition.key,
+      //       condition_min_sum: this.form.conditionMinSum,
+      //       condition_SKU: this.form.conditionMinCount,
+      //       participants_type: this.form.participantsType,
+      //       products: Object.keys(this.selected),
+      //       products_data: this.selected_data,
+      //       regions_select: this.regions_select,
+      //       organizations: this.all_organizations_selected,
+      //       method_adding_products: this.form.addProductType,
+      //       available_stores: this.form.available_stores[0] === 'true',
+      //       available_vendors: this.form.available_vendors[0] === 'true',
+      //       available_opt: this.form.available_opt[0] === 'true',
+      //       complects: this.selected_complects,
+      //       big_sale_actions: this.form.bigDiscount,
+      //       not_sale_client: this.form.not_sale_client[0] === 'true',
+      //       limit_sum: this.form.limitationValue,
+      //       limit_type: this.form.limitations,
+      //       actionLast: this.form.actionLast[0] === 'true'
+      //     })
+      //       .then((result) => {
+      //         this.loading = false
+      //         router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
+      //       })
+      //       .catch((result) => {
+      //         // console.log(result)
+      //       })
+      //   }
+      // })
       this.loading = true
       // }
     },
@@ -1432,6 +1630,7 @@ export default {
         this.selected[product.id] = product
         this.products = this.products.filter((r) => r.id !== id)
         const data = {
+          storeid: this.form.store_id,
           filter: this.filter,
           filterselected: this.filter_table,
           selected: Object.keys(this.selected),
@@ -1443,6 +1642,60 @@ export default {
           this.kenostTableCheckedAllCheck()
         })
         this.total_selected++
+      })
+    },
+    selectGift (id) {
+      const product = this.productsGift.find(r => r.id === id)
+      // product.discountInterest = 0
+      // product.discountInRubles = 0
+      product.multiplicity = 1
+      // product.finalPrice = Number(product.price)
+      // product.typeFormul = {}
+      // product.typePrice = ''
+
+      this.selectedGift[product.id] = product
+      this.productsGift = this.productsGift.filter((r) => r.id !== id)
+      const data = {
+        storeid: this.form.store_id,
+        filter: this.filterGift,
+        filterselected: this.filter_table,
+        selected: Object.keys(this.selectedGift),
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page,
+        type: 'gift'
+      }
+      this.get_available_products_from_api(data).then((res) => {
+        this.kenostTableCheckedAllCheck()
+      })
+    },
+    deleteSelectGift (id) {
+      this.productsGift.push(this.selectedGift[id])
+
+      // eslint-disable-next-line camelcase
+      const new_selected = {}
+
+      for (let i = 0; i < Object.keys(this.selectedGift).length; i++) {
+        if (this.selectedGift[Object.keys(this.selectedGift)[i]].id !== id) {
+          new_selected[Object.keys(this.selectedGift)[i]] = this.selectedGift[Object.keys(this.selectedGift)[i]]
+        }
+      }
+
+      // eslint-disable-next-line camelcase
+      this.selectedGift = new_selected
+
+      // this.selected = this.selected.filter((r) => r.id !== id)
+      const data = {
+        storeid: this.form.store_id,
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: Object.keys(this.selected),
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
+      this.get_available_products_from_api(data).then((res) => {
+        this.kenostTableCheckedAllCheck()
       })
     },
     deleteSelect (id) {
@@ -1462,6 +1715,7 @@ export default {
 
       // this.selected = this.selected.filter((r) => r.id !== id)
       const data = {
+        storeid: this.form.store_id,
         filter: this.filter,
         filterselected: this.filter_table,
         selected: Object.keys(this.selected),
@@ -1502,6 +1756,7 @@ export default {
     pagClickCallback (pageNum) {
       this.page = pageNum
       const data = {
+        storeid: this.form.store_id,
         filter: this.filter,
         filterselected: this.filter_table,
         selected: Object.keys(this.selected),
@@ -1513,9 +1768,26 @@ export default {
         this.kenostTableCheckedAllCheck()
       })
     },
+    pagClickCallbackGift (pageNum) {
+      this.pageGift = pageNum
+      const data = {
+        storeid: this.form.store_id,
+        filter: this.filterGift,
+        filterselected: this.filter_table,
+        selected: Object.keys(this.selectedGift),
+        pageselected: this.page_selected,
+        page: this.pageGift,
+        perpage: this.per_page,
+        type: 'gift'
+      }
+      this.get_available_products_from_api(data).then((res) => {
+        this.kenostTableCheckedAllCheck()
+      })
+    },
     pagClickCallbackSelect (pageNum) {
       this.page_selected = pageNum
       const data = {
+        storeid: this.form.store_id,
         filter: this.filter,
         filterselected: this.filter_table,
         selected: Object.keys(this.selected),
@@ -1636,9 +1908,11 @@ export default {
     }
   },
   mounted () {
-    this.get_available_products_from_api({ filter: '', selected: ['0'], page: this.page }).then(
-      this.products = this.available_products.products
-    )
+    this.get_available_products_from_api({ storeid: this.form.store_id, filter: '', selected: ['0'], page: this.page }).then((res) => {
+      if (this.available_products) {
+        this.products = this.available_products?.products
+      }
+    })
     const data = { filter: this.filter_organizations }
     this.get_all_organizations_from_api(data).then(
       this.all_organizations = this.allorganizations
@@ -1668,6 +1942,10 @@ export default {
       store_id: router.currentRoute._value.params.id
     })
     this.get_opt_catalog_tree_from_api()
+    this.org_get_stores_from_api({
+      action: 'get/stores',
+      org_id: this.$route.params.id
+    })
   },
   components: {
     FileUpload,
@@ -1695,7 +1973,8 @@ export default {
       'allactions',
       'oprprices',
       'oprpricesremain',
-      'optcatalogtree'
+      'optcatalogtree',
+      'org_stores'
     ]),
     pagesCountSelect () {
       let pages = Math.round(this.total_selected / this.per_page)
@@ -1710,20 +1989,44 @@ export default {
         pages = 1
       }
       return pages
+    },
+    pagesCountGift () {
+      let pages = Math.round(this.total_gift_products / this.per_page)
+      if (pages === 0) {
+        pages = 1
+      }
+      return pages
     }
   },
   watch: {
+    org_stores: function (newVal, oldVal) {
+      this.stores = []
+      for (let i = 0; i < newVal.items.length; i++) {
+        this.stores.push({ label: newVal.items[i].name, value: newVal.items[i].store_id })
+      }
+    },
     available_products: function (newVal, oldVal) {
-      this.products = newVal.products
-      // this.selected = newVal.selected
-      if (newVal.selected) {
-        this.selected = newVal.selected
+      if (newVal) {
+        if (newVal.type === 'gift') {
+          this.productsGift = newVal.products
+          // this.selected = newVal.selected
+          if (newVal.selected) {
+            this.selectedGift = newVal.selected
+          }
+          this.total_gift_products = newVal.total
+        } else {
+          this.products = newVal.products
+          // this.selected = newVal.selected
+          if (newVal.selected) {
+            this.selected = newVal.selected
+          }
+          if (newVal.visible) {
+            this.selected_visible = newVal.visible
+          }
+          this.total_products = newVal.total
+          this.total_selected = newVal.total_selected
+        }
       }
-      if (newVal.visible) {
-        this.selected_visible = newVal.visible
-      }
-      this.total_products = newVal.total
-      this.total_selected = newVal.total_selected
     },
     allorganizations: function (newVal, oldVal) {
       this.all_organizations = newVal
@@ -1844,6 +2147,7 @@ export default {
         )
 
         const data = {
+          storeid: this.form.store_id,
           filter: this.filter,
           filterselected: this.filter_table,
           selected: Object.keys(this.selected),
@@ -1870,6 +2174,17 @@ export default {
 }
 </script>
 <style lang="scss">
+
+  .PickList__mini{
+    .PickList__products{
+      height: 250px;
+    }
+
+    .PickList__products-selected {
+      height: 313px !important;
+    }
+  }
+
   .field-desc{
     display: block;
     margin-bottom: 5px;
