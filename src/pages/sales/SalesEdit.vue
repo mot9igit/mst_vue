@@ -99,47 +99,68 @@
 
             <div class="dart-form-group mb-3">
                 <span class="ktitle">Совместимость скидок</span>
+                <span class="field-desc">Выберите совместимость скидок. При выборе совместимости, Вам будет предложено выбрать режим совместимости.</span>
                 <div class="flex align-items-center mt-3">
                   <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-1" name="compatibilityDiscount" value="1"/>
-                  <label for="compatibilityDiscount-1" class="ml-2 radioLabel">Совместим со всеми акциями</label>
+                  <label for="compatibilityDiscount-1" class="ml-2 radioLabel">Совместима со всеми акциями</label>
                 </div>
                 <div class="flex align-items-center mt-3">
-                <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-2" name="compatibilityDiscount" value="2"/>
-                <label for="compatibilityDiscount-2" class="ml-2 radioLabel">Не совместим со всеми акциями</label>
+                  <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-2" name="compatibilityDiscount" value="2"/>
+                  <label for="compatibilityDiscount-2" class="ml-2 radioLabel">Не совместима со всеми акциями</label>
                 </div>
                 <div class="flex align-items-center mt-3">
-                <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-3" name="compatibilityDiscount" value="3"/>
-                <label for="compatibilityDiscount-3" class="ml-2 radioLabel">Применяется большая скидка</label>
-                </div>
+                  <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-3" name="compatibilityDiscount" value="3"/>
+                  <label for="compatibilityDiscount-3" class="ml-2 radioLabel">Не совместима с выбранными акциями</label>
+                  </div>
                 <div class="flex align-items-center mt-3">
-                <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-4" name="compatibilityDiscount" value="4"/>
-                <label for="compatibilityDiscount-4" class="ml-2 radioLabel">Складывается с выбранными акциями</label>
+                  <RadioButton v-model="this.form.compatibilityDiscount" inputId="compatibilityDiscount-4" name="compatibilityDiscount" value="4"/>
+                  <label for="compatibilityDiscount-4" class="ml-2 radioLabel">Совместима с выбранными акциями</label>
                 </div>
             </div>
-
+            <!--
             <div v-if="this.form.compatibilityDiscount == '1'" class="flex align-items-center kenost-gray-p mb-3">
               <Checkbox v-model="this.form.actionLast" inputId="actionLast-1" name="actionLast-1" value="true" />
               <label for="actionLast-1" class="ml-2 mb-0">Применяется последней (от стоимости товара по всем акциям)</label>
             </div>
-
+            -->
             <div class="dart-form-group mt-4" v-if="this.form.compatibilityDiscount == 3 || this.form.compatibilityDiscount == 4">
+              <label>Выберите акции из списка</label>
               <MultiSelect filter v-model="this.form.bigDiscount" display="chip" :options="this.allAction" optionLabel="name" placeholder="Выберите из списка" class="w-full md:w-20rem kenost-multiselect" />
+            </div>
+            <div class="dart-form-group mt-4" v-if="this.form.compatibilityDiscount == 1 || this.form.compatibilityDiscount == 3 || this.form.compatibilityDiscount == 4">
+              <label>Выберите режим совместимости</label>
+              <Dropdown v-model="this.form.compabilityMode" :options="this.compabilityMode" optionLabel="name" placeholder="Режим совместимости" class="w-full md:w-14rem" />
             </div>
 
             <div class="dart-form-group mb-4">
                 <span class="ktitle">Совместимость отсрочек</span>
+                <span class="field-desc">Выберите совместимость отсрочек. При выборе совместимости, Вам будет предложено выбрать режим совместимости.</span>
                 <div class="flex align-items-center mt-3">
-                <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-1" name="compatibilityPost" value="1"/>
-                <label for="compatibilityPost-1" class="ml-2 radioLabel">Совместим со всеми отсрочками</label>
+                  <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-1" name="compatibilityPost" value="1"/>
+                  <label for="compatibilityPost-1" class="ml-2 radioLabel">Совместима со всеми акциями</label>
                 </div>
                 <div class="flex align-items-center mt-3">
-                <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-2" name="compatibilityPost" value="2"/>
-                <label for="compatibilityPost-2" class="ml-2 radioLabel">Не совместим со всеми отсрочками</label>
+                  <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-2" name="compatibilityPost" value="2"/>
+                  <label for="compatibilityPost-2" class="ml-2 radioLabel">Не совместима со всеми акциями</label>
                 </div>
                 <div class="flex align-items-center mt-3">
-                <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-3" name="compatibilityPost" value="3"/>
-                <label for="compatibilityPost-3" class="ml-2 radioLabel">Применяется большая отсрочка</label>
+                  <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-3" name="compatibilityPost" value="3"/>
+                  <label for="compatibilityPost-3" class="ml-2 radioLabel">Не совместима с выбранными акциями</label>
                 </div>
+                <div class="flex align-items-center mt-3">
+                  <RadioButton v-model="this.form.compatibilityPost" inputId="compatibilityPost-4" name="compatibilityPost" value="4"/>
+                  <label for="compatibilityPost-4" class="ml-2 radioLabel">Совместима с выбранными акциями</label>
+                </div>
+            </div>
+
+            <div class="dart-form-group mt-4" v-if="this.form.compatibilityPost == 3 || this.form.compatibilityPost == 4">
+              <label>Выберите акции из списка</label>
+              <MultiSelect filter v-model="this.form.bigPost" display="chip" :options="this.allAction" optionLabel="name" placeholder="Выберите из списка" class="w-full md:w-20rem kenost-multiselect" />
+            </div>
+
+            <div class="dart-form-group mt-4" v-if="this.form.compatibilityPost == 1 || this.form.compatibilityPost == 3 || this.form.compatibilityPost == 4">
+              <label>Выберите режим совместимости</label>
+              <Dropdown v-model="this.form.compabilityModePost" :options="this.compabilityModePost" optionLabel="name" placeholder="Режим совместимости" class="w-full md:w-14rem" />
             </div>
 
             <div class="dart-form-group mb-4">
@@ -975,6 +996,14 @@ export default {
           original_href: ''
         }
       },
+      compabilityMode: [
+        { name: 'Применяется бóльшая', key: 0 },
+        { name: 'Скидки складываются', key: 1 }
+      ],
+      compabilityModePost: [
+        { name: 'Применяется бóльшая', key: 0 },
+        { name: 'Применяется меньшая', key: 1 }
+      ],
       paymentDelivery: [
         { name: 'Покупатель', key: 0 },
         { name: 'Поставщик', key: 1 }
@@ -1841,6 +1870,16 @@ export default {
 }
 </script>
 <style lang="scss">
+  .field-desc{
+    display: block;
+    margin-bottom: 5px;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.3;
+    letter-spacing: 0.25px;
+    color: #ADADAD;
+  }
   .kenost-basker-delete{
     width: 100%;
     display: flex;

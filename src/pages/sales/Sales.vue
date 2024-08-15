@@ -1,7 +1,7 @@
 <template>
   <Toast />
   <ConfirmDialog></ConfirmDialog>
-  <TabView class="tab-custom" v-if="organization.warehouse || organization.vendor">
+  <TabView class="tab-custom">
       <TabPanel header="Акции">
         <v-table
           :items_data="actions.items"
@@ -60,27 +60,25 @@
           @editElem="editDiler"
         />
       </TabPanel>
-  </TabView>
-  <TabView class="tab-custom" v-else>
-    <TabPanel header="Мои поставщики">
-      <v-opts
-          :items_data="opts.items"
-          :total="opts.total"
-          :pagination_items_per_page="this.pagination_items_per_page_dilers_opts"
-          :pagination_offset="this.pagination_offset_dilers_opts"
-          :page="this.optpage"
-          :filters="this.optfilters"
-          title="Доступные поставщики"
-          @update="optUpdate"
-          @filter="optfilter"
-          @sort="optfilter"
-          @paginate="optpaginate"
-        >
-          <template v-slot:desc>
-            <span class="desc">Отметьте организации, которые являются вашими поставщиками.</span>
-          </template>
-        </v-opts>
-    </TabPanel>
+      <TabPanel header="Мои поставщики">
+        <v-opts
+            :items_data="opts.items"
+            :total="opts.total"
+            :pagination_items_per_page="this.pagination_items_per_page_dilers_opts"
+            :pagination_offset="this.pagination_offset_dilers_opts"
+            :page="this.optpage"
+            :filters="this.optfilters"
+            title="Доступные поставщики"
+            @update="optUpdate"
+            @filter="optfilter"
+            @sort="optfilter"
+            @paginate="optpaginate"
+          >
+            <template v-slot:desc>
+              <span class="desc">Отметьте организации, которые являются вашими поставщиками.</span>
+            </template>
+          </v-opts>
+      </TabPanel>
   </TabView>
   <Dialog v-model:visible="this.modals.diler" header="Редактирование дилера" :style="{ width: '400px' }">
     <div class="kenost-modal-price">
