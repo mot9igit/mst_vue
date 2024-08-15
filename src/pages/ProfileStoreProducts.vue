@@ -1,5 +1,5 @@
 <template>
-    <h1 class="h1-mini">{{ organization.name }}</h1>
+    <h1 class="h1-mini">{{ store.name }}</h1>
     <TabView class="tab-custom">
        <TabPanel header="Сопоставление товаров">
         <h1 class="h1-mini">Сопоставление товаров</h1>
@@ -42,7 +42,7 @@
                          </div>
                        </div>
                        <div class="products_href">
-                         <router-link :to="{ name: 'report_copo', params: { id: $route.params.id } }">
+                         <router-link :to="{ name: 'report_copo', params: { id: $route.params.id, store_id: $route.params.store_id } }">
                            Отчет по сопоставлению
                            <mdicon name="arrow-right" />
                          </router-link>
@@ -77,7 +77,7 @@
                        </div>
                      </div>
                      <div class="products_href">
-                         <router-link :to="{ name: 'report_copo', params: { id: $route.params.id } }">
+                         <router-link :to="{ name: 'report_copo', params: { id: $route.params.id, store_id: $route.params.store_id } }">
                            Отчет по сопоставлению
                            <mdicon name="arrow-right" />
                          </router-link>
@@ -319,7 +319,7 @@
        <TabPanel header="Настройки">
         <form action="#" @submit.prevent="formChangeSettings">
           <div class="dart-row">
-            <div class="d-col-md-6" v-for="(group, index) in organization?.settings?.groups" :key="index">
+            <div class="d-col-md-6" v-for="(group, index) in org_store?.settings?.groups" :key="index">
               <div class="dart-form-block">
                 <span class="title">{{ group.label }}</span>
                 <div class="dart-form-block__content">
@@ -405,6 +405,7 @@ export default {
         2: false,
         3: false
       }],
+      store: [],
       prods: {
         copo_percent: 0,
         all: 0,
@@ -612,7 +613,7 @@ export default {
   methods: {
     ...mapActions([
       'get_data_from_api',
-      'get_organization_from_api',
+      'get_org_store_from_api',
       'get_report_copo_from_api',
       'get_cardstatus_from_api',
       'get_vendors_from_api',
@@ -625,7 +626,7 @@ export default {
       return {
         datasets: [
           {
-            data: [this.organization.products.copo_percent, this.organization.products.no_copo_percent],
+            data: [this.store?.products?.copo_percent, this.store?.products?.no_copo_percent],
             backgroundColor: ['#008FFF', '#EEEEEE'],
             hoverBackgroundColor: ['#008FFF', '#EEEEEE']
           }
@@ -636,7 +637,7 @@ export default {
       return {
         datasets: [
           {
-            data: [this.organization.products.copo_money_percent, this.organization.products.no_copo_money_percent],
+            data: [this.store?.products?.copo_money_percent, this.store?.products?.no_copo_money_percent],
             backgroundColor: ['#008FFF', '#EEEEEE'],
             hoverBackgroundColor: ['#008FFF', '#EEEEEE']
           }
@@ -693,13 +694,13 @@ export default {
         await this.set_organization_settings({
           action: 'set',
           type: 'organization',
-          id: router.currentRoute._value.params.id,
+          id: router.currentRoute._value.params.store_id,
           settings: this.settingsForm
         })
           .then((result) => {
             this.loading = false
             this.$toast.add({ severity: 'info', summary: 'Данные изменены', detail: 'Данные были успешно изменены', life: 3000 })
-            this.get_organization_from_api()
+            this.get_org_store_from_api()
           })
           .catch((result) => {
             console.log(result)
@@ -769,29 +770,18 @@ export default {
       page: this.page,
       perpage: this.pagination_items_per_page
     })
-    this.get_organization_from_api().then(() => {
-      this.chartData = this.setChartData()
-      this.chartDataMoney = this.setChartDataMoney()
+    this.get_org_store_from_api().then(() => {
       this.chartDataHelpOne = this.setChartDataHelpOne()
       this.chartDataHelpTwo = this.setChartDataHelpTwo()
       this.chartDataHelpThee = this.setChartDataHelpTree()
       this.chartDataHelpFour = this.setChartDataHelpFour()
-      const num = this.organization.products.copo_percent
-      this.prods.copo_percent = num
-      this.prods.all = this.organization.products.count
-      this.prods.copo = this.organization.products.copo_count
-      this.prods.count_all = this.organization.products.count_all
-      this.prods.summ = this.organization.products.summ
-      this.prods.copo_money_percent = this.organization.products.copo_money_percent
-      this.prods.no_copo_money_percent = this.organization.products.no_copo_money_percent
-      this.prods.summ_copo = this.organization.products.summ_copo
       // orders.summ && orders.count
-      this.dilers.summ = this.organization.dilers.summ
-      this.dilers.count = this.organization.dilers.count
-      this.distr.summ = this.organization.distr.summ
-      this.distr.count = this.organization.distr.count
-      this.shipment.total = this.organization.shipment.total
-      this.shipment.items = this.organization.shipment.items
+      // this.dilers.summ = this.org_store.dilers.summ
+      // this.dilers.count = this.org_store.dilers.count
+      // this.distr.summ = this.org_store.distr.summ
+      // this.distr.count = this.org_store.distr.count
+      // this.shipment.total = this.org_store.shipment.total
+      // this.shipment.items = this.org_store.shipment.items
       this.get_cardstatus_from_api()
       this.get_vendors_from_api()
       this.get_catalog_from_api()
@@ -800,10 +790,9 @@ export default {
         page: this.page_modal,
         perpage: this.pagination_items_per_page
       })
-
       this.opt_get_prices({
         action: 'get/type/prices',
-        store_id: router.currentRoute._value.params.id
+        store_id: router.currentRoute._value.params.store_id
       })
     })
   },
@@ -821,7 +810,7 @@ export default {
   computed: {
     ...mapGetters([
       'products',
-      'organization',
+      'org_store',
       'report_copo',
       'getcardstatus',
       'getvendors',
@@ -847,8 +836,19 @@ export default {
     }
   },
   watch: {
-    organization: function (newVal, oldVal) {
-      console.log(newVal)
+    org_store: function (newVal, oldVal) {
+      this.store = newVal
+      const num = this.store.products.copo_percent
+      this.prods.copo_percent = num
+      this.chartData = this.setChartData()
+      this.chartDataMoney = this.setChartDataMoney()
+      this.prods.all = this.org_store.products.count
+      this.prods.copo = this.org_store.products.copo_count
+      this.prods.count_all = this.org_store.products.count_all
+      this.prods.summ = this.org_store.products.summ
+      this.prods.copo_money_percent = this.org_store.products.copo_money_percent
+      this.prods.no_copo_money_percent = this.org_store.products.no_copo_money_percent
+      this.prods.summ_copo = this.org_store.products.summ_copo
       const settings = JSON.parse(JSON.stringify(newVal.settings))
       const groupKeys = Object.keys(settings.groups)
       for (let i = 0; i < groupKeys.length; i++) {
