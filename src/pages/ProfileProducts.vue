@@ -849,12 +849,12 @@ export default {
       this.prods.no_copo_money_percent = this.organization.products.no_copo_money_percent
       this.prods.summ_copo = this.organization.products.summ_copo
       // orders.summ && orders.count
-      this.dilers.summ = this.organization.dilers.summ
-      this.dilers.count = this.organization.dilers.count
-      this.distr.summ = this.organization.distr.summ
-      this.distr.count = this.organization.distr.count
-      this.shipment.total = this.organization.shipment.total
-      this.shipment.items = this.organization.shipment.items
+      // this.dilers.summ = this.organization.dilers.summ
+      // this.dilers.count = this.organization.dilers.count
+      // this.distr.summ = this.organization.distr.summ
+      // this.distr.count = this.organization.distr.count
+      // this.shipment.total = this.organization.shipment.total
+      // this.shipment.items = this.organization.shipment.items
       this.get_cardstatus_from_api()
       this.get_vendors_from_api()
       this.get_catalog_from_api()

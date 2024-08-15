@@ -11,6 +11,7 @@ export default {
       // console.log(filter)
       const data = {
         id: router.currentRoute._value.params.id,
+        store_id: router.currentRoute._value.params.store_id,
         filter: filter,
         filtersdata: filtersdata,
         sort: sort,
