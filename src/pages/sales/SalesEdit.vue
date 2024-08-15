@@ -1428,145 +1428,108 @@ export default {
       this.opt_get_complects(data)
     },
     formSubmit (event) {
-      console.log({
-        action: 'set',
-        type: 'b2b',
-        id: router.currentRoute._value.params.id,
-        name: this.form.name,
-        files: this.files,
-        description: this.form.description,
-        award: this.form.award,
-        compatibilityDiscount: this.form.compatibilityDiscount,
-        compatibilityPost: this.form.compatibilityPost,
-        dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
-        shipment_type: this.form.typeShipment,
-        shipment_date: this.form.dateShipment,
-        payer: this.form.paymentDelivery.key,
-        delivery_payment_terms: this.form.conditionPaymentDelivery.key,
-        delivery_payment_value: this.form.conditionPaymentDeliveryValue,
-        delay: this.postponement_period,
-        delay_graph: this.form.delay,
-        delay_condition: this.form.postponementConditions.key,
-        delay_condition_value: this.form.postponementConditionsValue,
-        condition_type: this.form.condition.key,
-        condition_min_sum: this.form.conditionMinSum,
-        condition_SKU: this.form.conditionMinCount,
-        participants_type: this.form.participantsType,
-        products: Object.keys(this.selected),
-        products_data: this.selected_data,
-        regions_select: this.regions_select,
-        organizations: this.all_organizations_selected,
-        method_adding_products: this.form.addProductType,
-        available_stores: this.form.available_stores[0] === 'true',
-        available_vendors: this.form.available_vendors[0] === 'true',
-        available_opt: this.form.available_opt[0] === 'true',
-        complects: this.selected_complects,
-        action_id: router.currentRoute._value.params.sales_id,
-        big_sale_actions: this.form.bigDiscount,
-        not_sale_client: this.form.not_sale_client[0] === 'true',
-        limit_sum: this.form.limitationValue,
-        limit_type: this.form.limitations,
-        actionLast: this.form.actionLast[0] === 'true',
-        gifts: this.selectGift
+      this.$load(async () => {
+        if (router.currentRoute._value.params.sales_id) {
+          await this.set_sales_to_api({
+            action: 'set',
+            type: 'b2b',
+            id: router.currentRoute._value.params.id,
+            store_id: this.form.store_id,
+            gifts: this.selectedGift,
+            name: this.form.name,
+            files: this.files,
+            description: this.form.description,
+            award: this.form.award,
+            compatibilityDiscount: this.form.compatibilityDiscount,
+            compatibilityPost: this.form.compatibilityPost,
+            dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
+            shipment_type: this.form.typeShipment,
+            shipment_date: this.form.dateShipment,
+            payer: this.form.paymentDelivery.key,
+            delivery_payment_terms: this.form.conditionPaymentDelivery.key,
+            delivery_payment_value: this.form.conditionPaymentDeliveryValue,
+            delay: this.postponement_period,
+            delay_graph: this.form.delay,
+            delay_condition: this.form.postponementConditions.key,
+            delay_condition_value: this.form.postponementConditionsValue,
+            condition_type: this.form.condition.key,
+            condition_min_sum: this.form.conditionMinSum,
+            condition_SKU: this.form.conditionMinCount,
+            participants_type: this.form.participantsType,
+            products: Object.keys(this.selected),
+            products_data: this.selected_data,
+            regions_select: this.regions_select,
+            organizations: this.all_organizations_selected,
+            method_adding_products: this.form.addProductType,
+            available_stores: this.form.available_stores[0] === 'true',
+            available_vendors: this.form.available_vendors[0] === 'true',
+            available_opt: this.form.available_opt[0] === 'true',
+            complects: this.selected_complects,
+            action_id: router.currentRoute._value.params.sales_id,
+            big_sale_actions: this.form.bigDiscount,
+            not_sale_client: this.form.not_sale_client[0] === 'true',
+            limit_sum: this.form.limitationValue,
+            limit_type: this.form.limitations,
+            actionLast: this.form.actionLast[0] === 'true'
+          })
+            .then((result) => {
+              this.loading = false
+              router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
+            })
+            .catch((result) => {
+              // console.log(result)
+            })
+        } else {
+          await this.set_sales_to_api({
+            action: 'set',
+            type: 'b2b',
+            id: router.currentRoute._value.params.id,
+            store_id: this.form.store_id,
+            gifts: this.selectedGift,
+            name: this.form.name,
+            files: this.files,
+            description: this.form.description,
+            award: this.form.award,
+            compatibilityDiscount: this.form.compatibilityDiscount,
+            compatibilityPost: this.form.compatibilityPost,
+            dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
+            shipment_type: this.form.typeShipment,
+            shipment_date: this.form.dateShipment,
+            payer: this.form.paymentDelivery.key,
+            delivery_payment_terms: this.form.conditionPaymentDelivery.key,
+            delivery_payment_value: this.form.conditionPaymentDeliveryValue,
+            delay: this.postponement_period,
+            delay_graph: this.form.delay,
+            delay_condition: this.form.postponementConditions.key,
+            delay_condition_value: this.form.postponementConditionsValue,
+            condition_type: this.form.condition.key,
+            condition_min_sum: this.form.conditionMinSum,
+            condition_SKU: this.form.conditionMinCount,
+            participants_type: this.form.participantsType,
+            products: Object.keys(this.selected),
+            products_data: this.selected_data,
+            regions_select: this.regions_select,
+            organizations: this.all_organizations_selected,
+            method_adding_products: this.form.addProductType,
+            available_stores: this.form.available_stores[0] === 'true',
+            available_vendors: this.form.available_vendors[0] === 'true',
+            available_opt: this.form.available_opt[0] === 'true',
+            complects: this.selected_complects,
+            big_sale_actions: this.form.bigDiscount,
+            not_sale_client: this.form.not_sale_client[0] === 'true',
+            limit_sum: this.form.limitationValue,
+            limit_type: this.form.limitations,
+            actionLast: this.form.actionLast[0] === 'true'
+          })
+            .then((result) => {
+              this.loading = false
+              router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
+            })
+            .catch((result) => {
+              // console.log(result)
+            })
+        }
       })
-      // this.$load(async () => {
-      //   if (router.currentRoute._value.params.sales_id) {
-      //     await this.set_sales_to_api({
-      //       action: 'set',
-      //       type: 'b2b',
-      //       id: router.currentRoute._value.params.id,
-      //       name: this.form.name,
-      //       files: this.files,
-      //       description: this.form.description,
-      //       award: this.form.award,
-      //       compatibilityDiscount: this.form.compatibilityDiscount,
-      //       compatibilityPost: this.form.compatibilityPost,
-      //       dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
-      //       shipment_type: this.form.typeShipment,
-      //       shipment_date: this.form.dateShipment,
-      //       payer: this.form.paymentDelivery.key,
-      //       delivery_payment_terms: this.form.conditionPaymentDelivery.key,
-      //       delivery_payment_value: this.form.conditionPaymentDeliveryValue,
-      //       delay: this.postponement_period,
-      //       delay_graph: this.form.delay,
-      //       delay_condition: this.form.postponementConditions.key,
-      //       delay_condition_value: this.form.postponementConditionsValue,
-      //       condition_type: this.form.condition.key,
-      //       condition_min_sum: this.form.conditionMinSum,
-      //       condition_SKU: this.form.conditionMinCount,
-      //       participants_type: this.form.participantsType,
-      //       products: Object.keys(this.selected),
-      //       products_data: this.selected_data,
-      //       regions_select: this.regions_select,
-      //       organizations: this.all_organizations_selected,
-      //       method_adding_products: this.form.addProductType,
-      //       available_stores: this.form.available_stores[0] === 'true',
-      //       available_vendors: this.form.available_vendors[0] === 'true',
-      //       available_opt: this.form.available_opt[0] === 'true',
-      //       complects: this.selected_complects,
-      //       action_id: router.currentRoute._value.params.sales_id,
-      //       big_sale_actions: this.form.bigDiscount,
-      //       not_sale_client: this.form.not_sale_client[0] === 'true',
-      //       limit_sum: this.form.limitationValue,
-      //       limit_type: this.form.limitations,
-      //       actionLast: this.form.actionLast[0] === 'true'
-      //     })
-      //       .then((result) => {
-      //         this.loading = false
-      //         router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
-      //       })
-      //       .catch((result) => {
-      //         // console.log(result)
-      //       })
-      //   } else {
-      //     await this.set_sales_to_api({
-      //       action: 'set',
-      //       type: 'b2b',
-      //       id: router.currentRoute._value.params.id,
-      //       name: this.form.name,
-      //       files: this.files,
-      //       description: this.form.description,
-      //       award: this.form.award,
-      //       compatibilityDiscount: this.form.compatibilityDiscount,
-      //       compatibilityPost: this.form.compatibilityPost,
-      //       dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
-      //       shipment_type: this.form.typeShipment,
-      //       shipment_date: this.form.dateShipment,
-      //       payer: this.form.paymentDelivery.key,
-      //       delivery_payment_terms: this.form.conditionPaymentDelivery.key,
-      //       delivery_payment_value: this.form.conditionPaymentDeliveryValue,
-      //       delay: this.postponement_period,
-      //       delay_graph: this.form.delay,
-      //       delay_condition: this.form.postponementConditions.key,
-      //       delay_condition_value: this.form.postponementConditionsValue,
-      //       condition_type: this.form.condition.key,
-      //       condition_min_sum: this.form.conditionMinSum,
-      //       condition_SKU: this.form.conditionMinCount,
-      //       participants_type: this.form.participantsType,
-      //       products: Object.keys(this.selected),
-      //       products_data: this.selected_data,
-      //       regions_select: this.regions_select,
-      //       organizations: this.all_organizations_selected,
-      //       method_adding_products: this.form.addProductType,
-      //       available_stores: this.form.available_stores[0] === 'true',
-      //       available_vendors: this.form.available_vendors[0] === 'true',
-      //       available_opt: this.form.available_opt[0] === 'true',
-      //       complects: this.selected_complects,
-      //       big_sale_actions: this.form.bigDiscount,
-      //       not_sale_client: this.form.not_sale_client[0] === 'true',
-      //       limit_sum: this.form.limitationValue,
-      //       limit_type: this.form.limitations,
-      //       actionLast: this.form.actionLast[0] === 'true'
-      //     })
-      //       .then((result) => {
-      //         this.loading = false
-      //         router.push({ name: 'org_sales', params: { id: router.currentRoute._value.params.id } })
-      //       })
-      //       .catch((result) => {
-      //         // console.log(result)
-      //       })
-      //   }
-      // })
       this.loading = true
       // }
     },
@@ -1944,7 +1907,7 @@ export default {
     this.get_opt_catalog_tree_from_api()
     this.org_get_stores_from_api({
       action: 'get/stores',
-      org_id: this.$route.params.id
+      id: this.$route.params.id
     })
   },
   components: {
@@ -2002,7 +1965,7 @@ export default {
     org_stores: function (newVal, oldVal) {
       this.stores = []
       for (let i = 0; i < newVal.items.length; i++) {
-        this.stores.push({ label: newVal.items[i].name, value: newVal.items[i].store_id })
+        this.stores.push({ label: newVal.items[i].name, value: newVal.items[i].id })
       }
     },
     available_products: function (newVal, oldVal) {
@@ -2064,6 +2027,22 @@ export default {
         }
         if (newVal.image_inner) {
           this.files.min.original_href = this.site_url_prefix + newVal.image_inner
+        }
+
+        if (newVal.store_id) {
+          this.form.store_id = newVal.store_id.toString()
+
+          const data = {
+            storeid: newVal.store_id.toString(),
+            filter: this.filterGift,
+            filterselected: this.filter_table,
+            selected: Object.keys(this.selectedGift),
+            pageselected: this.page_selected,
+            page: this.pageGift,
+            perpage: this.per_page,
+            type: 'gift'
+          }
+          this.get_available_products_from_api(data).then()
         }
 
         if (newVal.icon) {
