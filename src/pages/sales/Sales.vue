@@ -62,8 +62,8 @@
       </TabPanel>
       <TabPanel header="Мои поставщики">
         <v-opts
-            :items_data="opts.items"
-            :total="opts.total"
+            :items_data="warehouses.items"
+            :total="warehouses.total"
             :pagination_items_per_page="this.pagination_items_per_page_dilers_opts"
             :pagination_offset="this.pagination_offset_dilers_opts"
             :page="this.optpage"
@@ -170,6 +170,10 @@ export default {
         }
       },
       stores: {
+        items: [],
+        total: -1
+      },
+      warehouses: {
         items: [],
         total: -1
       },
@@ -494,15 +498,13 @@ export default {
   },
   mounted () {
     this.get_organization_from_api().then(() => {
-      if (this.organization.store) {
-        this.get_regions_from_api().then(
-          this.optfilters.region.values = this.getregions
-        )
-        this.get_opts_from_api({
-          page: this.optpage,
-          perpage: this.pagination_items_per_page_dilers_opts
-        })
-      }
+      this.get_regions_from_api().then(
+        this.optfilters.region.values = this.getregions
+      )
+      this.get_opts_from_api({
+        page: this.optpage,
+        perpage: this.pagination_items_per_page_dilers_opts
+      })
     })
     this.get_sales_to_api({
       page: this.page,
@@ -564,6 +566,23 @@ export default {
       } else {
         this.stores.items = []
         this.stores.total = 0
+      }
+    },
+    opts: function (newVal, oldVal) {
+      if (typeof newVal === 'object') {
+        if (Object.prototype.hasOwnProperty.call(newVal, 'items')) {
+          this.warehouses.items = newVal.items
+        } else {
+          this.warehouses.items = []
+        }
+        if (Object.prototype.hasOwnProperty.call(newVal, 'total')) {
+          this.warehouses.total = newVal.total
+        } else {
+          this.warehouses.total = 0
+        }
+      } else {
+        this.warehouses.items = []
+        this.warehouses.total = 0
       }
     }
   }

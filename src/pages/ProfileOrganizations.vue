@@ -19,7 +19,7 @@
                 <i class="d_icon d_icon-house"></i>
               </div>
             </div>
-            <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.org_id }}">{{ item.name }}</router-link>
+            <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name }}</router-link>
             <p class="panel_widget_organization__addres">{{ item.address }}</p>
             <hr/>
             <div class="panel_widget_organization__two-collums">
@@ -76,7 +76,6 @@ export default {
   },
   methods: {
     ...mapActions([
-      'get_organizations_from_api',
       'org_get_from_api'
     ])
   },
