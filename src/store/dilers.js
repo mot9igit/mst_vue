@@ -25,7 +25,6 @@ export default {
         })
     },
     get_dilers_from_api ({ commit }, { type, filter, page, perpage }) {
-      console.log(filter)
       return Axios('/rest/front_getdilers', {
         method: 'POST',
         data: {
