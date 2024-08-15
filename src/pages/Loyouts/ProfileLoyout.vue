@@ -167,7 +167,11 @@ export default {
   },
   props: { },
   mounted () {
-    this.get_organization_from_api().then(() => {})
+    if (Object.prototype.hasOwnProperty.call(router, 'params')) {
+      if (Object.prototype.hasOwnProperty.call(router.params, 'id')) {
+        this.get_organization_from_api().then(() => {})
+      }
+    }
     this.get_training_catalog_from_api().then(
       this.training_catalog = this.trainingcatalog
     )
@@ -494,7 +498,11 @@ export default {
       this.trainin_catalog = newVal
     },
     $route () {
-      this.get_organization_from_api()
+      if (Object.prototype.hasOwnProperty.call(router, 'params')) {
+        if (Object.prototype.hasOwnProperty.call(router.params, 'id')) {
+          this.get_organization_from_api()
+        }
+      }
     },
     organization: function (newVal, oldVal) {
       this.org.image = newVal.image
