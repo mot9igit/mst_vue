@@ -18,32 +18,25 @@ export default {
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
       }
 
-      // ВРЕМЕННОЕ РЕШЕНИЕ KENOSTDEVELOPER
-      if (router.currentRoute._value.params.store_id) {
-        data.id = router.currentRoute._value.params.store_id
-      } else {
+      if (router.currentRoute._value.params.id) {
         data.id = router.currentRoute._value.params.id
-      }
-
-      if (router.currentRoute._value.params.store_id) {
-        data.store_id = router.currentRoute._value.params.store_id
-      }
-      return Axios('/rest/front_organization', {
-        method: 'POST',
-        data: data,
-        headers: {
-          'Access-Control-Allow-Origin': '*'
-        }
-      })
-        .then((response) => {
-          commit('SET_ORGANIZATION_TO_VUEX', response.data)
-        })
-        .catch(error => {
-          if (error.response.status === 403) {
-            localStorage.removeItem('user')
-            router.push({ name: 'home' })
+        return Axios('/rest/front_organization', {
+          method: 'POST',
+          data: data,
+          headers: {
+            'Access-Control-Allow-Origin': '*'
           }
         })
+          .then((response) => {
+            commit('SET_ORGANIZATION_TO_VUEX', response.data)
+          })
+          .catch(error => {
+            if (error.response.status === 403) {
+              localStorage.removeItem('user')
+              router.push({ name: 'home' })
+            }
+          })
+      }
     },
     get_diler_from_api ({ commit }) {
       return Axios('/rest/front_organization', {

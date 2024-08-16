@@ -55,228 +55,6 @@
                 </div>
             </div>
           </div>
-          <div class="d-col-lg-3 d-col-md-3">
-            <div class="operating-mode">
-                <div class="operating-mode__title"><p>Режим работы</p><i class="d_icon d_icon-edit" @click="this.showOperatingModeModal = !this.showOperatingModeModal"></i></div>
-                <div class="operating-mode__container">
-                  <div class="operating-mode__el" :class="{ 'off': !work.days[1].active }">
-                    <p>Понедельник</p>
-                    <p v-if="!work.days[1].active">Выходной</p>
-                    <p v-else>{{ work.days[1].time_from }} - {{ work.days[1].time_to }} </p>
-                  </div>
-                  <div class="operating-mode__el" :class="{ 'off': !work.days[2].active }">
-                    <p>Вторник</p>
-                    <p v-if="!work.days[2].active">Выходной</p>
-                    <p v-else>{{ work.days[2].time_from }} - {{ work.days[2].time_to }} </p>
-                  </div>
-                  <div class="operating-mode__el" :class="{ 'off': !work.days[3].active }">
-                    <p>Среда</p>
-                    <p v-if="!work.days[3].active">Выходной</p>
-                    <p v-else>{{ work.days[3].time_from }} - {{ work.days[3].time_to }} </p>
-                  </div>
-                  <div class="operating-mode__el" :class="{ 'off': !work.days[4].active }">
-                    <p>Четверг</p>
-                    <p v-if="!work.days[4].active">Выходной</p>
-                    <p v-else>{{ work.days[4].time_from }} - {{ work.days[4].time_to }} </p>
-                  </div>
-                  <div class="operating-mode__el" :class="{ 'off': !work.days[5].active }">
-                    <p>Пятница</p>
-                    <p v-if="!work.days[5].active">Выходной</p>
-                    <p v-else>{{ work.days[5].time_from }} - {{ work.days[5].time_to }} </p>
-                  </div>
-                  <div class="operating-mode__el" :class="{ 'off': !work.days[6].active }">
-                    <p>Суббота</p>
-                    <p v-if="!work.days[6].active">Выходной</p>
-                    <p v-else>{{ work.days[6].time_from }} - {{ work.days[6].time_to }} </p>
-                  </div>
-                  <div class="operating-mode__el" :class="{ 'off': !work.days[7].active }">
-                    <p>Воскресенье</p>
-                    <p v-if="!work.days[7].active">Выходной</p>
-                    <p v-else>{{ work.days[7].time_from }} - {{ work.days[7].time_to }} </p>
-                  </div>
-                </div>
-            </div>
-          </div>
-          <div class="d-col-lg-3 d-col-md-3">
-            <div class="operating-mode-calend">
-              <div class="operating-mode-calend__title"><p>Выходные и короткие дни</p><i class="d_icon d_icon-edit" @click="this.showOperatingModeCalendarModal = !this.showOperatingModeCalendarModal"></i></div>
-              <Calendar
-              is-expanded
-              title-position="left"
-              :attributes="work_dates"
-              :masks="{ weekdays: 'WW' }"/>
-            </div>
-          </div>
-          <custom-modal class="operating-mode-modal" v-model="showOperatingModeModal">
-            <template v-slot:title>Режим работы</template>
-            <form class="operating-mode-change" action="">
-                <div class="operating-mode-change__el">
-                  <div class="flex align-items-center">
-                    <Checkbox v-model="work.days[1].active" :binary="true" inputId="workday_1"/>
-                    <label for="workday_1" class="ml-2">Понедельник</label>
-                  </div>
-                  <div class="operating-mode-change__values" v-if="work.days[1].active">
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar id="calendar-timeonly" v-model="work.days[1].start" timeOnly :stepMinute="step_minute" :invalid="work.days[1].error_start"/>
-                    </div>
-                    <div class="operating-mode-change__line"></div>
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar id="calendar-timeonly" v-model="work.days[1].end" timeOnly :stepMinute="step_minute" :invalid="work.days[1].error_end"/>
-                    </div>
-                  </div>
-                  <div class="operating-mode-change__values off" v-else>
-                    <p>Выходной</p>
-                  </div>
-                </div>
-                <div class="operating-mode-change__el">
-                  <div class="flex align-items-center">
-                    <Checkbox v-model="work.days[2].active" :binary="true" inputId="workday_2"/>
-                    <label for="workday_2" class="ml-2">Вторник</label>
-                  </div>
-                  <div class="operating-mode-change__values" v-if="work.days[2].active">
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar id="calendar-timeonly" v-model="work.days[2].start" timeOnly :stepMinute="step_minute" :invalid="work.days[2].error_start"/>
-                    </div>
-                    <div class="operating-mode-change__line"></div>
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar id="calendar-timeonly" v-model="work.days[2].end" timeOnly :stepMinute="step_minute" :invalid="work.days[2].error_end"/>
-                    </div>
-                  </div>
-                  <div class="operating-mode-change__values off" v-else>
-                    <p>Выходной</p>
-                  </div>
-                </div>
-                <div class="operating-mode-change__el">
-                  <div class="flex align-items-center">
-                    <Checkbox v-model="work.days[3].active" :binary="true" inputId="workday_3"/>
-                    <label for="workday_3" class="ml-2">Среда</label>
-                  </div>
-                  <div class="operating-mode-change__values" v-if="work.days[3].active">
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar id="calendar-timeonly" v-model="work.days[3].start" timeOnly :stepMinute="step_minute" :invalid="work.days[3].error_start"/>
-                    </div>
-                    <div class="operating-mode-change__line"></div>
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar id="calendar-timeonly" v-model="work.days[3].end" timeOnly :stepMinute="step_minute" :invalid="work.days[3].error_end"/>
-                    </div>
-                  </div>
-                  <div class="operating-mode-change__values off" v-else>
-                    <p>Выходной</p>
-                  </div>
-                </div>
-                <div class="operating-mode-change__el">
-                  <div class="flex align-items-center">
-                    <Checkbox v-model="work.days[4].active" :binary="true" inputId="workday_4"/>
-                    <label for="workday_4" class="ml-2">Четверг</label>
-                  </div>
-                  <div class="operating-mode-change__values" v-if="work.days[4].active">
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar id="calendar-timeonly" v-model="work.days[4].start" timeOnly :stepMinute="step_minute" :invalid="work.days[4].error_start"/>
-                    </div>
-                    <div class="operating-mode-change__line"></div>
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar id="calendar-timeonly" v-model="work.days[4].end" timeOnly :stepMinute="step_minute" :invalid="work.days[4].error_end"/>
-                    </div>
-                  </div>
-                  <div class="operating-mode-change__values off" v-else>
-                    <p>Выходной</p>
-                  </div>
-                </div>
-                <div class="operating-mode-change__el">
-                  <div class="flex align-items-center">
-                    <Checkbox v-model="work.days[5].active" :binary="true" inputId="workday_5"/>
-                    <label for="workday_5" class="ml-2">Пятница</label>
-                  </div>
-                  <div class="operating-mode-change__values" v-if="work.days[5].active">
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar id="calendar-timeonly" v-model="work.days[5].start" timeOnly :stepMinute="step_minute" :invalid="work.days[5].error_start"/>
-                    </div>
-                    <div class="operating-mode-change__line"></div>
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar id="calendar-timeonly" v-model="work.days[5].end" timeOnly :stepMinute="step_minute" :invalid="work.days[5].error_end"/>
-                    </div>
-                  </div>
-                  <div class="operating-mode-change__values off" v-else>
-                    <p>Выходной</p>
-                </div>
-                </div>
-                <div class="operating-mode-change__el">
-                  <div class="flex align-items-center">
-                    <Checkbox v-model="work.days[6].active" :binary="true" inputId="workday_6"/>
-                    <label for="workday_6" class="ml-2">Суббота</label>
-                  </div>
-                  <div class="operating-mode-change__values" v-if="work.days[6].active">
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar id="calendar-timeonly" v-model="work.days[6].start" timeOnly :stepMinute="step_minute" :invalid="work.days[6].error_start"/>
-                    </div>
-                    <div class="operating-mode-change__line"></div>
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar id="calendar-timeonly" v-model="work.days[6].end" timeOnly :stepMinute="step_minute" :invalid="work.days[6].error_end"/>
-                    </div>
-                  </div>
-                  <div class="operating-mode-change__values off" v-else>
-                    <p>Выходной</p>
-                </div>
-                </div>
-                <div class="operating-mode-change__el">
-                  <div class="flex align-items-center">
-                    <Checkbox v-model="work.days[7].active" :binary="true" inputId="workday_7"/>
-                    <label for="workday_7" class="ml-2">Воскресенье</label>
-                  </div>
-                  <div class="operating-mode-change__values" v-if="work.days[7].active">
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar v-model="work.days[7].start" timeOnly :stepMinute="step_minute" :invalid="work.days[7].error_start"/>
-                    </div>
-                    <div class="operating-mode-change__line"></div>
-                    <div class="form_input_group input_pl input-parent required">
-                      <primeCalendar v-model="work.days[7].end" timeOnly :stepMinute="step_minute" :invalid="work.days[7].error_end"/>
-                    </div>
-                  </div>
-                  <div class="operating-mode-change__values off" v-else>
-                      <p>Выходной</p>
-                  </div>
-                </div>
-                <div class="operating-mode-change__buttons">
-                  <button class="dart-btn dart-btn-secondary alert_change_btn" type="button" @click.prevent="clearWorkForm"><span>Сбросить</span></button>
-                  <button class="dart-btn dart-btn-primary" @click.prevent="addWorkForm" :class="{ 'dart-btn-loading': work_loading }">Сохранить</button>
-                </div>
-            </form>
-          </custom-modal>
-
-          <custom-modal class="operating-mode-calend-modal" v-model="showOperatingModeCalendarModal" @close="resetForm()">
-            <template v-slot:title>Выходные и короткие дни</template>
-            <div>
-              <DatePicker
-              :attributes="work_dates"
-              :masks="{ weekdays: 'WW' }"
-              v-model="work_date"
-              :timezone="work_dates_input.timezone"/>
-              <div class="operating-mode-calend-modal__radio">
-                <div class="flex align-items-center">
-                  <RadioButton v-model="work_dates_input.type" inputId="work_dates_type_1" value="weekend" />
-                  <label for="work_dates_type_1" class="ml-2">Выходной</label>
-                </div>
-                <div class="flex align-items-center">
-                  <RadioButton v-model="work_dates_input.type" inputId="work_dates_type_2" value="shortday" />
-                  <label for="work_dates_type_2" class="ml-2">Короткий день</label>
-                </div>
-              </div>
-              <div class="operating-mode-calend-modal__values" v-if="work_dates_input.type == 'shortday'">
-                <div class="form_input_group input_pl input-parent required">
-                  <primeCalendar v-model="work_dates_input.start" timeOnly :stepMinute="step_minute" :invalid="work_dates_input.start_error"/>
-                </div>
-                <div class="operating-mode-calend-modal__line"></div>
-                <div class="form_input_group input_pl input-parent required">
-                  <primeCalendar v-model="work_dates_input.end" timeOnly :stepMinute="step_minute" :invalid="work_dates_input.end_error"/>
-                </div>
-              </div>
-              <div class="operating-mode-calend-modal__buttons">
-                <button class="dart-btn dart-btn-secondary alert_change_btn" type="button" @click.prevent="deleteWorkDay" v-if="work_dates_input.delete"><span>Удалить</span></button>
-                <button class="dart-btn dart-btn-primary" @click.prevent="addWorkDay" :class="{ 'dart-btn-loading': work_calendar_loading }">Сохранить</button>
-              </div>
-            </div>
-          </custom-modal>
-
           <div class="d-col-md-2" v-for="item in organization.brands" :key="item.id">
             <div class="panel-widget panel-widget-summ">
               <span> {{ item.name }} </span>
@@ -438,13 +216,7 @@ import router from '@/router'
 import { mapActions, mapGetters } from 'vuex'
 import Chart from 'primevue/chart'
 import vTable from '@/components/table/v-table'
-import { Calendar, DatePicker } from 'v-calendar'
 import Toast from 'primevue/toast'
-import primeCalendar from 'primevue/calendar'
-import 'v-calendar/dist/style.css'
-import customModal from '@/components/popup/CustomModal.vue'
-import Checkbox from 'primevue/checkbox'
-import RadioButton from 'primevue/radiobutton'
 
 export default {
   name: 'ProfileOrganization',
@@ -470,90 +242,8 @@ export default {
   },
   data () {
     return {
-      showOperatingModeModal: false,
-      showOperatingModeCalendarModal: false,
       chartData: null,
       loading_products: false,
-      work_loading: false,
-      work_calendar_loading: false,
-      work_date: new Date(),
-      work_dates_input: {
-        id: '',
-        type: 'shortday',
-        start: '',
-        end: '',
-        delete: false,
-        date: new Date(),
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
-      },
-      work_dates: [{
-        dot: 'red',
-        dates: []
-      },
-      {
-        dot: 'blue',
-        dates: []
-      }],
-      work: {
-        days: {
-          1: {
-            active: 0,
-            start: '',
-            end: '',
-            weekend: 1,
-            error_start: false,
-            error_end: false
-          },
-          2: {
-            active: 0,
-            start: '',
-            end: '',
-            weekend: 1,
-            error_start: false,
-            error_end: false
-          },
-          3: {
-            active: 0,
-            start: '',
-            end: '',
-            weekend: 1,
-            error_start: false,
-            error_end: false
-          },
-          4: {
-            active: 0,
-            start: '',
-            end: '',
-            weekend: 1,
-            error_start: false,
-            error_end: false
-          },
-          5: {
-            active: 0,
-            start: '',
-            end: '',
-            weekend: 1,
-            error_start: false,
-            error_end: false
-          },
-          6: {
-            active: 0,
-            start: '',
-            end: '',
-            weekend: 1,
-            error_start: false,
-            error_end: false
-          },
-          7: {
-            active: 0,
-            start: '',
-            end: '',
-            weekend: 1,
-            error_start: false,
-            error_end: false
-          }
-        }
-      },
       page: 1,
       chartOptions: {
         cutout: '60%'
@@ -939,7 +629,7 @@ export default {
       }).then(() => { })
     })
   },
-  components: { Chart, vTable, Calendar, customModal, Checkbox, primeCalendar, Toast, RadioButton, DatePicker },
+  components: { Chart, vTable, Toast },
   computed: {
     ...mapGetters([
       'organization',
@@ -1001,16 +691,17 @@ export default {
       this.over_products.count_all = newVal.products.count_all
       this.over_products.summ = newVal.products.summ
       // orders.summ && orders.count
-      this.dilers.summ = newVal.dilers.summ
-      this.dilers.count = newVal.dilers.count
-      this.distr.summ = newVal.distr.summ
-      this.distr.count = newVal.distr.count
+      // this.dilers.summ = newVal.dilers.summ
+      // this.dilers.count = newVal.dilers.count
+      // this.distr.summ = newVal.distr.summ
+      // this.distr.count = newVal.distr.count
       this.orders.summ = newVal.orders.summ
       this.orders.count = newVal.orders.count
-      this.shipment.total = newVal.shipment.total
-      this.shipment.items = newVal.shipment.items
+      // this.shipment.total = newVal.shipment.total
+      // this.shipment.items = newVal.shipment.items
       this.no_money = newVal.no_money
       this.forecast = newVal.forecast
+      /*
       this.work_dates = newVal.workdays
       this.workdays_source = newVal.workdays_source
       for (let i = 0; i < Object.keys(newVal.worktime).length; i++) {
@@ -1028,6 +719,7 @@ export default {
           this.work.days[ji].end = new Date(newVal.worktime[i].timestamp_to * 1000)
         }
       }
+      */
     }
   }
 }

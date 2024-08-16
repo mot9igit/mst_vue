@@ -1,5 +1,6 @@
 <template>
     <h1 class="h1-mini">{{ store.name }}</h1>
+    <Toast />
     <TabView class="tab-custom">
        <TabPanel header="Сопоставление товаров">
         <h1 class="h1-mini">Сопоставление товаров</h1>
@@ -349,11 +350,236 @@
             <button class="dart-btn dart-btn-primary dart-mt-1" type="submit">Сохранить</button>
           </div>
         </form>
+        <div class="widgets-block">
+          <div class="dart-row">
+            <div class="d-col-lg-6 d-col-md-6">
+              <div class="operating-mode">
+                  <div class="operating-mode__title"><p>Режим работы</p><i class="d_icon d_icon-edit" @click="this.showOperatingModeModal = !this.showOperatingModeModal"></i></div>
+                  <div class="operating-mode__container">
+                    <div class="operating-mode__el" :class="{ 'off': !work.days[1].active }">
+                      <p>Понедельник</p>
+                      <p v-if="!work.days[1].active">Выходной</p>
+                      <p v-else>{{ work.days[1].time_from }} - {{ work.days[1].time_to }} </p>
+                    </div>
+                    <div class="operating-mode__el" :class="{ 'off': !work.days[2].active }">
+                      <p>Вторник</p>
+                      <p v-if="!work.days[2].active">Выходной</p>
+                      <p v-else>{{ work.days[2].time_from }} - {{ work.days[2].time_to }} </p>
+                    </div>
+                    <div class="operating-mode__el" :class="{ 'off': !work.days[3].active }">
+                      <p>Среда</p>
+                      <p v-if="!work.days[3].active">Выходной</p>
+                      <p v-else>{{ work.days[3].time_from }} - {{ work.days[3].time_to }} </p>
+                    </div>
+                    <div class="operating-mode__el" :class="{ 'off': !work.days[4].active }">
+                      <p>Четверг</p>
+                      <p v-if="!work.days[4].active">Выходной</p>
+                      <p v-else>{{ work.days[4].time_from }} - {{ work.days[4].time_to }} </p>
+                    </div>
+                    <div class="operating-mode__el" :class="{ 'off': !work.days[5].active }">
+                      <p>Пятница</p>
+                      <p v-if="!work.days[5].active">Выходной</p>
+                      <p v-else>{{ work.days[5].time_from }} - {{ work.days[5].time_to }} </p>
+                    </div>
+                    <div class="operating-mode__el" :class="{ 'off': !work.days[6].active }">
+                      <p>Суббота</p>
+                      <p v-if="!work.days[6].active">Выходной</p>
+                      <p v-else>{{ work.days[6].time_from }} - {{ work.days[6].time_to }} </p>
+                    </div>
+                    <div class="operating-mode__el" :class="{ 'off': !work.days[7].active }">
+                      <p>Воскресенье</p>
+                      <p v-if="!work.days[7].active">Выходной</p>
+                      <p v-else>{{ work.days[7].time_from }} - {{ work.days[7].time_to }} </p>
+                    </div>
+                  </div>
+              </div>
+            </div>
+            <div class="d-col-lg-6 d-col-md-6">
+              <div class="operating-mode-calend">
+                <div class="operating-mode-calend__title"><p>Выходные и короткие дни</p><i class="d_icon d_icon-edit" @click="this.showOperatingModeCalendarModal = !this.showOperatingModeCalendarModal"></i></div>
+                <Calendar
+                is-expanded
+                title-position="left"
+                :attributes="work_dates"
+                :masks="{ weekdays: 'WW' }"/>
+              </div>
+            </div>
+            <custom-modal class="operating-mode-modal" v-model="showOperatingModeModal">
+              <template v-slot:title>Режим работы</template>
+              <form class="operating-mode-change" action="">
+                  <div class="operating-mode-change__el">
+                    <div class="flex align-items-center">
+                      <Checkbox v-model="work.days[1].active" :binary="true" inputId="workday_1"/>
+                      <label for="workday_1" class="ml-2">Понедельник</label>
+                    </div>
+                    <div class="operating-mode-change__values" v-if="work.days[1].active">
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar id="calendar-timeonly" v-model="work.days[1].start" timeOnly :stepMinute="step_minute" :invalid="work.days[1].error_start"/>
+                      </div>
+                      <div class="operating-mode-change__line"></div>
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar id="calendar-timeonly" v-model="work.days[1].end" timeOnly :stepMinute="step_minute" :invalid="work.days[1].error_end"/>
+                      </div>
+                    </div>
+                    <div class="operating-mode-change__values off" v-else>
+                      <p>Выходной</p>
+                    </div>
+                  </div>
+                  <div class="operating-mode-change__el">
+                    <div class="flex align-items-center">
+                      <Checkbox v-model="work.days[2].active" :binary="true" inputId="workday_2"/>
+                      <label for="workday_2" class="ml-2">Вторник</label>
+                    </div>
+                    <div class="operating-mode-change__values" v-if="work.days[2].active">
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar id="calendar-timeonly" v-model="work.days[2].start" timeOnly :stepMinute="step_minute" :invalid="work.days[2].error_start"/>
+                      </div>
+                      <div class="operating-mode-change__line"></div>
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar id="calendar-timeonly" v-model="work.days[2].end" timeOnly :stepMinute="step_minute" :invalid="work.days[2].error_end"/>
+                      </div>
+                    </div>
+                    <div class="operating-mode-change__values off" v-else>
+                      <p>Выходной</p>
+                    </div>
+                  </div>
+                  <div class="operating-mode-change__el">
+                    <div class="flex align-items-center">
+                      <Checkbox v-model="work.days[3].active" :binary="true" inputId="workday_3"/>
+                      <label for="workday_3" class="ml-2">Среда</label>
+                    </div>
+                    <div class="operating-mode-change__values" v-if="work.days[3].active">
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar id="calendar-timeonly" v-model="work.days[3].start" timeOnly :stepMinute="step_minute" :invalid="work.days[3].error_start"/>
+                      </div>
+                      <div class="operating-mode-change__line"></div>
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar id="calendar-timeonly" v-model="work.days[3].end" timeOnly :stepMinute="step_minute" :invalid="work.days[3].error_end"/>
+                      </div>
+                    </div>
+                    <div class="operating-mode-change__values off" v-else>
+                      <p>Выходной</p>
+                    </div>
+                  </div>
+                  <div class="operating-mode-change__el">
+                    <div class="flex align-items-center">
+                      <Checkbox v-model="work.days[4].active" :binary="true" inputId="workday_4"/>
+                      <label for="workday_4" class="ml-2">Четверг</label>
+                    </div>
+                    <div class="operating-mode-change__values" v-if="work.days[4].active">
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar id="calendar-timeonly" v-model="work.days[4].start" timeOnly :stepMinute="step_minute" :invalid="work.days[4].error_start"/>
+                      </div>
+                      <div class="operating-mode-change__line"></div>
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar id="calendar-timeonly" v-model="work.days[4].end" timeOnly :stepMinute="step_minute" :invalid="work.days[4].error_end"/>
+                      </div>
+                    </div>
+                    <div class="operating-mode-change__values off" v-else>
+                      <p>Выходной</p>
+                    </div>
+                  </div>
+                  <div class="operating-mode-change__el">
+                    <div class="flex align-items-center">
+                      <Checkbox v-model="work.days[5].active" :binary="true" inputId="workday_5"/>
+                      <label for="workday_5" class="ml-2">Пятница</label>
+                    </div>
+                    <div class="operating-mode-change__values" v-if="work.days[5].active">
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar id="calendar-timeonly" v-model="work.days[5].start" timeOnly :stepMinute="step_minute" :invalid="work.days[5].error_start"/>
+                      </div>
+                      <div class="operating-mode-change__line"></div>
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar id="calendar-timeonly" v-model="work.days[5].end" timeOnly :stepMinute="step_minute" :invalid="work.days[5].error_end"/>
+                      </div>
+                    </div>
+                    <div class="operating-mode-change__values off" v-else>
+                      <p>Выходной</p>
+                  </div>
+                  </div>
+                  <div class="operating-mode-change__el">
+                    <div class="flex align-items-center">
+                      <Checkbox v-model="work.days[6].active" :binary="true" inputId="workday_6"/>
+                      <label for="workday_6" class="ml-2">Суббота</label>
+                    </div>
+                    <div class="operating-mode-change__values" v-if="work.days[6].active">
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar id="calendar-timeonly" v-model="work.days[6].start" timeOnly :stepMinute="step_minute" :invalid="work.days[6].error_start"/>
+                      </div>
+                      <div class="operating-mode-change__line"></div>
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar id="calendar-timeonly" v-model="work.days[6].end" timeOnly :stepMinute="step_minute" :invalid="work.days[6].error_end"/>
+                      </div>
+                    </div>
+                    <div class="operating-mode-change__values off" v-else>
+                      <p>Выходной</p>
+                  </div>
+                  </div>
+                  <div class="operating-mode-change__el">
+                    <div class="flex align-items-center">
+                      <Checkbox v-model="work.days[7].active" :binary="true" inputId="workday_7"/>
+                      <label for="workday_7" class="ml-2">Воскресенье</label>
+                    </div>
+                    <div class="operating-mode-change__values" v-if="work.days[7].active">
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar v-model="work.days[7].start" timeOnly :stepMinute="step_minute" :invalid="work.days[7].error_start"/>
+                      </div>
+                      <div class="operating-mode-change__line"></div>
+                      <div class="form_input_group input_pl input-parent required">
+                        <primeCalendar v-model="work.days[7].end" timeOnly :stepMinute="step_minute" :invalid="work.days[7].error_end"/>
+                      </div>
+                    </div>
+                    <div class="operating-mode-change__values off" v-else>
+                        <p>Выходной</p>
+                    </div>
+                  </div>
+                  <div class="operating-mode-change__buttons">
+                    <button class="dart-btn dart-btn-secondary alert_change_btn" type="button" @click.prevent="clearWorkForm"><span>Сбросить</span></button>
+                    <button class="dart-btn dart-btn-primary" @click.prevent="addWorkForm" :class="{ 'dart-btn-loading': work_loading }">Сохранить</button>
+                  </div>
+              </form>
+            </custom-modal>
+            <custom-modal class="operating-mode-calend-modal" v-model="showOperatingModeCalendarModal" @close="resetForm()">
+              <template v-slot:title>Выходные и короткие дни</template>
+              <div>
+                <DatePicker
+                :attributes="work_dates"
+                :masks="{ weekdays: 'WW' }"
+                v-model="work_date"
+                :timezone="work_dates_input.timezone"/>
+                <div class="operating-mode-calend-modal__radio">
+                  <div class="flex align-items-center">
+                    <RadioButton v-model="work_dates_input.type" inputId="work_dates_type_1" value="weekend" />
+                    <label for="work_dates_type_1" class="ml-2">Выходной</label>
+                  </div>
+                  <div class="flex align-items-center">
+                    <RadioButton v-model="work_dates_input.type" inputId="work_dates_type_2" value="shortday" />
+                    <label for="work_dates_type_2" class="ml-2">Короткий день</label>
+                  </div>
+                </div>
+                <div class="operating-mode-calend-modal__values" v-if="work_dates_input.type == 'shortday'">
+                  <div class="form_input_group input_pl input-parent required">
+                    <primeCalendar v-model="work_dates_input.start" timeOnly :stepMinute="step_minute" :invalid="work_dates_input.start_error"/>
+                  </div>
+                  <div class="operating-mode-calend-modal__line"></div>
+                  <div class="form_input_group input_pl input-parent required">
+                    <primeCalendar v-model="work_dates_input.end" timeOnly :stepMinute="step_minute" :invalid="work_dates_input.end_error"/>
+                  </div>
+                </div>
+                <div class="operating-mode-calend-modal__buttons">
+                  <button class="dart-btn dart-btn-secondary alert_change_btn" type="button" @click.prevent="deleteWorkDay" v-if="work_dates_input.delete"><span>Удалить</span></button>
+                  <button class="dart-btn dart-btn-primary" @click.prevent="addWorkDay" :class="{ 'dart-btn-loading': work_calendar_loading }">Сохранить</button>
+                </div>
+              </div>
+            </custom-modal>
+          </div>
+        </div>
       </TabPanel>
    </TabView>
 </template>
 
 <script>
+import { toRaw } from 'vue'
 import { mapActions, mapGetters } from 'vuex'
 import vTable from '../components/table/v-table'
 import Chart from 'primevue/chart'
@@ -365,6 +591,11 @@ import Dropdown from 'primevue/dropdown'
 import InputText from 'primevue/inputtext'
 import InputNumber from 'primevue/inputnumber'
 import Checkbox from 'primevue/checkbox'
+import { Calendar, DatePicker } from 'v-calendar'
+import Toast from 'primevue/toast'
+import primeCalendar from 'primevue/calendar'
+import 'v-calendar/dist/style.css'
+import customModal from '@/components/popup/CustomModal.vue'
 
 export default {
   name: 'ProfileProducts',
@@ -382,10 +613,97 @@ export default {
       default: () => {
         return []
       }
+    },
+    step_minute: {
+      type: Number,
+      default: 15
     }
   },
   data () {
     return {
+      showOperatingModeModal: false,
+      showOperatingModeCalendarModal: false,
+      work_loading: false,
+      work_calendar_loading: false,
+      work_date: new Date(),
+      work_dates_input: {
+        id: '',
+        type: 'shortday',
+        start: '',
+        end: '',
+        delete: false,
+        date: new Date(),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      },
+      work_dates: [{
+        dot: 'red',
+        dates: []
+      },
+      {
+        dot: 'blue',
+        dates: []
+      }],
+      work: {
+        days: {
+          1: {
+            active: 0,
+            start: '',
+            end: '',
+            weekend: 1,
+            error_start: false,
+            error_end: false
+          },
+          2: {
+            active: 0,
+            start: '',
+            end: '',
+            weekend: 1,
+            error_start: false,
+            error_end: false
+          },
+          3: {
+            active: 0,
+            start: '',
+            end: '',
+            weekend: 1,
+            error_start: false,
+            error_end: false
+          },
+          4: {
+            active: 0,
+            start: '',
+            end: '',
+            weekend: 1,
+            error_start: false,
+            error_end: false
+          },
+          5: {
+            active: 0,
+            start: '',
+            end: '',
+            weekend: 1,
+            error_start: false,
+            error_end: false
+          },
+          6: {
+            active: 0,
+            start: '',
+            end: '',
+            weekend: 1,
+            error_start: false,
+            error_end: false
+          },
+          7: {
+            active: 0,
+            start: '',
+            end: '',
+            weekend: 1,
+            error_start: false,
+            error_end: false
+          }
+        }
+      },
+      workdays_source: [],
       chartData: null,
       chartDataMoney: null,
       chartDataHelpOne: null,
@@ -620,7 +938,9 @@ export default {
       'get_msproducts_from_api',
       'get_catalog_from_api',
       'opt_get_prices',
-      'set_organization_settings'
+      'set_organization_settings',
+      'set_work_to_api',
+      'delete_work_from_api'
     ]),
     setChartData () {
       return {
@@ -757,6 +1077,160 @@ export default {
       this.report_copo.total = -1
       this.page_brand = data.page
       this.get_report_copo_from_api(data)
+    },
+    // чекнули дату, проверяем занята ли она
+    checkDate (date) {
+      // console.log(date)
+      const source = toRaw(this.workdays_source)
+      const dater = new Date(date)
+      const month = Number(dater.getMonth()) + 1
+      const searchDate = dater.getFullYear() + '-' + (month < 10 ? '0' : '') + month + '-' + (dater.getDate() < 10 ? '0' : '') + dater.getDate()
+      // console.log(searchDate)
+      source.forEach((element) => {
+        if (element.date === searchDate) {
+          // console.log(element)
+          this.work_dates_input.delete = true
+          const weekend = Number(element.weekend)
+          this.work_dates_input.id = element.id
+          if (weekend === 1) {
+            this.work_dates_input.type = 'weekend'
+          } else {
+            this.work_dates_input.type = 'shortday'
+            this.work_dates_input.start = new Date(element.timestamp_from * 1000)
+            this.work_dates_input.end = new Date(element.timestamp_to * 1000)
+          }
+        }
+      })
+    },
+    // обновление формы
+    resetForm () {
+      this.work_dates_input = {
+        id: '',
+        type: 'shortday',
+        start: '',
+        end: '',
+        delete: false,
+        date: new Date(),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+      }
+    },
+    // добавляем дату в листинг
+    addWorkDay () {
+      let error = false
+      this.work_calendar_loading = true
+      if (this.work_dates_input.type === 'shortday') {
+        if (!this.work_dates_input.start) {
+          this.work_dates_input.start_error = true
+          error = true
+        }
+        if (!this.work_dates_input.end) {
+          this.work_dates_input.end_error = true
+          error = true
+        }
+      }
+      if (!error) {
+        const data = toRaw(this.work_dates_input)
+        const date = new Date(data.date)
+        const dateFrom = new Date(data.start)
+        const dateTo = new Date(data.end)
+        data.date_record = Math.round(date.getTime() / 1000)
+        date.setUTCHours(0, 0, 0, 0)
+        data.condition_date_from = Math.round(date.getTime() / 1000)
+        date.setUTCHours(23, 59, 59, 999)
+        data.condition_date_to = Math.round(date.getTime() / 1000)
+        data.time_start = Math.round(dateFrom.getTime() / 1000)
+        data.time_end = Math.round(dateTo.getTime() / 1000)
+        data.time_from = (dateFrom.getHours() < 10 ? '0' : '') + dateFrom.getHours() + ':' + (dateFrom.getMinutes() < 10 ? '0' : '') + dateFrom.getMinutes()
+        data.time_to = (dateTo.getHours() < 10 ? '0' : '') + dateTo.getHours() + ':' + (dateTo.getMinutes() < 10 ? '0' : '') + dateTo.getMinutes()
+        console.log(data)
+        this.$load(async () => {
+          await this.set_work_to_api({
+            action: 'set',
+            type: 'work_week_date',
+            id: router.currentRoute._value.params.store_id,
+            data: data
+          })
+            .then((result) => {
+              this.work_calendar_loading = false
+              this.showOperatingModeCalendarModal = false
+              this.get_org_store_from_api().then(() => {
+                this.$toast.add({ severity: 'info', summary: 'Время работы скорректировано', detail: 'Время работы организации успешно скорректировано. Проверьте корректность.', life: 3000 })
+              })
+            })
+            .catch((result) => {
+              console.log(result)
+            })
+        })
+      } else {
+        this.work_calendar_loading = false
+      }
+    },
+    // удаляем дату из листинга
+    deleteWorkDay () {
+      if (this.work_dates_input.id) {
+        this.showOperatingModeCalendarModal = false
+        this.$load(async () => {
+          await this.delete_work_from_api({
+            action: 'delete',
+            type: 'work_week_date',
+            id: router.currentRoute._value.params.store_id,
+            object_id: this.work_dates_input.id
+          })
+            .then((result) => {
+              this.get_org_store_from_api().then(() => {
+                this.$toast.add({ severity: 'info', summary: 'День сброшен', detail: 'Теперь Вы можете указать другой график работы', life: 3000 })
+              })
+            })
+            .catch((result) => {
+              console.log(result)
+            })
+        })
+      }
+    },
+    clearWorkForm () {
+      for (let i = 1; i <= Object.keys(this.work.days).length; i++) {
+        this.work.days[i].active = false
+      }
+    },
+    addWorkForm () {
+      let error = false
+      this.work_loading = true
+      for (let i = 1; i <= Object.keys(this.work.days).length; i++) {
+        const dateFrom = new Date(this.work.days[i].start)
+        const dateTo = new Date(this.work.days[i].end)
+        this.work.days[i].time_start = Math.round(dateFrom.getTime() / 1000)
+        this.work.days[i].time_end = Math.round(dateTo.getTime() / 1000)
+        if ((!this.work.days[i].weekend && this.work.days[i].start && this.work.days[i].end && (!this.work.days[i].weekend && this.work.days[i].time_start < this.work.days[i].time_end)) || this.work.days[i].weekend) {
+          this.work.days[i].time_from = (dateFrom.getHours() < 10 ? '0' : '') + dateFrom.getHours() + ':' + (dateFrom.getMinutes() < 10 ? '0' : '') + dateFrom.getMinutes()
+          this.work.days[i].time_to = (dateTo.getHours() < 10 ? '0' : '') + dateTo.getHours() + ':' + (dateTo.getMinutes() < 10 ? '0' : '') + dateTo.getMinutes()
+          this.work.days[i].timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+        } else {
+          this.work.days[i].error_start = true
+          this.work.days[i].error_end = true
+          error = true
+        }
+      }
+      if (!error) {
+        const dates = toRaw(this.work.days)
+        this.$load(async () => {
+          await this.set_work_to_api({
+            action: 'set',
+            type: 'work_week',
+            id: router.currentRoute._value.params.store_id,
+            dates: dates
+          })
+            .then((result) => {
+              this.work_loading = false
+              this.showOperatingModeModal = false
+              this.$toast.add({ severity: 'info', summary: 'Время работы скорректировано', detail: 'Время работы организации успешно скорректировано. Проверьте корректность.', life: 3000 })
+            })
+            .catch((result) => {
+              console.log(result)
+            })
+        })
+      } else {
+        this.work_loading = false
+      }
     }
   },
   mounted () {
@@ -805,7 +1279,12 @@ export default {
     Dropdown,
     InputText,
     InputNumber,
-    Checkbox
+    Checkbox,
+    customModal,
+    primeCalendar,
+    Calendar,
+    DatePicker,
+    Toast
   },
   computed: {
     ...mapGetters([
@@ -836,6 +1315,12 @@ export default {
     }
   },
   watch: {
+    work_date (newVal, oldVal) {
+      if (newVal !== oldVal) {
+        this.work_dates_input.date = newVal
+        this.checkDate(newVal)
+      }
+    },
     org_store: function (newVal, oldVal) {
       this.store = newVal
       const num = this.store.products.copo_percent
@@ -849,6 +1334,23 @@ export default {
       this.prods.copo_money_percent = this.org_store.products.copo_money_percent
       this.prods.no_copo_money_percent = this.org_store.products.no_copo_money_percent
       this.prods.summ_copo = this.org_store.products.summ_copo
+      this.work_dates = newVal.workdays
+      this.workdays_source = newVal.workdays_source
+      for (let i = 0; i < Object.keys(newVal.worktime).length; i++) {
+        const ji = i + 1
+        const weekend = Number(newVal.worktime[i].weekend)
+        if (weekend === 1) {
+          this.work.days[ji].weekend = true
+          this.work.days[ji].active = false
+        } else {
+          this.work.days[ji].weekend = false
+          this.work.days[ji].active = true
+          this.work.days[ji].time_from = newVal.worktime[i].time_from
+          this.work.days[ji].time_to = newVal.worktime[i].time_to
+          this.work.days[ji].start = new Date(newVal.worktime[i].timestamp_from * 1000)
+          this.work.days[ji].end = new Date(newVal.worktime[i].timestamp_to * 1000)
+        }
+      }
       const settings = JSON.parse(JSON.stringify(newVal.settings))
       const groupKeys = Object.keys(settings.groups)
       for (let i = 0; i < groupKeys.length; i++) {
@@ -891,7 +1393,12 @@ export default {
 </script>
 
 <style lang="scss">
-
+  .dart-form-block span.title {
+    display: block;
+    font-size: 18px;
+    line-height: 1.3;
+    font-weight: 500;
+  }
  .add-brand{
    width: 100vw;
    position: fixed;
