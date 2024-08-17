@@ -190,11 +190,11 @@
                 </div>
                 <div class="flex align-items-center mt-3">
                   <RadioButton v-model="this.form.typeShipment" inputId="typeShipment-2" name="typeShipment" value="2"/>
-                  <label for="typeShipment-2" class="ml-2 radioLabel">Определяется по расчету доставки СДЭК</label>
+                  <label for="typeShipment-2" class="ml-2 radioLabel">Определяется по расчету доставки ТК</label>
                 </div>
                 <div class="flex align-items-center mt-3">
                 <RadioButton v-model="this.form.typeShipment" inputId="typeShipment-3" name="typeShipment" value="3"/>
-                <label for="typeShipment-3" class="ml-2 radioLabel">Рассчитывается СДЭК от выбранной даты отгрузки</label>
+                <label for="typeShipment-3" class="ml-2 radioLabel">Рассчитывается ТК от выбранной даты отгрузки</label>
                 </div>
 
                 <Calendar class="mt-3" v-if="this.form.typeShipment == 3" v-model="this.form.dateShipment" placeholder="Выберите ближайшую дату отгрузки" :manualInput="false" showIcon/>
@@ -244,7 +244,7 @@
               <div class="kenost-wiget">
                   <Dropdown v-model="this.form.condition" :options="this.condition" optionLabel="name" placeholder="Оплата доставки" class="w-full md:w-14rem" />
               </div>
-              <div class="two-colums mt-2" v-if="this.form.condition.key == 3 || this.form.condition.key == 4">
+              <div class="two-colums mt-2" v-if="this.form.condition.key != 0">
                   <div class="kenost-wiget">
                     <p>Минимальная общая сумма</p>
                     <InputNumber
@@ -1040,6 +1040,8 @@ export default {
         dateShipment: '',
         paymentDelivery: { name: 'Покупатель', key: 0 },
         conditionPaymentDelivery: { name: 'Без условий', key: 0 },
+        compabilityMode: { name: 'Применяется бóльшая', key: 0 },
+        compabilityModePost: { name: 'Применяется бóльшая', key: 0 },
         conditionPaymentDeliveryValue: 0,
         postponementConditions: { name: 'Без условий', key: 0 },
         postponementConditionsValue: 0,
@@ -1123,10 +1125,7 @@ export default {
       condition: [
         { name: 'Скидка без условий', key: 0 },
         { name: 'Купи Х товаров по цене Y', key: 1 },
-        { name: 'Получи подарок при покупке Х товаров', key: 2 },
-        // { name: 'Получи подарок при покупке на Х рублей', key: 5 },
-        { name: 'Купи на Х рублей - получи Y скидку на выбранный товар', key: 3 },
-        { name: 'Купи на Х рублей - получи скидку на Y %', key: 4 }
+        { name: 'Получи подарок при покупке Х товаров', key: 2 }
       ],
       typeFormul: [
         { name: '₽', key: 0 },
@@ -1440,6 +1439,8 @@ export default {
             files: this.files,
             description: this.form.description,
             award: this.form.award,
+            compabilityMode: this.form.compabilityMode,
+            compabilityModePost: this.form.compabilityModePost,
             compatibilityDiscount: this.form.compatibilityDiscount,
             compatibilityPost: this.form.compatibilityPost,
             dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],
@@ -1490,6 +1491,8 @@ export default {
             files: this.files,
             description: this.form.description,
             award: this.form.award,
+            compabilityMode: this.form.compabilityMode,
+            compabilityModePost: this.form.compabilityModePost,
             compatibilityDiscount: this.form.compatibilityDiscount,
             compatibilityPost: this.form.compatibilityPost,
             dates: [this.form.dates[0].toDateString(), this.form.dates[1].toDateString()],

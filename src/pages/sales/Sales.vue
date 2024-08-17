@@ -210,8 +210,8 @@ export default {
             diler_id: 'id'
           }
         },
-        address: {
-          label: 'Адрес',
+        warehouse: {
+          label: 'Склад',
           type: 'text'
         },
         base_sale: {
@@ -259,6 +259,10 @@ export default {
             action: 'id'
           },
           sort: true
+        },
+        store_name: {
+          label: 'Склад',
+          type: 'text'
         },
         date_from: {
           label: 'Действует с',
@@ -375,7 +379,8 @@ export default {
     },
     editDiler (value) {
       this.form.diler.name = value.name
-      this.form.diler.id = value.id
+      this.form.diler.warehouse_id = value.warehouse_id
+      this.form.diler.id = value.obj_id
       this.form.diler.base_sale = value.base_sale
       this.modals.diler = !this.modals.diler
     },
@@ -383,7 +388,6 @@ export default {
       this.diler_loading = true
       const data = this.form.diler
       data.action = 'diler/set'
-      data.warehouse_id = this.$route.params.id
       this.$load(async () => {
         await this.set_diler_to_api(data)
           .then((result) => {
@@ -523,8 +527,8 @@ export default {
       perpage: this.pagination_items_per_page_dilers
     }).then(() => {
       if (this.dilers) {
-        if (Object.prototype.hasOwnProperty.call(this.dilers, 'dilers')) {
-          this.stores.items = this.dilers.dilers
+        if (Object.prototype.hasOwnProperty.call(this.dilers, 'items')) {
+          this.stores.items = this.dilers.items
         } else {
           this.stores.items = []
         }
@@ -553,8 +557,8 @@ export default {
     },
     dilers: function (newVal, oldVal) {
       if (typeof newVal === 'object') {
-        if (Object.prototype.hasOwnProperty.call(newVal, 'dilers')) {
-          this.stores.items = newVal.dilers
+        if (Object.prototype.hasOwnProperty.call(newVal, 'items')) {
+          this.stores.items = newVal.items
         } else {
           this.stores.items = []
         }

@@ -318,40 +318,42 @@
         </div>
        </TabPanel>
        <TabPanel header="Настройки">
-        <form action="#" @submit.prevent="formChangeSettings">
-          <div class="dart-row">
-            <div class="d-col-md-6" v-for="(group, index) in org_store?.settings?.groups" :key="index">
-              <div class="dart-form-block">
-                <span class="title">{{ group.label }}</span>
-                <div class="dart-form-block__content">
-                  <div class="dart-form-group" v-for="(setting) in group.settings" :key="setting.id">
-                    <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 1">
-                      <InputText :id="setting.key" v-model="this.settingsForm[setting.key]" />
-                      <label :for="setting.key">{{ setting.label }}</label>
-                    </FloatLabel>
-                    <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 2">
-                      <label :for="setting.key">{{ setting.label }}</label>
-                      <Dropdown :id="setting.key" v-model="this.settingsForm[setting.key]" :options="this.typePrice" optionLabel="name" class="w-full" />
-                    </FloatLabel>
-                    <div class="flex align-items-center" v-if="setting.type == 3">
-                      <Checkbox :id="setting.key" v-model="this.settingsForm[setting.key]" :inputId="setting.key" :name="setting.key" binary />
-                      <label :for="setting.key" class="ml-2"> {{ setting.label }} </label>
-                    </div>
-                    <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 4">
-                      <InputNumber :id="setting.key" v-model="this.settingsForm[setting.key]" class="w-full" />
-                      <label :for="setting.key">{{ setting.label }}</label>
-                    </FloatLabel>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="form_input_group">
-            <button class="dart-btn dart-btn-primary dart-mt-1" type="submit">Сохранить</button>
-          </div>
-        </form>
         <div class="widgets-block">
           <div class="dart-row">
+            <div class="d-col-lg-12 d-col-md-12">
+              <form action="#" class="panel-widget" @submit.prevent="formChangeSettings">
+                <div class="dart-row">
+                  <div class="d-col-md-6" v-for="(group, index) in org_store?.settings?.groups" :key="index">
+                    <div class="dart-form-block">
+                      <span class="title">{{ group.label }}</span>
+                      <div class="dart-form-block__content">
+                        <div class="dart-form-group" v-for="(setting) in group.settings" :key="setting.id">
+                          <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 1">
+                            <InputText :id="setting.key" v-model="this.settingsForm[setting.key]" />
+                            <label :for="setting.key">{{ setting.label }}</label>
+                          </FloatLabel>
+                          <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 2">
+                            <label :for="setting.key">{{ setting.label }}</label>
+                            <Dropdown :id="setting.key" v-model="this.settingsForm[setting.key]" :options="this.typePrice" optionLabel="name" class="w-full" />
+                          </FloatLabel>
+                          <div class="flex align-items-center" v-if="setting.type == 3">
+                            <Checkbox :id="setting.key" v-model="this.settingsForm[setting.key]" :inputId="setting.key" :name="setting.key" binary />
+                            <label :for="setting.key" class="ml-2"> {{ setting.label }} </label>
+                          </div>
+                          <FloatLabel class="w-full md:w-14rem" v-if="setting.type == 4">
+                            <InputNumber :id="setting.key" v-model="this.settingsForm[setting.key]" class="w-full" />
+                            <label :for="setting.key">{{ setting.label }}</label>
+                          </FloatLabel>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form_input_group">
+                  <button class="dart-btn dart-btn-primary dart-mt-1" type="submit">Сохранить</button>
+                </div>
+              </form>
+            </div>
             <div class="d-col-lg-6 d-col-md-6">
               <div class="operating-mode">
                   <div class="operating-mode__title"><p>Режим работы</p><i class="d_icon d_icon-edit" @click="this.showOperatingModeModal = !this.showOperatingModeModal"></i></div>

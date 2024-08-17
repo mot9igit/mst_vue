@@ -32,9 +32,9 @@
           <div @click="addBasket(item.remain_id, item.basket.count, item.store_id, index)" class="dart-btn dart-btn-primary"><i class="d_icon d_icon-busket"></i></div>
         </form>
       </td>
-      <td>{{item.store_name}}</td>
+      <td :data-id="item.id">{{item.store_name}}</td>
       <td>{{Math.round(item.price).toLocaleString('ru')}} ₽</td>
-      <td>{{item.old_price ? Math.round(item.old_price).toLocaleString('ru') : Math.round(item.price).toLocaleString('ru')}} ₽ / {{item.actions.length == 0 ? 0 : ((item.old_price - item.price).toFixed(0)).toLocaleString('ru')}} ₽</td>
+      <td>{{item.old_price ? Math.round(item.old_price).toLocaleString('ru') : Math.round(item.price).toLocaleString('ru')}} ₽ / {{((item.old_price - item.price).toFixed(0)).toLocaleString('ru')}} ₽</td>
       <td>{{item.delay ? Number(item.delay).toFixed(1) + ' дн' : 'Нет'}}</td>
       <td>{{item.payer === '1' ? 'Поставщик' : 'Покупатель'}} </td>
       <td>от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</td>

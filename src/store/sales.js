@@ -51,6 +51,12 @@ export default {
           commit('GET_ACTIONS_TO_VUEX', response.data)
           return response
         })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
     },
     get_sales_adv_pages_to_api ({ commit }, data) {
       return Axios('/rest/front_sales', {

@@ -24,12 +24,12 @@
             <hr/>
             <div class="panel_widget_organization__two-collums">
               <p class="panel_widget_organization__name">Баланс</p>
-              <p class="panel_widget_organization__value">999 999 999 ₽</p>
+              <p class="panel_widget_organization__value">{{ item.balance }} ₽</p>
             </div>
             <hr/>
             <div class="panel_widget_organization__two-collums">
               <p class="panel_widget_organization__name">Заказы</p>
-              <p class="panel_widget_organization__circle active">99</p>
+              <p class="panel_widget_organization__circle active">{{ item.orders.count }}</p>
             </div>
           </div>
         </div>
