@@ -111,7 +111,7 @@ const routes = [
           component: ProfileOrganization,
           meta: {
             breadcrumb: {
-              label: 'Название огранизации',
+              label: 'Название организации',
               link: 'store_id'
             }
           }

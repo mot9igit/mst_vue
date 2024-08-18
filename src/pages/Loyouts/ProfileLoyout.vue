@@ -921,7 +921,12 @@ main{
       }
     }
   }
-  .dart_diler_widget .dart_diler_widget__info-text{
+
+  &.active .dart_diler_widget__info-text{
+    display: block;
+  }
+
+  .dart_diler_widget__info-text{
     display: none;
   }
 
