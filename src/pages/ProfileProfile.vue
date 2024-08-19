@@ -214,8 +214,7 @@ export default {
     ...mapActions([
       'get_organization_from_api',
       'set_organization_data',
-      'set_organization_settings',
-      'opt_get_prices'
+      'set_organization_settings'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -271,47 +270,16 @@ export default {
     }
   },
   mounted () {
-    this.get_organization_from_api().then(() => {
-      this.opt_get_prices({
-        action: 'get/type/prices',
-        store_id: router.currentRoute._value.params.id
-      })
-    })
+    this.get_organization_from_api().then(() => {})
   },
   components: { customModal, FileUpload, Toast, TabView, TabPanel, Dropdown, FloatLabel, InputText, InputNumber, Checkbox },
   computed: {
     ...mapGetters([
-      'organization',
-      'oprprices'
+      'organization'
     ])
   },
   watch: {
-    organization: function (newVal, oldVal) {
-      const settings = JSON.parse(JSON.stringify(newVal.settings))
-      const groupKeys = Object.keys(settings.groups)
-      for (let i = 0; i < groupKeys.length; i++) {
-        const keys = Object.keys(settings.groups[groupKeys[i]].settings)
-        for (let j = 0; j < keys.length; j++) {
-          if (settings.groups[groupKeys[i]].settings[keys[j]].type === '2') {
-            this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = settings.groups[groupKeys[i]].settings[keys[j]].value
-          } if (settings.groups[groupKeys[i]].settings[keys[j]].type === '3') {
-            if (settings.groups[groupKeys[i]].settings[keys[j]].value === '1') {
-              this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = true
-            } else {
-              this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = false
-            }
-          } else {
-            this.settingsForm[settings.groups[groupKeys[i]].settings[keys[j]].key] = settings.groups[groupKeys[i]].settings[keys[j]].value
-          }
-        }
-      }
-    },
-    oprprices: function (newVal, oldVal) {
-      this.typePrice = []
-      for (let i = 0; i < newVal.length; i++) {
-        this.typePrice.push({ key: newVal[i].guid, name: newVal[i].name })
-      }
-    }
+    organization: function (newVal, oldVal) { }
   }
 }
 </script>

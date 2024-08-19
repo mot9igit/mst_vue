@@ -1125,7 +1125,8 @@ export default {
       condition: [
         { name: 'Скидка без условий', key: 0 },
         { name: 'Купи Х товаров по цене Y', key: 1 },
-        { name: 'Получи подарок при покупке Х товаров', key: 2 }
+        { name: 'Получи подарок при покупке Х товаров', key: 2 },
+        { name: 'Купи на X рублей и получи скидку Y', key: 3 }
       ],
       typeFormul: [
         { name: '₽', key: 0 },
@@ -1468,6 +1469,7 @@ export default {
             complects: this.selected_complects,
             action_id: router.currentRoute._value.params.sales_id,
             big_sale_actions: this.form.bigDiscount,
+            big_post_actions: this.form.bigPost,
             not_sale_client: this.form.not_sale_client[0] === 'true',
             limit_sum: this.form.limitationValue,
             limit_type: this.form.limitations,
@@ -1519,6 +1521,7 @@ export default {
             available_opt: this.form.available_opt[0] === 'true',
             complects: this.selected_complects,
             big_sale_actions: this.form.bigDiscount,
+            big_post_actions: this.form.bigPost,
             not_sale_client: this.form.not_sale_client[0] === 'true',
             limit_sum: this.form.limitationValue,
             limit_type: this.form.limitations,

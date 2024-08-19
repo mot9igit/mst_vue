@@ -41,12 +41,16 @@
       <td>
         <div class="k-order__actions center">
           <div @click="openActions(item)" class="k-actions" v-for="(action, index) in item.actions" v-bind:key="action.id">
-            <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" :src="site_url_prefix + action.icon" >
+            <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" :src="action.icon" >
+            <!--
             <div v-if="action.conflicts.items[action.action_id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div>
+            -->
           </div>
           <div v-if="item.actions.length > 3" class="k-order__actions-el last">+{{ item.actions.length - 3 }}</div>
         </div>
+        <!--
         <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span>
+        -->
       </td>
       <td>{{item.remains}}</td>
   </tr>
@@ -75,14 +79,14 @@
       <td class="td-center" :class="{'pointer-none' : index !== 0}"><span :style="'top:' +  (complect.length * 70) / 2 + 'px'" v-if="index === 0">{{item.action?.payer === '1' ? 'Поставщик' : 'Покупатель'}}</span></td>
       <td class="td-center" :class="{'pointer-none' : index !== 0}"><span :style="'top:' +  (complect.length * 70) / 2 + 'px'" v-if="index === 0">от {{item.delivery}} дн ({{new Date(item.delivery_day).toLocaleString("ru", {month: 'long', day: 'numeric'})}})</span></td>
       <td>
-        <!-- <div class="k-order__actions center">
+        <div class="k-order__actions center">
           <div @click="openActions(item)" class="k-actions" v-for="(action, index) in item.actions" v-bind:key="action.id">
-            <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" :src="site_url_prefix + action.icon" >
-            <div v-if="action.conflicts.items[action.action_id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div>
+            <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" :src="action.icon" >
+            <!-- <div v-if="action.conflicts.items[action.action_id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div> -->
           </div>
-          <div v-if="item.actions.length > 3" class="k-order__actions-el last">+{{ item.actions.length - 3 }}</div>
+          <!-- <div v-if="item.actions.length > 3" class="k-order__actions-el last">+{{ item.actions.length - 3 }}</div> -->
         </div>
-        <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span> -->
+        <!-- <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span> -->
       </td>
       <td class="td-center" :class="{'pointer-none' : index !== 0}"><span :style="'top:' +  (complect.length * 70) / 2 + 'px'" v-if="index === 0">{{item.remain_complect}} шт</span></td>
     </tr>

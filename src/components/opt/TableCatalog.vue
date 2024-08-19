@@ -38,18 +38,31 @@
             <tbody>
               <tr v-for="item in this.actions_item.actions" v-bind:key="item.id" @click="this.active = !this.active" :class="{'active-el' : this.active, 'no-active-el' : !this.active}">
                 <td class="kenost-actions-modal__action">
-                  <img :src="'https://mst.tools/' + item.icon" alt="">
-                  <RouterLink :to="{ name: 'promotion', params: { action: item.action_id }}" class="kenost-actions-modal__link"><p>{{item.name}}</p> <i class="mst-icon mst-icon-open"></i></RouterLink>
+                  <img :src="item.icon" alt="">
+                  <span v-if="item.id > 0">
+                    <RouterLink :to="{ name: 'promotion', params: { action: item.action_id }}" class="kenost-actions-modal__link"><p>{{item.name}}</p> <i class="mst-icon mst-icon-open"></i></RouterLink>
+                  </span>
+                  <span v-else>
+                    {{item.name}}
+                  </span>
                 </td>
                 <td class="kenost-actions-modal__center">{{item.description}}</td>
-                <td class="kenost-actions-modal__center">Скидка <span v-if="item.old_price != 0">{{(100 - (Number(item.new_price) / (item.old_price / 100))).toFixed(2)}}</span><span v-else>100</span>%, оплата доставки {{item.payer === '1' ? 'поставщиком' : 'покупателем'}}
-                  <span v-if="item.delivery_payment_terms == '1'">при условии «Купи на {{ Number(item.delivery_payment_value).toLocaleString('ru') }} рублей»</span>
-                  <span v-if="item.delivery_payment_terms == '2'">при условии «Купи {{ Number(item.delivery_payment_value).toLocaleString('ru') }} шт. товара»</span><span v-if="item.delay != 0">, отсрочка {{Number(item.delay).toLocaleString('ru')}} дней</span>
-                  <span v-if="item.delay_condition == '1'">при покупке на {{ Number(item.delay_condition_value).toLocaleString('ru') }} рублей</span>
-                  <span v-if="item.delay_condition == '2'">при покупке {{ Number(item.delay_condition_value).toLocaleString('ru') }} шт. товара</span>
-                  <span v-if="item.delay != 0">(<span v-for="(delay, index) in item.delay_graph" v-bind:key="delay.id"><span v-if="index != 0">, </span>{{ Number(delay.day).toLocaleString('ru') }} дней – {{ delay.percent }}%</span>)</span></td>
-                <td>
+                <td class="kenost-actions-modal__center">
+                  <div v-if="item.action_id == 0">
+                    Базовая скидка клиента в размере {{ item.base_sale }}%
+                  </div>
+                  <div v-else>
+                    Скидка <span v-if="item.old_price != 0">{{(100 - (Number(item.new_price) / (item.old_price / 100))).toFixed(2)}}</span><span v-else>100</span>%, оплата доставки {{item.payer === '1' ? 'поставщиком' : 'покупателем'}}
+                    <span v-if="item.delivery_payment_terms == '1'">при условии «Купи на {{ Number(item.delivery_payment_value).toLocaleString('ru') }} рублей»</span>
+                    <span v-if="item.delivery_payment_terms == '2'">при условии «Купи {{ Number(item.delivery_payment_value).toLocaleString('ru') }} шт. товара»</span><span v-if="item.delay != 0">, отсрочка {{Number(item.delay).toLocaleString('ru')}} дней</span>
+                    <span v-if="item.delay_condition == '1'">при покупке на {{ Number(item.delay_condition_value).toLocaleString('ru') }} рублей</span>
+                    <span v-if="item.delay_condition == '2'">при покупке {{ Number(item.delay_condition_value).toLocaleString('ru') }} шт. товара</span>
+                    <span v-if="item.delay != 0">(<span v-for="(delay, index) in item.delay_graph" v-bind:key="delay.id"><span v-if="index != 0">, </span>{{ Number(delay.day).toLocaleString('ru') }} дней – {{ delay.percent }}%</span>)</span>
+                  </div>
+                  </td>
+                  <td>
                   <div class="kenost-conflict">
+                    <!--
                     <div v-if="item.conflicts.items[item.action_id].length" class="kenost-conflict__container">
                       <div class="kenost-conflict__icon">
                         <i class="pi pi-info"></i>
@@ -58,6 +71,7 @@
                         <p>Конфликт с акцией <span>{{item.conflicts.items[item.action_id][0].name}}</span></p>
                       </div>
                     </div>
+                    -->
                     <InputSwitch @update:modelValue="updateAction(item.remain_id, item.store_id, item.action_id, item.enabled)" class="kenost-input-switch" v-model="item.enabled" />
                   </div>
                 </td>
