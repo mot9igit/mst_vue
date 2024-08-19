@@ -6,32 +6,34 @@
     <div class="organizations">
       <div class="dart-row">
         <div class="d-col-xl-custom d-col-lg-3 panel_widget_organization_wrap" v-for="item in this.organizations" v-bind:key="item.id">
-          <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
-            <div class="panel_widget_organization__top">
-              <div class="panel_widget_organization__icon" v-if="item.image">
-                <img :src="item.image" alt="">
-                <div class="panel_widget_organization__status">
-                  <i class="d_icon d_icon-check" v-if="item.active"></i>
-                  <i class="d_icon d_icon-focus" v-if="!item.active"></i>
+          <router-link class="link-no-style" :to="{ name: 'organization', params: { id: item.id }}">
+            <div class="panel_widget panel_widget_organization" :class="item.active ? 'active' : 'not_active'">
+              <div class="panel_widget_organization__top">
+                <div class="panel_widget_organization__icon" v-if="item.image">
+                  <img :src="item.image" alt="">
+                  <div class="panel_widget_organization__status">
+                    <i class="d_icon d_icon-check" v-if="item.active"></i>
+                    <i class="d_icon d_icon-focus" v-if="!item.active"></i>
+                  </div>
+                </div>
+                <div class="panel_widget_organization__icon" v-else>
+                  <i class="d_icon d_icon-house"></i>
                 </div>
               </div>
-              <div class="panel_widget_organization__icon" v-else>
-                <i class="d_icon d_icon-house"></i>
+              <div class="panel_widget_organization__title">{{ item.name }}</div>
+              <p class="panel_widget_organization__addres">{{ item.address }}</p>
+              <hr/>
+              <div class="panel_widget_organization__two-collums">
+                <p class="panel_widget_organization__name">Баланс</p>
+                <p class="panel_widget_organization__value">{{ item.balance }} ₽</p>
+              </div>
+              <hr/>
+              <div class="panel_widget_organization__two-collums">
+                <p class="panel_widget_organization__name">Заказы</p>
+                <p class="panel_widget_organization__circle active">{{ item.orders.count }}</p>
               </div>
             </div>
-            <router-link class="panel_widget_organization__title" :to="{ name: 'organization', params: { id: item.id }}">{{ item.name }}</router-link>
-            <p class="panel_widget_organization__addres">{{ item.address }}</p>
-            <hr/>
-            <div class="panel_widget_organization__two-collums">
-              <p class="panel_widget_organization__name">Баланс</p>
-              <p class="panel_widget_organization__value">{{ item.balance }} ₽</p>
-            </div>
-            <hr/>
-            <div class="panel_widget_organization__two-collums">
-              <p class="panel_widget_organization__name">Заказы</p>
-              <p class="panel_widget_organization__circle active">{{ item.orders.count }}</p>
-            </div>
-          </div>
+          </router-link>
         </div>
       </div>
     </div>
@@ -260,6 +262,13 @@ export default {
 </script>
 
 <style lang="scss">
+
+  .link-no-style{
+    text-decoration: none;
+    &:hover hr{
+      color: black;
+    }
+  }
 
   .panel_widget {
       background: #fff;
