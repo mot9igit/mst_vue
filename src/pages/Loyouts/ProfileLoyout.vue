@@ -210,34 +210,16 @@ export default {
             to: { name: 'org_orders', params: { id: this.$route.params.id } }
           },
           {
-            key: '1',
-            label: 'Товары',
-            icon: 'mst-icon mst-icon-products',
-            to: { name: 'org_products', params: { id: this.$route.params.id } }
-          },
-          {
             key: '2',
             label: 'Карточка компании',
             icon: 'mst-icon mst-icon-settings',
             to: { name: 'org_profile', params: { id: this.$route.params.id } }
           },
           {
-            key: '3',
-            label: 'Возвраты',
-            icon: 'mst-icon mst-icon-my_vendors',
-            to: { name: 'returns_home', params: { id: this.$route.params.id } }
-          },
-          {
             key: '4',
             label: 'B2B-маркетинг',
             icon: 'mst-icon mst-icon-b2b',
             to: { name: 'org_sales', params: { id: this.$route.params.id } }
-          },
-          {
-            key: '4',
-            label: 'B2C-маркетинг',
-            icon: 'mst-icon mst-icon-b2c',
-            to: { name: 'org_actions', params: { id: this.$route.params.id } }
           },
           // {
           //   key: '4',
@@ -252,22 +234,10 @@ export default {
           //   to: { name: 'org_reports', params: { id: this.$route.params.id } }
           // },
           {
-            key: '6',
-            label: 'Документы',
-            icon: 'mst-icon mst-icon-documents',
-            to: { name: 'org_docs', params: { id: this.$route.params.id } }
-          },
-          {
             key: '7',
             label: 'Закупки',
             icon: 'mst-icon mst-icon-opt',
             to: { name: 'purchases_home', params: { id: this.$route.params.id } }
-          },
-          {
-            key: '8',
-            label: 'Бонусная программа',
-            icon: 'mst-icon mst-icon-bonuses',
-            to: { name: 'bonus_program', params: { id: this.$route.params.id } }
           }]
         }
         if (this.organization.type === 2) {
@@ -284,47 +254,23 @@ export default {
             to: { name: 'org_products', params: { id: this.$route.params.id } }
           },
           {
-            key: '2',
-            label: 'Карточка компании',
-            icon: 'mst-icon mst-icon-settings',
-            to: { name: 'org_profile', params: { id: this.$route.params.id } }
+            key: '3',
+            label: 'Возвраты',
+            icon: 'mst-icon mst-icon-my_vendors',
+            to: { name: 'returns_home', params: { id: this.$route.params.id } }
           },
-          // {
-          //   key: '3',
-          //   label: 'Мои магазины',
-          //   icon: 'd_icon d_icon-cog',
-          //   to: { name: 'org_dilers', params: { id: this.$route.params.id } }
-          // },
           {
             key: '4',
-            label: 'Отгрузки',
-            icon: 'mst-icon mst-icon-shipments',
-            to: { name: 'org_shipping', params: { id: this.$route.params.id } }
-          },
-          {
-            key: '5',
             label: 'B2B-маркетинг',
             icon: 'mst-icon mst-icon-b2b',
             to: { name: 'org_sales', params: { id: this.$route.params.id } }
           },
           {
-            key: '6',
+            key: '5',
             label: 'B2C-маркетинг',
             icon: 'mst-icon mst-icon-b2c',
             to: { name: 'org_actions', params: { id: this.$route.params.id } }
           },
-          // {
-          //   key: '5',
-          //   label: 'Программы производителей',
-          //   icon: 'd_icon d_icon-star',
-          //   to: { name: 'org_bonuses', params: { id: this.$route.params.id } }
-          // },
-          // {
-          //   key: '6',
-          //   label: 'Мои программы',
-          //   icon: 'd_icon d_icon-star',
-          //   to: { name: 'org_ourbonuses', params: { id: this.$route.params.id } }
-          // },
           // {
           //   key: '7',
           //   label: 'Мастер отчетов',
@@ -344,7 +290,7 @@ export default {
             to: { name: 'purchases_home', params: { id: this.$route.params.id } }
           },
           {
-            key: '9',
+            key: '10',
             label: 'Бонусная программа',
             icon: 'mst-icon mst-icon-bonuses',
             to: { name: 'bonus_program', params: { id: this.$route.params.id } }
@@ -352,97 +298,60 @@ export default {
         }
         if (this.organization.type === 3) {
           return [{
-            key: '1',
+            key: '0',
+            label: 'Заказы',
+            icon: 'mst-icon mst-icon-orders',
+            to: { name: 'org_orders', params: { id: this.$route.params.id } }
+          },
+          {
+            key: '2',
+            label: 'Товары',
+            icon: 'mst-icon mst-icon-products',
+            to: { name: 'org_products', params: { id: this.$route.params.id } }
+          }, {
+            key: '3',
             label: 'Карточка компании',
             icon: 'mst-icon mst-icon-settings',
             to: { name: 'org_profile', params: { id: this.$route.params.id } }
           },
-          // {
-          //   key: '2',
-          //   label: 'Ассортимент',
-          //   icon: 'pi pi-database',
-          //   to: { name: 'org_assortment', params: { id: this.$route.params.id } }
-          // },
           {
-            key: '3',
+            key: '4',
             label: 'Товары',
             icon: 'mst-icon mst-icon-products',
             to: { name: 'org_products', params: { id: this.$route.params.id } }
           },
           {
-            key: '4',
+            key: '5',
             label: 'B2B-маркетинг',
             icon: 'mst-icon mst-icon-b2b',
             to: { name: 'org_sales', params: { id: this.$route.params.id } }
           },
           {
-            key: '5',
+            key: '6',
             label: 'B2C-маркетинг',
             icon: 'mst-icon mst-icon-b2c',
             to: { name: 'org_actions', params: { id: this.$route.params.id } }
           },
-          // {
-          //   key: '4',
-          //   label: 'Мои программы',
-          //   icon: 'd_icon d_icon-star',
-          //   to: { name: 'org_ourbonuses', params: { id: this.$route.params.id } }
-          // },
-          // {
-          //   key: '5',
-          //   label: 'Мои магазины',
-          //   icon: 'd_icon d_icon-cog',
-          //   to: { name: 'org_dilers', params: { id: this.$route.params.id } }
-          // },
-          // {
-          //   key: '7',
-          //   label: 'Мои оптовики',
-          //   icon: 'd_icon d_icon-cog',
-          //   to: { name: 'org_opts', params: { id: this.$route.params.id } }
-          // },
-          // {
-          //   key: '8',
-          //   label: 'Отгрузки',
-          //   icon: 'd_icon d_icon-truck',
-          //   to: { name: 'org_shipping', params: { id: this.$route.params.id } }
-          // },
-          // {
-          //   key: '9',
-          //   label: 'АКБ',
-          //   icon: 'd_icon d_icon-star',
-          //   to: { name: 'org_akb', params: { id: this.$route.params.id } }
-          // },
-          // {
-          //   key: '10',
-          //   label: 'Наличие товара',
-          //   icon: 'd_icon d_icon-star',
-          //   to: { name: 'org_reports_available', params: { id: this.$route.params.id } }
-          // },
-          // {
-          //   key: '11',
-          //   label: 'Мастер отчетов',
-          //   icon: 'd_icon d_icon-analytics',
-          //   to: { name: 'org_reports', params: { id: this.$route.params.id } }
-          // },
-          // {
-          //   key: '12',
-          //   label: 'Ключевые матрицы',
-          //   icon: 'd_icon d_icon-key',
-          //   to: { name: 'org_matrix', params: { id: this.$route.params.id } }
-          // },
           {
-            key: '13',
+            key: '7',
+            label: 'Отгрузки',
+            icon: 'mst-icon mst-icon-shipments',
+            to: { name: 'org_shipping', params: { id: this.$route.params.id } }
+          },
+          {
+            key: '8',
             label: 'Документы',
             icon: 'mst-icon mst-icon-documents',
             to: { name: 'org_docs', params: { id: this.$route.params.id } }
           },
           {
-            key: '14',
+            key: '9',
             label: 'Закупки',
             icon: 'mst-icon mst-icon-opt',
             to: { name: 'purchases_home', params: { id: this.$route.params.id } }
           },
           {
-            key: '15',
+            key: '10',
             label: 'Бонусная программа',
             icon: 'mst-icon mst-icon-bonuses',
             to: { name: 'bonus_program', params: { id: this.$route.params.id } }
