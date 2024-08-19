@@ -1431,7 +1431,6 @@ export default {
       this.opt_get_complects(data)
     },
     formSubmit (event) {
-      console.log('TEEEEEST')
       this.$load(async () => {
         if (router.currentRoute._value.params.sales_id) {
           await this.set_sales_to_api({
