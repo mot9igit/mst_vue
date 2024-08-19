@@ -1055,7 +1055,7 @@ export default {
     })
     this.org_get_stores_from_api({
       action: 'get/stores',
-      org_id: this.$route.params.id
+      id: this.$route.params.id
     })
     this.get_regions_from_api().then(
       // this.filters.region.values = this.getregions
