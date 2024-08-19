@@ -1431,6 +1431,7 @@ export default {
       this.opt_get_complects(data)
     },
     formSubmit (event) {
+      console.log('TEEEEEST')
       this.$load(async () => {
         if (router.currentRoute._value.params.sales_id) {
           await this.set_sales_to_api({
@@ -1478,7 +1479,7 @@ export default {
             limit_type: this.form.limitations,
             actionLast: this.form.actionLast[0] === 'true',
             page_places: this.place_action.map(x => x.code),
-            page_geo: this.geo_action.key,
+            page_geo: this.geo_action?.key,
             page_place_position: this.position,
             page_create: this.create_page_action[0] === 'true'
           })
@@ -1534,7 +1535,7 @@ export default {
             limit_type: this.form.limitations,
             actionLast: this.form.actionLast[0] === 'true',
             page_places: this.place_action.map(x => x.code),
-            page_geo: this.geo_action.key,
+            page_geo: this.geo_action?.key,
             page_place_position: this.position,
             page_create: this.create_page_action[0] === 'true'
           })
