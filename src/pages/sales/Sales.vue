@@ -2,7 +2,7 @@
   <Toast />
   <ConfirmDialog></ConfirmDialog>
   <TabView class="tab-custom">
-      <TabPanel header="Акции">
+      <TabPanel header="Акции" v-if="organization.type != 1">
         <v-table
           :items_data="actions.items"
           :total="actions.total"
@@ -24,7 +24,7 @@
           </template>
         </v-table>
       </TabPanel>
-      <TabPanel header="Комплекты">
+      <TabPanel header="Комплекты" v-if="organization.type != 1">
         <v-table
           :items_data="optcomplects.complects"
           :total="optcomplects.total"
@@ -46,7 +46,7 @@
           </template>
         </v-table>
       </TabPanel>
-      <TabPanel header="Мои клиенты">
+      <TabPanel header="Мои клиенты" v-if="organization.type == 3">
         <v-table
           :items_data="stores.items"
           :total="stores.total"

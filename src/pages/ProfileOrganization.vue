@@ -12,21 +12,21 @@
                 <span class="day">{{ day }}</span>
             </div>
           </div>
-          <div class="d-col-md-4" v-if="over_products.all">
+          <div class="d-col-md-4" v-if="over_products.all && organization.type != 1">
             <div class="panel-widget panel-widget-summ">
               <span>Остатки</span>
               <span class="sum">{{ over_products.summ }} ₽</span>
               <span class="num">{{ over_products.count_all }} шт.</span>
             </div>
           </div>
-          <div class="d-col-md-4">
+          <div class="d-col-md-4" v-if="organization.type != 1">
             <div class="panel-widget panel-widget-summ">
               <span>Заказы за неделю</span>
               <span class="sum">{{ orders.summ }} ₽</span>
               <span class="num">{{ orders.count }} шт.</span>
             </div>
           </div>
-          <div class="d-col-lg-6 d-col-md-6" v-if="over_products.all">
+          <div class="d-col-lg-6 d-col-md-6" v-if="over_products.all && organization.type != 1">
             <div class="panel-widget panel-widget-remains">
                 <div class="panel-widget-remains__graph">
                   <Chart type="doughnut" :data="chartData" :options="chartOptions" class="w-full md:w-5rem" />
@@ -53,13 +53,6 @@
                     </div>
                   </div>
                 </div>
-            </div>
-          </div>
-          <div class="d-col-md-2" v-for="item in organization.brands" :key="item.id">
-            <div class="panel-widget panel-widget-summ">
-              <span> {{ item.name }} </span>
-              <span class="sum">{{ item.count }} шт.</span>
-              <span class="num">Кол-во сопоставленных товаров по бренду {{ item.name }}</span>
             </div>
           </div>
           <div class="d-col-md-3" v-if="organization.type != 1">
@@ -108,7 +101,7 @@
               </div>
             </div>
           </div>
-          <div class="d-col-md-8" v-if="shipment.total">
+          <div class="d-col-md-8" v-if="shipment.total && organization.type != 1">
             <div class="panel-widget panel-widget-shipping">
               <span class="title">Ближайшие отгрузки</span>
               <div class="shippings">
@@ -126,7 +119,7 @@
             </div>
           </div>
         </div>
-        <div class="dart-row">
+        <div class="dart-row" v-if="organization.type != 1">
           <div class="d-col-md-6" v-if="no_money.top">
             <div class="panel-widget panel-widget-top-nomoney">
               <v-table
