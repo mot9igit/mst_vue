@@ -1,6 +1,6 @@
 <template>
   <TabView class="tab-custom">
-      <TabPanel header="Розничные заказы">
+      <TabPanel header="Розничные заказы" v-if="organization.type != 1">
           <div class="products">
             <v-table
               :items_data="orders.orders"
@@ -17,13 +17,13 @@
             />
         </div>
       </TabPanel>
-      <TabPanel header="Оптовые заказы">
+      <TabPanel header="Оптовые заказы" v-if="organization.type != 1">
         <div class="products">
           <v-table
             :items_data="optorder.orders"
             :total="optorder.total"
-            :pagination_items_per_page="this.pagination_items_per_page_opt"
-            :pagination_offset="this.pagination_offset_opt"
+            :pagination_items_per_page="this.pagination_items_per_page"
+            :pagination_offset="this.pagination_offset"
             :page="this.page_opt"
             :table_data="this.table_data_opt"
             :filters="this.filters_opt"
@@ -32,6 +32,10 @@
             @sort="filter_opt"
             @paginate="paginate_opt"
           />
+        </div>
+      </TabPanel>
+      <TabPanel header="Мои заказы">
+        <div class="products">
         </div>
       </TabPanel>
   </TabView>
@@ -54,26 +58,13 @@ export default {
     pagination_offset: {
       type: Number,
       default: 0
-    },
-    page: {
-      type: Number,
-      default: 1
-    },
-    pagination_items_per_page_opt: {
-      type: Number,
-      default: 25
-    },
-    pagination_offset_opt: {
-      type: Number,
-      default: 0
-    },
-    page_opt: {
-      type: Number,
-      default: 1
     }
   },
   data () {
     return {
+      page: 1,
+      page_opt: 1,
+      page_our: 1,
       filters: {
         name: {
           name: 'Наименование, артикул',
@@ -218,6 +209,7 @@ export default {
   },
   methods: {
     ...mapActions([
+      'get_organization_from_api',
       'get_orders_from_api',
       'get_opt_order_api'
     ]),
@@ -241,24 +233,25 @@ export default {
     }
   },
   mounted () {
-    this.get_orders_from_api({
-      page: this.page,
-      perpage: this.pagination_items_per_page
+    this.get_organization_from_api().then(() => {
+      this.get_orders_from_api({
+        page: this.page,
+        perpage: this.pagination_items_per_page
+      })
+      this.get_opt_order_api({
+        action: 'get/orders/seller',
+        store_id: router.currentRoute._value.params.id,
+        page: this.page_opt,
+        perpage: this.pagination_items_per_page_opt
+      })
     })
-    this.get_opt_order_api({
-      action: 'get/orders/seller',
-      store_id: router.currentRoute._value.params.id,
-      page: this.page_opt,
-      perpage: this.pagination_items_per_page_opt
-    })
-    console.log(this.optorder)
-    console.log(Object.assign({}, this.$store.state.orders.orders.statuses))
   },
   components: { vTable, TabView, TabPanel },
   computed: {
     ...mapGetters([
       'orders',
-      'optorder'
+      'optorder',
+      'organization'
     ])
   }
 }
