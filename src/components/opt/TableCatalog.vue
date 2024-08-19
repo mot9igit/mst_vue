@@ -36,7 +36,7 @@
                 </tr>
             </thead>
             <tbody>
-              <tr v-for="item in this.actions_item.actions" v-bind:key="item.id" @click="this.active = !this.active" :class="{'active-el' : this.active, 'no-active-el' : !this.active}">
+              <tr v-for="(item) in this.actions_item.actions" v-bind:key="item.id" @click="this.active = !this.active" :class="{'active-el' : this.active, 'no-active-el' : !this.active}">
                 <td class="kenost-actions-modal__action">
                   <img :src="item.icon" alt="">
                   <span v-if="item.id > 0">
@@ -62,17 +62,24 @@
                   </td>
                   <td>
                   <div class="kenost-conflict">
-                    <!--
-                    <div v-if="item.conflicts.items[item.action_id].length" class="kenost-conflict__container">
+                    <!-- {{ item.conflicts?.items[item.action_id] }} -->
+                      <!-- {{item.conflicts?.items[item.action_id]?.postponement_conflicts}}
+                      {{item.conflicts?.items[item.action_id]?.sales_conflicts}} -->
+                    <div v-if="item.conflicts?.items[item.action_id]" class="kenost-conflict__container">
                       <div class="kenost-conflict__icon">
                         <i class="pi pi-info"></i>
                       </div>
                       <div class="kenost-conflict__message">
-                        <p>Конфликт с акцией <span>{{item.conflicts.items[item.action_id][0].name}}</span></p>
+                        <div v-for="(conf) in item.conflicts?.items[item.action_id]?.postponement_conflicts" v-bind:key="conf">
+                          <p>Конфликт с акцией <span>{{ this.actions_item.actions.find(action => action.id === conf) ? this.actions_item.actions.find(action => action.id === conf).name : this.actions_item.actions.find(action => action.action_id === conf).name }}</span></p>
+                        </div>
+                        <!-- v-if="item.conflicts?.items[item.action_id]?.postponement_conflicts.indexOf(conf) == -1 && conf != item.action_id" -->
+                        <div v-for="(conf) in item.conflicts?.items[item.action_id]?.sales_conflicts" v-bind:key="conf">
+                          <p>Конфликт с акцией <span>{{ this.actions_item.actions.find(action => action.id === conf) ? this.actions_item.actions.find(action => action.id === conf).name : this.actions_item.actions.find(action => action.action_id === conf).name }}</span></p>
+                        </div>
                       </div>
                     </div>
-                    -->
-                    <InputSwitch @update:modelValue="updateAction(item.remain_id, item.store_id, item.action_id, item.enabled)" class="kenost-input-switch" v-model="item.enabled" />
+                    <InputSwitch @update:modelValue="updateAction(item.id == 0? this.actions_item.remain_id : item.remain_id, item.id == 0? this.actions_item.store_id : item.store_id, item.action_id, item.enabled)" class="kenost-input-switch" v-model="item.enabled" />
                   </div>
                 </td>
             </tr>
@@ -85,6 +92,8 @@ import { mapActions, mapGetters, mapMutations } from 'vuex'
 import TableCatalogRow from './TableCatalogRow.vue'
 import Dialog from 'primevue/dialog'
 import InputSwitch from 'primevue/inputswitch'
+// import { isNullOrUndef } from 'chart.js/dist/helpers/helpers.core'
+import router from '@/router'
 
 export default {
   name: 'TableCatalog',
@@ -159,49 +168,94 @@ export default {
       // Выключаем конфликтные акции
 
       const conflicts = this.actions_item.actions.find((action) => action.action_id === actionid)
-      for (let i = 0; i < conflicts.conflicts.items[conflicts.action_id].length; i++) {
-        for (let j = 0; j < Object.keys(this.actions_item.actions).length; j++) {
-          if (conflicts.conflicts.items[conflicts.action_id][i].id === this.actions_item.actions[j].action_id) {
-            this.actions_item.actions[j].enabled = false
-            const data = {
-              action: 'action/user/off/on',
-              remain_id: this.actions_item.actions[j].remain_id,
-              store_id: this.actions_item.actions[j].store_id,
-              action_id: this.actions_item.actions[j].action_id,
-              status: false
-            }
-
-            this.opt_api(data).then(() => {
-              const dataUpdate = {
-                action: 'get/info/product',
-                store_id: storeid,
-                remain_id: remainid
-              }
-
-              this.opt_api(dataUpdate).then((response) => {
+      // console.log(conflicts)
+      if (conflicts.conflicts.items[conflicts.action_id] && !status) {
+        if (conflicts.conflicts.items[conflicts.action_id].postponement_conflicts) {
+          for (let i = 0; i < conflicts.conflicts.items[conflicts.action_id].postponement_conflicts.length; i++) {
+            for (let j = 0; j < Object.keys(this.actions_item.actions).length; j++) {
+              if (conflicts.conflicts.items[conflicts.action_id].postponement_conflicts[i] === this.actions_item.actions[j].action_id) {
+                this.actions_item.actions[j].enabled = false
                 const data = {
-                  remain_id: remainid,
-                  store_id: storeid,
-                  data: response.data.data
+                  action: 'action/user/off/on',
+                  remain_id: this.actions_item.actions[j].remain_id ? this.actions_item.actions[j].remain_id : conflicts.remain_id,
+                  store_id: this.actions_item.actions[j].store_id ? this.actions_item.actions[j].store_id : conflicts.store_id,
+                  action_id: this.actions_item.actions[j].action_id,
+                  status: false,
+                  test: 'true1'
                 }
-                this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
-              })
-            })
+
+                this.opt_api(data).then(() => {
+                  const dataUpdate = {
+                    action: 'get/info/product',
+                    store_id: storeid,
+                    remain_id: remainid,
+                    id: router.currentRoute._value.params.id
+                  }
+
+                  this.opt_api(dataUpdate).then((response) => {
+                    const data = {
+                      remain_id: remainid,
+                      store_id: storeid,
+                      data: response.data.data
+                    }
+                    this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
+                  })
+                })
+              }
+            }
           }
         }
+        // if (conflicts.conflicts.items[conflicts.action_id].sales_conflicts) {
+        //   for (let i = 0; i < conflicts.conflicts.items[conflicts.action_id].sales_conflicts.length; i++) {
+        //     for (let j = 0; j < Object.keys(this.actions_item.actions).length; j++) {
+        //       if (conflicts.conflicts.items[conflicts.action_id].sales_conflicts[i] === this.actions_item.actions[j].action_id) {
+        //         this.actions_item.actions[j].enabled = false
+        //         console.log(this.actions_item.actions[j])
+        //         const data = {
+        //           action: 'action/user/off/on',
+        //           remain_id: this.actions_item.actions[j].remain_id ? this.actions_item.actions[j].remain_id : conflicts.remain_id,
+        //           store_id: this.actions_item.actions[j].store_id ? this.actions_item.actions[j].store_id : conflicts.store_id,
+        //           action_id: this.actions_item.actions[j].action_id,
+        //           status: false,
+        //           test: 'true2'
+        //         }
+
+        //         this.opt_api(data).then(() => {
+        //           const dataUpdate = {
+        //             action: 'get/info/product',
+        //             store_id: storeid,
+        //             remain_id: remainid,
+        //             id: router.currentRoute._value.params.id
+        //           }
+
+        //           this.opt_api(dataUpdate).then((response) => {
+        //             const data = {
+        //               remain_id: remainid,
+        //               store_id: storeid,
+        //               data: response.data.data
+        //             }
+        //             this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
+        //           })
+        //         })
+        //       }
+        //     }
+        //   }
+        // }
       }
       const data = {
         action: 'action/user/off/on',
         remain_id: remainid,
         store_id: storeid,
         action_id: actionid,
-        status: !status
+        status: !status,
+        test: 'true3'
       }
       this.opt_api(data).then(() => {
         const dataUpdate = {
           action: 'get/info/product',
           store_id: storeid,
-          remain_id: remainid
+          remain_id: remainid,
+          id: router.currentRoute._value.params.id
         }
 
         this.opt_api(dataUpdate).then((response) => {
@@ -265,6 +319,7 @@ export default {
       .kenost-conflict__message{
         opacity: 1;
         pointer-events: all;
+        z-index: 1;
       }
     }
   }

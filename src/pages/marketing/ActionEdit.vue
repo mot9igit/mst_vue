@@ -35,403 +35,405 @@
           />
         </div>
 
-        <div class="dart-form-group mb-0">
-          <span class="ktitle">Страница акции</span>
-          <div class="flex align-items-center">
-              <Checkbox v-model="this.create_page_action" inputId="create-page-action" name="create_page_action" value="true" />
-              <label for="create-page-action" class="ml-2 mb-0"> Создавать страницу акции </label>
-          </div>
-        </div>
-
-        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
-          <div class="upload-banner">
-            <div class="upload-banner__text">
-              <span class="ktitle">Большой баннер</span>
-              <span>Загрузить изображение нужно размером не менее 1108х332, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в два раза больше указанного размера.</span>
+        <div v-if="this.form.store_id">
+          <div class="dart-form-group mb-0">
+            <span class="ktitle">Страница акции</span>
+            <div class="flex align-items-center">
+                <Checkbox v-model="this.create_page_action" inputId="create-page-action" name="create_page_action" value="true" />
+                <label for="create-page-action" class="ml-2 mb-0"> Создавать страницу акции </label>
             </div>
-            <!-- <div class="dart-btn dart-btn-secondary btn-padding">Загрузить</div> -->
-            <FileUpload class="kenost-upload-button" mode="basic" name="banner[]" :url="'/rest/file_upload.php?banner=max'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
           </div>
-          <div class="upload-banner__image">
-            <img :src="files?.max?.original_href" v-if="files?.max?.original_href">
-          </div>
-        </div>
 
-        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
-          <div class="upload-banner">
-            <div class="upload-banner__text">
-              <span class="ktitle">Малый баннер</span>
-              <span>Загрузить изображение нужно размером не менее 324х161, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
-            </div>
-            <FileUpload class="kenost-upload-button" mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
-          </div>
-          <div class="upload-banner__image">
-            <img :src="files?.min?.original_href" v-if="files?.min?.original_href">
-          </div>
-        </div>
-
-        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
-          <div class="upload-banner">
-            <div class="upload-banner__text">
-              <span class="ktitle">Квадратный баннер</span>
-              <span>Загрузить изображение нужно размером не менее 459х459, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
-            </div>
-            <FileUpload class="kenost-upload-button" mode="basic" name="small[]" :url="'/rest/file_upload.php?banner=small'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
-          </div>
-          <div class="upload-banner__image">
-            <img :src="files?.small?.original_href" v-if="files?.small?.original_href">
-          </div>
-        </div>
-
-        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
-            <div class="rules-container">
-                <div class="rules-container__text">
-                    <span class="ktitle">Правила акции</span>
-                    <p class="kgraytext">Загрузите файл с подробными правилами акции</p>
-                    <a target="_blank" :href="files?.file?.original_href" class="kenost-add-file" v-if="files?.file?.original_href">
-                        <img src="../../../public/img/files/pdf.png" alt="">
-                        <p>{{files?.file?.name? files?.file?.name : "Файл загружен!"}}</p>
-                    </a>
-                </div>
-                <FileUpload class="kenost-upload-button" mode="basic" name="icon[]" :url="'/rest/file_upload.php?banner=file'" accept="application/pdf" :maxFileSize="20000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
-            </div>
-        </div>
-
-        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
-          <span class="ktitle">Место размещение баннера/товара</span>
-          <MultiSelect v-model="this.place_action" :options="this.place" optionLabel="name" placeholder="Выберите один или несколько вариантов"
-             class="w-full" />
-        </div>
-
-        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
-          <span class="ktitle">География показа</span>
-          <Dropdown v-model="this.geo_action" :options="this.geo" optionLabel="name" placeholder="Массовое действие" class="w-full md:w-14rem" />
-        </div>
-
-        <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
-          <span class="ktitle">Позиция в карусели</span>
-          <InputNumber
-            v-model="this.position"
-            inputId="horizontal-buttons"
-            :step="1"
-            min="0"
-            max="100"
-            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-          />
-        </div>
-
-        <div class="dart-form-group mb-4 mt-4">
-          <span class="ktitle">Условия</span>
-          <input v-model="form.conditions" type="text" name="conditions" placeholder="Укажите условия акции" class="dart-form-control" >
-        <!-- :class="{'kenost-error':this.validation.conditions.error}" -->
-          <!-- <span v-if="this.validation.conditions.error" class="kenost-error-text">{{ this.validation.conditions.text }}</span> -->
-        </div>
-
-        <div class="dart-form-group mb-4">
-          <span class="ktitle">Описание</span>
-          <!-- <Editor ref="editorRef" v-model="this.form.description" @load="updateEditorContent(this.form.description)" editorStyle="height: 320px" /> -->
-          <Editor
-            api-key="ctqgmxpl4dimvsnrt6lnhbyk2xb7eyrhvbbh9lch2kltngkh"
-            language_url='../../../src/locales/tiny/ru.js'
-            :language_load=true
-            v-model="this.form.description"
-            initial-value="<b>Подзаголовок акции</b>
-            <br>
-            <p><span style='text-decoration: underline'>Перечислить все выгодные условия:</span> скидки, подарки, бонусы, возможность выиграть приз и т.д.</p>
-            <p><span style='text-decoration: underline'>Выделить ключевые преимущества:</span> чем ваша акция лучше, чем у конкурентов?</p>
-            <p><span style='text-decoration: underline'>Указать, для кого она предназначена:</span> для всех, для определенной возрастной группы, для постоянных клиентов и т.д.</p>"
-            :init="{
-              plugins: [
-                'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
-                'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
-                'insertdatetime', 'media', 'table', 'help', 'wordcount'
-              ],
-              toolbar: 'undo redo | ' +
-              'bold italic underline backcolor | alignleft aligncenter ' +
-              'alignright alignjustify | bullist numlist outdent indent | ' +
-              'removeformat | help',
-              content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
-              menu: {
-                file: { title: 'Файл', items: 'newdocument restoredraft | preview | importword exportpdf exportword | deleteallconversations' },
-                edit: { title: 'Редактировать', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace' },
-                view: { title: 'View', items: '' },
-                insert: { title: 'Вставить', items: 'image link media addcomment pageembed codesample inserttable | math | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime' },
-                format: { title: 'Форматирование', items: 'bold italic underline strikethrough superscript subscript | align lineheight | forecolor | language | removeformat' },
-                tools: { title: 'Tools', items: '' },
-                table: { title: 'Таблица', items: 'inserttable | cell row column | advtablesort | tableprops deletetable' },
-                help: { title: 'Help', items: '' }
-              }
-            }"
-          />
-          <!-- <input v-model="this.form.description" type="text" name="conditions" placeholder="Укажите описание акции" class="dart-form-control"> -->
-        </div>
-
-        <div class="dart-form-group mb-4">
-          <span class="ktitle">Сроки проведения</span>
-          <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите даты" :manualInput="false" showIcon :class="{'kenost-error':this.validation.dates.error}"/>
-          <span v-if="this.validation.dates.error" class="kenost-error-text">{{ this.validation.dates.text }}</span>
-        </div>
-
-        <div class="dart-form-group mb-4">
-          <span class="ktitle">Регион</span>
-          <div class="flex align-items-center mb-3">
-              <Checkbox v-model="this.region_all" inputId="region_all" name="region_all" value="1" />
-              <label for="region_all" class="ml-2 mb-0"> Доступна для всех регионов </label>
-          </div>
-          <MultiSelect :class="{'kenost-error':this.validation.region.error}" v-if="this.region_all.length == 0" filter v-model="this.select_regions" display="chip" :options="this.regions_all" optionLabel="name" placeholder="Выберите регионы" class="w-full md:w-20rem kenost-multiselect" />
-          <!-- <TreeSelect :class="{'kenost-error':this.validation.region.error}" v-if="this.region_all.length == 0" v-model="this.select_regions" :options="this.regions" selectionMode="checkbox" :placeholder="'Зависит от выбранного ценового предложения'" class="w-full"/> -->
-          <span v-if="this.validation.region.error" class="kenost-error-text">{{ this.validation.region.text }}</span>
-        </div>
-
-        <div class="dart-form-group picker-wrap">
-          <span class="ktitle">Добавление товаров</span>
-          <div class="flex align-items-center mt-2">
-            <RadioButton v-model="this.form.addProductType" inputId="addProductType-1" name="addProductType" value="1"/>
-            <label for="addProductType-1" class="ml-2 radioLabel">Добавить товары</label>
-          </div>
-          <div class="flex align-items-center mt-3">
-              <RadioButton v-model="this.form.addProductType" inputId="addProductType-2" name="addProductType" value="2"/>
-              <label for="addProductType-2" class="ml-2 radioLabel">Загрузить товары файлом</label>
-          </div>
-        </div>
-
-        <div v-if="this.form.addProductType == '2'" class="dart-form-group mb-4">
-          <DropZone
-            v-if="!this.upload_product"
-            class="kenost-dropzone"
-            :maxFiles="Number(1)"
-            url="/rest/file_upload.php?upload_products=xlsx"
-            :uploadOnDrop="true"
-            :multipleUpload="true"
-            :acceptedFiles="['xls', 'xlsx']"
-            :parallelUpload="1"
-            @sending="parseFile"
-            v-bind="args"
-            >
-            <template v-slot:message>
-              <div class="kenost-dropzone__custom">
-                <i class="pi pi-cloud-upload"></i>
-                <b>Перетащите файл в эту область</b>
-                <p>Вы также можете загрузить файл, <span>нажав сюда</span></p>
+          <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+            <div class="upload-banner">
+              <div class="upload-banner__text">
+                <span class="ktitle">Большой баннер</span>
+                <span>Загрузить изображение нужно размером не менее 1108х332, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в два раза больше указанного размера.</span>
               </div>
-            </template>
-          </DropZone>
-
-          <div class="kenost-upload-xlsx" v-if="this.upload_product">
-            <div class="kenost-upload-xlsx__file">
-              <img src="../../../public/img/files/xls.png" alt="">
-              <a targer="_blank" :href="files?.xlsx?.original_href">{{ files?.xlsx?.name }}</a>
+              <!-- <div class="dart-btn dart-btn-secondary btn-padding">Загрузить</div> -->
+              <FileUpload class="kenost-upload-button" mode="basic" name="banner[]" :url="'/rest/file_upload.php?banner=max'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
             </div>
-            <div class="kenost-upload-xlsx__info">
-              <p>Загружено товаров: {{Object.keys(this.selected).length}} шт</p>
-              <p>Всего товаров: {{Object.keys(this.selected).length + this.error_product.length}} шт</p>
-              <div class="kenost-link-blue" @click="this.modals.error_product = true">Список незагруженных товаров</div>
+            <div class="upload-banner__image">
+              <img :src="files?.max?.original_href" v-if="files?.max?.original_href">
             </div>
           </div>
 
-          <a :href="site_url_prefix + '/assets/files/files/examples/ExampleLoadingProductsB2C.xlsx'" class="kenost-link-blue mt-2">Скачать шаблон файла</a>
-        </div>
+          <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+            <div class="upload-banner">
+              <div class="upload-banner__text">
+                <span class="ktitle">Малый баннер</span>
+                <span>Загрузить изображение нужно размером не менее 324х161, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
+              </div>
+              <FileUpload class="kenost-upload-button" mode="basic" name="banner_small[]" :url="'/rest/file_upload.php?banner=min'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+            </div>
+            <div class="upload-banner__image">
+              <img :src="files?.min?.original_href" v-if="files?.min?.original_href">
+            </div>
+          </div>
 
-        <div class="dart-form-group picker-wrap">
-          <!-- <span class="ktitle">Добавление товаров</span> -->
-          <!-- <span v-if="this.validation.selected.error" class="kenost-error-text">{{ this.validation.selected.text }}</span> -->
-          <div class="PickList">
-            <div class="PickList__product" >
-              <b class="PickList__title">Доступные товары</b>
-              <div class="PickList__filters">
-                <div class="form_input_group input_pl input-parent required">
-                  <input
-                  type="text"
-                  id="filter_name"
-                  placeholder="Введите артикул или название"
-                  class="dart-form-control"
-                  v-model="filter.name"
-                  @input="setFilter('filter')"
-                  />
-                  <label for="product_filter_name" class="s-complex-input__label">Введите артикул или название</label>
-                  <div class="form_input_group__icon">
-                      <i class="d_icon d_icon-search"></i>
+          <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+            <div class="upload-banner">
+              <div class="upload-banner__text">
+                <span class="ktitle">Квадратный баннер</span>
+                <span>Загрузить изображение нужно размером не менее 459х459, соблюдая пропорции. Чтобы не потерялось качество, желательно загружать изображение в три раза больше указанного размера.</span>
+              </div>
+              <FileUpload class="kenost-upload-button" mode="basic" name="small[]" :url="'/rest/file_upload.php?banner=small'" accept="image/*" :maxFileSize="2000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+            </div>
+            <div class="upload-banner__image">
+              <img :src="files?.small?.original_href" v-if="files?.small?.original_href">
+            </div>
+          </div>
+
+          <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+              <div class="rules-container">
+                  <div class="rules-container__text">
+                      <span class="ktitle">Правила акции</span>
+                      <p class="kgraytext">Загрузите файл с подробными правилами акции</p>
+                      <a target="_blank" :href="files?.file?.original_href" class="kenost-add-file" v-if="files?.file?.original_href">
+                          <img src="../../../public/img/files/pdf.png" alt="">
+                          <p>{{files?.file?.name? files?.file?.name : "Файл загружен!"}}</p>
+                      </a>
+                  </div>
+                  <FileUpload class="kenost-upload-button" mode="basic" name="icon[]" :url="'/rest/file_upload.php?banner=file'" accept="application/pdf" :maxFileSize="20000000" @upload="onUpload" :auto="true" chooseLabel="Загрузить" />
+              </div>
+          </div>
+
+          <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+            <span class="ktitle">Место размещение баннера/товара</span>
+            <MultiSelect v-model="this.place_action" :options="this.place" optionLabel="name" placeholder="Выберите один или несколько вариантов"
+              class="w-full" />
+          </div>
+
+          <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+            <span class="ktitle">География показа</span>
+            <Dropdown v-model="this.geo_action" :options="this.geo" optionLabel="name" placeholder="География показа" class="w-full md:w-14rem" />
+          </div>
+
+          <div class="dart-form-group kenost-action-page pt-3" v-if="this.create_page_action.length != 0">
+            <span class="ktitle">Позиция в карусели</span>
+            <InputNumber
+              v-model="this.position"
+              inputId="horizontal-buttons"
+              :step="1"
+              min="0"
+              max="100"
+              incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+            />
+          </div>
+
+          <div class="dart-form-group mb-4 mt-4">
+            <span class="ktitle">Условия</span>
+            <input v-model="form.conditions" type="text" name="conditions" placeholder="Укажите условия акции" class="dart-form-control" >
+          <!-- :class="{'kenost-error':this.validation.conditions.error}" -->
+            <!-- <span v-if="this.validation.conditions.error" class="kenost-error-text">{{ this.validation.conditions.text }}</span> -->
+          </div>
+
+          <div class="dart-form-group mb-4">
+            <span class="ktitle">Описание</span>
+            <!-- <Editor ref="editorRef" v-model="this.form.description" @load="updateEditorContent(this.form.description)" editorStyle="height: 320px" /> -->
+            <Editor
+              api-key="ctqgmxpl4dimvsnrt6lnhbyk2xb7eyrhvbbh9lch2kltngkh"
+              language_url='../../../src/locales/tiny/ru.js'
+              :language_load=true
+              v-model="this.form.description"
+              initial-value="<b>Подзаголовок акции</b>
+              <br>
+              <p><span style='text-decoration: underline'>Перечислить все выгодные условия:</span> скидки, подарки, бонусы, возможность выиграть приз и т.д.</p>
+              <p><span style='text-decoration: underline'>Выделить ключевые преимущества:</span> чем ваша акция лучше, чем у конкурентов?</p>
+              <p><span style='text-decoration: underline'>Указать, для кого она предназначена:</span> для всех, для определенной возрастной группы, для постоянных клиентов и т.д.</p>"
+              :init="{
+                plugins: [
+                  'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
+                  'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
+                  'insertdatetime', 'media', 'table', 'help', 'wordcount'
+                ],
+                toolbar: 'undo redo | ' +
+                'bold italic underline backcolor | alignleft aligncenter ' +
+                'alignright alignjustify | bullist numlist outdent indent | ' +
+                'removeformat | help',
+                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:16px }',
+                menu: {
+                  file: { title: 'Файл', items: 'newdocument restoredraft | preview | importword exportpdf exportword | deleteallconversations' },
+                  edit: { title: 'Редактировать', items: 'undo redo | cut copy paste pastetext | selectall | searchreplace' },
+                  view: { title: 'View', items: '' },
+                  insert: { title: 'Вставить', items: 'image link media addcomment pageembed codesample inserttable | math | charmap emoticons hr | pagebreak nonbreaking anchor tableofcontents | insertdatetime' },
+                  format: { title: 'Форматирование', items: 'bold italic underline strikethrough superscript subscript | align lineheight | forecolor | language | removeformat' },
+                  tools: { title: 'Tools', items: '' },
+                  table: { title: 'Таблица', items: 'inserttable | cell row column | advtablesort | tableprops deletetable' },
+                  help: { title: 'Help', items: '' }
+                }
+              }"
+            />
+            <!-- <input v-model="this.form.description" type="text" name="conditions" placeholder="Укажите описание акции" class="dart-form-control"> -->
+          </div>
+
+          <div class="dart-form-group mb-4">
+            <span class="ktitle">Сроки проведения</span>
+            <Calendar v-model="form.dates" selectionMode="range" placeholder="Выберите даты" :manualInput="false" showIcon :class="{'kenost-error':this.validation.dates.error}"/>
+            <span v-if="this.validation.dates.error" class="kenost-error-text">{{ this.validation.dates.text }}</span>
+          </div>
+
+          <div class="dart-form-group mb-4">
+            <span class="ktitle">Регион</span>
+            <div class="flex align-items-center mb-3">
+                <Checkbox v-model="this.region_all" inputId="region_all" name="region_all" value="1" />
+                <label for="region_all" class="ml-2 mb-0"> Доступна для всех регионов </label>
+            </div>
+            <MultiSelect :class="{'kenost-error':this.validation.region.error}" v-if="this.region_all.length == 0" filter v-model="this.select_regions" display="chip" :options="this.regions_all" optionLabel="name" placeholder="Выберите регионы" class="w-full md:w-20rem kenost-multiselect" />
+            <!-- <TreeSelect :class="{'kenost-error':this.validation.region.error}" v-if="this.region_all.length == 0" v-model="this.select_regions" :options="this.regions" selectionMode="checkbox" :placeholder="'Зависит от выбранного ценового предложения'" class="w-full"/> -->
+            <span v-if="this.validation.region.error" class="kenost-error-text">{{ this.validation.region.text }}</span>
+          </div>
+
+          <div class="dart-form-group picker-wrap">
+            <span class="ktitle">Добавление товаров</span>
+            <div class="flex align-items-center mt-2">
+              <RadioButton v-model="this.form.addProductType" inputId="addProductType-1" name="addProductType" value="1"/>
+              <label for="addProductType-1" class="ml-2 radioLabel">Добавить товары</label>
+            </div>
+            <div class="flex align-items-center mt-3">
+                <RadioButton v-model="this.form.addProductType" inputId="addProductType-2" name="addProductType" value="2"/>
+                <label for="addProductType-2" class="ml-2 radioLabel">Загрузить товары файлом</label>
+            </div>
+          </div>
+
+          <div v-if="this.form.addProductType == '2'" class="dart-form-group mb-4">
+            <DropZone
+              v-if="!this.upload_product"
+              class="kenost-dropzone"
+              :maxFiles="Number(1)"
+              url="/rest/file_upload.php?upload_products=xlsx"
+              :uploadOnDrop="true"
+              :multipleUpload="true"
+              :acceptedFiles="['xls', 'xlsx']"
+              :parallelUpload="1"
+              @sending="parseFile"
+              v-bind="args"
+              >
+              <template v-slot:message>
+                <div class="kenost-dropzone__custom">
+                  <i class="pi pi-cloud-upload"></i>
+                  <b>Перетащите файл в эту область</b>
+                  <p>Вы также можете загрузить файл, <span>нажав сюда</span></p>
+                </div>
+              </template>
+            </DropZone>
+
+            <div class="kenost-upload-xlsx" v-if="this.upload_product">
+              <div class="kenost-upload-xlsx__file">
+                <img src="../../../public/img/files/xls.png" alt="">
+                <a targer="_blank" :href="files?.xlsx?.original_href">{{ files?.xlsx?.name }}</a>
+              </div>
+              <div class="kenost-upload-xlsx__info">
+                <p>Загружено товаров: {{Object.keys(this.selected).length}} шт</p>
+                <p>Всего товаров: {{Object.keys(this.selected).length + this.error_product.length}} шт</p>
+                <div class="kenost-link-blue" @click="this.modals.error_product = true">Список незагруженных товаров</div>
+              </div>
+            </div>
+
+            <a :href="site_url_prefix + '/assets/files/files/examples/ExampleLoadingProductsB2C.xlsx'" class="kenost-link-blue mt-2">Скачать шаблон файла</a>
+          </div>
+
+          <div class="dart-form-group picker-wrap">
+            <!-- <span class="ktitle">Добавление товаров</span> -->
+            <!-- <span v-if="this.validation.selected.error" class="kenost-error-text">{{ this.validation.selected.text }}</span> -->
+            <div class="PickList">
+              <div class="PickList__product" >
+                <b class="PickList__title">Доступные товары</b>
+                <div class="PickList__filters">
+                  <div class="form_input_group input_pl input-parent required">
+                    <input
+                    type="text"
+                    id="filter_name"
+                    placeholder="Введите артикул или название"
+                    class="dart-form-control"
+                    v-model="filter.name"
+                    @input="setFilter('filter')"
+                    />
+                    <label for="product_filter_name" class="s-complex-input__label">Введите артикул или название</label>
+                    <div class="form_input_group__icon">
+                        <i class="d_icon d_icon-search"></i>
+                    </div>
+                  </div>
+                  <div class="dart-form-group">
+                    <TreeSelect v-model="this.filter.category" :options="this.opt_catalog_tree" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
                   </div>
                 </div>
-                <div class="dart-form-group">
-                  <TreeSelect v-model="this.filter.category" :options="this.opt_catalog_tree" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
-                </div>
-              </div>
-              <div class="PickList__products">
-                <div class="PickList__el" v-for="item in this.products" :key="item.id">
-                  <img :src="item.image" alt="">
-                  <div class="PickList__product-info">
-                    <div class="PickList__name">{{item.name}}</div>
-                    <div class="PickList__article">{{item.article}}</div>
-                    <div class="PickList__price">{{Number(item.price).toFixed(0)}} ₽</div>
-                  </div>
-                  <div @click="select(item.id)" class="PickList__select"><i class="pi pi-angle-right"></i></div>
-                </div>
-                <paginate
-                  :page-count="pagesCount"
-                  :click-handler="pagClickCallback"
-                  :prev-text="'Пред'"
-                  :next-text="'След'"
-                  :container-class="'pagination justify-content-center'"
-                  :initialPage="this.page"
-                  :forcePage="this.page"
-                >
-                </paginate>
-              </div>
-            </div>
-
-            <div class="PickList__buttons">
-              <div class="PickList__select" @click="setAllProducts(true)"><i class="pi pi-angle-double-right"></i></div>
-              <div class="PickList__select mt-2" @click="setAllProducts(false)"><i class="pi pi-angle-double-left"></i></div>
-            </div>
-
-            <div class="PickList__selected" :style="{ width: '40%' }">
-              <div class="PickList__title mb-4">
-              <b>Добавленные товары</b>
-              </div>
-              <div class="PickList__products PickList__products-selected">
-              <div class="PickList__el" v-for="(item) in this.selected" :key="item.id">
-                  <img :src="item.image" alt="">
-                  <div class="PickList__info">
-                  <div class="PickList__product-info off">
+                <div class="PickList__products">
+                  <div class="PickList__el" v-for="item in this.products" :key="item.id">
+                    <img :src="item.image" alt="">
+                    <div class="PickList__product-info">
                       <div class="PickList__name">{{item.name}}</div>
                       <div class="PickList__article">{{item.article}}</div>
                       <div class="PickList__price">{{Number(item.price).toFixed(0)}} ₽</div>
-                  </div>
-                  </div>
-                  <div @click="deleteSelect(item.id)" class="PickList__select"><i class="pi pi-times"></i></div>
-              </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- {{ this.selected_data }} -->
-
-        <div class="table-kenost mt-4 table-b2c" :class="{ loading: this.table_products_loading }">
-          <p class="table-kenost__title">Таблица добавленных товаров</p>
-          <div class="table-kenost__filters">
-            <div class="table-kenost__filters-left">
-              <div class="form_input_group input_pl input-parent required">
-                  <input
-                  type="text"
-                  id="filter_table"
-                  placeholder="Введите артикул или название"
-                  class="dart-form-control"
-                  v-model="filter_table.name"
-                  @input="setFilter('filter')"
-                  />
-                  <label for="product_filter_name" class="s-complex-input__label">Введите артикул или название</label>
-                  <div class="form_input_group__icon">
-                      <i class="d_icon d_icon-search"></i>
-                  </div>
-              </div>
-              <div class="dart-form-group">
-                  <TreeSelect label="name" v-model="this.filter_table.category" :options="this.opt_catalog_tree" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
-              </div>
-            </div>
-            <!-- <div @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</div> -->
-          </div>
-          <table class="table-kenost__table">
-            <thead>
-                <tr>
-                    <th class="table-kenost__name table-kenost__name-checkbox"><Checkbox @update:modelValue="kenostTableCheckedAll" v-model="this.kenost_table_all" inputId="kenost_table_all" value="1" /></th>
-                    <th class="table-kenost__name table-kenost__name-product">Товар</th>
-                    <th class="table-kenost__name">РРЦ (₽)</th>
-                    <th class="table-kenost__name">Скидка %</th>
-                    <th class="table-kenost__name">Цена со скидкой за шт.</th>
-                    <th class="table-kenost__name">Действие</th>
-                </tr>
-            </thead>
-            <tbody v-for="item in this.selected_visible" :key="item.id">
-              <tr>
-                <td class="table-kenost__checkbox">
-                  <Checkbox @change="kenostTableCheckedAllCheck" v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
-                </td>
-                <td class="table-kenost__product">
-                  <img :src="item.image">
-                  <div class="table-kenost__product-text">
-                    <p>{{ item.name }}</p>
-                    <span>{{item.article}}</span>
-                  </div>
-                </td>
-                <td>
-                  {{(Number(item.price).toFixed(0)).toLocaleString('ru')}} ₽
-                </td>
-                <td>
-                  {{ this.selected_data[item.id] ? (Number(this.selected_data[item.id].discountInterest).toFixed(2)).toLocaleString('ru') : Number(0.00).toFixed(2) }}
-                </td>
-                <td>
-                  {{this.selected_data[item.id] ? (Number(this.selected_data[item.id].finalPrice).toFixed(2)).toLocaleString('ru') : item.price.toLocaleString('ru')}} ₽
-                  <p class="table-kenost__settings" @click="settings(item)">Настроить</p>
-                </td>
-                <td>
-                  <div class="kenost-basker-delete">
-                    <div class="kenost-basker-delete__button" @click="deleteSelect(item.id)">
-                      <i class="pi pi-trash"></i>
                     </div>
+                    <div @click="select(item.id)" class="PickList__select"><i class="pi pi-angle-right"></i></div>
                   </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <paginate
-            :page-count="pagesCountSelect"
-            :click-handler="pagClickCallbackSelect"
-            :prev-text="'Пред'"
-            :next-text="'След'"
-            :container-class="'pagination justify-content-center'"
-            :initialPage="this.page_selected"
-            :forcePage="this.page_selected"
-            >
-          </paginate>
-          <div class="table-kenost-help">
-            <div class="table-kenost-help__select"><span>Отмечено:</span> {{ this.kenost_table.length }} / {{ Object.keys(this.selected).length }}</div>
-            <div class="flex align-items-center">
-              <Checkbox @change="globalTable" v-model="this.form.global_kenost_table" inputId="global_kenost_table-1" name="global_kenost_table-1" value="true" />
-              <label for="global_kenost_table-1" class="ml-2 mb-0">Все</label>
+                  <paginate
+                    :page-count="pagesCount"
+                    :click-handler="pagClickCallback"
+                    :prev-text="'Пред'"
+                    :next-text="'След'"
+                    :container-class="'pagination justify-content-center'"
+                    :initialPage="this.page"
+                    :forcePage="this.page"
+                  >
+                  </paginate>
+                </div>
+              </div>
+
+              <div class="PickList__buttons">
+                <div class="PickList__select" @click="setAllProducts(true)"><i class="pi pi-angle-double-right"></i></div>
+                <div class="PickList__select mt-2" @click="setAllProducts(false)"><i class="pi pi-angle-double-left"></i></div>
+              </div>
+
+              <div class="PickList__selected" :style="{ width: '40%' }">
+                <div class="PickList__title mb-4">
+                <b>Добавленные товары</b>
+                </div>
+                <div class="PickList__products PickList__products-selected">
+                <div class="PickList__el" v-for="(item) in this.selected" :key="item.id">
+                    <img :src="item.image" alt="">
+                    <div class="PickList__info">
+                    <div class="PickList__product-info off">
+                        <div class="PickList__name">{{item.name}}</div>
+                        <div class="PickList__article">{{item.article}}</div>
+                        <div class="PickList__price">{{Number(item.price).toFixed(0)}} ₽</div>
+                    </div>
+                    </div>
+                    <div @click="deleteSelect(item.id)" class="PickList__select"><i class="pi pi-times"></i></div>
+                </div>
+                </div>
+              </div>
+
             </div>
           </div>
-        </div>
-      </div>
 
-      <div class="kenost-all-table-activity" v-if="this.form.addProductType == '1' || this.form.addProductType == '2'">
-        <div class="kenost-wiget">
-          <p>Массовое действие</p>
-          <Dropdown v-model="this.kenostActivityAll.type" :options="this.massAction" optionLabel="name" placeholder="Массовое действие" class="w-full md:w-14rem" />
-        </div>
-        <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0 || this.kenostActivityAll.type.key == 1">
-          <p>Тип цен</p>
-          <Dropdown v-model="this.kenostActivityAll.typePrice" :options="this.typePrice" optionLabel="name" placeholder="Тип цен" class="w-full md:w-14rem" />
-        </div>
-        <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0">
-          <p>Значение</p>
-          <InputNumber
-            v-model="this.kenostActivityAll.value"
-            inputId="horizontal-buttons"
-            :step="1"
-            min="0"
-            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-          />
-        </div>
-        <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0">
-          <p>&nbsp;</p>
-          <Dropdown v-model="kenostActivityAll.typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
-        </div>
+          <!-- {{ this.selected_data }} -->
 
-        <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 3">
-          <p>Значение</p>
-          <InputNumber
-            v-model="this.kenostActivityAll.multiplicity"
-            inputId="horizontal-buttons"
-            :step="1"
-            min="1"
-            incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
-          />
-        </div>
+          <div class="table-kenost mt-4 table-b2c" :class="{ loading: this.table_products_loading }">
+            <p class="table-kenost__title">Таблица добавленных товаров</p>
+            <div class="table-kenost__filters">
+              <div class="table-kenost__filters-left">
+                <div class="form_input_group input_pl input-parent required">
+                    <input
+                    type="text"
+                    id="filter_table"
+                    placeholder="Введите артикул или название"
+                    class="dart-form-control"
+                    v-model="filter_table.name"
+                    @input="setFilter('filter')"
+                    />
+                    <label for="product_filter_name" class="s-complex-input__label">Введите артикул или название</label>
+                    <div class="form_input_group__icon">
+                        <i class="d_icon d_icon-search"></i>
+                    </div>
+                </div>
+                <div class="dart-form-group">
+                    <TreeSelect label="name" v-model="this.filter_table.category" :options="this.opt_catalog_tree" selectionMode="checkbox" placeholder="Выберите категорию" class="w-full" @change="setFilter"/>
+                </div>
+              </div>
+              <!-- <div @click="createSet" class="dart-btn dart-btn-primary btn-padding">Создать комплект</div> -->
+            </div>
+            <table class="table-kenost__table">
+              <thead>
+                  <tr>
+                      <th class="table-kenost__name table-kenost__name-checkbox"><Checkbox @update:modelValue="kenostTableCheckedAll" v-model="this.kenost_table_all" inputId="kenost_table_all" value="1" /></th>
+                      <th class="table-kenost__name table-kenost__name-product">Товар</th>
+                      <th class="table-kenost__name">РРЦ (₽)</th>
+                      <th class="table-kenost__name">Скидка %</th>
+                      <th class="table-kenost__name">Цена со скидкой за шт.</th>
+                      <th class="table-kenost__name">Действие</th>
+                  </tr>
+              </thead>
+              <tbody v-for="item in this.selected_visible" :key="item.id">
+                <tr>
+                  <td class="table-kenost__checkbox">
+                    <Checkbox @change="kenostTableCheckedAllCheck" v-model="this.kenost_table" inputId="kenost_table" :value="item.id" />
+                  </td>
+                  <td class="table-kenost__product">
+                    <img :src="item.image">
+                    <div class="table-kenost__product-text">
+                      <p>{{ item.name }}</p>
+                      <span>{{item.article}}</span>
+                    </div>
+                  </td>
+                  <td>
+                    {{(Number(item.price).toFixed(0)).toLocaleString('ru')}} ₽
+                  </td>
+                  <td>
+                    {{ this.selected_data[item.id] ? (Number(this.selected_data[item.id].discountInterest).toFixed(2)).toLocaleString('ru') : Number(0.00).toFixed(2) }}
+                  </td>
+                  <td>
+                    {{this.selected_data[item.id] ? (Number(this.selected_data[item.id].finalPrice).toFixed(2)).toLocaleString('ru') : item.price.toLocaleString('ru')}} ₽
+                    <p class="table-kenost__settings" @click="settings(item)">Настроить</p>
+                  </td>
+                  <td>
+                    <div class="kenost-basker-delete">
+                      <div class="kenost-basker-delete__button" @click="deleteSelect(item.id)">
+                        <i class="pi pi-trash"></i>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <paginate
+              :page-count="pagesCountSelect"
+              :click-handler="pagClickCallbackSelect"
+              :prev-text="'Пред'"
+              :next-text="'След'"
+              :container-class="'pagination justify-content-center'"
+              :initialPage="this.page_selected"
+              :forcePage="this.page_selected"
+              >
+            </paginate>
+            <div class="table-kenost-help">
+              <div class="table-kenost-help__select"><span>Отмечено:</span> {{ this.kenost_table.length }} / {{ Object.keys(this.selected).length }}</div>
+              <div class="flex align-items-center">
+                <Checkbox @change="globalTable" v-model="this.form.global_kenost_table" inputId="global_kenost_table-1" name="global_kenost_table-1" value="true" />
+                <label for="global_kenost_table-1" class="ml-2 mb-0">Все</label>
+              </div>
+            </div>
+          </div>
 
-        <div v-if="this.kenostActivityAll.type.key == 0 || this.kenostActivityAll.type.key == 1 || this.kenostActivityAll.type.key == 2 || this.kenostActivityAll.type.key == 3" @click="massActionTable" class="dart-btn dart-btn-primary mt-3"><i class="pi pi-check"></i></div>
+          <div class="kenost-all-table-activity" v-if="this.form.addProductType == '1' || this.form.addProductType == '2'">
+            <div class="kenost-wiget">
+              <p>Массовое действие</p>
+              <Dropdown v-model="this.kenostActivityAll.type" :options="this.massAction" optionLabel="name" placeholder="Массовое действие" class="w-full md:w-14rem" />
+            </div>
+            <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0 || this.kenostActivityAll.type.key == 1">
+              <p>Тип цен</p>
+              <Dropdown v-model="this.kenostActivityAll.typePrice" :options="this.typePrice" optionLabel="name" placeholder="Тип цен" class="w-full md:w-14rem" />
+            </div>
+            <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0">
+              <p>Значение</p>
+              <InputNumber
+                v-model="this.kenostActivityAll.value"
+                inputId="horizontal-buttons"
+                :step="1"
+                min="0"
+                incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+              />
+            </div>
+            <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 0">
+              <p>&nbsp;</p>
+              <Dropdown v-model="kenostActivityAll.typeFormul" :options="this.typeFormul" optionLabel="name" class="w-full md:w-14rem" />
+            </div>
+
+            <div class="kenost-wiget" v-if="this.kenostActivityAll.type.key == 3">
+              <p>Значение</p>
+              <InputNumber
+                v-model="this.kenostActivityAll.multiplicity"
+                inputId="horizontal-buttons"
+                :step="1"
+                min="1"
+                incrementButtonIcon="pi pi-plus" decrementButtonIcon="pi pi-minus"
+              />
+            </div>
+
+            <div v-if="this.kenostActivityAll.type.key == 0 || this.kenostActivityAll.type.key == 1 || this.kenostActivityAll.type.key == 2 || this.kenostActivityAll.type.key == 3" @click="massActionTable" class="dart-btn dart-btn-primary mt-3"><i class="pi pi-check"></i></div>
+          </div>
+        </div>
       </div>
     </form>
 
