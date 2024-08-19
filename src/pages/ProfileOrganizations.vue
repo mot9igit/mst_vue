@@ -1,7 +1,7 @@
 <template>
   <div class="profile-block" v-if="this.organizations">
     <div class="profile-block__title">
-      <span class="title">Огранизации</span>
+      <span class="title">Организации</span>
     </div>
     <div class="organizations">
       <div class="dart-row">

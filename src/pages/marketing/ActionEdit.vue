@@ -21,6 +21,20 @@
           <span v-if="this.validation.name.error" class="kenost-error-text">{{ this.validation.name.text }}</span>
         </div>
 
+        <div class="dart-form-group mt-2 mb-4">
+          <span class="ktitle">Склад</span>
+          <!-- <label for="name">Введите наименование, которое будет отражать смысл вашей акции</label> -->
+          <!-- <input v-model="form.name" type="text" name="name" placeholder="Укажите склад акции" class="dart-form-control"> -->
+          <Dropdown
+            @change="updateProducts"
+            v-model="this.form.store_id"
+            :options="this.stores"
+            optionLabel="label"
+            optionValue="value"
+            placeholder="Выберите склад"
+          />
+        </div>
+
         <div class="dart-form-group mb-0">
           <span class="ktitle">Страница акции</span>
           <div class="flex align-items-center">
@@ -676,11 +690,13 @@ export default {
       products: [],
       total_products: 0,
       per_page: 25,
+      stores: [],
       form: {
         date: null,
         addProductType: '1',
         description: '',
-        global_kenost_table: []
+        global_kenost_table: [],
+        store_id: ''
       },
       editMode: true,
       typeFormul: [
@@ -712,11 +728,12 @@ export default {
       'get_opt_catalog_tree_from_api',
       'opt_get_prices',
       'opt_get_remain_prices',
-      'get_sales_adv_pages_to_api'
+      'get_sales_adv_pages_to_api',
+      'org_get_stores_from_api'
     ]),
     paginate (obj) {
       this.page_selected = obj.page
-      const data = { filter: this.filter, selected: Object.keys(this.selected), pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = { storeid: this.form.store_id, filter: this.filter, selected: Object.keys(this.selected), pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data).then((res) => {
         this.kenostTableCheckedAllCheck()
       })
@@ -830,6 +847,7 @@ export default {
     pagClickCallbackSelect (pageNum) {
       this.page_selected = pageNum
       const data = {
+        storeid: this.form.store_id,
         filter: this.filter,
         filterselected: this.filter_table,
         selected: Object.keys(this.selected),
@@ -902,6 +920,7 @@ export default {
     },
     setAllProducts (is) {
       const data = {
+        storeid: this.form.store_id,
         filter: this.filter,
         filterselected: this.filter_table,
         pageselected: this.page_selected,
@@ -980,6 +999,7 @@ export default {
             }
           }
           const data = {
+            storeid: this.form.store_id,
             filter: this.filter,
             filterselected: this.filter_table,
             selected: Object.keys(this.selected),
@@ -1000,6 +1020,26 @@ export default {
           callback(xhr.response)
         }
       }
+    },
+    updateProducts () {
+      const data = {
+        storeid: this.form.store_id,
+        filter: this.filter,
+        filterselected: this.filter_table,
+        selected: Object.keys(this.selected),
+        pageselected: this.page_selected,
+        page: this.page,
+        perpage: this.per_page
+      }
+
+      this.selected = {}
+      this.selected_data = {}
+      this.selected_visible = {}
+      this.products = []
+
+      this.get_available_products_from_api(data).then(
+        this.kenostTableCheckedAllCheck()
+      )
     },
     select (id) {
       const product = this.products.find(r => r.id === id)
@@ -1026,6 +1066,7 @@ export default {
         this.selected[product.id] = product
         this.products = this.products.filter((r) => r.id !== id)
         const data = {
+          storeid: this.form.store_id,
           filter: this.filter,
           filterselected: this.filter_table,
           selected: Object.keys(this.selected),
@@ -1058,7 +1099,7 @@ export default {
       this.selected = new_selected
 
       // this.selected = this.selected.filter((r) => r.id !== id)
-      const data = { filter: this.filter, filterselected: this.filter_table, selected: Object.keys(this.selected), pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = { storeid: this.form.store_id, filter: this.filter, filterselected: this.filter_table, selected: Object.keys(this.selected), pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data).then((res) => {
         this.kenostTableCheckedAllCheck()
       })
@@ -1066,7 +1107,7 @@ export default {
     },
     pagClickCallback (pageNum) {
       this.page = pageNum
-      const data = { filter: this.filter, selected: Object.keys(this.selected), pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+      const data = { storeid: this.form.store_id, filter: this.filter, selected: Object.keys(this.selected), pageselected: this.page_selected, page: this.page, perpage: this.per_page }
       this.get_available_products_from_api(data).then((res) => {
         this.kenostTableCheckedAllCheck()
       })
@@ -1075,6 +1116,7 @@ export default {
       this.page = 1
       this.page_selected = 1
       const data = {
+        storeid: this.form.store_id,
         filter: this.filter,
         filterselected: this.filter_table,
         selected: Object.keys(this.selected),
@@ -1148,6 +1190,7 @@ export default {
               action: 'set',
               type: 'b2c',
               id: router.currentRoute._value.params.id,
+              store_id: this.form.store_id,
               name: this.form.name,
               description: this.form.description,
               conditions: this.form.conditions,
@@ -1175,6 +1218,7 @@ export default {
               action: 'set',
               type: 'b2c',
               id: router.currentRoute._value.params.id,
+              store_id: this.form.store_id,
               name: this.form.name,
               description: this.form.description,
               conditions: this.form.conditions,
@@ -1215,8 +1259,10 @@ export default {
     // }
   },
   mounted () {
-    this.get_available_products_from_api({ filter: '', selected: ['0'], page: this.page }).then((res) => {
-      this.products = this.available_products.products
+    this.get_available_products_from_api({ storeid: this.form.store_id, filter: '', selected: ['0'], page: this.page }).then((res) => {
+      if (this.available_products) {
+        this.products = this.available_products?.products
+      }
       // this.selected = this.available_products.selected
     })
     this.get_regions_from_api().then(
@@ -1238,7 +1284,12 @@ export default {
     })
     this.get_sales_adv_pages_to_api({
       action: 'get/adv/pages',
-      store_id: router.currentRoute._value.params.id
+      store_id: router.currentRoute._value.params.id,
+      type: 2
+    })
+    this.org_get_stores_from_api({
+      action: 'get/stores',
+      id: this.$route.params.id
     })
   },
   components: {
@@ -1266,7 +1317,8 @@ export default {
       'optcatalogtree',
       'oprpricesremain',
       'oprprices',
-      'adv_pages'
+      'adv_pages',
+      'org_stores'
     ]),
     pagesCountSelect () {
       let pages = Math.round(this.total_selected / this.per_page)
@@ -1284,18 +1336,26 @@ export default {
     }
   },
   watch: {
+    org_stores: function (newVal, oldVal) {
+      this.stores = []
+      for (let i = 0; i < newVal.items.length; i++) {
+        this.stores.push({ label: newVal.items[i].name, value: newVal.items[i].id })
+      }
+    },
     available_products: function (newVal, oldVal) {
-      this.products = newVal.products
+      if (newVal) {
+        this.products = newVal.products
 
-      if (newVal.selected) {
-        this.selected = newVal.selected
-      }
+        if (newVal.selected) {
+          this.selected = newVal.selected
+        }
 
-      if (newVal.visible) {
-        this.selected_visible = newVal.visible
+        if (newVal.visible) {
+          this.selected_visible = newVal.visible
+        }
+        this.total_products = newVal.total
+        this.total_selected = newVal.total_selected
       }
-      this.total_products = newVal.total
-      this.total_selected = newVal.total_selected
     },
     adv_pages: function (newVal, oldVal) {
       this.place = newVal
@@ -1334,6 +1394,21 @@ export default {
         this.selected_data = newVal.products_data
       }
 
+      if (newVal.store_id) {
+        this.form.store_id = newVal.store_id.toString()
+
+        const data = {
+          storeid: newVal.store_id.toString(),
+          filter: this.filter_organizations,
+          filterselected: this.filter_table,
+          selected: Object.keys(this.selected),
+          pageselected: this.page_selected,
+          page: this.page,
+          perpage: this.per_page
+        }
+        this.get_available_products_from_api(data).then()
+      }
+
       const dateto = new Date(newVal.date_to)
       const datefrom = new Date(newVal.date_from)
       this.form.dates = [datefrom, dateto]
@@ -1360,7 +1435,7 @@ export default {
       }
 
       setTimeout(() => {
-        const data = { filter: this.filter, selected: Object.keys(this.selected), pageselected: this.page_selected, page: this.page, perpage: this.per_page }
+        const data = { storeid: this.form.store_id, filter: this.filter, selected: Object.keys(this.selected), pageselected: this.page_selected, page: this.page, perpage: this.per_page }
         this.get_available_products_from_api(data).then((res) => {
           this.kenostTableCheckedAllCheck()
         })

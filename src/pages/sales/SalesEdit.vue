@@ -1139,11 +1139,11 @@ export default {
         { name: 'Кратность', key: 3 }
       ],
       place: [
-        { name: 'На главной', code: 0 },
-        { name: 'На странице огранизаций', code: 1 },
-        { name: 'В каталоге', code: 2 },
-        { name: 'При выборе поставщика', code: 3 },
-        { name: 'При офомлении заказа', code: 4 }
+        // { name: 'На главной', code: 0 },
+        // { name: 'На странице огранизаций', code: 1 },
+        // { name: 'В каталоге', code: 2 },
+        // { name: 'При выборе поставщика', code: 3 },
+        // { name: 'При офомлении заказа', code: 4 }
       ],
       geo: [
         { name: 'Показывать всем', key: 0 },
@@ -1164,7 +1164,8 @@ export default {
       'opt_get_prices',
       'opt_get_remain_prices',
       'get_opt_catalog_tree_from_api',
-      'org_get_stores_from_api'
+      'org_get_stores_from_api',
+      'get_sales_adv_pages_to_api'
     ]),
     onUpload (data) {
       if (data.xhr.response) {
@@ -1202,6 +1203,8 @@ export default {
       this.get_available_products_from_api(data).then(
         this.kenostTableCheckedAllCheck()
       )
+
+      this.selectedGift = {}
 
       const dataGift = {
         storeid: this.form.store_id,
@@ -1473,7 +1476,11 @@ export default {
             not_sale_client: this.form.not_sale_client[0] === 'true',
             limit_sum: this.form.limitationValue,
             limit_type: this.form.limitations,
-            actionLast: this.form.actionLast[0] === 'true'
+            actionLast: this.form.actionLast[0] === 'true',
+            page_places: this.place_action.map(x => x.code),
+            page_geo: this.geo_action.key,
+            page_place_position: this.position,
+            page_create: this.create_page_action[0] === 'true'
           })
             .then((result) => {
               this.loading = false
@@ -1525,7 +1532,11 @@ export default {
             not_sale_client: this.form.not_sale_client[0] === 'true',
             limit_sum: this.form.limitationValue,
             limit_type: this.form.limitations,
-            actionLast: this.form.actionLast[0] === 'true'
+            actionLast: this.form.actionLast[0] === 'true',
+            page_places: this.place_action.map(x => x.code),
+            page_geo: this.geo_action.key,
+            page_place_position: this.position,
+            page_create: this.create_page_action[0] === 'true'
           })
             .then((result) => {
               this.loading = false
@@ -1615,6 +1626,7 @@ export default {
     },
     selectGift (id) {
       const product = this.productsGift.find(r => r.id === id)
+      // console.log(product)
       // product.discountInterest = 0
       // product.discountInRubles = 0
       product.multiplicity = 1
@@ -1623,6 +1635,7 @@ export default {
       // product.typePrice = ''
 
       this.selectedGift[product.id] = product
+      // console.log(this.selectedGift)
       this.productsGift = this.productsGift.filter((r) => r.id !== id)
       const data = {
         storeid: this.form.store_id,
@@ -1630,7 +1643,7 @@ export default {
         filterselected: this.filter_table,
         selected: Object.keys(this.selectedGift),
         pageselected: this.page_selected,
-        page: this.page,
+        page: this.pageGift,
         perpage: this.per_page,
         type: 'gift'
       }
@@ -1656,12 +1669,13 @@ export default {
       // this.selected = this.selected.filter((r) => r.id !== id)
       const data = {
         storeid: this.form.store_id,
-        filter: this.filter,
+        filter: this.filterGift,
         filterselected: this.filter_table,
         selected: Object.keys(this.selected),
         pageselected: this.page_selected,
         page: this.page,
-        perpage: this.per_page
+        perpage: this.per_page,
+        type: 'gift'
       }
       this.get_available_products_from_api(data).then((res) => {
         this.kenostTableCheckedAllCheck()
@@ -1915,6 +1929,11 @@ export default {
       action: 'get/stores',
       id: this.$route.params.id
     })
+    this.get_sales_adv_pages_to_api({
+      action: 'get/adv/pages',
+      store_id: router.currentRoute._value.params.id,
+      type: 1
+    })
   },
   components: {
     FileUpload,
@@ -1943,7 +1962,8 @@ export default {
       'oprprices',
       'oprpricesremain',
       'optcatalogtree',
-      'org_stores'
+      'org_stores',
+      'adv_pages'
     ]),
     pagesCountSelect () {
       let pages = Math.round(this.total_selected / this.per_page)
@@ -1973,6 +1993,9 @@ export default {
       for (let i = 0; i < newVal.items.length; i++) {
         this.stores.push({ label: newVal.items[i].name, value: newVal.items[i].id })
       }
+    },
+    adv_pages: function (newVal, oldVal) {
+      this.place = newVal
     },
     available_products: function (newVal, oldVal) {
       if (newVal) {
@@ -2033,6 +2056,18 @@ export default {
         }
         if (newVal.image_inner) {
           this.files.min.original_href = this.site_url_prefix + newVal.image_inner
+        }
+
+        this.place_action = newVal.page_places
+        this.geo_action = this.geo[newVal.page_geo]
+        this.position = newVal.page_place_position
+
+        if (newVal.page_create) {
+          this.create_page_action = ['true']
+        }
+
+        if (newVal.gift) {
+          this.selectedGift = newVal.gift
         }
 
         if (newVal.store_id) {
