@@ -62,14 +62,10 @@
                   </td>
                   <td>
                   <div class="kenost-conflict">
-                    <!-- {{ item.conflicts?.items[item.action_id] }} -->
-                      <!-- {{item.conflicts?.items[item.action_id]?.postponement_conflicts}}
-                      {{item.conflicts?.items[item.action_id]?.sales_conflicts}} -->
                     <div v-if="item.conflicts?.items[item.action_id]" class="kenost-conflict__container">
                       <div class="kenost-conflict__icon">
                         <i class="pi pi-info"></i>
                       </div>
-                      <!-- {{ item.conflicts?.items[item.action_id] }} -->
                       <div class="kenost-conflict__message">
                         <div v-for="(conf) in item.conflicts?.items[item.action_id]?.postponement_conflicts" v-bind:key="conf">
                           <p>Конфликт с акцией <span>{{ this.actions_item.actions.find(action => action.id === conf) ? this.actions_item.actions.find(action => action.id === conf).name : this.actions_item.actions.find(action => action.action_id === conf).name }}</span></p>
