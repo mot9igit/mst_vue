@@ -69,13 +69,14 @@
                       <div class="kenost-conflict__icon">
                         <i class="pi pi-info"></i>
                       </div>
+                      <!-- {{ item.conflicts?.items[item.action_id] }} -->
                       <div class="kenost-conflict__message">
                         <div v-for="(conf) in item.conflicts?.items[item.action_id]?.postponement_conflicts" v-bind:key="conf">
                           <p>Конфликт с акцией <span>{{ this.actions_item.actions.find(action => action.id === conf) ? this.actions_item.actions.find(action => action.id === conf).name : this.actions_item.actions.find(action => action.action_id === conf).name }}</span></p>
                         </div>
                         <!-- v-if="item.conflicts?.items[item.action_id]?.postponement_conflicts.indexOf(conf) == -1 && conf != item.action_id" -->
                         <div v-for="(conf) in item.conflicts?.items[item.action_id]?.sales_conflicts" v-bind:key="conf">
-                          <p>Конфликт с акцией <span>{{ this.actions_item.actions.find(action => action.id === conf) ? this.actions_item.actions.find(action => action.id === conf).name : this.actions_item.actions.find(action => action.action_id === conf).name }}</span></p>
+                          <p v-if="item.conflicts?.items[item.action_id]?.postponement_conflicts?.indexOf(conf) == -1 || !item.conflicts?.items[item.action_id]?.postponement_conflicts">Конфликт с акцией <span>{{ this.actions_item.actions.find(action => action.id === conf) ? this.actions_item.actions.find(action => action.id === conf).name : this.actions_item.actions.find(action => action.action_id === conf).name }}</span></p>
                         </div>
                       </div>
                     </div>
@@ -164,83 +165,53 @@ export default {
       // console.log(obj)
       this.modal_actions = true
     },
-    updateAction (remainid, storeid, actionid, status) {
+    async updateAction (remainid, storeid, actionid, status) {
       // Выключаем конфликтные акции
 
       const conflicts = this.actions_item.actions.find((action) => action.action_id === actionid)
       // console.log(conflicts)
-      if (conflicts.conflicts.items[conflicts.action_id] && !status) {
+      if (conflicts.conflicts.items[conflicts.action_id]) {
         if (conflicts.conflicts.items[conflicts.action_id].postponement_conflicts) {
           for (let i = 0; i < conflicts.conflicts.items[conflicts.action_id].postponement_conflicts.length; i++) {
             for (let j = 0; j < Object.keys(this.actions_item.actions).length; j++) {
               if (conflicts.conflicts.items[conflicts.action_id].postponement_conflicts[i] === this.actions_item.actions[j].action_id) {
-                this.actions_item.actions[j].enabled = false
-                const data = {
-                  action: 'action/user/off/on',
-                  remain_id: this.actions_item.actions[j].remain_id ? this.actions_item.actions[j].remain_id : conflicts.remain_id,
-                  store_id: this.actions_item.actions[j].store_id ? this.actions_item.actions[j].store_id : conflicts.store_id,
-                  action_id: this.actions_item.actions[j].action_id,
-                  status: false,
-                  test: 'true1'
-                }
-
-                this.opt_api(data).then(() => {
-                  const dataUpdate = {
-                    action: 'get/info/product',
-                    store_id: storeid,
-                    remain_id: remainid,
-                    id: router.currentRoute._value.params.id
+                if (this.actions_item.actions[j].enabled) {
+                  this.actions_item.actions[j].enabled = false
+                  const data = {
+                    action: 'action/user/off/on',
+                    remain_id: this.actions_item.actions[j].remain_id ? this.actions_item.actions[j].remain_id : conflicts.remain_id,
+                    store_id: this.actions_item.actions[j].store_id ? this.actions_item.actions[j].store_id : conflicts.store_id,
+                    action_id: this.actions_item.actions[j].action_id,
+                    status: false,
+                    test: 'true2'
                   }
-
-                  this.opt_api(dataUpdate).then((response) => {
-                    const data = {
-                      remain_id: remainid,
-                      store_id: storeid,
-                      data: response.data.data
-                    }
-                    this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
-                  })
-                })
+                  this.opt_api(data)
+                }
               }
             }
           }
         }
-        // if (conflicts.conflicts.items[conflicts.action_id].sales_conflicts) {
-        //   for (let i = 0; i < conflicts.conflicts.items[conflicts.action_id].sales_conflicts.length; i++) {
-        //     for (let j = 0; j < Object.keys(this.actions_item.actions).length; j++) {
-        //       if (conflicts.conflicts.items[conflicts.action_id].sales_conflicts[i] === this.actions_item.actions[j].action_id) {
-        //         this.actions_item.actions[j].enabled = false
-        //         console.log(this.actions_item.actions[j])
-        //         const data = {
-        //           action: 'action/user/off/on',
-        //           remain_id: this.actions_item.actions[j].remain_id ? this.actions_item.actions[j].remain_id : conflicts.remain_id,
-        //           store_id: this.actions_item.actions[j].store_id ? this.actions_item.actions[j].store_id : conflicts.store_id,
-        //           action_id: this.actions_item.actions[j].action_id,
-        //           status: false,
-        //           test: 'true2'
-        //         }
 
-        //         this.opt_api(data).then(() => {
-        //           const dataUpdate = {
-        //             action: 'get/info/product',
-        //             store_id: storeid,
-        //             remain_id: remainid,
-        //             id: router.currentRoute._value.params.id
-        //           }
-
-        //           this.opt_api(dataUpdate).then((response) => {
-        //             const data = {
-        //               remain_id: remainid,
-        //               store_id: storeid,
-        //               data: response.data.data
-        //             }
-        //             this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
-        //           })
-        //         })
-        //       }
-        //     }
-        //   }
-        // }
+        if (conflicts.conflicts.items[conflicts.action_id].sales_conflicts) {
+          for (let i = 0; i < conflicts.conflicts.items[conflicts.action_id].sales_conflicts.length; i++) {
+            for (let j = 0; j < Object.keys(this.actions_item.actions).length; j++) {
+              if (conflicts.conflicts.items[conflicts.action_id].sales_conflicts[i] === this.actions_item.actions[j].action_id) {
+                if (this.actions_item.actions[j].enabled) {
+                  this.actions_item.actions[j].enabled = false
+                  const data = {
+                    action: 'action/user/off/on',
+                    remain_id: this.actions_item.actions[j].remain_id ? this.actions_item.actions[j].remain_id : conflicts.remain_id,
+                    store_id: this.actions_item.actions[j].store_id ? this.actions_item.actions[j].store_id : conflicts.store_id,
+                    action_id: this.actions_item.actions[j].action_id,
+                    status: false,
+                    test: 'true2'
+                  }
+                  this.opt_api(data)
+                }
+              }
+            }
+          }
+        }
       }
       const data = {
         action: 'action/user/off/on',
