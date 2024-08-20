@@ -315,12 +315,6 @@ export default {
             to: { name: 'org_profile', params: { id: this.$route.params.id } }
           },
           {
-            key: '4',
-            label: 'Товары',
-            icon: 'mst-icon mst-icon-products',
-            to: { name: 'org_products', params: { id: this.$route.params.id } }
-          },
-          {
             key: '5',
             label: 'B2B-маркетинг',
             icon: 'mst-icon mst-icon-b2b',
