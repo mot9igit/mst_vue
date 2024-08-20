@@ -231,22 +231,26 @@
             <td class="opt-table__col">664 600 ₽ / 731 060 ₽</td>
           </tr>
           <tr class="opt-table__row opt-table__row--total">
-            <td class="opt-table__head-col">
-              <span class="opt-table__name">Вес заказов (кг)</span>
-              <span class="opt-table__value">450</span>
-            </td>
-            <td class="opt-table__head-col" colspan="2">
-              <span class="opt-table__name">Объем заказов (м3)</span>
-              <span class="opt-table__value">5,3</span>
-            </td>
-            <td class="opt-table__head-col" colspan="2">
-              <span class="opt-table__name">Сумма (₽)</span>
-              <span class="opt-table__value">1 465 285</span>
-            </td>
-            <td class="opt-table__head-col">
-              <button class="dart-btn dart-btn-secondary opt-order__button">
-                Скачать заказ
-              </button>
+            <td class="opt-table__head-col" colspan="6">
+              <div class="opt-table__total-row-container">
+                <div class="opt-table__head-col">
+                  <span class="opt-table__name">Вес заказов (кг)</span>
+                  <span class="opt-table__value">450</span>
+                </div>
+                <div class="opt-table__head-col">
+                  <span class="opt-table__name">Объем заказов (м3)</span>
+                  <span class="opt-table__value">5,3</span>
+                </div>
+                <div class="opt-table__head-col">
+                  <span class="opt-table__name">Сумма (₽)</span>
+                  <span class="opt-table__value">1 465 285</span>
+                </div>
+                <div class="opt-table__head-col">
+                  <button class="dart-btn dart-btn-secondary opt-order__button">
+                  Скачать заказ
+                </button>
+                </div>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -259,6 +263,8 @@
 import { mapActions, mapGetters } from 'vuex'
 import router from '@/router'
 // import customModal from '@/components/popup/CustomModal'
+import TreeSelect from 'primevue/treeselect'
+import DropdownButton from './opt/OptOrder/DropdownButton.vue'
 
 export default {
   name: 'ProfileoptorderOpt',
@@ -318,6 +324,8 @@ export default {
   },
   components: {
     // customModal
+    TreeSelect,
+    DropdownButton
   },
   computed: {
     ...mapGetters([
@@ -513,6 +521,7 @@ export default {
 .opt-table {
   width: 100%;
   table-layout: fixed;
+  font-size: 14px;
 
   &--products {
     .opt-table__head-col,
@@ -530,6 +539,7 @@ export default {
   &__head-col {
     font-weight: 500;
     padding-bottom: 16px;
+    width: max-content;
 
     &:not(:last-child) {
       padding-right: 16px;
@@ -566,6 +576,17 @@ export default {
 
   &__value {
   }
+
+  .opt-table__total-row-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+
+    .opt-table__head-col {
+      padding: 0 !important;
+    }
+  }
 }
 
 .opt-product-info {
@@ -587,10 +608,13 @@ export default {
     font-weight: 400;
     padding: 0;
     margin: 0;
+    font-size: 14px;
+    line-height: 18px;
   }
 
   &__article {
     color: #acabab;
+    margin: 0;
   }
 }
 
