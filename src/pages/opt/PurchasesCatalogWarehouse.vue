@@ -1,7 +1,7 @@
 <template>
     <div class="dart-custom-grid" :class="{ loading: loading }">
       <CatalogMenu :items="opt_catalog" />
-      <div class="d-col-content">
+      <div v-if="opt_vendors.selected_count > 0" class="d-col-content">
         <div class="dart-home dart-window">
             <Breadcrumbs :items="this.$breadcrumbs"/>
             <div v-if="$route.params.warehouse_id && !$route.params.warehouse_cat_id">
@@ -36,12 +36,18 @@
             </paginate>
         </div>
       </div>
-      <div class="d-col-map">
+      <div v-if="opt_vendors.selected_count > 0" class="d-col-map">
         <Vendors :items="this.opt_vendors" @vendorCheck="vendorCheck"/>
         <Basket ref="childComponent" @toOrder="toOrder" @catalogUpdate="catalogUpdate"/>
       </div>
+      <div class="not-vendors" v-if="opt_vendors.selected_count <= 0">
+        <img src="../../assets/img/not-vendors.png" alt="">
+        <p>Пожалуйста, выберите хотя-бы 1 поставщика!</p>
+        <div class="a-dart-btn a-dart-btn-primary" @click="changeActive" >Выбрать</div>
+      </div>
     </div>
     <OrderModal :show="show_order" @fromOrder="fromOrder" @orderSubmit="updatePage($route.params.category_id)"/>
+    <Vendors @changeActive="changeActive" @vendorCheck="vendorCheck" :vendorModal="this.vendorModal" :items="this.opt_vendors" />
   </template>
 <script>
 import { mapActions, mapGetters } from 'vuex'
@@ -68,7 +74,8 @@ export default {
       opt_vendors: {},
       opt_products: {},
       page: 1,
-      perpage: 25
+      perpage: 25,
+      vendorModal: false
     }
   },
   components: {
@@ -163,6 +170,9 @@ export default {
     },
     fromOrder () {
       this.show_order = false
+    },
+    changeActive () {
+      this.vendorModal = !this.vendorModal
     }
   },
   computed: {

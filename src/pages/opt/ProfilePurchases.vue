@@ -1,6 +1,7 @@
 <template>
   <ChangeVendorsModal :items="this.opt_vendors"/>
-  <div class="dart-custom-grid">
+  <Vendors @changeActive="changeActive" @vendorCheck="vendorCheck" :vendorModal="this.vendorModal" :items="this.opt_vendors" />
+  <div v-if="opt_vendors.selected_count > 0" class="dart-custom-grid">
     <CatalogMenu :items="opt_catalog" />
     <div class="d-col-content">
       <div class="dart-home dart-window">
@@ -21,6 +22,11 @@
       <Basket ref="childComponent" @toOrder="toOrder"/>
     </div>
   </div>
+  <div class="not-vendors" v-else>
+    <img src="../../assets/img/not-vendors.png" alt="">
+    <p>Пожалуйста, выберите хотя-бы 1 поставщика!</p>
+    <div class="a-dart-btn a-dart-btn-primary" @click="changeActive" >Выбрать</div>
+  </div>
   <OrderModal :show="show_order" @fromOrder="fromOrder"/>
 </template>
 <script>
@@ -35,6 +41,7 @@ import Basket from '../../components/opt/Basket.vue'
 import ChangeVendorsModal from '../../components/opt/ChangeVendorsModal.vue'
 import OrderModal from '../../components/opt/OrderModal.vue'
 import router from '@/router'
+import Vendors from '../../components/opt/Vendors.vue'
 
 export default {
   name: 'OptsMain',
@@ -48,7 +55,8 @@ export default {
       opt_mainpage: {},
       opt_catalog: {},
       opt_vendors: {},
-      sales_banners: {}
+      sales_banners: {},
+      vendorModal: false
     }
   },
   components: {
@@ -61,7 +69,8 @@ export default {
     Banners,
     // Vendors,
     ChangeVendorsModal,
-    OrderModal
+    OrderModal,
+    Vendors
   },
   mounted () {
     this.get_opt_mainpage_from_api().then(
@@ -100,6 +109,9 @@ export default {
         store_id: router.currentRoute._value.params.id
       }
       this.get_salses_banners_to_api(data)
+    },
+    changeActive () {
+      this.vendorModal = !this.vendorModal
     }
   },
   computed: {
@@ -127,6 +139,19 @@ export default {
 }
 </script>
 <style lang="scss">
+
+  .not-vendors{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: calc(100vh - 195px);
+
+    p{
+      font-size: 16px;
+      margin: 10px 0;
+    }
+  }
 
   .dart-window{
     background: #FFF;

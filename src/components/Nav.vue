@@ -6,7 +6,7 @@
                 <span>для бизнеса</span>
             </Link>
 
-            <div class="navmain__search a-dart-input a-dart-input-search">
+            <div v-if="opt_vendors.selected_count > 0" class="navmain__search a-dart-input a-dart-input-search">
                 <form action="#" method="post" @submit.prevent="toSearch()">
                     <div class="navmain__search_btn">
                         <input type="text" placeholder="Найти у выбранных поставщиков" v-model="search"/>
