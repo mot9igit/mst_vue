@@ -361,6 +361,7 @@ export default {
   }
 
   &__date {
+    font-size: 14px;
   }
 
   &__select {
@@ -452,12 +453,25 @@ export default {
 
     &__card,
     .detail-card {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
       flex-grow: 1;
       flex-basis: 0;
 
+      &__title,
+      &__name,
+      &__value,
+      &__value-list {
+        font-size: 14px;
+        line-height: 1;
+        padding: 0;
+        margin: 0;
+      }
+
       &__title {
         font-weight: 500;
-        font-size: 14px;
       }
 
       &__content {
@@ -552,13 +566,11 @@ export default {
   &__row {
     &:not(.opt-table__head-row) {
       border-top: 1px solid #e2e2e2;
+    }
 
-      &:last-child {
-        .opt-table__head-col {
-          padding-top: 16px;
-          padding-bottom: 0;
-        }
-      }
+    &:last-child:not(.opt-table__head-row) :is(.opt-table__col, .opt-table__head-col) {
+      padding-top: 16px;
+      padding-bottom: 0;
     }
   }
 
@@ -625,7 +637,7 @@ export default {
   aspect-ratio: 1;
 
   &:not(:first-child) {
-    margin-left: -10px;
+    margin-left: -5px;
   }
 
   &__list {

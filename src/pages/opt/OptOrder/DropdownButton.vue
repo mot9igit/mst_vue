@@ -40,6 +40,10 @@ export default {
 
 <style lang="scss" scoped>
 .dropbutton {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   background-color: #fff;
 
   margin-block: 4px;
@@ -49,6 +53,10 @@ export default {
   transition-duration: 0.3s;
 
   &__arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
     margin-left: 13px;
     transition-duration: .3s;
 
@@ -58,7 +66,7 @@ export default {
 
     &::before {
       color: #b4b4b4;
-      font-size: 10px;
+      font-size: 8px;
     }
   }
 
