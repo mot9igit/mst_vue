@@ -8,9 +8,9 @@
     <div class="opt-order__top opt-order-top">
       <div class="opt-order-top__left">
         <div class="opt-order-top__info">
-          <h1 class="opt-order__title">Заказ №{{ $route.params.id }}</h1>
+          <h1 class="opt-order__title">Заказ №{{ this.order?.id }}</h1>
           <span class="opt-order__date"
-            >от <time datetime="2022-01-01">01.01.2022</time></span
+            >от <time datetime="2022-01-01">{{ new Date(this.order.date)?.toLocaleString("ru", this.dateOptions) }}</time></span
           >
         </div>
         <TreeSelect placeholder="Укажите статус" class="opt-order__select" />
@@ -59,20 +59,19 @@
         <div class="detail-card__content">
           <div class="detail-card__row">
             <p class="detail-card__name">Название юр. лица</p>
-            <p class="detail-card__value">ООО "ПримерКомпания"</p>
+            <p class="detail-card__value">{{ this.order?.buyer_name }}</p>
           </div>
           <div class="detail-card__row">
             <p class="detail-card__name">ИНН</p>
-            <p class="detail-card__value">1234567890</p>
+            <p class="detail-card__value"></p>
           </div>
           <div class="detail-card__row">
             <p class="detail-card__name">КПП</p>
-            <p class="detail-card__value">123401001</p>
+            <p class="detail-card__value"></p>
           </div>
           <div class="detail-card__row">
             <p class="detail-card__name">Адрес получателя</p>
             <p class="detail-card__value">
-              624800, Свердловская область, г. Сухой Лог, ул. Белинского, д. 56
             </p>
           </div>
         </div>
@@ -84,20 +83,20 @@
         <div class="detail-card__content">
           <div class="detail-card__row">
             <p class="detail-card__name">Название юр. лица</p>
-            <p class="detail-card__value">ООО "ПримерКомпания"</p>
+            <p class="detail-card__value">{{ this.order?.name_short }}</p>
           </div>
           <div class="detail-card__row">
             <p class="detail-card__name">ИНН</p>
-            <p class="detail-card__value">1234567890</p>
+            <p class="detail-card__value">{{ this.order?.seller_inn }}</p>
           </div>
           <div class="detail-card__row">
             <p class="detail-card__name">КПП</p>
-            <p class="detail-card__value">123401001</p>
+            <p class="detail-card__value">{{ this.order?.seller_kpp }}</p>
           </div>
           <div class="detail-card__row">
             <p class="detail-card__name">Адрес получателя</p>
             <p class="detail-card__value">
-              624800, Свердловская область, г. Сухой Лог, ул. Белинского, д. 56
+              {{ this.order?.seller_address }}
             </p>
           </div>
         </div>
@@ -115,9 +114,9 @@
         </thead>
         <tbody class="opt-table__body">
           <tr class="opt-table__row">
-            <td class="opt-table__col">Поставщик</td>
-            <td class="opt-table__col">15.07.2024</td>
-            <td class="opt-table__col">Согласование поставщиком</td>
+            <td class="opt-table__col">-------------------</td>
+            <td class="opt-table__col">--.--.--</td>
+            <td class="opt-table__col">{{ this.order?.status_name }}</td>
           </tr>
         </tbody>
       </table>
@@ -136,7 +135,53 @@
           </tr>
         </thead>
         <tbody class="opt-table__body">
-          <tr class="opt-table__row">
+          <tr v-for="(item, index) in this.order?.products" :key="index" class="opt-table__row">
+            <td class="opt-table__col">
+              <article class="opt-order-products__info opt-product-info">
+                <img
+                  :src="item.image"
+                  alt="Изображение товара"
+                  class="opt-product-info__img"
+                />
+                <div class="opt-product-info__content">
+                  <h3 class="opt-product-info__title">
+                    {{item.name}}
+                  </h3>
+                  <span class="opt-product-info__article">{{item.article}}</span>
+                </div>
+              </article>
+            </td>
+            <td class="opt-table__col">
+              <div class="opt-promotion__list">
+                <article class="opt-promotion">
+                  <img
+                    src="/img/test/promotion.png"
+                    alt="Изображение акции"
+                    class="opt-promotion__img"
+                  />
+                </article>
+                <article class="opt-promotion">
+                  <img
+                    src="/img/test/promotion.png"
+                    alt="Изображение акции"
+                    class="opt-promotion__img"
+                  />
+                </article>
+                <article class="opt-promotion">
+                  <img
+                    src="/img/test/promotion.png"
+                    alt="Изображение акции"
+                    class="opt-promotion__img"
+                  />
+                </article>
+              </div>
+            </td>
+            <td class="opt-table__col">{{item.count}}</td>
+            <td class="opt-table__col">{{Number(item.price).toLocaleString('ru')}} ₽</td>
+            <td class="opt-table__col">-- %</td>
+            <td class="opt-table__col">{{(Number(item.price) * item.count).toLocaleString('ru')}} ₽ / {{(Number(item.price) * item.count).toLocaleString('ru')}} ₽</td>
+          </tr>
+          <!-- <tr class="opt-table__row">
             <td class="opt-table__col">
               <article class="opt-order-products__info opt-product-info">
                 <img
@@ -182,68 +227,21 @@
             <td class="opt-table__col">13 292 ₽</td>
             <td class="opt-table__col">10 %</td>
             <td class="opt-table__col">664 600 ₽ / 731 060 ₽</td>
-          </tr>
-          <tr class="opt-table__row">
-            <td class="opt-table__col">
-              <article class="opt-order-products__info opt-product-info">
-                <img
-                  src="/img/test/drill.png"
-                  alt="Изображение товара"
-                  class="opt-product-info__img"
-                />
-                <div class="opt-product-info__content">
-                  <h3 class="opt-product-info__title">
-                    Аккумуляторная дрель-шуруповерт ИНТЕРСКОЛ ДА-10/14.4Л2
-                    425.0.2.00
-                  </h3>
-                  <span class="opt-product-info__article">844337</span>
-                </div>
-              </article>
-            </td>
-            <td class="opt-table__col">
-              <div class="opt-promotion__list">
-                <article class="opt-promotion">
-                  <img
-                    src="/img/test/promotion.png"
-                    alt="Изображение акции"
-                    class="opt-promotion__img"
-                  />
-                </article>
-                <article class="opt-promotion">
-                  <img
-                    src="/img/test/promotion.png"
-                    alt="Изображение акции"
-                    class="opt-promotion__img"
-                  />
-                </article>
-                <article class="opt-promotion">
-                  <img
-                    src="/img/test/promotion.png"
-                    alt="Изображение акции"
-                    class="opt-promotion__img"
-                  />
-                </article>
-              </div>
-            </td>
-            <td class="opt-table__col">50</td>
-            <td class="opt-table__col">13 292 ₽</td>
-            <td class="opt-table__col">10 %</td>
-            <td class="opt-table__col">664 600 ₽ / 731 060 ₽</td>
-          </tr>
+          </tr> -->
           <tr class="opt-table__row opt-table__row--total">
             <td class="opt-table__head-col" colspan="6">
               <div class="opt-table__total-row-container">
                 <div class="opt-table__head-col">
                   <span class="opt-table__name">Вес заказов (кг)</span>
-                  <span class="opt-table__value">450</span>
+                  <span class="opt-table__value">---</span>
                 </div>
                 <div class="opt-table__head-col">
                   <span class="opt-table__name">Объем заказов (м3)</span>
-                  <span class="opt-table__value">5,3</span>
+                  <span class="opt-table__value">----</span>
                 </div>
                 <div class="opt-table__head-col">
                   <span class="opt-table__name">Сумма (₽)</span>
-                  <span class="opt-table__value">1 465 285</span>
+                  <span class="opt-table__value">-----</span>
                 </div>
                 <div class="opt-table__head-col">
                   <button class="dart-btn dart-btn-secondary opt-order__button">
@@ -281,6 +279,13 @@ export default {
       response: {
         success: true,
         message: ''
+      },
+      dateOptions: {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
       }
     }
   },
@@ -635,6 +640,7 @@ export default {
     margin: 0;
     font-size: 14px;
     line-height: 18px;
+    max-width: 430px;
   }
 
   &__article {
