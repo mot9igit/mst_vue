@@ -181,37 +181,50 @@ export default {
       // console.log(obj)
       this.modal_actions = true
     },
-    updateAction (remainid, storeid, actionid, status) {
-    // Выключаем конфликтные акции
+    async updateAction (remainid, storeid, actionid, status) {
+      // Выключаем конфликтные акции
       const conflicts = this.actions_item.actions.find((action) => action.action_id === actionid)
-      for (let i = 0; i < conflicts.conflicts.items[conflicts.action_id].length; i++) {
-        for (let j = 0; j < Object.keys(this.actions_item.actions).length; j++) {
-          if (conflicts.conflicts.items[conflicts.action_id][i].id === this.actions_item.actions[j].action_id) {
-            this.actions_item.actions[j].enabled = false
-            const data = {
-              action: 'action/user/off/on',
-              remain_id: this.actions_item.actions[j].remain_id,
-              store_id: this.actions_item.actions[j].store_id,
-              action_id: this.actions_item.actions[j].action_id,
-              status: false
-            }
-
-            this.opt_api(data).then(() => {
-              const dataUpdate = {
-                action: 'get/info/product',
-                store_id: storeid,
-                remain_id: remainid
-              }
-
-              this.opt_api(dataUpdate).then((response) => {
-                const data = {
-                  remain_id: remainid,
-                  store_id: storeid,
-                  data: response.data.data
+      // console.log(conflicts)
+      if (conflicts.conflicts.items[conflicts.action_id]) {
+        if (conflicts.conflicts.items[conflicts.action_id].postponement_conflicts) {
+          for (let i = 0; i < conflicts.conflicts.items[conflicts.action_id].postponement_conflicts.length; i++) {
+            for (let j = 0; j < Object.keys(this.actions_item.actions).length; j++) {
+              if (conflicts.conflicts.items[conflicts.action_id].postponement_conflicts[i] === this.actions_item.actions[j].action_id) {
+                if (this.actions_item.actions[j].enabled) {
+                  this.actions_item.actions[j].enabled = false
+                  const data = {
+                    action: 'action/user/off/on',
+                    remain_id: this.actions_item.actions[j].remain_id ? this.actions_item.actions[j].remain_id : conflicts.remain_id,
+                    store_id: this.actions_item.actions[j].store_id ? this.actions_item.actions[j].store_id : conflicts.store_id,
+                    action_id: this.actions_item.actions[j].action_id,
+                    status: false,
+                    test: 'true2'
+                  }
+                  this.opt_api(data)
                 }
-                this.$store.commit('SET_OPT_PRODUCT_TO_VUEX', data)
-              })
-            })
+              }
+            }
+          }
+        }
+
+        if (conflicts.conflicts.items[conflicts.action_id].sales_conflicts) {
+          for (let i = 0; i < conflicts.conflicts.items[conflicts.action_id].sales_conflicts.length; i++) {
+            for (let j = 0; j < Object.keys(this.actions_item.actions).length; j++) {
+              if (conflicts.conflicts.items[conflicts.action_id].sales_conflicts[i] === this.actions_item.actions[j].action_id) {
+                if (this.actions_item.actions[j].enabled) {
+                  this.actions_item.actions[j].enabled = false
+                  const data = {
+                    action: 'action/user/off/on',
+                    remain_id: this.actions_item.actions[j].remain_id ? this.actions_item.actions[j].remain_id : conflicts.remain_id,
+                    store_id: this.actions_item.actions[j].store_id ? this.actions_item.actions[j].store_id : conflicts.store_id,
+                    action_id: this.actions_item.actions[j].action_id,
+                    status: false,
+                    test: 'true2'
+                  }
+                  this.opt_api(data)
+                }
+              }
+            }
           }
         }
       }
@@ -220,13 +233,15 @@ export default {
         remain_id: remainid,
         store_id: storeid,
         action_id: actionid,
-        status: !status
+        status: !status,
+        test: 'true3'
       }
       this.opt_api(data).then(() => {
         const dataUpdate = {
           action: 'get/info/product',
           store_id: storeid,
-          remain_id: remainid
+          remain_id: remainid,
+          id: router.currentRoute._value.params.id
         }
 
         this.opt_api(dataUpdate).then((response) => {
