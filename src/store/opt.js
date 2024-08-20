@@ -16,7 +16,8 @@ export default {
       name_short: ''
     },
     oprprices: [],
-    oprpricesremain: []
+    oprpricesremain: [],
+    my_orders: []
   },
   actions: {
     set_vendors_to_api ({ commit }, data) {
@@ -108,6 +109,26 @@ export default {
       })
         .then((response) => {
           commit('GET_OPT_ORDER_TO_VUEX', response.data)
+          // console.log(response)
+          return response
+        })
+        .catch(error => {
+          if (error.response.status === 403) {
+            localStorage.removeItem('user')
+            router.push({ name: 'home' })
+          }
+        })
+    },
+    get_opt_my_order_api ({ commit }, data) {
+      return Axios('/rest/front_opt', {
+        method: 'POST',
+        data: data,
+        headers: {
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
+        .then((response) => {
+          commit('GET_OPT_MY_ORDER_TO_VUEX', response.data)
           // console.log(response)
           return response
         })
@@ -383,6 +404,9 @@ export default {
     SET_OPT_PRODUCTS_TO_VUEX: (state, data) => {
       state.optproducts = data.data
     },
+    GET_OPT_MY_ORDER_TO_VUEX: (state, data) => {
+      state.my_orders = data.data
+    },
     SET_OPT_PRODUCT_FILE: (state, data) => {
       state.optproductsfile = data.data
     },
@@ -482,6 +506,9 @@ export default {
     },
     optcatalogtree (state) {
       return state.optcatalogtree
+    },
+    my_orders (state) {
+      return state.my_orders
     }
   }
 }

@@ -11186,7 +11186,7 @@ ol.comments-list {
 }
 
 .profile-table thead tr th {
-  padding: 10px 10px;
+  padding: 16px 10px;
   font-style: normal;
   font-weight: 500;
   font-size: 14px;
@@ -11205,7 +11205,7 @@ ol.comments-list {
 }
 
 .profile-table tbody tr td {
-  padding: 10px 10px;
+  padding: 16px 10px;
   text-align: center;
   font-style: normal;
   font-weight: 400;
