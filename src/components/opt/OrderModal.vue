@@ -41,7 +41,7 @@
                                 <div class="k-order__actions center">
                                     <div class="k-actions" v-for="(action, index) in product.actions" v-bind:key="action.id">
                                     <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" :src="site_url_prefix + action.icon" >
-                                    <div v-if="action.conflicts.items[action.id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div>
+                                    <!-- <div v-if="action.conflicts.items[action.id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div> -->
                                     </div>
                                     <div v-if="product.actions.length > 3" class="k-order__actions-el last">+{{ product.actions.length - 3 }}</div>
                                 </div>

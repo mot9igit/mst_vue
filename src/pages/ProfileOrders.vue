@@ -36,6 +36,19 @@
       </TabPanel>
       <TabPanel header="Мои заказы">
         <div class="products">
+          <v-table
+            :items_data="my_orders.orders"
+            :total="my_orders.total"
+            :pagination_items_per_page="this.pagination_items_per_page"
+            :pagination_offset="this.pagination_offset"
+            :page="this.page_opt"
+            :table_data="this.table_data_opt_my"
+            :filters="this.filters_opt_my"
+            title="Заказы"
+            @filter="filter_opt_my"
+            @sort="filter_opt_my"
+            @paginate="paginate_opt_my"
+          />
         </div>
       </TabPanel>
   </TabView>
@@ -73,6 +86,13 @@ export default {
         }
       },
       filters_opt: {
+        name: {
+          name: 'Наименование, артикул',
+          placeholder: 'Наименование, артикул',
+          type: 'text'
+        }
+      },
+      filters_opt_my: {
         name: {
           name: 'Наименование, артикул',
           placeholder: 'Наименование, артикул',
@@ -172,10 +192,6 @@ export default {
           },
           sort: true
         },
-        // status: {
-        //   label: 'Статус',
-        //   type: 'status'
-        // },
         cost: {
           label: 'Сумма',
           type: 'link',
@@ -185,25 +201,56 @@ export default {
             order_id: 'id'
           },
           sort: true
+        },
+        status_name: {
+          label: 'Статус',
+          type: 'status'
         }
-        // delivery: {
-        //   label: 'Доставка',
-        //   type: 'link',
-        //   link_to: 'org_order',
-        //   link_params: {
-        //     id: this.$route.params.id,
-        //     order_id: 'id'
-        //   }
-        // },
-        // payment: {
-        //   label: 'Оплата',
-        //   type: 'link',
-        //   link_to: 'org_order',
-        //   link_params: {
-        //     id: this.$route.params.id,
-        //     order_id: 'id'
-        //   }
-        // }
+      },
+      table_data_opt_my: {
+        id: {
+          label: 'Номер',
+          type: 'link',
+          link_to: 'opt_order',
+          link_params: {
+            id: this.$route.params.id,
+            order_id: 'id'
+          },
+          sort: true
+        },
+        store_name: {
+          label: 'Покупатель',
+          type: 'link',
+          link_to: 'opt_order',
+          link_params: {
+            id: this.$route.params.id,
+            order_id: 'id'
+          }
+        },
+        createdon: {
+          label: 'Дата',
+          type: 'link',
+          link_to: 'opt_order',
+          link_params: {
+            id: this.$route.params.id,
+            order_id: 'id'
+          },
+          sort: true
+        },
+        cost: {
+          label: 'Сумма',
+          type: 'link',
+          link_to: 'org_order',
+          link_params: {
+            id: this.$route.params.id,
+            order_id: 'id'
+          },
+          sort: true
+        },
+        status_name: {
+          label: 'Статус',
+          type: 'status'
+        }
       }
     }
   },
@@ -211,7 +258,8 @@ export default {
     ...mapActions([
       'get_organization_from_api',
       'get_orders_from_api',
-      'get_opt_order_api'
+      'get_opt_order_api',
+      'get_opt_my_order_api'
     ]),
     filter (data) {
       console.log(data)
@@ -222,14 +270,24 @@ export default {
       this.get_orders_from_api(data)
     },
     filter_opt (data) {
-      data.store_id = router.currentRoute._value.params.id
+      data.id = router.currentRoute._value.params.id
       data.action = 'get/orders/seller'
       this.get_opt_order_api(data)
     },
     paginate_opt (data) {
-      data.store_id = router.currentRoute._value.params.id
+      data.id = router.currentRoute._value.params.id
       data.action = 'get/orders/seller'
       this.get_opt_order_api(data)
+    },
+    filter_opt_my (data) {
+      data.id = router.currentRoute._value.params.id
+      data.action = 'get/orders/buyer'
+      this.get_opt_my_order_api(data)
+    },
+    paginate_opt_my (data) {
+      data.id = router.currentRoute._value.params.id
+      data.action = 'get/orders/buyer'
+      this.get_opt_my_order_api(data)
     }
   },
   mounted () {
@@ -240,7 +298,13 @@ export default {
       })
       this.get_opt_order_api({
         action: 'get/orders/seller',
-        store_id: router.currentRoute._value.params.id,
+        id: router.currentRoute._value.params.id,
+        page: this.page_opt,
+        perpage: this.pagination_items_per_page_opt
+      })
+      this.get_opt_my_order_api({
+        action: 'get/orders/buyer',
+        id: router.currentRoute._value.params.id,
         page: this.page_opt,
         perpage: this.pagination_items_per_page_opt
       })
@@ -251,7 +315,8 @@ export default {
     ...mapGetters([
       'orders',
       'optorder',
-      'organization'
+      'organization',
+      'my_orders'
     ])
   }
 }
