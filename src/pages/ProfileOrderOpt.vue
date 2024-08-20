@@ -546,8 +546,21 @@ export default {
     }
   }
 
+  .opt-order__button {
+    margin-block: 0;
+  }
+
   &__head {
     padding-bottom: 16px;
+  }
+
+  &__head &__head-row &__head-col {
+    line-height: 1;
+  }
+
+  &__col,
+  &__head-col {
+    line-height: 1.15;
   }
 
   &__head-col {
