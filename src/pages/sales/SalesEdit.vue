@@ -710,13 +710,13 @@
                         </div>
                       </div>
                     <MultiSelect filter v-model="this.regions_select" display="chip" :options="this.regions_all" optionLabel="name" placeholder="Выберите регионы"
-                    class="w-full md:w-20rem kenost-multiselect" />
+                    class="w-full md:w-20rem kenost-multiselect mt-2" />
                     </div>
                   </div>
 
                   <div class="PickList" v-if="this.form.participantsType == '2'">
                     <div class="PickList__product" :style="{ width: '40%' }">
-                      <b class="PickList__title">Добавление отдельных компаний</b>
+                      <b class="PickList__title">Добавление отдельных организаций</b>
                       <div class="PickList__filters">
                         <div class="form_input_group input_pl input-parent required">
                           <input
@@ -727,7 +727,7 @@
                           v-model="filter_organizations.name"
                           @input="setFilterOrganization('filter')"
                           />
-                          <label for="product_filter_name" class="s-complex-input__label">Введите название компании</label>
+                          <label for="product_filter_name" class="s-complex-input__label">Введите название организации</label>
                           <div class="form_input_group__icon">
                               <i class="d_icon d_icon-search"></i>
                           </div>
@@ -746,9 +746,9 @@
 
                     <div class="PickList__selected" :style="{ width: '40%' }">
                       <div class="PickList__title mb-4">
-                        <b>Добавленные компании</b>
+                        <b>Добавленные организации</b>
                       </div>
-                      <div class="PickList__products">
+                      <div class="PickList__products PickList__products-selected">
                         <div class="PickList__el center" v-for="(item) in this.all_organizations_selected" :key="item.id">
                           <img :src="item.image" alt="">
                             <div class="PickList__info">

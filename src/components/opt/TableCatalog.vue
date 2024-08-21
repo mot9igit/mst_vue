@@ -62,8 +62,8 @@
                   </td>
                   <td>
                   <div class="kenost-conflict">
-                    {{item.conflicts?.items}}
-                    <div v-if="item.conflicts?.items[item.action_id]" class="kenost-conflict__container">
+                    <!-- v-if="item.conflicts?.items[item.action_id]" -->
+                    <div v-if="item.conflicts?.items[item.action_id] && !item.enabled" class="kenost-conflict__container">
                       <div class="kenost-conflict__icon">
                         <i class="pi pi-info"></i>
                       </div>

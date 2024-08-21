@@ -109,7 +109,7 @@ export default {
       id: router.currentRoute._value.params.sales_id,
       actionid: router.currentRoute._value.params.action
     }).then((res) => {
-      if (!res.data.data.access) {
+      if (!res.data.success) {
         this.$toast.add({ severity: 'info', summary: 'Ошибка', detail: res.data.data.message, life: 3000 })
         setTimeout(() => {
           this.$router.go(-1)

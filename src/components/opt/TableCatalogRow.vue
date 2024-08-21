@@ -44,7 +44,7 @@
             <img :style="index > 2 ? { display: 'none' } : false" class="k-order__actions-el" :src="action.icon" >
             <!-- <div v-if="action.conflicts.items[action.action_id]?.length" :style="index > 2 ? { display: 'none' } : false" class="k-err-icon"><i class="pi pi-info"></i></div> -->
           </div>
-          <div v-if="item.actions.length > 3" class="k-order__actions-el last">+{{ item.actions.length - 3 }}</div>
+          <div v-if="item?.actions?.length > 3" class="k-order__actions-el last">+{{ item?.actions?.length - 3 }}</div>
         </div>
         <span v-if="item?.actions[0]?.conflicts?.global" class="kenost-err-compatibility">* Несовместимость акций</span>
       </td>

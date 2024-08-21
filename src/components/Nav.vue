@@ -88,7 +88,7 @@ export default {
     vendorCheck () {
       const data = {
         action: 'get/banners',
-        store_id: router.currentRoute._value.params.id
+        id: router.currentRoute._value.params.id
       }
       this.get_salses_banners_to_api(data)
     }
