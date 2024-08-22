@@ -15,20 +15,23 @@
           </a>
         </div>
         <div class="organization-menu" v-if="$route.params.id">
-          <div class="organization-menu__up">
+          <!-- <div class="organization-menu__up">
             <router-link :to="{ name: 'organizations' }">
               <mdicon name="arrow-left" />
               <span>Назад к организациям</span>
             </router-link>
-          </div>
+          </div> -->
           <div class="organization-menu__name organization-menu__gradient">
-            <div class="icon" v-if="org.image">
-              <img :src="org.image" alt="">
+            <div class="flex kenost-org-change">
+              <div class="icon" v-if="org.image">
+                <img :src="org.image" alt="">
+              </div>
+              <div class="icon" v-else>
+                <i class="d_icon d_icon-account-circle"></i>
+              </div>
+              <router-link class="organization-menu__title mt-0" :to="{ name: 'organization', params: { id: $route.params.id }}">{{ org.name }}</router-link>
             </div>
-            <div class="icon" v-else>
-              <i class="d_icon d_icon-account-circle"></i>
-            </div>
-            <router-link class="organization-menu__title" :to="{ name: 'organization', params: { id: $route.params.id }}">{{ org.name }}</router-link>
+            <div class="kenost-org-change__change" @click="this.changeOrgModal = true">Сменить организацию</div>
           </div>
           <div class="organization-menu__name">
               <div class="sidebar_widget dart_diler_widget">
@@ -123,6 +126,17 @@
       </div>
     </div>
   </div>
+  <Dialog v-model:visible="this.changeOrgModal" :header="'Выбор организации'" class="kenost-change-org">
+    <router-link @click="this.changeOrgModal = false" :to="{ name: 'organization', params: { id: item.id }}" class="change-org-el" :class="{'active': $route.params.id == item.id}" v-for="item in this.organizations" v-bind:key="item.id">
+      <div class="icon"><img :src="item.image" alt=""></div>
+      <div class="change-org-el__text">
+        <b>{{ item.name }}</b>
+        <!-- <p>{{ item.active }}</p> -->
+        <div v-if="item.active" class="dart-payment-status-org"><i class="d_icon d_icon-check"></i><span>Включен</span></div>
+        <div v-else class="dart-payment-status-org off"><i class="d_icon d_icon-focus"></i><span>Выключен</span></div>
+      </div>
+    </router-link>
+  </Dialog>
 </template>
 
 <script>
@@ -132,6 +146,7 @@ import { mapActions, mapGetters } from 'vuex'
 import Nav from '@/components/Nav.vue'
 import router from '@/router'
 import CatalogMenu from '@/components/training/CatalogMenu.vue'
+import Dialog from 'primevue/dialog'
 
 export default {
   name: 'ProfilePage',
@@ -143,6 +158,8 @@ export default {
       menuHelp: false,
       menuHelpMobile: false,
       training_catalog: {},
+      changeOrgModal: false,
+      organizations: [],
       user: {
       },
       index1: 0,
@@ -184,6 +201,10 @@ export default {
       //   to: { name: 'copo_all' }
       // })
     }
+    const data = {
+      action: 'get/orgs'
+    }
+    this.org_get_from_api(data)
   },
   updated () {
     this.namePathIsNav = router?.currentRoute?._value.matched[3]?.name
@@ -191,11 +212,12 @@ export default {
       this.training_catalog = this.trainingcatalog
     )
   },
-  components: { MainHeader, PanelMenu, Nav, CatalogMenu },
+  components: { MainHeader, PanelMenu, Nav, CatalogMenu, Dialog },
   computed: {
     ...mapGetters([
       'organization',
-      'trainingcatalog'
+      'trainingcatalog',
+      'orgs'
     ]),
     getYear () {
       return new Date().getFullYear()
@@ -361,7 +383,8 @@ export default {
     ...mapActions([
       'get_organization_from_api',
       'delete_organization_from_api',
-      'get_training_catalog_from_api'
+      'get_training_catalog_from_api',
+      'org_get_from_api'
     ]),
     changeContentTraining (elem) {
       console.log(elem)
@@ -404,12 +427,106 @@ export default {
       this.org.name = newVal.name
       this.org.balance = newVal.balance
       this.org.type = newVal.type
+    },
+    orgs: function (newVal, oldVal) {
+      this.organizations = newVal
     }
   }
 }
 </script>
 
 <style lang="scss">
+
+.dart-payment-status-org{
+  height: 24px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: #00F61926;
+  border: 1px solid #00a711;
+  margin-top: 6px;
+  color: #FFFFFF;
+  border-radius: 30px;
+  width: fit-content;
+
+  span{
+    color: #00a711;
+  }
+
+  &.off{
+    background: rgba(255, 0, 0, 0.15) !important;
+    border: 1px solid #FF0000 !important;
+
+    span{
+      color: #FF0000;
+    }
+  }
+}
+
+.change-org-el + .change-org-el{
+  margin-top: 12px
+}
+
+.change-org-el{
+  text-decoration: none;
+  display: flex;
+  gap: 12px;
+  padding: 10px 10px 10px 1.5rem;
+
+  &.active{
+    background: linear-gradient(89.93deg, rgba(255, 0, 0, 0.15) 0.06%, rgba(255, 0, 0, 0) 99.95%);
+    border-left: 4px solid #FF0000;
+  }
+
+  .icon{
+    width: 60px;
+    height: 60px;
+    margin: 0 0;
+    padding: 5px 5px;
+    background: #ffffff;
+    box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.14), 0px 3px 1px rgba(0, 0, 0, 0.12), 0px 1px 5px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__text{
+    b{
+      display: block;
+      color: #282828;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+    }
+  }
+}
+
+.kenost-change-org{
+  display: flex;
+  flex-direction: column;
+  min-width: 500px;
+
+  .p-dialog-content{
+    padding: 0 0 2rem 0 !important;
+  }
+}
+
+.kenost-org-change{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &__change{
+    font-size: 14px;
+    color: #FFF;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+}
 
 .sidebars .mst-icon{
   font-size: 24px;
