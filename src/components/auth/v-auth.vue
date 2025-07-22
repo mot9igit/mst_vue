@@ -1,6 +1,6 @@
 <template>
   <form class="form-signin" @submit.prevent="formSubmit">
-    <Toast />
+    <Toast/>
     <div class="logo text-center">
       <img src="img/logo.svg" alt="" width="200">
     </div>
